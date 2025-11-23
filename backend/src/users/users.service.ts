@@ -102,4 +102,16 @@ export class UsersService {
     userEntity.isActive = false;
     return await this.userRepository.save(userEntity);
   }
+
+  async findOneByEmail(email: string) {
+    // Buscamos el usuario y traemos su rol
+    return await this.userRepository.findOne({
+      where: { email },
+      relations: ['role'],
+    });
+  }
+
+  async findRoleByName(name: string): Promise<Role | null> {
+    return await this.roleRepository.findOneBy({ name });
+  }
 }
