@@ -4,7 +4,9 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany, // <--- 1. AGREGAR ESTO
 } from 'typeorm';
+import { User } from '../../users/entities/user.entity'; // <--- 2. IMPORTAR USUARIO
 
 @Entity('roles')
 export class Role {
@@ -19,6 +21,9 @@ export class Role {
 
   @Column({ type: 'boolean', default: true })
   isActive: boolean;
+
+  @OneToMany(() => User, (user) => user.role)
+  users: User[];
 
   @CreateDateColumn()
   createdAt: Date;
