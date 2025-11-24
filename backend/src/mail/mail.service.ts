@@ -18,4 +18,17 @@ export class MailService {
       },
     });
   }
+  async sendPasswordReset(email: string, name: string, token: string) {
+    const url = `http://localhost:3000/api/auth/reset-password?token=${token}`;
+
+    await this.mailerService.sendMail({
+      to: email,
+      subject: 'Restablecer Contraseña',
+      template: './reset-password',
+      context: {
+        name: name,
+        url: url,
+      },
+    });
+  }
 }
