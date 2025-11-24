@@ -31,7 +31,12 @@ export class AuthService {
       throw new UnauthorizedException('Credenciales inválidas');
     }
 
-    const tokens = await this.getTokens(user.id, user.email, user.role.name);
+    const tokens = await this.getTokens(
+      user.id,
+      user.email,
+      user.role.name,
+      user.isVerified,
+    );
     await this.updateRefreshToken(user.id, tokens.refresh_token);
 
     return {
@@ -51,17 +56,27 @@ export class AuthService {
 
     const verificationToken = uuidv4();
 
-    // Guardamos el token en la DB
-    await this.usersService.setVerificationToken(newUser.id, verificationToken);
+    const expires = new Date();
+    expires.setHours(expires.getHours() + 24);
 
-    // 2. Enviar correo
+    await this.usersService.setVerificationData(
+      newUser.id,
+      verificationToken,
+      expires,
+    );
+
     await this.mailService.sendUserWelcome(
       newUser.email,
       newUser.email,
       verificationToken,
     );
 
-    const tokens = await this.getTokens(newUser.id, newUser.email, role.name);
+    const tokens = await this.getTokens(
+      newUser.id,
+      newUser.email,
+      role.name,
+      newUser.isVerified,
+    );
     await this.updateRefreshToken(newUser.id, tokens.refresh_token);
 
     return tokens;
@@ -80,9 +95,38 @@ export class AuthService {
       throw new BadRequestException('El usuario ya está verificado');
     }
 
+    if (user.verificationExpires && new Date() > user.verificationExpires) {
+      throw new BadRequestException(
+        'El token ha expirado. Solicita uno nuevo.',
+      );
+    }
+
     await this.usersService.markAsVerified(user.id);
 
+    await this.mailService.sendAccountConfirmed(user.email, user.email);
+
     return { message: 'Email verificado exitosamente' };
+  }
+
+  async resendVerification(email: string) {
+    const user = await this.usersService.findOneByEmail(email);
+
+    // Por seguridad, no decimos si no existe o si ya está verificado explícitamente
+    // Pero para UX, si ya está verificado, podemos avisar.
+    if (!user) {
+      return { message: 'Si el correo existe, se ha enviado un enlace.' };
+    }
+    if (user.isVerified)
+      throw new BadRequestException('Este usuario ya está verificado');
+
+    const newToken = uuidv4();
+    const newExpires = new Date();
+    newExpires.setHours(newExpires.getHours() + 24); // 24h más
+
+    await this.usersService.setVerificationData(user.id, newToken, newExpires);
+    await this.mailService.sendUserWelcome(user.email, user.email, newToken);
+
+    return { message: 'Nuevo correo de verificación enviado' };
   }
 
   async logout(userId: string) {
@@ -102,7 +146,12 @@ export class AuthService {
 
     if (!refreshTokenMatches) throw new ForbiddenException('Acceso Denegado');
 
-    const tokens = await this.getTokens(user.id, user.email, user.role.name);
+    const tokens = await this.getTokens(
+      user.id,
+      user.email,
+      user.role.name,
+      user.isVerified,
+    );
     await this.updateRefreshToken(user.id, tokens.refresh_token);
 
     return tokens;
@@ -117,7 +166,13 @@ export class AuthService {
     }
   }
 
-  async getTokens(userId: string, email: string, role: string) {
+  async getTokens(
+    userId: string,
+    email: string,
+    role: string,
+    isVerified: boolean,
+  ) {
+    const payload = { sub: userId, email, role, isVerified };
     const accessSecret = this.configService.get<string>('JWT_SECRET');
     const accessExpires =
       this.configService.get<string>('JWT_EXPIRES_IN') ?? '15m';
@@ -127,23 +182,14 @@ export class AuthService {
       this.configService.get<string>('JWT_REFRESH_EXPIRES_IN') ?? '7d';
 
     const [at, rt] = await Promise.all([
-      this.jwtService.signAsync(
-        { sub: userId, email, role },
-        {
-          secret: accessSecret,
-          // 👇 SOLUCIÓN MAESTRA (Sin 'any'):
-          // Usamos el tipo exacto que la librería espera.
-          expiresIn: accessExpires as JwtSignOptions['expiresIn'],
-        },
-      ),
-      this.jwtService.signAsync(
-        { sub: userId, email, role },
-        {
-          secret: refreshSecret,
-          // 👇 Aquí también
-          expiresIn: refreshExpires as JwtSignOptions['expiresIn'],
-        },
-      ),
+      this.jwtService.signAsync(payload, {
+        secret: accessSecret,
+        expiresIn: accessExpires as JwtSignOptions['expiresIn'],
+      }),
+      this.jwtService.signAsync(payload, {
+        secret: refreshSecret,
+        expiresIn: refreshExpires as JwtSignOptions['expiresIn'],
+      }),
     ]);
 
     return {
@@ -160,7 +206,9 @@ export class AuthService {
     }
 
     const token = uuidv4();
-    await this.usersService.setResetPasswordToken(user.id, token);
+    const expires = new Date();
+    expires.setHours(expires.getHours() + 1);
+    await this.usersService.setResetPasswordData(user.id, token, expires);
 
     await this.mailService.sendPasswordReset(user.email, user.email, token);
 
@@ -174,8 +222,11 @@ export class AuthService {
       throw new BadRequestException('Token inválido o expirado');
     }
 
-    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    if (user.resetPasswordExpires && new Date() > user.resetPasswordExpires) {
+      throw new BadRequestException('El token ha expirado');
+    }
 
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
     await this.usersService.updatePassword(user.id, hashedPassword);
 
     return { message: 'Contraseña actualizada exitosamente' };

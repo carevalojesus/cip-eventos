@@ -79,7 +79,6 @@ export class AuthController {
     return this.authService.forgotPassword(email);
   }
 
-  // 👇 Paso 2: Cambiar contraseña
   @Public()
   @Post('reset-password')
   async resetPassword(
@@ -87,5 +86,11 @@ export class AuthController {
     @Body() resetDto: ResetPasswordDto,
   ) {
     return this.authService.resetPassword(token, resetDto.newPassword);
+  }
+
+  @Public()
+  @Post('resend-verification')
+  async resendVerification(@Body('email') email: string) {
+    return this.authService.resendVerification(email);
   }
 }

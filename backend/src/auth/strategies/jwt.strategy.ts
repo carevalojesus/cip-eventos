@@ -3,12 +3,11 @@ import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 
-// 1. Creamos una interfaz para definir qué hay dentro del token
-// Esto elimina el error del 'any'
 interface JwtPayload {
   sub: string;
   email: string;
   role: string;
+  isVerified: boolean;
 }
 
 @Injectable()
@@ -25,6 +24,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       userId: payload.sub,
       email: payload.email,
       role: payload.role,
+      isVerified: payload.isVerified,
     };
   }
 }

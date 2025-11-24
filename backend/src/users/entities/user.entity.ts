@@ -37,6 +37,14 @@ export class User {
   verificationToken: string | null;
 
   @Exclude()
+  @Column({ type: 'timestamp', nullable: true })
+  verificationExpires: Date | null;
+
+  @Exclude()
+  @Column({ type: 'timestamp', nullable: true })
+  resetPasswordExpires: Date | null;
+
+  @Exclude()
   @Column({ type: 'text', nullable: true })
   resetPasswordToken: string | null;
 
