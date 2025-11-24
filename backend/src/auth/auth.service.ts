@@ -151,4 +151,33 @@ export class AuthService {
       refresh_token: rt,
     };
   }
+
+  async forgotPassword(email: string) {
+    const user = await this.usersService.findOneByEmail(email);
+
+    if (!user) {
+      return { message: 'Si el correo existe, se ha enviado un enlace.' };
+    }
+
+    const token = uuidv4();
+    await this.usersService.setResetPasswordToken(user.id, token);
+
+    await this.mailService.sendPasswordReset(user.email, user.email, token);
+
+    return { message: 'Si el correo existe, se ha enviado un enlace.' };
+  }
+
+  async resetPassword(token: string, newPassword: string) {
+    const user = await this.usersService.findOneByResetToken(token);
+
+    if (!user) {
+      throw new BadRequestException('Token inválido o expirado');
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    await this.usersService.updatePassword(user.id, hashedPassword);
+
+    return { message: 'Contraseña actualizada exitosamente' };
+  }
 }

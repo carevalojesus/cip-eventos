@@ -14,6 +14,7 @@ import { RegisterAuthDto } from './dto/register-auth.dto';
 import { Public } from './decorators/public.decorator';
 import { RefreshTokenGuard } from './guards/refresh-token.guard';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { ResetPasswordDto } from './dto/reset-password.dto';
 
 // 1. Interfaz para cuando usas JwtAuthGuard (Logout)
 // La estrategia JWT mapeaba 'sub' a 'userId', recuerda?
@@ -70,5 +71,21 @@ export class AuthController {
       throw new BadRequestException('Token requerido');
     }
     return this.authService.verifyUser(token);
+  }
+
+  @Public()
+  @Post('forgot-password')
+  async forgotPassword(@Body('email') email: string) {
+    return this.authService.forgotPassword(email);
+  }
+
+  // 👇 Paso 2: Cambiar contraseña
+  @Public()
+  @Post('reset-password')
+  async resetPassword(
+    @Query('token') token: string,
+    @Body() resetDto: ResetPasswordDto,
+  ) {
+    return this.authService.resetPassword(token, resetDto.newPassword);
   }
 }

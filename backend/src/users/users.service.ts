@@ -137,4 +137,21 @@ export class UsersService {
       verificationToken: token,
     });
   }
+
+  async setResetPasswordToken(id: string, token: string): Promise<void> {
+    await this.userRepository.update(id, {
+      resetPasswordToken: token,
+    });
+  }
+
+  async findOneByResetToken(token: string): Promise<User | null> {
+    return await this.userRepository.findOneBy({ resetPasswordToken: token });
+  }
+
+  async updatePassword(id: string, newPasswordHash: string): Promise<void> {
+    await this.userRepository.update(id, {
+      password: newPasswordHash,
+      resetPasswordToken: null,
+    });
+  }
 }
