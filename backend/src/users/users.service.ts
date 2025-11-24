@@ -129,18 +129,7 @@ export class UsersService {
     await this.userRepository.update(id, {
       isVerified: true,
       verificationToken: null,
-    });
-  }
-
-  async setVerificationToken(id: string, token: string): Promise<void> {
-    await this.userRepository.update(id, {
-      verificationToken: token,
-    });
-  }
-
-  async setResetPasswordToken(id: string, token: string): Promise<void> {
-    await this.userRepository.update(id, {
-      resetPasswordToken: token,
+      verificationExpires: null,
     });
   }
 
@@ -152,6 +141,29 @@ export class UsersService {
     await this.userRepository.update(id, {
       password: newPasswordHash,
       resetPasswordToken: null,
+      resetPasswordExpires: null,
+    });
+  }
+
+  async setVerificationData(
+    id: string,
+    token: string,
+    expires: Date,
+  ): Promise<void> {
+    await this.userRepository.update(id, {
+      verificationToken: token,
+      verificationExpires: expires,
+    });
+  }
+
+  async setResetPasswordData(
+    id: string,
+    token: string,
+    expires: Date,
+  ): Promise<void> {
+    await this.userRepository.update(id, {
+      resetPasswordToken: token,
+      resetPasswordExpires: expires,
     });
   }
 }
