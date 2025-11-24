@@ -22,6 +22,10 @@ export class User {
   @Column({ type: 'text' })
   password: string;
 
+  @Exclude()
+  @Column({ type: 'text', nullable: true })
+  currentRefreshToken: string | null;
+
   @Column({ type: 'boolean', default: true })
   isActive: boolean;
 
