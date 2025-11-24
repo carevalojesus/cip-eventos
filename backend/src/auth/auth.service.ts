@@ -3,6 +3,7 @@ import {
   UnauthorizedException,
   ForbiddenException,
   BadRequestException,
+  NotFoundException,
 } from '@nestjs/common';
 import { JwtService, JwtSignOptions } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
@@ -10,12 +11,17 @@ import { UsersService } from 'src/users/users.service';
 import { LoginAuthDto } from './dto/login-auth.dto';
 import { RegisterAuthDto } from './dto/register-auth.dto';
 import { ConfigService } from '@nestjs/config';
+import * as crypto from 'crypto';
 
 import { v4 as uuidv4 } from 'uuid';
 import { MailService } from 'src/mail/mail.service';
+import { User } from 'src/users/entities/user.entity';
 
 @Injectable()
 export class AuthService {
+  private readonly resendThrottle = new Map<string, number>();
+  private readonly forgotThrottle = new Map<string, number>();
+
   constructor(
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
@@ -29,6 +35,14 @@ export class AuthService {
 
     if (!user || !(await bcrypt.compare(password, user.password))) {
       throw new UnauthorizedException('Credenciales inválidas');
+    }
+    if (!user.isActive) {
+      throw new ForbiddenException('Cuenta desactivada');
+    }
+    if (!user.isVerified) {
+      throw new ForbiddenException(
+        'Debes verificar tu email antes de ingresar',
+      );
     }
 
     const tokens = await this.getTokens(
@@ -55,13 +69,14 @@ export class AuthService {
     });
 
     const verificationToken = uuidv4();
+    const hashedVerificationToken = this.hashToken(verificationToken);
 
     const expires = new Date();
     expires.setHours(expires.getHours() + 24);
 
     await this.usersService.setVerificationData(
       newUser.id,
-      verificationToken,
+      hashedVerificationToken,
       expires,
     );
 
@@ -83,7 +98,9 @@ export class AuthService {
   }
 
   async verifyUser(token: string) {
-    const user = await this.usersService.findOneByVerificationToken(token);
+    const hashedToken = this.hashToken(token);
+    const user =
+      await this.usersService.findOneByVerificationToken(hashedToken);
 
     if (!user) {
       throw new BadRequestException(
@@ -109,6 +126,7 @@ export class AuthService {
   }
 
   async resendVerification(email: string) {
+    this.ensureNotThrottled(email, this.resendThrottle, 60_000);
     const user = await this.usersService.findOneByEmail(email);
 
     // Por seguridad, no decimos si no existe o si ya está verificado explícitamente
@@ -120,12 +138,18 @@ export class AuthService {
       throw new BadRequestException('Este usuario ya está verificado');
 
     const newToken = uuidv4();
+    const newHashedToken = this.hashToken(newToken);
     const newExpires = new Date();
     newExpires.setHours(newExpires.getHours() + 24); // 24h más
 
-    await this.usersService.setVerificationData(user.id, newToken, newExpires);
+    await this.usersService.setVerificationData(
+      user.id,
+      newHashedToken,
+      newExpires,
+    );
     await this.mailService.sendUserWelcome(user.email, user.email, newToken);
 
+    this.registerThrottleHit(email, this.resendThrottle);
     return { message: 'Nuevo correo de verificación enviado' };
   }
 
@@ -134,10 +158,23 @@ export class AuthService {
   }
 
   async refreshTokens(userId: string, refreshToken: string) {
-    const user = await this.usersService.findOne(userId);
+    let user: User | null = null;
+    try {
+      user = await this.usersService.findOne(userId);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw new ForbiddenException('Acceso Denegado');
+      }
+      throw error;
+    }
 
     if (!user || !user.currentRefreshToken)
       throw new ForbiddenException('Acceso Denegado');
+    if (!user.isActive) throw new ForbiddenException('Acceso Denegado');
+    if (!user.isVerified)
+      throw new ForbiddenException(
+        'Debes verificar tu email antes de renovar tokens',
+      );
 
     const refreshTokenMatches = await bcrypt.compare(
       refreshToken,
@@ -199,6 +236,7 @@ export class AuthService {
   }
 
   async forgotPassword(email: string) {
+    this.ensureNotThrottled(email, this.forgotThrottle, 60_000);
     const user = await this.usersService.findOneByEmail(email);
 
     if (!user) {
@@ -206,17 +244,20 @@ export class AuthService {
     }
 
     const token = uuidv4();
+    const hashedToken = this.hashToken(token);
     const expires = new Date();
     expires.setHours(expires.getHours() + 1);
-    await this.usersService.setResetPasswordData(user.id, token, expires);
+    await this.usersService.setResetPasswordData(user.id, hashedToken, expires);
 
     await this.mailService.sendPasswordReset(user.email, user.email, token);
 
+    this.registerThrottleHit(email, this.forgotThrottle);
     return { message: 'Si el correo existe, se ha enviado un enlace.' };
   }
 
   async resetPassword(token: string, newPassword: string) {
-    const user = await this.usersService.findOneByResetToken(token);
+    const hashedToken = this.hashToken(token);
+    const user = await this.usersService.findOneByResetToken(hashedToken);
 
     if (!user) {
       throw new BadRequestException('Token inválido o expirado');
@@ -230,5 +271,29 @@ export class AuthService {
     await this.usersService.updatePassword(user.id, hashedPassword);
 
     return { message: 'Contraseña actualizada exitosamente' };
+  }
+
+  private hashToken(token: string): string {
+    return crypto.createHash('sha256').update(token).digest('hex');
+  }
+
+  private ensureNotThrottled(
+    email: string,
+    store: Map<string, number>,
+    ttlMs: number,
+  ) {
+    const lastHit = store.get(email);
+    if (!lastHit) return;
+
+    const now = Date.now();
+    if (now - lastHit < ttlMs) {
+      throw new ForbiddenException(
+        'Demasiadas solicitudes. Intenta nuevamente en unos segundos.',
+      );
+    }
+  }
+
+  private registerThrottleHit(email: string, store: Map<string, number>) {
+    store.set(email, Date.now());
   }
 }

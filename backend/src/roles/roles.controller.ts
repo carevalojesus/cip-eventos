@@ -7,12 +7,19 @@ import {
   Param,
   Delete,
   ParseIntPipe,
+  UseGuards,
 } from '@nestjs/common';
 import { RolesService } from './roles.service';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { Roles as RolesDecorator } from 'src/auth/decorators/roles.decorator';
+import { EmailVerifiedGuard } from 'src/auth/guards/email-verified.guard';
 
 @Controller('roles')
+@UseGuards(JwtAuthGuard, EmailVerifiedGuard, RolesGuard)
+@RolesDecorator('ADMIN', 'SUPER_ADMIN')
 export class RolesController {
   constructor(private readonly rolesService: RolesService) {}
 

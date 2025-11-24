@@ -13,9 +13,10 @@ import { UpdateProfileDto } from './dto/update-profile.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { Profile } from './entities/profile.entity';
+import { EmailVerifiedGuard } from 'src/auth/guards/email-verified.guard';
 
 @Controller('profiles')
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, EmailVerifiedGuard)
 export class ProfilesController {
   constructor(private readonly profilesService: ProfilesService) {}
 

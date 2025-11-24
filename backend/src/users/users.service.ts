@@ -53,13 +53,14 @@ export class UsersService {
 
   async findAll(): Promise<User[]> {
     return await this.userRepository.find({
+      where: { isActive: true },
       relations: ['role'],
     });
   }
 
   async findOne(id: string): Promise<User> {
     const user = await this.userRepository.findOne({
-      where: { id },
+      where: { id, isActive: true },
       relations: ['role'],
     });
 
@@ -72,7 +73,7 @@ export class UsersService {
   // Método auxiliar para el Login (AuthService)
   async findOneByEmail(email: string): Promise<User | null> {
     return await this.userRepository.findOne({
-      where: { email },
+      where: { email, isActive: true },
       relations: ['role'],
     });
   }
