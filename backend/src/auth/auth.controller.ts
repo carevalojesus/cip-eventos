@@ -15,6 +15,7 @@ import { Public } from './decorators/public.decorator';
 import { RefreshTokenGuard } from './guards/refresh-token.guard';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { ResetPasswordDto } from './dto/reset-password.dto';
+import { EmailVerifiedGuard } from './guards/email-verified.guard';
 
 // 1. Interfaz para cuando usas JwtAuthGuard (Logout)
 // La estrategia JWT mapeaba 'sub' a 'userId', recuerda?
@@ -28,6 +29,7 @@ interface RequestWithRefreshToken {
   user: {
     sub: string;
     refreshToken: string;
+    isVerified: boolean;
   };
 }
 
@@ -47,16 +49,16 @@ export class AuthController {
     return this.authService.register(registerDto);
   }
 
-  @UseGuards(JwtAuthGuard)
-  @Get('logout')
+  @UseGuards(JwtAuthGuard, EmailVerifiedGuard)
+  @Post('logout')
   // 3. Usamos la interfaz en lugar de 'any' o 'Req' genérico
   logout(@Req() req: RequestWithUserId) {
     return this.authService.logout(req.user.userId);
   }
 
   @Public()
-  @UseGuards(RefreshTokenGuard)
-  @Get('refresh')
+  @UseGuards(RefreshTokenGuard, EmailVerifiedGuard)
+  @Post('refresh')
   // 4. Usamos la interfaz específica para refresh
   refreshTokens(@Req() req: RequestWithRefreshToken) {
     const userId = req.user.sub;

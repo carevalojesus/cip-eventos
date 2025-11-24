@@ -9,6 +9,7 @@ interface JwtPayload {
   sub: string;
   email: string;
   role: string;
+  isVerified: boolean;
 }
 
 // 2. Definimos qué vamos a devolver (lo anterior + el string del token)

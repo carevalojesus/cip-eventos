@@ -311,13 +311,13 @@ Content-Type: application/json
 
 #### 7. Renovar Tokens
 ```bash
-GET /auth/refresh
+POST /auth/refresh
 Authorization: Bearer {refresh_token}
 ```
 
 #### 8. Cerrar Sesión
 ```bash
-GET /auth/logout
+POST /auth/logout
 Authorization: Bearer {access_token}
 ```
 
