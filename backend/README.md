@@ -1,98 +1,553 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# CIP Eventos - Backend API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+API REST para el sistema de gestión de eventos del Colegio de Ingenieros del Perú (CIP).
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Descripción
 
-## Description
+Backend desarrollado con NestJS que proporciona un sistema completo de autenticación, gestión de usuarios, roles y notificaciones por email para la plataforma de eventos del CIP.
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Características Principales
 
-## Project setup
+### 🔐 Autenticación y Seguridad
+- Login/Register con JWT
+- Tokens duales (access + refresh)
+- Verificación de email con expiración (24h)
+- Recuperación de contraseña con expiración (1h)
+- Guards globales de protección
+- Control de acceso basado en roles
+- Hashing de contraseñas con bcrypt
 
-```bash
-$ pnpm install
-```
+### 👥 Gestión de Usuarios
+- CRUD completo de usuarios
+- Relación con roles
+- Soft delete
+- Campos de auditoría
 
-## Compile and run the project
+### 🎭 Sistema de Roles
+- CRUD completo de roles
+- Roles por defecto: ADMIN, USER
+- Validación de permisos
 
-```bash
-# development
-$ pnpm run start
+### 📧 Sistema de Emails
+- Email de bienvenida con verificación
+- Email de confirmación de cuenta
+- Email de recuperación de contraseña
+- Templates personalizables con Handlebars
 
-# watch mode
-$ pnpm run start:dev
+## Tecnologías
 
-# production mode
-$ pnpm run start:prod
-```
+- **Framework**: NestJS 11.x
+- **Lenguaje**: TypeScript 5.7.3
+- **Base de Datos**: PostgreSQL 16
+- **ORM**: TypeORM 0.3.27
+- **Autenticación**: Passport.js + JWT
+- **Validación**: class-validator
+- **Email**: @nestjs-modules/mailer + Nodemailer
+- **Hashing**: bcrypt
+- **Containerización**: Docker Compose
 
-## Run tests
+## Requisitos Previos
 
-```bash
-# unit tests
-$ pnpm run test
+- Node.js >= 18
+- pnpm >= 8
+- PostgreSQL 16
+- Docker & Docker Compose (opcional)
 
-# e2e tests
-$ pnpm run test:e2e
+## Instalación
 
-# test coverage
-$ pnpm run test:cov
-```
-
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+### 1. Clonar el repositorio
 
 ```bash
-$ pnpm install -g @nestjs/mau
-$ mau deploy
+git clone https://github.com/carevalojesus/cip-eventos.git
+cd cip-eventos/backend
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+### 2. Instalar dependencias
 
-## Resources
+```bash
+pnpm install
+```
 
-Check out a few resources that may come in handy when working with NestJS:
+### 3. Configurar variables de entorno
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+Crea un archivo `.env` en la raíz del proyecto backend:
 
-## Support
+```bash
+# Database
+DB_HOST=localhost
+DB_PORT=5432
+DB_USERNAME=cip_eventos_user
+DB_PASSWORD=CipEv3nt0s_2025!S3cur3
+DB_NAME=cip_eventos
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+# JWT
+JWT_SECRET=tu-clave-secreta-super-segura-aqui
+JWT_EXPIRES_IN=15m
+JWT_REFRESH_SECRET=tu-clave-refresh-super-segura-aqui
+JWT_REFRESH_EXPIRES_IN=7d
 
-## Stay in touch
+# Email (Gmail)
+MAIL_HOST=smtp.gmail.com
+MAIL_PORT=587
+MAIL_USER=tu-email@gmail.com
+MAIL_PASSWORD=tu-app-password
+MAIL_FROM=noreply@cipeventos.com
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+# Frontend
+FRONTEND_URL=http://localhost:4321
+```
 
-## License
+**Nota sobre Email:** Para Gmail, necesitas generar una "Contraseña de aplicación" en tu cuenta de Google (Configuración > Seguridad > Verificación en dos pasos > Contraseñas de aplicaciones).
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+### 4. Configurar la base de datos
+
+#### Opción A: Con Docker Compose
+
+```bash
+docker-compose up -d
+```
+
+#### Opción B: PostgreSQL local
+
+1. Crear la base de datos:
+```sql
+CREATE DATABASE cip_eventos;
+CREATE USER cip_eventos_user WITH PASSWORD 'CipEv3nt0s_2025!S3cur3';
+GRANT ALL PRIVILEGES ON DATABASE cip_eventos TO cip_eventos_user;
+```
+
+2. TypeORM creará automáticamente las tablas al iniciar la aplicación.
+
+### 5. Ejecutar la aplicación
+
+```bash
+# Modo desarrollo
+pnpm run start:dev
+
+# Modo producción
+pnpm run build
+pnpm run start:prod
+```
+
+La API estará disponible en `http://localhost:3000`
+
+## Estructura del Proyecto
+
+```
+backend/
+├── src/
+│   ├── auth/              # Módulo de autenticación
+│   │   ├── decorators/    # @Public, @Roles, @CurrentUser
+│   │   ├── dto/           # DTOs de login, register, reset
+│   │   ├── guards/        # JWT, Refresh, Roles, EmailVerified
+│   │   ├── strategies/    # JWT y RefreshToken strategies
+│   │   ├── auth.controller.ts
+│   │   ├── auth.service.ts
+│   │   └── auth.module.ts
+│   ├── users/             # Módulo de usuarios
+│   │   ├── dto/
+│   │   ├── entities/
+│   │   ├── users.controller.ts
+│   │   ├── users.service.ts
+│   │   └── users.module.ts
+│   ├── roles/             # Módulo de roles
+│   │   ├── dto/
+│   │   ├── entities/
+│   │   ├── roles.controller.ts
+│   │   ├── roles.service.ts
+│   │   └── roles.module.ts
+│   ├── mail/              # Módulo de emails
+│   │   ├── templates/     # Plantillas Handlebars
+│   │   │   ├── welcome.hbs
+│   │   │   ├── account-confirmed.hbs
+│   │   │   └── reset-password.hbs
+│   │   ├── mail.service.ts
+│   │   └── mail.module.ts
+│   ├── app.module.ts
+│   └── main.ts
+├── .env
+├── docker-compose.yml
+├── package.json
+└── tsconfig.json
+```
+
+## API Endpoints
+
+### Base URL
+```
+http://localhost:3000/api
+```
+
+### 🔓 Autenticación (Públicos)
+
+#### 1. Registrar Usuario
+```bash
+POST /auth/register
+Content-Type: application/json
+
+{
+  "email": "usuario@ejemplo.com",
+  "password": "password123"
+}
+```
+
+**Respuesta:**
+```json
+{
+  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+}
+```
+
+#### 2. Iniciar Sesión
+```bash
+POST /auth/login
+Content-Type: application/json
+
+{
+  "email": "usuario@ejemplo.com",
+  "password": "password123"
+}
+```
+
+**Respuesta:**
+```json
+{
+  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "user": {
+    "email": "usuario@ejemplo.com",
+    "role": "USER"
+  }
+}
+```
+
+#### 3. Verificar Email
+```bash
+GET /auth/confirm?token=uuid-token-aqui
+```
+
+**Respuesta:**
+```json
+{
+  "message": "Email verificado exitosamente"
+}
+```
+
+#### 4. Reenviar Email de Verificación
+```bash
+POST /auth/resend-verification
+Content-Type: application/json
+
+{
+  "email": "usuario@ejemplo.com"
+}
+```
+
+#### 5. Solicitar Recuperación de Contraseña
+```bash
+POST /auth/forgot-password
+Content-Type: application/json
+
+{
+  "email": "usuario@ejemplo.com"
+}
+```
+
+#### 6. Restablecer Contraseña
+```bash
+POST /auth/reset-password?token=uuid-token-aqui
+Content-Type: application/json
+
+{
+  "newPassword": "nuevaPassword123"
+}
+```
+
+### 🔐 Autenticación (Protegidos)
+
+#### 7. Renovar Tokens
+```bash
+GET /auth/refresh
+Authorization: Bearer {refresh_token}
+```
+
+#### 8. Cerrar Sesión
+```bash
+GET /auth/logout
+Authorization: Bearer {access_token}
+```
+
+### 👥 Usuarios (Requieren JWT)
+
+#### 9. Listar Usuarios
+```bash
+GET /users
+Authorization: Bearer {access_token}
+```
+
+#### 10. Obtener Usuario por ID
+```bash
+GET /users/{id}
+Authorization: Bearer {access_token}
+```
+
+#### 11. Crear Usuario
+```bash
+POST /users
+Authorization: Bearer {access_token}
+Content-Type: application/json
+
+{
+  "email": "nuevo@ejemplo.com",
+  "password": "password123",
+  "roleId": "uuid-del-rol"
+}
+```
+
+#### 12. Actualizar Usuario
+```bash
+PATCH /users/{id}
+Authorization: Bearer {access_token}
+Content-Type: application/json
+
+{
+  "email": "actualizado@ejemplo.com"
+}
+```
+
+#### 13. Eliminar Usuario (Soft Delete)
+```bash
+DELETE /users/{id}
+Authorization: Bearer {access_token}
+```
+
+### 🎭 Roles (Requieren JWT)
+
+#### 14. Listar Roles
+```bash
+GET /roles
+Authorization: Bearer {access_token}
+```
+
+#### 15. Obtener Rol por ID
+```bash
+GET /roles/{id}
+Authorization: Bearer {access_token}
+```
+
+#### 16. Crear Rol
+```bash
+POST /roles
+Authorization: Bearer {access_token}
+Content-Type: application/json
+
+{
+  "name": "MODERADOR",
+  "description": "Moderador de eventos"
+}
+```
+
+#### 17. Actualizar Rol
+```bash
+PATCH /roles/{id}
+Authorization: Bearer {access_token}
+Content-Type: application/json
+
+{
+  "description": "Nueva descripción"
+}
+```
+
+#### 18. Eliminar Rol (Soft Delete)
+```bash
+DELETE /roles/{id}
+Authorization: Bearer {access_token}
+```
+
+## Cómo Probar los Endpoints
+
+### Opción 1: Con cURL
+
+#### 1. Registrar un usuario
+```bash
+curl -X POST http://localhost:3000/api/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "test@ejemplo.com",
+    "password": "password123"
+  }'
+```
+
+#### 2. Guardar el access_token
+```bash
+# Copia el access_token de la respuesta
+export TOKEN="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
+
+#### 3. Listar usuarios (con autenticación)
+```bash
+curl -X GET http://localhost:3000/api/users \
+  -H "Authorization: Bearer $TOKEN"
+```
+
+### Opción 2: Con Postman
+
+1. **Crear una colección** llamada "CIP Eventos API"
+
+2. **Configurar Variables de Entorno:**
+   - `base_url`: `http://localhost:3000/api`
+   - `access_token`: (se actualizará automáticamente)
+
+3. **Request de Login:**
+   - Method: POST
+   - URL: `{{base_url}}/auth/login`
+   - Body (JSON):
+     ```json
+     {
+       "email": "test@ejemplo.com",
+       "password": "password123"
+     }
+     ```
+   - Tests (para guardar el token):
+     ```javascript
+     const response = pm.response.json();
+     pm.environment.set("access_token", response.access_token);
+     ```
+
+4. **Requests Protegidos:**
+   - Agregar en Headers:
+     - Key: `Authorization`
+     - Value: `Bearer {{access_token}}`
+
+### Opción 3: Con Thunder Client (VS Code)
+
+1. Instalar extensión "Thunder Client"
+2. Crear nueva request
+3. Configurar similar a Postman
+4. Usar variables de entorno
+
+## Flujo de Autenticación
+
+```mermaid
+sequenceDiagram
+    participant Usuario
+    participant API
+    participant DB
+    participant Email
+
+    Usuario->>API: POST /auth/register
+    API->>DB: Crear usuario
+    API->>DB: Guardar token verificación
+    API->>Email: Enviar email bienvenida
+    API->>Usuario: access_token + refresh_token
+
+    Usuario->>Email: Click en link verificación
+    Usuario->>API: GET /auth/confirm?token=xxx
+    API->>DB: Validar token y expiración
+    API->>DB: Marcar isVerified=true
+    API->>Email: Enviar email confirmación
+    API->>Usuario: Mensaje de éxito
+
+    Usuario->>API: POST /auth/login
+    API->>DB: Verificar credenciales
+    API->>Usuario: access_token + refresh_token
+
+    Usuario->>API: GET /users (con token)
+    API->>API: Validar JWT
+    API->>DB: Consultar usuarios
+    API->>Usuario: Lista de usuarios
+```
+
+## Seguridad
+
+### Tokens
+- **Access Token**: Expira en 15 minutos
+- **Refresh Token**: Expira en 7 días, hasheado en BD
+- **Token Verificación**: Expira en 24 horas
+- **Token Reset Password**: Expira en 1 hora
+
+### Passwords
+- Hasheados con bcrypt (10 salt rounds)
+- Mínimo 6 caracteres (validación)
+
+### Guards Implementados
+- `JwtAuthGuard`: Protección global JWT
+- `RefreshTokenGuard`: Validación de refresh tokens
+- `RolesGuard`: Control de acceso por roles
+- `EmailVerifiedGuard`: Requiere email verificado
+
+### Decoradores Personalizados
+- `@Public()`: Excluye ruta del guard global
+- `@Roles('ADMIN', 'USER')`: Requiere roles específicos
+- `@CurrentUser()`: Obtiene usuario del request
+
+## Scripts Disponibles
+
+```bash
+# Desarrollo
+pnpm run start:dev
+
+# Producción
+pnpm run build
+pnpm run start:prod
+
+# Linting
+pnpm run lint
+
+# Formateo
+pnpm run format
+
+# Tests
+pnpm run test
+pnpm run test:e2e
+pnpm run test:cov
+```
+
+## Troubleshooting
+
+### Error: No se pueden enviar emails
+
+**Problema:** `Error: Invalid login: 535-5.7.8 Username and Password not accepted`
+
+**Solución:**
+1. Activa verificación en 2 pasos en Google
+2. Genera una "Contraseña de aplicación"
+3. Usa esa contraseña en `MAIL_PASSWORD`
+
+### Error: Cannot connect to database
+
+**Problema:** `ECONNREFUSED ::1:5432`
+
+**Solución:**
+1. Verifica que PostgreSQL esté corriendo: `docker ps` o `pg_isready`
+2. Verifica las credenciales en `.env`
+3. Si usas Docker: `docker-compose up -d`
+
+### Error: Token expirado
+
+**Problema:** `El token ha expirado`
+
+**Solución:**
+- Para verificación de email: Usar `POST /auth/resend-verification`
+- Para reset de contraseña: Solicitar nuevo token con `POST /auth/forgot-password`
+
+## Contribuir
+
+1. Fork el proyecto
+2. Crea una rama feature (`git checkout -b feature/nueva-funcionalidad`)
+3. Commit tus cambios (`git commit -m 'feat: Agregar nueva funcionalidad'`)
+4. Push a la rama (`git push origin feature/nueva-funcionalidad`)
+5. Abre un Pull Request
+
+## Licencia
+
+Este proyecto es privado y pertenece al Colegio de Ingenieros del Perú.
+
+## Autor
+
+Christian Arévalo Jesús - [@carevalojesus](https://github.com/carevalojesus)
+
+## Soporte
+
+Para preguntas o soporte, contactar a: carevalojesus@gmail.com
