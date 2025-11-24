@@ -16,9 +16,11 @@ export class UploadsService {
 
   constructor(private readonly configService: ConfigService) {
     this.endpoint =
-      this.configService.get<string>('MINIO_ENDPOINT') ?? 'http://localhost:9000';
+      this.configService.get<string>('MINIO_ENDPOINT') ??
+      'http://localhost:9000';
     this.bucket = this.configService.get<string>('MINIO_BUCKET') ?? 'avatars';
-    const region = this.configService.get<string>('MINIO_REGION') ?? 'us-east-1';
+    const region =
+      this.configService.get<string>('MINIO_REGION') ?? 'us-east-1';
     const accessKeyId = this.configService.get<string>('MINIO_ACCESS_KEY');
     const secretAccessKey = this.configService.get<string>('MINIO_SECRET_KEY');
 
