@@ -1,4 +1,13 @@
-import { Body, Controller, Post, UseGuards, Get, Req } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Post,
+  UseGuards,
+  Get,
+  Req,
+  Query,
+  BadRequestException,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginAuthDto } from './dto/login-auth.dto';
 import { RegisterAuthDto } from './dto/register-auth.dto';
@@ -14,8 +23,6 @@ interface RequestWithUserId {
   };
 }
 
-// 2. Interfaz para cuando usas RefreshTokenGuard (Refresh)
-// La estrategia de Refresh devuelve 'sub' y 'refreshToken'
 interface RequestWithRefreshToken {
   user: {
     sub: string;
@@ -54,5 +61,14 @@ export class AuthController {
     const userId = req.user.sub;
     const refreshToken = req.user.refreshToken;
     return this.authService.refreshTokens(userId, refreshToken);
+  }
+
+  @Public()
+  @Get('confirm')
+  async confirm(@Query('token') token: string) {
+    if (!token) {
+      throw new BadRequestException('Token requerido');
+    }
+    return this.authService.verifyUser(token);
   }
 }

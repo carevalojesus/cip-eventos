@@ -120,4 +120,21 @@ export class UsersService {
       currentRefreshToken: refreshToken,
     });
   }
+
+  async findOneByVerificationToken(token: string): Promise<User | null> {
+    return await this.userRepository.findOneBy({ verificationToken: token });
+  }
+
+  async markAsVerified(id: string): Promise<void> {
+    await this.userRepository.update(id, {
+      isVerified: true,
+      verificationToken: null,
+    });
+  }
+
+  async setVerificationToken(id: string, token: string): Promise<void> {
+    await this.userRepository.update(id, {
+      verificationToken: token,
+    });
+  }
 }

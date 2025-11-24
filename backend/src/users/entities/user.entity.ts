@@ -29,6 +29,13 @@ export class User {
   @Column({ type: 'boolean', default: true })
   isActive: boolean;
 
+  @Column({ type: 'boolean', default: false })
+  isVerified: boolean;
+
+  @Exclude()
+  @Column({ type: 'text', nullable: true })
+  verificationToken: string | null;
+
   @ManyToOne(() => Role, (role) => role.users, { eager: true })
   @JoinColumn({ name: 'roleId' })
   role: Role;

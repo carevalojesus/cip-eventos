@@ -4,12 +4,15 @@ import {
   ForbiddenException,
   BadRequestException,
 } from '@nestjs/common';
-import { JwtService, JwtSignOptions } from '@nestjs/jwt'; // <--- 1. Importar JwtSignOptions
+import { JwtService, JwtSignOptions } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { UsersService } from 'src/users/users.service';
 import { LoginAuthDto } from './dto/login-auth.dto';
 import { RegisterAuthDto } from './dto/register-auth.dto';
 import { ConfigService } from '@nestjs/config';
+
+import { v4 as uuidv4 } from 'uuid';
+import { MailService } from 'src/mail/mail.service';
 
 @Injectable()
 export class AuthService {
@@ -17,6 +20,7 @@ export class AuthService {
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
+    private readonly mailService: MailService,
   ) {}
 
   async login(loginDto: LoginAuthDto) {
@@ -45,10 +49,40 @@ export class AuthService {
       roleId: role.id,
     });
 
+    const verificationToken = uuidv4();
+
+    // Guardamos el token en la DB
+    await this.usersService.setVerificationToken(newUser.id, verificationToken);
+
+    // 2. Enviar correo
+    await this.mailService.sendUserWelcome(
+      newUser.email,
+      newUser.email,
+      verificationToken,
+    );
+
     const tokens = await this.getTokens(newUser.id, newUser.email, role.name);
     await this.updateRefreshToken(newUser.id, tokens.refresh_token);
 
     return tokens;
+  }
+
+  async verifyUser(token: string) {
+    const user = await this.usersService.findOneByVerificationToken(token);
+
+    if (!user) {
+      throw new BadRequestException(
+        'Token de verificación inválido o expirado',
+      );
+    }
+
+    if (user.isVerified) {
+      throw new BadRequestException('El usuario ya está verificado');
+    }
+
+    await this.usersService.markAsVerified(user.id);
+
+    return { message: 'Email verificado exitosamente' };
   }
 
   async logout(userId: string) {
