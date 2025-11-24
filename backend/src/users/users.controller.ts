@@ -19,9 +19,10 @@ import { RolesGuard } from 'src/auth/guards/roles.guard';
 // 👇 Importaciones de tu nueva estructura de Auth
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
+import { EmailVerifiedGuard } from 'src/auth/guards/email-verified.guard';
 
 @Controller('users')
-@UseGuards(JwtAuthGuard, RolesGuard) // 🔒 Candado General: Todas las rutas requieren Token
+@UseGuards(JwtAuthGuard, EmailVerifiedGuard, RolesGuard) // 🔒 Candado General: Todas las rutas requieren Token y email verificado
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
@@ -33,21 +34,25 @@ export class UsersController {
   }
 
   @Post()
+  @Roles('ADMIN', 'SUPER_ADMIN')
   create(@Body() createUserDto: CreateUserDto): Promise<User> {
     return this.usersService.create(createUserDto);
   }
 
   @Get()
+  @Roles('ADMIN', 'SUPER_ADMIN')
   findAll(): Promise<User[]> {
     return this.usersService.findAll();
   }
 
   @Get(':id')
+  @Roles('ADMIN', 'SUPER_ADMIN')
   findOne(@Param('id') id: string): Promise<User> {
     return this.usersService.findOne(id);
   }
 
   @Patch(':id')
+  @Roles('ADMIN', 'SUPER_ADMIN')
   update(
     @Param('id') id: string,
     @Body() updateUserDto: UpdateUserDto,

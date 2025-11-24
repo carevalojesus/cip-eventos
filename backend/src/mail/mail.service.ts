@@ -10,9 +10,11 @@ export class MailService {
   ) {}
 
   async sendUserWelcome(email: string, name: string, token: string) {
-    const baseUrl =
-      this.configService.get<string>('FRONTEND_URL') || 'http://localhost:4321';
-    const url = `${baseUrl}/api/auth/confirm?token=${token}`;
+    const url = this.buildUrlWithToken(
+      token,
+      this.configService.get<string>('FRONTEND_CONFIRM_PATH') ||
+        '/auth/confirm',
+    );
 
     await this.mailerService.sendMail({
       to: email,
@@ -25,9 +27,11 @@ export class MailService {
     });
   }
   async sendPasswordReset(email: string, name: string, token: string) {
-    const baseUrl =
-      this.configService.get<string>('FRONTEND_URL') || 'http://localhost:4321';
-    const url = `${baseUrl}/api/auth/reset-password?token=${token}`;
+    const url = this.buildUrlWithToken(
+      token,
+      this.configService.get<string>('FRONTEND_RESET_PATH') ||
+        '/auth/reset-password',
+    );
 
     await this.mailerService.sendMail({
       to: email,
@@ -47,5 +51,15 @@ export class MailService {
       template: './account-confirmed',
       context: { name },
     });
+  }
+
+  private buildUrlWithToken(token: string, path: string): string {
+    const baseUrl =
+      this.configService.get<string>('FRONTEND_URL') || 'http://localhost:4321';
+
+    const normalizedBase = baseUrl.replace(/\/+$/, '');
+    const normalizedPath = path.startsWith('/') ? path : `/${path}`;
+
+    return `${normalizedBase}${normalizedPath}?token=${token}`;
   }
 }
