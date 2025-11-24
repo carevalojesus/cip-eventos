@@ -5,10 +5,12 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   ManyToOne,
+  OneToOne,
   JoinColumn,
 } from 'typeorm';
 import { Exclude } from 'class-transformer';
 import { Role } from '../../roles/entities/role.entity';
+import { Profile } from '../../profiles/entities/profile.entity';
 
 @Entity('users')
 export class User {
@@ -51,6 +53,9 @@ export class User {
   @ManyToOne(() => Role, (role) => role.users, { eager: true })
   @JoinColumn({ name: 'roleId' })
   role: Role;
+
+  @OneToOne(() => Profile, (profile) => profile.user, { eager: true })
+  profile: Profile;
 
   @CreateDateColumn()
   createdAt: Date;
