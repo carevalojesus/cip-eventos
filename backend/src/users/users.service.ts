@@ -21,7 +21,6 @@ export class UsersService {
     private readonly roleRepository: Repository<Role>,
   ) {}
 
-  // 1. Tipo explícito OBLIGATORIO
   async create(createUserDto: CreateUserDto): Promise<User> {
     const role = await this.roleRepository.findOneBy({
       id: createUserDto.roleId,
@@ -52,14 +51,12 @@ export class UsersService {
     return await this.userRepository.save(newUser);
   }
 
-  // 2. Tipo explícito (Array)
   async findAll(): Promise<User[]> {
     return await this.userRepository.find({
       relations: ['role'],
     });
   }
 
-  // 3. Tipo explícito
   async findOne(id: string): Promise<User> {
     const user = await this.userRepository.findOne({
       where: { id },
@@ -72,8 +69,21 @@ export class UsersService {
     return user;
   }
 
-  // 4. Tipo explícito
+  // Método auxiliar para el Login (AuthService)
+  async findOneByEmail(email: string): Promise<User | null> {
+    return await this.userRepository.findOne({
+      where: { email },
+      relations: ['role'],
+    });
+  }
+
+  // Método auxiliar para el Registro (AuthService)
+  async findRoleByName(name: string): Promise<Role | null> {
+    return await this.roleRepository.findOneBy({ name });
+  }
+
   async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {
+    // Logica normal de actualización de datos de usuario
     const dataToUpdate = { ...updateUserDto };
 
     if (updateUserDto.password) {
@@ -91,7 +101,6 @@ export class UsersService {
     return await this.userRepository.save(user);
   }
 
-  // 5. Tipo explícito
   async remove(id: string): Promise<User> {
     const userEntity = await this.userRepository.findOneBy({ id });
 
@@ -103,15 +112,12 @@ export class UsersService {
     return await this.userRepository.save(userEntity);
   }
 
-  async findOneByEmail(email: string) {
-    // Buscamos el usuario y traemos su rol
-    return await this.userRepository.findOne({
-      where: { email },
-      relations: ['role'],
+  async updateRefreshToken(
+    id: string,
+    refreshToken: string | null,
+  ): Promise<void> {
+    await this.userRepository.update(id, {
+      currentRefreshToken: refreshToken,
     });
-  }
-
-  async findRoleByName(name: string): Promise<Role | null> {
-    return await this.roleRepository.findOneBy({ name });
   }
 }
