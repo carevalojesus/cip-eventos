@@ -10,6 +10,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 import { MailModule } from './mail/mail.module';
 import { ProfilesModule } from './profiles/profiles.module';
+import { UploadsModule } from './uploads/uploads.module';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { ProfilesModule } from './profiles/profiles.module';
     AuthModule,
     MailModule,
     ProfilesModule,
+    UploadsModule,
   ],
   controllers: [AppController],
   providers: [

@@ -2,6 +2,11 @@
 
 API REST para el sistema de gestión de eventos del Colegio de Ingenieros del Perú (CIP).
 
+## Novedades recientes
+- Nuevo módulo de **Perfiles** (`/api/profiles/me`) para crear/consultar/actualizar/eliminar el perfil del usuario autenticado.
+- Nuevo endpoint de **uploads** para avatares con URL firmada a MinIO/S3 (`/api/uploads/avatar-url`), guarda solo la URL en el perfil.
+- Configuración rápida de MinIO local en `../bucket` (docker compose).
+
 ## Descripción
 
 Backend desarrollado con NestJS que proporciona un sistema completo de autenticación, gestión de usuarios, roles y notificaciones por email para la plataforma de eventos del CIP.
@@ -95,6 +100,13 @@ MAIL_FROM=noreply@cipeventos.com
 
 # Frontend
 FRONTEND_URL=http://localhost:4321
+
+# MinIO / S3 compatible (para uploads de avatar)
+MINIO_ENDPOINT=http://localhost:9000
+MINIO_REGION=us-east-1
+MINIO_BUCKET=avatars
+MINIO_ACCESS_KEY=minioadmin
+MINIO_SECRET_KEY=supersecret
 ```
 
 **Nota sobre Email:** Para Gmail, necesitas generar una "Contraseña de aplicación" en tu cuenta de Google (Configuración > Seguridad > Verificación en dos pasos > Contraseñas de aplicaciones).
@@ -130,6 +142,9 @@ pnpm run start:prod
 ```
 
 La API estará disponible en `http://localhost:3000`
+
+### Prefijo global
+Por defecto, todas las rutas están bajo `/api` (configurable con `API_PREFIX` en `.env`). Ejemplo: `POST /api/uploads/avatar-url`.
 
 ## Estructura del Proyecto
 
@@ -176,6 +191,34 @@ backend/
 ### Base URL
 ```
 http://localhost:3000/api
+```
+
+### 📤 Uploads (requiere JWT)
+1) Pedir URL firmada para avatar
+```
+POST /uploads/avatar-url
+Content-Type: application/json
+Authorization: Bearer <token>
+
+{ "contentType": "image/png" }
+```
+Respuesta:
+```json
+{
+  "uploadUrl": "http://localhost:9000/avatars/...",
+  "publicUrl": "http://localhost:9000/avatars/...",
+  "key": "avatars/uuid"
+}
+```
+
+2) Subir la imagen a `uploadUrl` con PUT directo a MinIO (sin Authorization, solo `Content-Type` y el binario).
+
+3) Guardar `publicUrl` en tu perfil:
+```
+PATCH /profiles/me
+Authorization: Bearer <token>
+Content-Type: application/json
+{ "avatar": "<publicUrl>" }
 ```
 
 ### 🔓 Autenticación (Públicos)
