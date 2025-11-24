@@ -45,7 +45,7 @@ export class UploadsService {
       ContentType: contentType,
     });
 
-    const uploadUrl = await getSignedUrl(this.s3, command, { expiresIn: 300 }); // 5 min
+    const uploadUrl = await getSignedUrl(s3, command, { expiresIn: 300 }); // 5 min
     const normalizedEndpoint = this.endpoint.replace(/\/$/, '');
     const publicUrl = `${normalizedEndpoint}/${this.bucket}/${key}`;
 
