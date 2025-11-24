@@ -12,7 +12,6 @@ import { MailModule } from './mail/mail.module';
 import { ProfilesModule } from './profiles/profiles.module';
 import { UploadsModule } from './uploads/uploads.module';
 import { validate } from './config/env.validation';
-import { CategoriesModule } from './categories/categories.module';
 
 @Module({
   imports: [
@@ -46,7 +45,6 @@ import { CategoriesModule } from './categories/categories.module';
     MailModule,
     ProfilesModule,
     UploadsModule,
-    CategoriesModule,
   ],
   controllers: [AppController],
   providers: [
