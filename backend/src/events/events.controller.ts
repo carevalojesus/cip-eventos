@@ -16,6 +16,8 @@ import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { EmailVerifiedGuard } from '../auth/guards/email-verified.guard';
 import { EventOwnershipGuard } from './guards/event-ownership.guard';
 import { EventModalityValidatorPipe } from './pipes/event-modality-validator.pipe';
+import { CreateSessionDto } from './dto/create-session.dto';
+import { UpdateSessionDto } from './dto/update-session.dto';
 
 @Controller('events')
 export class EventsController {
@@ -92,5 +94,51 @@ export class EventsController {
     @Param('organizerId') organizerId: string,
   ) {
     return this.eventsService.removeOrganizer(id, organizerId);
+  }
+  @UseGuards(EmailVerifiedGuard, EventOwnershipGuard)
+  @Post(':id/sessions')
+  addSession(
+    @Param('id') eventId: string,
+    @Body() createSessionDto: CreateSessionDto,
+  ) {
+    return this.eventsService.addSessionToEvent(eventId, createSessionDto);
+  }
+
+  @Public()
+  @Get(':id/sessions')
+  getSessionsByEvent(@Param('id') eventId: string) {
+    return this.eventsService.getSessionsByEvent(eventId);
+  }
+
+  @Public()
+  @Get(':id/sessions/:sessionId')
+  getSessionById(
+    @Param('id') eventId: string,
+    @Param('sessionId') sessionId: string,
+  ) {
+    return this.eventsService.getSessionById(eventId, sessionId);
+  }
+
+  @UseGuards(EmailVerifiedGuard, EventOwnershipGuard)
+  @Patch(':id/sessions/:sessionId')
+  updateSession(
+    @Param('id') eventId: string,
+    @Param('sessionId') sessionId: string,
+    @Body() updateSessionDto: UpdateSessionDto,
+  ) {
+    return this.eventsService.updateSession(
+      eventId,
+      sessionId,
+      updateSessionDto,
+    );
+  }
+
+  @UseGuards(EmailVerifiedGuard, EventOwnershipGuard)
+  @Delete(':id/sessions/:sessionId')
+  deleteSession(
+    @Param('id') eventId: string,
+    @Param('sessionId') sessionId: string,
+  ) {
+    return this.eventsService.deleteSession(eventId, sessionId);
   }
 }

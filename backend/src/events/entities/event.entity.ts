@@ -21,6 +21,7 @@ import { EventVirtualAccess } from './event-virtual-access.entity';
 import { Speaker } from '../../speakers/entities/speaker.entity';
 import { Organizer } from '../../organizers/entities/organizer.entity';
 import { EventTicket } from './event-ticket.entity';
+import { EventSession } from './event-session.entity';
 
 export enum EventStatus {
   DRAFT = 'DRAFT',
@@ -126,6 +127,12 @@ export class Event {
     inverseJoinColumn: { name: 'organizerId', referencedColumnName: 'id' },
   })
   organizers: Organizer[];
+
+  @OneToMany(() => EventSession, (session) => session.event, {
+    cascade: true,
+    eager: true,
+  })
+  sessions: EventSession[];
 
   // -------------------------
   // Auditoría y soft delete

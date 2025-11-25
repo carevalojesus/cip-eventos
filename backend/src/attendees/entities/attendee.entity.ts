@@ -1,10 +1,20 @@
-import { Column, Entity, OneToMany, OneToOne, PrimaryGeneratedColumn, JoinColumn, CreateDateColumn, UpdateDateColumn, Index } from 'typeorm';
+import {
+  Column,
+  Entity,
+  OneToMany,
+  OneToOne,
+  PrimaryGeneratedColumn,
+  JoinColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+  Index,
+} from 'typeorm';
 import { Registration } from '../../registrations/entities/registration.entity';
 import { User } from '../../users/entities/user.entity';
 
 export enum DocumentType {
   DNI = 'DNI',
-  CE = 'CE',             // Carné de Extranjería
+  CE = 'CE', // Carné de Extranjería
   PASSPORT = 'PASSPORT', // Pasaporte
 }
 
