@@ -3,8 +3,14 @@
 API REST para el sistema de gestión de eventos del Colegio de Ingenieros del Perú (CIP).
 
 ## Novedades recientes
+
 - Nuevo módulo de **Perfiles** (`/api/profiles/me`) para crear/consultar/actualizar/eliminar el perfil del usuario autenticado.
 - Nuevo endpoint de **uploads** para avatares con URL firmada a MinIO/S3 (`/api/uploads/avatar-url`), guarda solo la URL en el perfil.
+- **Módulo de Inscripciones (Registrations)**:
+  - Soporte para inscripción de invitados (público) y miembros (autenticados).
+  - Validación de stock y concurrencia con bloqueo pesimista.
+  - Integración con servicio de validación CIP (simulado).
+  - Rate limiting diferenciado (5 req/min para invitados, 15 req/min para miembros).
 - Configuración rápida de MinIO local en `../bucket` (docker compose).
 
 ## Descripción
@@ -14,6 +20,7 @@ Backend desarrollado con NestJS que proporciona un sistema completo de autentica
 ## Características Principales
 
 ### 🔐 Autenticación y Seguridad
+
 - Login/Register con JWT
 - Tokens duales (access + refresh)
 - Verificación de email con expiración (24h)
@@ -23,17 +30,20 @@ Backend desarrollado con NestJS que proporciona un sistema completo de autentica
 - Hashing de contraseñas con bcrypt
 
 ### 👥 Gestión de Usuarios
+
 - CRUD completo de usuarios
 - Relación con roles
 - Soft delete
 - Campos de auditoría
 
 ### 🎭 Sistema de Roles
+
 - CRUD completo de roles
 - Roles por defecto: ADMIN, USER
 - Validación de permisos
 
 ### 📧 Sistema de Emails
+
 - Email de bienvenida con verificación
 - Email de confirmación de cuenta
 - Email de recuperación de contraseña
@@ -122,6 +132,7 @@ docker-compose up -d
 #### Opción B: PostgreSQL local
 
 1. Crear la base de datos:
+
 ```sql
 CREATE DATABASE cip_eventos;
 CREATE USER cip_eventos_user WITH PASSWORD 'CipEv3nt0s_2025!S3cur3';
@@ -144,6 +155,7 @@ pnpm run start:prod
 La API estará disponible en `http://localhost:3000`
 
 ### Prefijo global
+
 Por defecto, todas las rutas están bajo `/api` (configurable con `API_PREFIX` en `.env`). Ejemplo: `POST /api/uploads/avatar-url`.
 
 ## Estructura del Proyecto
@@ -189,12 +201,15 @@ backend/
 ## API Endpoints
 
 ### Base URL
+
 ```
 http://localhost:3000/api
 ```
 
 ### 📤 Uploads (requiere JWT)
-1) Pedir URL firmada para avatar
+
+1. Pedir URL firmada para avatar
+
 ```
 POST /uploads/avatar-url
 Content-Type: application/json
@@ -202,7 +217,9 @@ Authorization: Bearer <token>
 
 { "contentType": "image/png" }
 ```
+
 Respuesta:
+
 ```json
 {
   "uploadUrl": "http://localhost:9000/avatars/...",
@@ -211,9 +228,10 @@ Respuesta:
 }
 ```
 
-2) Subir la imagen a `uploadUrl` con PUT directo a MinIO (sin Authorization, solo `Content-Type` y el binario).
+2. Subir la imagen a `uploadUrl` con PUT directo a MinIO (sin Authorization, solo `Content-Type` y el binario).
 
-3) Guardar `publicUrl` en tu perfil:
+3. Guardar `publicUrl` en tu perfil:
+
 ```
 PATCH /profiles/me
 Authorization: Bearer <token>
@@ -224,6 +242,7 @@ Content-Type: application/json
 ### 🔓 Autenticación (Públicos)
 
 #### 1. Registrar Usuario
+
 ```bash
 POST /auth/register
 Content-Type: application/json
@@ -235,6 +254,7 @@ Content-Type: application/json
 ```
 
 **Respuesta:**
+
 ```json
 {
   "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
@@ -243,6 +263,7 @@ Content-Type: application/json
 ```
 
 #### 2. Iniciar Sesión
+
 ```bash
 POST /auth/login
 Content-Type: application/json
@@ -254,6 +275,7 @@ Content-Type: application/json
 ```
 
 **Respuesta:**
+
 ```json
 {
   "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
@@ -266,11 +288,13 @@ Content-Type: application/json
 ```
 
 #### 3. Verificar Email
+
 ```bash
 GET /auth/confirm?token=uuid-token-aqui
 ```
 
 **Respuesta:**
+
 ```json
 {
   "message": "Email verificado exitosamente"
@@ -278,6 +302,7 @@ GET /auth/confirm?token=uuid-token-aqui
 ```
 
 #### 4. Reenviar Email de Verificación
+
 ```bash
 POST /auth/resend-verification
 Content-Type: application/json
@@ -288,6 +313,7 @@ Content-Type: application/json
 ```
 
 #### 5. Solicitar Recuperación de Contraseña
+
 ```bash
 POST /auth/forgot-password
 Content-Type: application/json
@@ -298,6 +324,7 @@ Content-Type: application/json
 ```
 
 #### 6. Restablecer Contraseña
+
 ```bash
 POST /auth/reset-password?token=uuid-token-aqui
 Content-Type: application/json
@@ -310,12 +337,14 @@ Content-Type: application/json
 ### 🔐 Autenticación (Protegidos)
 
 #### 7. Renovar Tokens
+
 ```bash
 POST /auth/refresh
 Authorization: Bearer {refresh_token}
 ```
 
 #### 8. Cerrar Sesión
+
 ```bash
 POST /auth/logout
 Authorization: Bearer {access_token}
@@ -324,18 +353,21 @@ Authorization: Bearer {access_token}
 ### 👥 Usuarios (Requieren JWT)
 
 #### 9. Listar Usuarios
+
 ```bash
 GET /users
 Authorization: Bearer {access_token}
 ```
 
 #### 10. Obtener Usuario por ID
+
 ```bash
 GET /users/{id}
 Authorization: Bearer {access_token}
 ```
 
 #### 11. Crear Usuario
+
 ```bash
 POST /users
 Authorization: Bearer {access_token}
@@ -349,6 +381,7 @@ Content-Type: application/json
 ```
 
 #### 12. Actualizar Usuario
+
 ```bash
 PATCH /users/{id}
 Authorization: Bearer {access_token}
@@ -360,6 +393,7 @@ Content-Type: application/json
 ```
 
 #### 13. Eliminar Usuario (Soft Delete)
+
 ```bash
 DELETE /users/{id}
 Authorization: Bearer {access_token}
@@ -368,18 +402,21 @@ Authorization: Bearer {access_token}
 ### 🎭 Roles (Requieren JWT)
 
 #### 14. Listar Roles
+
 ```bash
 GET /roles
 Authorization: Bearer {access_token}
 ```
 
 #### 15. Obtener Rol por ID
+
 ```bash
 GET /roles/{id}
 Authorization: Bearer {access_token}
 ```
 
 #### 16. Crear Rol
+
 ```bash
 POST /roles
 Authorization: Bearer {access_token}
@@ -392,20 +429,68 @@ Content-Type: application/json
 ```
 
 #### 17. Actualizar Rol
-```bash
+
+````bash
 PATCH /roles/{id}
 Authorization: Bearer {access_token}
 Content-Type: application/json
 
 {
-  "description": "Nueva descripción"
-}
-```
-
 #### 18. Eliminar Rol (Soft Delete)
+
 ```bash
 DELETE /roles/{id}
 Authorization: Bearer {access_token}
+````
+
+### 🎫 Inscripciones (Registrations)
+
+#### 19. Inscribir Invitado (Guest)
+
+- **Rate Limit**: 5 peticiones por minuto por IP.
+- **Nota**: Si el `cipCode` es proporcionado, se valida contra el servicio externo.
+
+```bash
+POST /registrations
+Content-Type: application/json
+
+{
+  "ticketId": "uuid-del-ticket",
+  "firstName": "Juan",
+  "lastName": "Perez",
+  "email": "juan.perez@email.com",
+  "documentType": "DNI",
+  "documentNumber": "12345678",
+  "cipCode": "123456" // Opcional
+}
+```
+
+#### 20. Inscribir Miembro (Autenticado)
+
+- **Rate Limit**: 15 peticiones por minuto por usuario.
+- **Nota**: Toma los datos del usuario autenticado. Si no tiene perfil de asistente, lo crea.
+
+```bash
+POST /registrations/member
+Authorization: Bearer {access_token}
+Content-Type: application/json
+
+{
+  "ticketId": "uuid-del-ticket"
+}
+```
+
+#### 21. Listar Inscripciones (Admin/SuperAdmin)
+
+```bash
+GET /registrations
+Authorization: Bearer {access_token}
+```
+
+#### 22. Obtener Inscripción por ID
+
+```bash
+GET /registrations/{id}
 ```
 
 ## Cómo Probar los Endpoints
@@ -413,6 +498,7 @@ Authorization: Bearer {access_token}
 ### Opción 1: Con cURL
 
 #### 1. Registrar un usuario
+
 ```bash
 curl -X POST http://localhost:3000/api/auth/register \
   -H "Content-Type: application/json" \
@@ -423,12 +509,14 @@ curl -X POST http://localhost:3000/api/auth/register \
 ```
 
 #### 2. Guardar el access_token
+
 ```bash
 # Copia el access_token de la respuesta
 export TOKEN="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
 ```
 
 #### 3. Listar usuarios (con autenticación)
+
 ```bash
 curl -X GET http://localhost:3000/api/users \
   -H "Authorization: Bearer $TOKEN"
@@ -455,7 +543,7 @@ curl -X GET http://localhost:3000/api/users \
    - Tests (para guardar el token):
      ```javascript
      const response = pm.response.json();
-     pm.environment.set("access_token", response.access_token);
+     pm.environment.set('access_token', response.access_token);
      ```
 
 4. **Requests Protegidos:**
@@ -505,22 +593,26 @@ sequenceDiagram
 ## Seguridad
 
 ### Tokens
+
 - **Access Token**: Expira en 15 minutos
 - **Refresh Token**: Expira en 7 días, hasheado en BD
 - **Token Verificación**: Expira en 24 horas
 - **Token Reset Password**: Expira en 1 hora
 
 ### Passwords
+
 - Hasheados con bcrypt (10 salt rounds)
 - Mínimo 6 caracteres (validación)
 
 ### Guards Implementados
+
 - `JwtAuthGuard`: Protección global JWT
 - `RefreshTokenGuard`: Validación de refresh tokens
 - `RolesGuard`: Control de acceso por roles
 - `EmailVerifiedGuard`: Requiere email verificado
 
 ### Decoradores Personalizados
+
 - `@Public()`: Excluye ruta del guard global
 - `@Roles('ADMIN', 'USER')`: Requiere roles específicos
 - `@CurrentUser()`: Obtiene usuario del request
@@ -554,6 +646,7 @@ pnpm run test:cov
 **Problema:** `Error: Invalid login: 535-5.7.8 Username and Password not accepted`
 
 **Solución:**
+
 1. Activa verificación en 2 pasos en Google
 2. Genera una "Contraseña de aplicación"
 3. Usa esa contraseña en `MAIL_PASSWORD`
@@ -563,6 +656,7 @@ pnpm run test:cov
 **Problema:** `ECONNREFUSED ::1:5432`
 
 **Solución:**
+
 1. Verifica que PostgreSQL esté corriendo: `docker ps` o `pg_isready`
 2. Verifica las credenciales en `.env`
 3. Si usas Docker: `docker-compose up -d`
@@ -572,6 +666,7 @@ pnpm run test:cov
 **Problema:** `El token ha expirado`
 
 **Solución:**
+
 - Para verificación de email: Usar `POST /auth/resend-verification`
 - Para reset de contraseña: Solicitar nuevo token con `POST /auth/forgot-password`
 
