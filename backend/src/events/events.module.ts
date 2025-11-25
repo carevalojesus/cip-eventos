@@ -9,6 +9,8 @@ import { EventType } from './entities/event-type.entity';
 import { User } from '../users/entities/user.entity';
 import { AuthModule } from '../auth/auth.module';
 import { EventOwnershipGuard } from './guards/event-ownership.guard';
+import { EventLocation } from './entities/event-location.entity';
+import { EventVirtualAccess } from './entities/event-virtual-access.entity';
 
 @Module({
   imports: [
@@ -17,6 +19,8 @@ import { EventOwnershipGuard } from './guards/event-ownership.guard';
       EventCategory,
       EventModality,
       EventType,
+      EventLocation,
+      EventVirtualAccess,
       User,
     ]),
     AuthModule,

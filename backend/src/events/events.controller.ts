@@ -15,6 +15,7 @@ import { Public } from '../auth/decorators/public.decorator';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { EmailVerifiedGuard } from '../auth/guards/email-verified.guard';
 import { EventOwnershipGuard } from './guards/event-ownership.guard';
+import { EventModalityValidatorPipe } from './pipes/event-modality-validator.pipe';
 
 @Controller('events')
 export class EventsController {
@@ -23,7 +24,7 @@ export class EventsController {
   @UseGuards(EmailVerifiedGuard)
   @Post()
   create(
-    @Body() createEventDto: CreateEventDto,
+    @Body(new EventModalityValidatorPipe()) createEventDto: CreateEventDto,
     @CurrentUser() user: { userId: string; email: string; role: string },
   ) {
     return this.eventsService.create(createEventDto, user.userId);
@@ -39,6 +40,14 @@ export class EventsController {
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.eventsService.findOne(id);
+  }
+
+  // Endpoint privado para obtener evento con virtualAccess
+  // Solo accesible por el creador o admin
+  @UseGuards(EmailVerifiedGuard, EventOwnershipGuard)
+  @Get(':id/full')
+  findOneWithVirtualAccess(@Param('id') id: string) {
+    return this.eventsService.findOneWithVirtualAccess(id);
   }
 
   @UseGuards(EmailVerifiedGuard, EventOwnershipGuard)

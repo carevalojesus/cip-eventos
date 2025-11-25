@@ -25,7 +25,14 @@ export class EventsService {
   ) {}
 
   async create(createEventDto: CreateEventDto, userId: string) {
-    const { typeId, categoryId, modalityId, ...eventData } = createEventDto;
+    const {
+      typeId,
+      categoryId,
+      modalityId,
+      location,
+      virtualAccess,
+      ...eventData
+    } = createEventDto;
 
     // Verificar que el usuario existe
     const user = await this.userRepository.findOne({
@@ -51,26 +58,49 @@ export class EventsService {
     const event = this.eventRepository.create({
       ...eventData,
       slug,
-      type,
-      category,
-      modality,
+      type: { id: typeId },
+      category: { id: categoryId },
+      modality: { id: modalityId },
       createdBy: user,
+      location,
+      virtualAccess,
     });
 
     return this.eventRepository.save(event);
   }
 
   findAll() {
+    // No incluye virtualAccess por seguridad (lazy loading)
     return this.eventRepository.find({
       where: { isActive: true },
-      relations: ['type', 'category', 'modality', 'createdBy'],
+      relations: ['type', 'category', 'modality', 'createdBy', 'location'],
     });
   }
 
   async findOne(id: string) {
+    // No incluye virtualAccess por seguridad (lazy loading)
     const event = await this.eventRepository.findOne({
       where: { id, isActive: true },
-      relations: ['type', 'category', 'modality', 'createdBy'],
+      relations: ['type', 'category', 'modality', 'createdBy', 'location'],
+    });
+
+    if (!event) throw new NotFoundException(`Event with ID ${id} not found`);
+
+    return event;
+  }
+
+  async findOneWithVirtualAccess(id: string) {
+    // Incluye virtualAccess (solo para creador o admin)
+    const event = await this.eventRepository.findOne({
+      where: { id, isActive: true },
+      relations: [
+        'type',
+        'category',
+        'modality',
+        'createdBy',
+        'location',
+        'virtualAccess',
+      ],
     });
 
     if (!event) throw new NotFoundException(`Event with ID ${id} not found`);
@@ -79,7 +109,14 @@ export class EventsService {
   }
 
   async update(id: string, updateEventDto: UpdateEventDto) {
-    const { typeId, categoryId, modalityId, ...eventData } = updateEventDto;
+    const {
+      typeId,
+      categoryId,
+      modalityId,
+      location,
+      virtualAccess,
+      ...eventData
+    } = updateEventDto;
 
     // Verificar que el evento existe y está activo
     const existingEvent = await this.eventRepository.findOne({
@@ -91,6 +128,8 @@ export class EventsService {
     const event = await this.eventRepository.preload({
       id,
       ...eventData,
+      location,
+      virtualAccess,
     });
 
     if (!event) throw new NotFoundException(`Event with ID ${id} not found`);

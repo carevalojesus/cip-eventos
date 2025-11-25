@@ -7,10 +7,15 @@ import {
   IsPositive,
   IsString,
   IsUrl,
+  ValidateNested,
 } from 'class-validator';
+import { Type } from 'class-transformer';
 import { EventStatus } from '../entities/event.entity';
 import { IsAfter } from '../../common/validators/is-after.validator';
 import { IsFutureDate } from '../../common/validators/is-future-date.validator';
+
+import { EventLocationDto } from './event-location.dto';
+import { EventVirtualAccessDto } from './event-virtual-access.dto';
 
 export class CreateEventDto {
   @IsString()
@@ -58,4 +63,14 @@ export class CreateEventDto {
   @IsInt()
   @IsPositive()
   modalityId: number;
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => EventLocationDto)
+  location?: EventLocationDto;
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => EventVirtualAccessDto)
+  virtualAccess?: EventVirtualAccessDto;
 }

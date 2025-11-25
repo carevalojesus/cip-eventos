@@ -6,12 +6,15 @@ import {
   UpdateDateColumn,
   ManyToOne,
   JoinColumn,
+  OneToOne,
 } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
 // Importamos las nuevas entidades
 import { EventType } from './event-type.entity';
 import { EventCategory } from './event-category.entity';
 import { EventModality } from './event-modality.entity';
+import { EventLocation } from './event-location.entity';
+import { EventVirtualAccess } from './event-virtual-access.entity';
 
 export enum EventStatus {
   DRAFT = 'DRAFT',
@@ -71,6 +74,24 @@ export class Event {
   })
   @JoinColumn({ name: 'modalityId' })
   modality: EventModality;
+
+  @OneToOne(() => EventLocation, (loc) => loc.event, {
+    cascade: true,
+    eager: true,
+    nullable: true,
+  })
+  @JoinColumn()
+  location: EventLocation;
+
+  // virtualAccess NO tiene eager loading por seguridad
+  // Solo se carga explícitamente cuando es necesario
+  @OneToOne(() => EventVirtualAccess, (virt) => virt.event, {
+    cascade: true,
+    eager: false, // Lazy loading por seguridad
+    nullable: true,
+  })
+  @JoinColumn()
+  virtualAccess: EventVirtualAccess;
 
   // -------------------------
   // Auditoría y soft delete
