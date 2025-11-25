@@ -6,6 +6,7 @@ import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { User } from 'src/users/entities/user.entity';
 import { Public } from 'src/auth/decorators/public.decorator';
 import { Throttle } from '@nestjs/throttler';
+import { EmailVerifiedGuard } from 'src/auth/guards/email-verified.guard';
 
 @Controller('registrations')
 export class RegistrationsController {
@@ -24,7 +25,7 @@ export class RegistrationsController {
   // Rate limiting más permisivo para usuarios autenticados: 15 por minuto
   @Throttle({ default: { limit: 15, ttl: 60000 } })
   @Post('member')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, EmailVerifiedGuard)
   createMember(@Body() dto: CreateRegistrationDto, @CurrentUser() user: User) {
     return this.regService.create(dto, user);
   }

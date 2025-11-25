@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, Repository, In } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 
 // Entidades
@@ -54,14 +54,17 @@ export class RegistrationsService {
           throw new BadRequestException('Evento no disponible');
 
         // 2. 📉 VALIDAR STOCK DE FORMA ATÓMICA
-        const soldCount = await manager.count(Registration, {
+        const reservedCount = await manager.count(Registration, {
           where: {
             eventTicket: { id: ticketId },
-            status: RegistrationStatus.CONFIRMED,
+            status: In([
+              RegistrationStatus.CONFIRMED,
+              RegistrationStatus.PENDING,
+            ]),
           },
         });
 
-        if (soldCount >= ticket.stock)
+        if (reservedCount >= ticket.stock)
           throw new BadRequestException('Entradas agotadas');
 
         // 3. 🕵️‍♂️ RESOLVER ATTENDEE (Usuario vs Guest)
