@@ -15,6 +15,8 @@ import { validate } from './config/env.validation';
 import { EventsModule } from './events/events.module';
 import { SpeakersModule } from './speakers/speakers.module';
 import { OrganizersModule } from './organizers/organizers.module';
+import { AttendeesModule } from './attendees/attendees.module';
+import { RegistrationsModule } from './registrations/registrations.module';
 
 @Module({
   imports: [
@@ -51,6 +53,8 @@ import { OrganizersModule } from './organizers/organizers.module';
     EventsModule,
     SpeakersModule,
     OrganizersModule,
+    AttendeesModule,
+    RegistrationsModule,
   ],
   controllers: [AppController],
   providers: [

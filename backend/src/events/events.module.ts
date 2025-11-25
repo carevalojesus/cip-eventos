@@ -31,5 +31,6 @@ import { Organizer } from '../organizers/entities/organizer.entity';
   ],
   controllers: [EventsController],
   providers: [EventsService, EventOwnershipGuard],
+  exports: [EventsService, TypeOrmModule],
 })
 export class EventsModule {}
