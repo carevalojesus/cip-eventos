@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, In } from 'typeorm';
 import { CreateEventDto } from './dto/create-event.dto';
@@ -10,6 +14,9 @@ import { EventType } from './entities/event-type.entity';
 import { Speaker } from '../speakers/entities/speaker.entity';
 import { Organizer } from '../organizers/entities/organizer.entity';
 import { User } from '../users/entities/user.entity';
+import { EventSession } from './entities/event-session.entity';
+import { CreateSessionDto } from './dto/create-session.dto';
+import { UpdateSessionDto } from './dto/update-session.dto';
 
 @Injectable()
 export class EventsService {
@@ -28,6 +35,8 @@ export class EventsService {
     private readonly speakerRepository: Repository<Speaker>,
     @InjectRepository(Organizer)
     private readonly organizerRepository: Repository<Organizer>,
+    @InjectRepository(EventSession)
+    private readonly sessionRepository: Repository<EventSession>,
   ) {}
 
   async create(createEventDto: CreateEventDto, userId: string) {
@@ -333,5 +342,237 @@ export class EventsService {
       .replace(/[^\w\s-]/g, '')
       .replace(/[\s_-]+/g, '-')
       .replace(/^-+|-+$/g, '');
+  }
+
+  async addSessionToEvent(eventId: string, sessionDto: CreateSessionDto) {
+    const event = await this.eventRepository.findOne({
+      where: { id: eventId },
+      relations: ['sessions', 'speakers'],
+    });
+
+    if (!event) throw new NotFoundException('Evento no encontrado');
+
+    // Validación 1: startAt debe ser menor que endAt
+    const sessionStart = new Date(sessionDto.startAt);
+    const sessionEnd = new Date(sessionDto.endAt);
+
+    if (sessionStart >= sessionEnd) {
+      throw new BadRequestException(
+        'La fecha de inicio debe ser anterior a la fecha de fin',
+      );
+    }
+
+    // Validación 2: La sesión debe estar dentro del rango del evento padre
+    const eventStart = new Date(event.startAt);
+    const eventEnd = new Date(event.endAt);
+
+    if (sessionStart < eventStart || sessionEnd > eventEnd) {
+      throw new BadRequestException(
+        `La sesión debe estar dentro del rango del evento (${event.startAt.toISOString()} - ${event.endAt.toISOString()})`,
+      );
+    }
+
+    // Validación 3: Validar solapamiento de sesiones en el mismo room
+    if (sessionDto.room) {
+      const overlappingSessions = event.sessions.filter((session) => {
+        if (session.room !== sessionDto.room) return false;
+
+        const existingStart = new Date(session.startAt);
+        const existingEnd = new Date(session.endAt);
+
+        // Verificar solapamiento: dos sesiones se solapan si una comienza antes de que termine la otra
+        return (
+          (sessionStart >= existingStart && sessionStart < existingEnd) ||
+          (sessionEnd > existingStart && sessionEnd <= existingEnd) ||
+          (sessionStart <= existingStart && sessionEnd >= existingEnd)
+        );
+      });
+
+      if (overlappingSessions.length > 0) {
+        throw new BadRequestException(
+          `Ya existe una sesión en la sala "${sessionDto.room}" que se solapa con el horario especificado`,
+        );
+      }
+    }
+
+    // Manejo de Ponentes de la sesión
+    let sessionSpeakers: Speaker[] = [];
+    if (sessionDto.speakersIds && sessionDto.speakersIds.length > 0) {
+      sessionSpeakers = await this.speakerRepository.findBy({
+        id: In(sessionDto.speakersIds),
+        isActive: true,
+      });
+
+      if (sessionSpeakers.length !== sessionDto.speakersIds.length) {
+        throw new NotFoundException('Uno o más ponentes no encontrados');
+      }
+
+      // Validación 4: Los speakers de la sesión deben ser speakers del evento
+      const eventSpeakerIds = event.speakers.map((s) => s.id);
+      const invalidSpeakers = sessionDto.speakersIds.filter(
+        (id) => !eventSpeakerIds.includes(id),
+      );
+
+      if (invalidSpeakers.length > 0) {
+        throw new BadRequestException(
+          'Algunos ponentes no están asignados a este evento. Primero debes agregarlos al evento.',
+        );
+      }
+    }
+
+    // Crear la sesión
+    const session = this.sessionRepository.create({
+      ...sessionDto,
+      event: event,
+      speakers: sessionSpeakers,
+    });
+
+    return await this.sessionRepository.save(session);
+  }
+
+  async getSessionsByEvent(eventId: string) {
+    const event = await this.eventRepository.findOne({
+      where: { id: eventId, isActive: true },
+      relations: ['sessions', 'sessions.speakers'],
+    });
+
+    if (!event) throw new NotFoundException('Evento no encontrado');
+
+    return event.sessions;
+  }
+
+  async getSessionById(eventId: string, sessionId: string) {
+    const event = await this.eventRepository.findOne({
+      where: { id: eventId, isActive: true },
+    });
+
+    if (!event) throw new NotFoundException('Evento no encontrado');
+
+    const session = await this.sessionRepository.findOne({
+      where: { id: sessionId, event: { id: eventId } },
+      relations: ['speakers', 'event'],
+    });
+
+    if (!session) throw new NotFoundException('Sesión no encontrada');
+
+    return session;
+  }
+
+  async updateSession(
+    eventId: string,
+    sessionId: string,
+    updateDto: UpdateSessionDto,
+  ) {
+    // Verificar que el evento existe
+    const event = await this.eventRepository.findOne({
+      where: { id: eventId, isActive: true },
+      relations: ['sessions', 'speakers'],
+    });
+
+    if (!event) throw new NotFoundException('Evento no encontrado');
+
+    // Buscar la sesión
+    const session = await this.sessionRepository.findOne({
+      where: { id: sessionId, event: { id: eventId } },
+      relations: ['speakers'],
+    });
+
+    if (!session) throw new NotFoundException('Sesión no encontrada');
+
+    // Validaciones si se están actualizando las fechas
+    if (updateDto.startAt || updateDto.endAt) {
+      const sessionStart = new Date(updateDto.startAt || session.startAt);
+      const sessionEnd = new Date(updateDto.endAt || session.endAt);
+
+      // Validación 1: startAt debe ser menor que endAt
+      if (sessionStart >= sessionEnd) {
+        throw new BadRequestException(
+          'La fecha de inicio debe ser anterior a la fecha de fin',
+        );
+      }
+
+      // Validación 2: La sesión debe estar dentro del rango del evento padre
+      const eventStart = new Date(event.startAt);
+      const eventEnd = new Date(event.endAt);
+
+      if (sessionStart < eventStart || sessionEnd > eventEnd) {
+        throw new BadRequestException(
+          `La sesión debe estar dentro del rango del evento (${event.startAt.toISOString()} - ${event.endAt.toISOString()})`,
+        );
+      }
+
+      // Validación 3: Validar solapamiento con otras sesiones (excluyendo la actual)
+      const roomToCheck = updateDto.room || session.room;
+      if (roomToCheck) {
+        const overlappingSessions = event.sessions.filter((s) => {
+          if (s.id === sessionId) return false; // Excluir la sesión actual
+          if (s.room !== roomToCheck) return false;
+
+          const existingStart = new Date(s.startAt);
+          const existingEnd = new Date(s.endAt);
+
+          return (
+            (sessionStart >= existingStart && sessionStart < existingEnd) ||
+            (sessionEnd > existingStart && sessionEnd <= existingEnd) ||
+            (sessionStart <= existingStart && sessionEnd >= existingEnd)
+          );
+        });
+
+        if (overlappingSessions.length > 0) {
+          throw new BadRequestException(
+            `Ya existe una sesión en la sala "${roomToCheck}" que se solapa con el horario especificado`,
+          );
+        }
+      }
+    }
+
+    // Validar speakers si se proporcionan
+    if (updateDto.speakersIds) {
+      const sessionSpeakers = await this.speakerRepository.findBy({
+        id: In(updateDto.speakersIds),
+        isActive: true,
+      });
+
+      if (sessionSpeakers.length !== updateDto.speakersIds.length) {
+        throw new NotFoundException('Uno o más ponentes no encontrados');
+      }
+
+      // Validar que los speakers pertenecen al evento
+      const eventSpeakerIds = event.speakers.map((s) => s.id);
+      const invalidSpeakers = updateDto.speakersIds.filter(
+        (id) => !eventSpeakerIds.includes(id),
+      );
+
+      if (invalidSpeakers.length > 0) {
+        throw new BadRequestException(
+          'Algunos ponentes no están asignados a este evento',
+        );
+      }
+
+      session.speakers = sessionSpeakers;
+    }
+
+    // Actualizar los campos
+    Object.assign(session, updateDto);
+
+    return await this.sessionRepository.save(session);
+  }
+
+  async deleteSession(eventId: string, sessionId: string) {
+    const event = await this.eventRepository.findOne({
+      where: { id: eventId, isActive: true },
+    });
+
+    if (!event) throw new NotFoundException('Evento no encontrado');
+
+    const session = await this.sessionRepository.findOne({
+      where: { id: sessionId, event: { id: eventId } },
+    });
+
+    if (!session) throw new NotFoundException('Sesión no encontrada');
+
+    await this.sessionRepository.remove(session);
+
+    return { message: 'Sesión eliminada correctamente' };
   }
 }

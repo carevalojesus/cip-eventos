@@ -14,27 +14,37 @@ export class EventModalityValidatorPipe implements PipeTransform {
     // 1. Validar Presencial
     if (value.modalityId === MODALITY_PRESENTIAL) {
       if (!value.location) {
-        throw new BadRequestException('Para eventos Presenciales, la ubicación (location) es obligatoria');
+        throw new BadRequestException(
+          'Para eventos Presenciales, la ubicación (location) es obligatoria',
+        );
       }
       if (value.virtualAccess) {
-        throw new BadRequestException('Un evento Presencial no debe tener accesos virtuales');
+        throw new BadRequestException(
+          'Un evento Presencial no debe tener accesos virtuales',
+        );
       }
     }
 
     // 2. Validar Virtual
     if (value.modalityId === MODALITY_VIRTUAL) {
       if (!value.virtualAccess) {
-        throw new BadRequestException('Para eventos Virtuales, el acceso virtual es obligatorio');
+        throw new BadRequestException(
+          'Para eventos Virtuales, el acceso virtual es obligatorio',
+        );
       }
       if (value.location) {
-        throw new BadRequestException('Un evento Virtual no debe tener ubicación física');
+        throw new BadRequestException(
+          'Un evento Virtual no debe tener ubicación física',
+        );
       }
     }
 
     // 3. Validar Híbrido
     if (value.modalityId === MODALITY_HYBRID) {
       if (!value.location || !value.virtualAccess) {
-        throw new BadRequestException('Para eventos Híbridos, se requiere tanto ubicación como acceso virtual');
+        throw new BadRequestException(
+          'Para eventos Híbridos, se requiere tanto ubicación como acceso virtual',
+        );
       }
     }
 
