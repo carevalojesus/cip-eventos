@@ -11,6 +11,7 @@ import { AuthModule } from '../auth/auth.module';
 import { EventOwnershipGuard } from './guards/event-ownership.guard';
 import { EventLocation } from './entities/event-location.entity';
 import { EventVirtualAccess } from './entities/event-virtual-access.entity';
+import { Speaker } from '../speakers/entities/speaker.entity';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { EventVirtualAccess } from './entities/event-virtual-access.entity';
       EventLocation,
       EventVirtualAccess,
       User,
+      Speaker,
     ]),
     AuthModule,
   ],

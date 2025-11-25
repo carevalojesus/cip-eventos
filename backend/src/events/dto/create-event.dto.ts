@@ -1,4 +1,5 @@
 import {
+  IsArray,
   IsDateString,
   IsEnum,
   IsInt,
@@ -7,6 +8,7 @@ import {
   IsPositive,
   IsString,
   IsUrl,
+  IsUUID,
   ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
@@ -73,4 +75,9 @@ export class CreateEventDto {
   @ValidateNested()
   @Type(() => EventVirtualAccessDto)
   virtualAccess?: EventVirtualAccessDto;
+
+  @IsOptional()
+  @IsArray()
+  @IsUUID('all', { each: true }) // Valida que cada elemento del array sea un UUID
+  speakersIds?: string[];
 }

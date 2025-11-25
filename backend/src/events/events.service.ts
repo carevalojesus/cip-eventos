@@ -1,12 +1,13 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, In } from 'typeorm';
 import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
 import { Event } from './entities/event.entity';
 import { EventCategory } from './entities/event-category.entity';
 import { EventModality } from './entities/event-modality.entity';
 import { EventType } from './entities/event-type.entity';
+import { Speaker } from '../speakers/entities/speaker.entity';
 import { User } from '../users/entities/user.entity';
 
 @Injectable()
@@ -22,6 +23,8 @@ export class EventsService {
     private readonly eventModalityRepository: Repository<EventModality>,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    @InjectRepository(Speaker)
+    private readonly speakerRepository: Repository<Speaker>,
   ) {}
 
   async create(createEventDto: CreateEventDto, userId: string) {
@@ -31,6 +34,7 @@ export class EventsService {
       modalityId,
       location,
       virtualAccess,
+      speakersIds,
       ...eventData
     } = createEventDto;
 
@@ -53,6 +57,18 @@ export class EventsService {
     });
     if (!modality) throw new NotFoundException('Event Modality not found');
 
+    // Validar speakers si se proporcionaron
+    let speakers: Speaker[] = [];
+    if (speakersIds && speakersIds.length > 0) {
+      speakers = await this.speakerRepository.findBy({
+        id: In(speakersIds),
+        isActive: true,
+      });
+      if (speakers.length !== speakersIds.length) {
+        throw new NotFoundException('One or more speakers not found');
+      }
+    }
+
     const slug = this.generateSlug(eventData.title);
 
     const event = this.eventRepository.create({
@@ -64,6 +80,7 @@ export class EventsService {
       createdBy: user,
       location,
       virtualAccess,
+      speakers,
     });
 
     return this.eventRepository.save(event);
@@ -73,7 +90,14 @@ export class EventsService {
     // No incluye virtualAccess por seguridad (lazy loading)
     return this.eventRepository.find({
       where: { isActive: true },
-      relations: ['type', 'category', 'modality', 'createdBy', 'location'],
+      relations: [
+        'type',
+        'category',
+        'modality',
+        'createdBy',
+        'location',
+        'speakers',
+      ],
     });
   }
 
@@ -81,7 +105,14 @@ export class EventsService {
     // No incluye virtualAccess por seguridad (lazy loading)
     const event = await this.eventRepository.findOne({
       where: { id, isActive: true },
-      relations: ['type', 'category', 'modality', 'createdBy', 'location'],
+      relations: [
+        'type',
+        'category',
+        'modality',
+        'createdBy',
+        'location',
+        'speakers',
+      ],
     });
 
     if (!event) throw new NotFoundException(`Event with ID ${id} not found`);
@@ -100,6 +131,7 @@ export class EventsService {
         'createdBy',
         'location',
         'virtualAccess',
+        'speakers',
       ],
     });
 
@@ -115,6 +147,7 @@ export class EventsService {
       modalityId,
       location,
       virtualAccess,
+      speakersIds,
       ...eventData
     } = updateEventDto;
 
@@ -156,6 +189,17 @@ export class EventsService {
       event.modality = modality;
     }
 
+    if (speakersIds) {
+      const speakers = await this.speakerRepository.findBy({
+        id: In(speakersIds),
+        isActive: true,
+      });
+      if (speakers.length !== speakersIds.length) {
+        throw new NotFoundException('One or more speakers not found');
+      }
+      event.speakers = speakers;
+    }
+
     // Regenerate slug if title changed
     if (eventData.title) {
       event.slug = this.generateSlug(eventData.title);
@@ -173,6 +217,44 @@ export class EventsService {
 
     // Soft delete: marcar como inactivo
     event.isActive = false;
+    return this.eventRepository.save(event);
+  }
+
+  async addSpeaker(id: string, speakerId: string) {
+    const event = await this.eventRepository.findOne({
+      where: { id, isActive: true },
+      relations: ['speakers'],
+    });
+
+    if (!event) throw new NotFoundException(`Event with ID ${id} not found`);
+
+    const speaker = await this.speakerRepository.findOne({
+      where: { id: speakerId, isActive: true },
+    });
+
+    if (!speaker)
+      throw new NotFoundException(`Speaker with ID ${speakerId} not found`);
+
+    // Verificar si ya existe
+    const exists = event.speakers.some((s) => s.id === speakerId);
+    if (!exists) {
+      event.speakers.push(speaker);
+      return this.eventRepository.save(event);
+    }
+
+    return event;
+  }
+
+  async removeSpeaker(id: string, speakerId: string) {
+    const event = await this.eventRepository.findOne({
+      where: { id, isActive: true },
+      relations: ['speakers'],
+    });
+
+    if (!event) throw new NotFoundException(`Event with ID ${id} not found`);
+
+    event.speakers = event.speakers.filter((s) => s.id !== speakerId);
+
     return this.eventRepository.save(event);
   }
 

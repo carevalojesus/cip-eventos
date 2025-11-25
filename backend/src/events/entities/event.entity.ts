@@ -7,6 +7,8 @@ import {
   ManyToOne,
   JoinColumn,
   OneToOne,
+  ManyToMany,
+  JoinTable,
 } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
 // Importamos las nuevas entidades
@@ -15,6 +17,7 @@ import { EventCategory } from './event-category.entity';
 import { EventModality } from './event-modality.entity';
 import { EventLocation } from './event-location.entity';
 import { EventVirtualAccess } from './event-virtual-access.entity';
+import { Speaker } from '../../speakers/entities/speaker.entity';
 
 export enum EventStatus {
   DRAFT = 'DRAFT',
@@ -92,6 +95,17 @@ export class Event {
   })
   @JoinColumn()
   virtualAccess: EventVirtualAccess;
+
+  @ManyToMany(() => Speaker, (speaker) => speaker.events, {
+    eager: false, // Lazy loading para mejor performance
+    cascade: true, // Permite insertar/actualizar
+  })
+  @JoinTable({
+    name: 'event_speakers', // Nombre personalizado para la tabla intermedia
+    joinColumn: { name: 'eventId', referencedColumnName: 'id' },
+    inverseJoinColumn: { name: 'speakerId', referencedColumnName: 'id' },
+  })
+  speakers: Speaker[];
 
   // -------------------------
   // Auditoría y soft delete
