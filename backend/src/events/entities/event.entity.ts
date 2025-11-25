@@ -18,6 +18,7 @@ import { EventModality } from './event-modality.entity';
 import { EventLocation } from './event-location.entity';
 import { EventVirtualAccess } from './event-virtual-access.entity';
 import { Speaker } from '../../speakers/entities/speaker.entity';
+import { Organizer } from '../../organizers/entities/organizer.entity';
 
 export enum EventStatus {
   DRAFT = 'DRAFT',
@@ -106,6 +107,17 @@ export class Event {
     inverseJoinColumn: { name: 'speakerId', referencedColumnName: 'id' },
   })
   speakers: Speaker[];
+
+  @ManyToMany(() => Organizer, (organizer) => organizer.events, {
+    eager: false,
+    cascade: true,
+  })
+  @JoinTable({
+    name: 'event_organizers',
+    joinColumn: { name: 'eventId', referencedColumnName: 'id' },
+    inverseJoinColumn: { name: 'organizerId', referencedColumnName: 'id' },
+  })
+  organizers: Organizer[];
 
   // -------------------------
   // Auditoría y soft delete

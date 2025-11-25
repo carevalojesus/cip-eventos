@@ -75,4 +75,22 @@ export class EventsController {
   ) {
     return this.eventsService.removeSpeaker(id, speakerId);
   }
+
+  @UseGuards(EmailVerifiedGuard, EventOwnershipGuard)
+  @Post(':id/organizers')
+  addOrganizer(
+    @Param('id') id: string,
+    @Body('organizerId') organizerId: string,
+  ) {
+    return this.eventsService.addOrganizer(id, organizerId);
+  }
+
+  @UseGuards(EmailVerifiedGuard, EventOwnershipGuard)
+  @Delete(':id/organizers/:organizerId')
+  removeOrganizer(
+    @Param('id') id: string,
+    @Param('organizerId') organizerId: string,
+  ) {
+    return this.eventsService.removeOrganizer(id, organizerId);
+  }
 }

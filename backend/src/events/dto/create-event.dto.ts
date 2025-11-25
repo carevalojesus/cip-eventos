@@ -78,6 +78,11 @@ export class CreateEventDto {
 
   @IsOptional()
   @IsArray()
-  @IsUUID('all', { each: true }) // Valida que cada elemento del array sea un UUID
+  @IsUUID('all', { each: true })
   speakersIds?: string[];
+
+  @IsOptional()
+  @IsArray()
+  @IsUUID('all', { each: true })
+  organizersIds?: string[];
 }
