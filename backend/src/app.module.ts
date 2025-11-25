@@ -17,6 +17,7 @@ import { SpeakersModule } from './speakers/speakers.module';
 import { OrganizersModule } from './organizers/organizers.module';
 import { AttendeesModule } from './attendees/attendees.module';
 import { RegistrationsModule } from './registrations/registrations.module';
+import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 
 @Module({
   imports: [
@@ -44,6 +45,13 @@ import { RegistrationsModule } from './registrations/registrations.module';
         };
       },
     }),
+    // Rate Limiting Global - Protección contra ataques DoS
+    ThrottlerModule.forRoot([
+      {
+        ttl: 60000, // Ventana de tiempo: 60 segundos
+        limit: 10, // Máximo 10 peticiones por ventana (default)
+      },
+    ]),
     RolesModule,
     UsersModule,
     AuthModule,
@@ -62,6 +70,10 @@ import { RegistrationsModule } from './registrations/registrations.module';
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
     },
   ],
 })

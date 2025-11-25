@@ -1,31 +1,32 @@
-import { Controller, Get, Post, Body, Param, UseGuards } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards } from '@nestjs/common';
 import { RegistrationsService } from './registrations.service';
 import { CreateRegistrationDto } from './dto/create-registration.dto';
-import { EmailVerifiedGuard } from '../auth/guards/email-verified.guard';
-import { RolesGuard } from '../auth/guards/roles.guard';
-import { Roles } from '../auth/decorators/roles.decorator';
-import { Public } from '../auth/decorators/public.decorator';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
+import { User } from 'src/users/entities/user.entity';
+import { Public } from 'src/auth/decorators/public.decorator';
+import { Throttle } from '@nestjs/throttler';
+import { EmailVerifiedGuard } from 'src/auth/guards/email-verified.guard';
 
 @Controller('registrations')
 export class RegistrationsController {
-  constructor(private readonly registrationsService: RegistrationsService) {}
+  constructor(private readonly regService: RegistrationsService) {}
 
+  // 🔓 Endpoint Público (Guests)
+  // Rate limiting más estricto: 5 registros por minuto por IP
   @Public()
+  @Throttle({ default: { limit: 5, ttl: 60000 } })
   @Post()
-  create(@Body() createRegistrationDto: CreateRegistrationDto) {
-    return this.registrationsService.create(createRegistrationDto);
+  createGuest(@Body() dto: CreateRegistrationDto) {
+    return this.regService.create(dto, null);
   }
 
-  @UseGuards(EmailVerifiedGuard, RolesGuard)
-  @Roles('ADMIN', 'SUPER_ADMIN')
-  @Get()
-  findAll() {
-    return this.registrationsService.findAll();
-  }
-
-  @Public()
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.registrationsService.findOne(id);
+  // 🔒 Endpoint Miembros (Usuarios Logueados)
+  // Rate limiting más permisivo para usuarios autenticados: 15 por minuto
+  @Throttle({ default: { limit: 15, ttl: 60000 } })
+  @Post('member')
+  @UseGuards(JwtAuthGuard, EmailVerifiedGuard)
+  createMember(@Body() dto: CreateRegistrationDto, @CurrentUser() user: User) {
+    return this.regService.create(dto, user);
   }
 }

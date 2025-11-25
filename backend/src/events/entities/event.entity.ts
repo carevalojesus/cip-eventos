@@ -9,6 +9,7 @@ import {
   OneToOne,
   ManyToMany,
   JoinTable,
+  OneToMany,
 } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
 // Importamos las nuevas entidades
@@ -19,6 +20,7 @@ import { EventLocation } from './event-location.entity';
 import { EventVirtualAccess } from './event-virtual-access.entity';
 import { Speaker } from '../../speakers/entities/speaker.entity';
 import { Organizer } from '../../organizers/entities/organizer.entity';
+import { EventTicket } from './event-ticket.entity';
 
 export enum EventStatus {
   DRAFT = 'DRAFT',
@@ -107,6 +109,12 @@ export class Event {
     inverseJoinColumn: { name: 'speakerId', referencedColumnName: 'id' },
   })
   speakers: Speaker[];
+
+  @OneToMany(() => EventTicket, (ticket) => ticket.event, {
+    cascade: true,
+    eager: true,
+  })
+  tickets: EventTicket[];
 
   @ManyToMany(() => Organizer, (organizer) => organizer.events, {
     eager: false,

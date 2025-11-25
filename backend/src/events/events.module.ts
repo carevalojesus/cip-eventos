@@ -13,6 +13,7 @@ import { EventLocation } from './entities/event-location.entity';
 import { EventVirtualAccess } from './entities/event-virtual-access.entity';
 import { Speaker } from '../speakers/entities/speaker.entity';
 import { Organizer } from '../organizers/entities/organizer.entity';
+import { EventTicket } from './entities/event-ticket.entity';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { Organizer } from '../organizers/entities/organizer.entity';
       User,
       Speaker,
       Organizer,
+      EventTicket,
     ]),
     AuthModule,
   ],

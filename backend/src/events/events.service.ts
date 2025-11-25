@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, In } from 'typeorm';
 import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
-import { Event } from './entities/event.entity';
+import { Event, EventStatus } from './entities/event.entity';
 import { EventCategory } from './entities/event-category.entity';
 import { EventModality } from './entities/event-modality.entity';
 import { EventType } from './entities/event-type.entity';
@@ -106,7 +106,7 @@ export class EventsService {
   findAll() {
     // No incluye virtualAccess por seguridad (lazy loading)
     return this.eventRepository.find({
-      where: { isActive: true },
+      where: { isActive: true, status: EventStatus.PUBLISHED },
       relations: [
         'type',
         'category',
@@ -122,7 +122,7 @@ export class EventsService {
   async findOne(id: string) {
     // No incluye virtualAccess por seguridad (lazy loading)
     const event = await this.eventRepository.findOne({
-      where: { id, isActive: true },
+      where: { id, isActive: true, status: EventStatus.PUBLISHED },
       relations: [
         'type',
         'category',
