@@ -61,4 +61,18 @@ export class EventsController {
   remove(@Param('id') id: string) {
     return this.eventsService.remove(id);
   }
+  @UseGuards(EmailVerifiedGuard, EventOwnershipGuard)
+  @Post(':id/speakers')
+  addSpeaker(@Param('id') id: string, @Body('speakerId') speakerId: string) {
+    return this.eventsService.addSpeaker(id, speakerId);
+  }
+
+  @UseGuards(EmailVerifiedGuard, EventOwnershipGuard)
+  @Delete(':id/speakers/:speakerId')
+  removeSpeaker(
+    @Param('id') id: string,
+    @Param('speakerId') speakerId: string,
+  ) {
+    return this.eventsService.removeSpeaker(id, speakerId);
+  }
 }
