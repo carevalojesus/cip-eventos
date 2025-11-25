@@ -18,6 +18,7 @@ import { OrganizersModule } from './organizers/organizers.module';
 import { AttendeesModule } from './attendees/attendees.module';
 import { RegistrationsModule } from './registrations/registrations.module';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
+import { PaymentsModule } from './payments/payments.module';
 
 @Module({
   imports: [
@@ -63,6 +64,7 @@ import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
     OrganizersModule,
     AttendeesModule,
     RegistrationsModule,
+    PaymentsModule,
   ],
   controllers: [AppController],
   providers: [

@@ -22,10 +22,10 @@ export class EventSession {
   description: string;
 
   // Fechas específicas de ESTA sesión (dentro del rango del evento padre)
-  @Column({ type: 'timestamp' })
+  @Column({ type: 'timestamptz' })
   startAt: Date;
 
-  @Column({ type: 'timestamp' })
+  @Column({ type: 'timestamptz' })
   endAt: Date;
 
   // Ubicación específica (Ej: "Sala 1", "Auditorio B")

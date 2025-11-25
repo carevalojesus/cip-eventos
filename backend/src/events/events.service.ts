@@ -432,7 +432,7 @@ export class EventsService {
 
   async getSessionsByEvent(eventId: string) {
     const event = await this.eventRepository.findOne({
-      where: { id: eventId, isActive: true },
+      where: { id: eventId, isActive: true, status: EventStatus.PUBLISHED },
       relations: ['sessions', 'sessions.speakers'],
     });
 
@@ -443,7 +443,7 @@ export class EventsService {
 
   async getSessionById(eventId: string, sessionId: string) {
     const event = await this.eventRepository.findOne({
-      where: { id: eventId, isActive: true },
+      where: { id: eventId, isActive: true, status: EventStatus.PUBLISHED },
     });
 
     if (!event) throw new NotFoundException('Evento no encontrado');
@@ -479,50 +479,49 @@ export class EventsService {
 
     if (!session) throw new NotFoundException('Sesión no encontrada');
 
-    // Validaciones si se están actualizando las fechas
-    if (updateDto.startAt || updateDto.endAt) {
-      const sessionStart = new Date(updateDto.startAt || session.startAt);
-      const sessionEnd = new Date(updateDto.endAt || session.endAt);
+    // Determinar las fechas finales (nuevas o existentes)
+    const sessionStart = new Date(updateDto.startAt || session.startAt);
+    const sessionEnd = new Date(updateDto.endAt || session.endAt);
 
-      // Validación 1: startAt debe ser menor que endAt
-      if (sessionStart >= sessionEnd) {
-        throw new BadRequestException(
-          'La fecha de inicio debe ser anterior a la fecha de fin',
+    // Validación 1: startAt debe ser menor que endAt
+    if (sessionStart >= sessionEnd) {
+      throw new BadRequestException(
+        'La fecha de inicio debe ser anterior a la fecha de fin',
+      );
+    }
+
+    // Validación 2: La sesión debe estar dentro del rango del evento padre
+    const eventStart = new Date(event.startAt);
+    const eventEnd = new Date(event.endAt);
+
+    if (sessionStart < eventStart || sessionEnd > eventEnd) {
+      throw new BadRequestException(
+        `La sesión debe estar dentro del rango del evento (${event.startAt.toISOString()} - ${event.endAt.toISOString()})`,
+      );
+    }
+
+    // Validación 3: Validar solapamiento con otras sesiones (excluyendo la actual)
+    // Se ejecuta SIEMPRE, incluso si solo se actualiza el room
+    const roomToCheck = updateDto.room ?? session.room;
+    if (roomToCheck) {
+      const overlappingSessions = event.sessions.filter((s) => {
+        if (s.id === sessionId) return false; // Excluir la sesión actual
+        if (s.room !== roomToCheck) return false;
+
+        const existingStart = new Date(s.startAt);
+        const existingEnd = new Date(s.endAt);
+
+        return (
+          (sessionStart >= existingStart && sessionStart < existingEnd) ||
+          (sessionEnd > existingStart && sessionEnd <= existingEnd) ||
+          (sessionStart <= existingStart && sessionEnd >= existingEnd)
         );
-      }
+      });
 
-      // Validación 2: La sesión debe estar dentro del rango del evento padre
-      const eventStart = new Date(event.startAt);
-      const eventEnd = new Date(event.endAt);
-
-      if (sessionStart < eventStart || sessionEnd > eventEnd) {
+      if (overlappingSessions.length > 0) {
         throw new BadRequestException(
-          `La sesión debe estar dentro del rango del evento (${event.startAt.toISOString()} - ${event.endAt.toISOString()})`,
+          `Ya existe una sesión en la sala "${roomToCheck}" que se solapa con el horario especificado`,
         );
-      }
-
-      // Validación 3: Validar solapamiento con otras sesiones (excluyendo la actual)
-      const roomToCheck = updateDto.room || session.room;
-      if (roomToCheck) {
-        const overlappingSessions = event.sessions.filter((s) => {
-          if (s.id === sessionId) return false; // Excluir la sesión actual
-          if (s.room !== roomToCheck) return false;
-
-          const existingStart = new Date(s.startAt);
-          const existingEnd = new Date(s.endAt);
-
-          return (
-            (sessionStart >= existingStart && sessionStart < existingEnd) ||
-            (sessionEnd > existingStart && sessionEnd <= existingEnd) ||
-            (sessionStart <= existingStart && sessionEnd >= existingEnd)
-          );
-        });
-
-        if (overlappingSessions.length > 0) {
-          throw new BadRequestException(
-            `Ya existe una sesión en la sala "${roomToCheck}" que se solapa con el horario especificado`,
-          );
-        }
       }
     }
 

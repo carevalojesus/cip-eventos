@@ -7,10 +7,12 @@ import {
   UpdateDateColumn,
   JoinColumn,
   Index,
+  OneToOne,
 } from 'typeorm';
 import { Attendee } from '../../attendees/entities/attendee.entity';
 import { Event } from '../../events/entities/event.entity';
 import { EventTicket } from '../../events/entities/event-ticket.entity';
+import { Payment } from 'src/payments/entities/payment.entity';
 
 export enum RegistrationStatus {
   PENDING = 'PENDING',
@@ -54,6 +56,9 @@ export class Registration {
   @ManyToOne(() => Event, { eager: true })
   @JoinColumn({ name: 'eventId' })
   event: Event;
+
+  @OneToOne(() => Payment, (payment) => payment.registration)
+  payment: Payment;
 
   @CreateDateColumn()
   registeredAt: Date;
