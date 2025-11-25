@@ -8,6 +8,7 @@ import { EventCategory } from './entities/event-category.entity';
 import { EventModality } from './entities/event-modality.entity';
 import { EventType } from './entities/event-type.entity';
 import { Speaker } from '../speakers/entities/speaker.entity';
+import { Organizer } from '../organizers/entities/organizer.entity';
 import { User } from '../users/entities/user.entity';
 
 @Injectable()
@@ -25,6 +26,8 @@ export class EventsService {
     private readonly userRepository: Repository<User>,
     @InjectRepository(Speaker)
     private readonly speakerRepository: Repository<Speaker>,
+    @InjectRepository(Organizer)
+    private readonly organizerRepository: Repository<Organizer>,
   ) {}
 
   async create(createEventDto: CreateEventDto, userId: string) {
@@ -35,6 +38,7 @@ export class EventsService {
       location,
       virtualAccess,
       speakersIds,
+      organizersIds,
       ...eventData
     } = createEventDto;
 
@@ -69,6 +73,18 @@ export class EventsService {
       }
     }
 
+    // Validar organizers si se proporcionaron
+    let organizers: Organizer[] = [];
+    if (organizersIds && organizersIds.length > 0) {
+      organizers = await this.organizerRepository.findBy({
+        id: In(organizersIds),
+        isActive: true,
+      });
+      if (organizers.length !== organizersIds.length) {
+        throw new NotFoundException('One or more organizers not found');
+      }
+    }
+
     const slug = this.generateSlug(eventData.title);
 
     const event = this.eventRepository.create({
@@ -81,6 +97,7 @@ export class EventsService {
       location,
       virtualAccess,
       speakers,
+      organizers,
     });
 
     return this.eventRepository.save(event);
@@ -97,6 +114,7 @@ export class EventsService {
         'createdBy',
         'location',
         'speakers',
+        'organizers',
       ],
     });
   }
@@ -148,6 +166,7 @@ export class EventsService {
       location,
       virtualAccess,
       speakersIds,
+      organizersIds,
       ...eventData
     } = updateEventDto;
 
@@ -198,6 +217,17 @@ export class EventsService {
         throw new NotFoundException('One or more speakers not found');
       }
       event.speakers = speakers;
+    }
+
+    if (organizersIds) {
+      const organizers = await this.organizerRepository.findBy({
+        id: In(organizersIds),
+        isActive: true,
+      });
+      if (organizers.length !== organizersIds.length) {
+        throw new NotFoundException('One or more organizers not found');
+      }
+      event.organizers = organizers;
     }
 
     // Regenerate slug if title changed
@@ -254,6 +284,44 @@ export class EventsService {
     if (!event) throw new NotFoundException(`Event with ID ${id} not found`);
 
     event.speakers = event.speakers.filter((s) => s.id !== speakerId);
+
+    return this.eventRepository.save(event);
+  }
+
+  async addOrganizer(id: string, organizerId: string) {
+    const event = await this.eventRepository.findOne({
+      where: { id, isActive: true },
+      relations: ['organizers'],
+    });
+
+    if (!event) throw new NotFoundException(`Event with ID ${id} not found`);
+
+    const organizer = await this.organizerRepository.findOne({
+      where: { id: organizerId, isActive: true },
+    });
+
+    if (!organizer)
+      throw new NotFoundException(`Organizer with ID ${organizerId} not found`);
+
+    // Verificar si ya existe
+    const exists = event.organizers.some((o) => o.id === organizerId);
+    if (!exists) {
+      event.organizers.push(organizer);
+      return this.eventRepository.save(event);
+    }
+
+    return event;
+  }
+
+  async removeOrganizer(id: string, organizerId: string) {
+    const event = await this.eventRepository.findOne({
+      where: { id, isActive: true },
+      relations: ['organizers'],
+    });
+
+    if (!event) throw new NotFoundException(`Event with ID ${id} not found`);
+
+    event.organizers = event.organizers.filter((o) => o.id !== organizerId);
 
     return this.eventRepository.save(event);
   }

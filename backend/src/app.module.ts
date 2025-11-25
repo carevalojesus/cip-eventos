@@ -14,6 +14,7 @@ import { UploadsModule } from './uploads/uploads.module';
 import { validate } from './config/env.validation';
 import { EventsModule } from './events/events.module';
 import { SpeakersModule } from './speakers/speakers.module';
+import { OrganizersModule } from './organizers/organizers.module';
 
 @Module({
   imports: [
@@ -49,6 +50,7 @@ import { SpeakersModule } from './speakers/speakers.module';
     UploadsModule,
     EventsModule,
     SpeakersModule,
+    OrganizersModule,
   ],
   controllers: [AppController],
   providers: [
