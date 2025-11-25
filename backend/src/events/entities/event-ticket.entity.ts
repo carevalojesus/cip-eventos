@@ -27,11 +27,15 @@ export class EventTicket {
   @Column({ type: 'boolean', default: false })
   requiresCipValidation: boolean; // 👈 Regla de negocio clave
 
+  // Soft delete para prevenir pérdida de datos de registraciones
+  @Column({ type: 'boolean', default: true })
+  isActive: boolean;
+
   // Control optimista de concurrencia para prevenir race conditions en stock
   @VersionColumn()
   version: number;
 
-  @ManyToOne(() => Event, (event) => event.tickets, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Event, (event) => event.tickets)
   @JoinColumn({ name: 'eventId' })
   event: Event;
 

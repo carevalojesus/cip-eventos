@@ -42,12 +42,13 @@ export class RegistrationsService {
       async (manager) => {
         // 1. 🎫 BUSCAR TICKET Y EVENTO CON BLOQUEO PESIMISTA
         const ticket = await manager.findOne(EventTicket, {
-          where: { id: ticketId },
+          where: { id: ticketId, isActive: true },
           relations: ['event', 'event.location'],
           lock: { mode: 'pessimistic_write' }, // 🔒 Bloqueo exclusivo
         });
 
-        if (!ticket) throw new NotFoundException('Entrada no encontrada');
+        if (!ticket)
+          throw new NotFoundException('Entrada no encontrada o no disponible');
         const event = ticket.event;
 
         if (event.status !== EventStatus.PUBLISHED)

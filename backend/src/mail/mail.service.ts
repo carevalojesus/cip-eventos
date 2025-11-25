@@ -62,4 +62,26 @@ export class MailService {
 
     return `${normalizedBase}${normalizedPath}?token=${token}`;
   }
+
+  async sendTicket(
+    email: string,
+    name: string,
+    eventTitle: string,
+    ticketCode: string,
+    eventDate: string,
+    eventLocation: string,
+  ) {
+    await this.mailerService.sendMail({
+      to: email,
+      subject: `Tu entrada para ${eventTitle}`,
+      template: './ticket',
+      context: {
+        name,
+        eventTitle,
+        ticketCode,
+        eventDate,
+        eventLocation,
+      },
+    });
+  }
 }
