@@ -16,6 +16,8 @@ import { Event } from '../events/entities/event.entity';
 import { Registration } from '../registrations/entities/registration.entity';
 import { Speaker } from '../speakers/entities/speaker.entity';
 import { User } from '../users/entities/user.entity';
+import { PdfService } from '../pdf/pdf.service';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class CertificatesService {
@@ -30,7 +32,54 @@ export class CertificatesService {
     private readonly speakerRepository: Repository<Speaker>,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    private readonly pdfService: PdfService,
   ) {}
+
+  async issueAttendanceCertificate(registrationId: string) {
+    // 1. Buscar datos completos (incluyendo firmantes del evento)
+    const registration = await this.registrationRepository.findOne({
+      where: { id: registrationId },
+      relations: ['event', 'event.signers', 'attendee'], // 👈 ¡Importante traer los signers!
+    });
+
+    if (!registration) {
+      throw new NotFoundException(
+        `Registration with ID ${registrationId} not found`,
+      );
+    }
+
+    // ... (validaciones de siempre: si asistió, si el evento tiene certificado...)
+
+    // Generar Código Único
+    const validationCode = `CIP-${new Date().getFullYear()}-${uuidv4().slice(0, 6).toUpperCase()}`;
+
+    // 2. 🔥 GENERAR EL PDF 🔥
+    const pdfRelativePath = await this.pdfService.generateCertificatePdf({
+      recipientName: `${registration.attendee.firstName} ${registration.attendee.lastName}`,
+      eventTitle: registration.event.title,
+      // Formatear la fecha bonito (puedes usar date-fns o moment aquí)
+      eventDate: registration.event.startAt.toLocaleDateString('es-PE'),
+      eventHours: registration.event.certificateHours,
+      validationCode: validationCode,
+      // Mapeamos los firmantes al formato que espera la plantilla
+      signers: registration.event.signers.map((s) => ({
+        fullName: s.fullName,
+        title: s.title,
+        signatureUrl: s.signatureUrl,
+      })),
+    });
+
+    // 3. Guardar registro en DB con la ruta del PDF
+    const cert = this.certificateRepository.create({
+      type: CertificateType.ATTENDANCE,
+      event: registration.event,
+      registration: registration,
+      validationCode: validationCode,
+      pdfUrl: pdfRelativePath, // 👈 Guardamos la ruta
+    });
+
+    return await this.certificateRepository.save(cert);
+  }
 
   async create(createCertificateDto: CreateCertificateDto) {
     const { eventId, type, registrationId, speakerId, userId } =

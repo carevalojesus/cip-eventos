@@ -21,6 +21,7 @@ import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { PaymentsModule } from './payments/payments.module';
 import { SignersModule } from './signers/signers.module';
 import { CertificatesModule } from './certificates/certificates.module';
+import { PdfModule } from './pdf/pdf.module';
 
 @Module({
   imports: [
@@ -69,6 +70,7 @@ import { CertificatesModule } from './certificates/certificates.module';
     PaymentsModule,
     SignersModule,
     CertificatesModule,
+    PdfModule,
   ],
   controllers: [AppController],
   providers: [

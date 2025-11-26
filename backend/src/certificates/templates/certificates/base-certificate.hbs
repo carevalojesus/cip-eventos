@@ -1,0 +1,154 @@
+<html>
+  <head>
+    <style>
+      /* Importamos una fuente bonita de Google Fonts */
+      @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Open+Sans&display=swap');
+
+      body {
+        font-family: 'Open Sans', sans-serif;
+        margin: 0;
+        padding: 0;
+        /* Fondo tipo pergamino o textura sutil */
+        background-color: #fcfcfc;
+      }
+      .certificate-container {
+        /* Dimensiones A4 Horizontal exactas para que no se corte */
+        width: 297mm;
+        height: 210mm;
+        padding: 20mm;
+        box-sizing: border-box;
+        border: 10px solid #2c3e50; /* Un marco elegante */
+        position: relative;
+        text-align: center;
+      }
+      .header-logo {
+        width: 150px;
+        margin-bottom: 20px;
+      }
+      h1 {
+        font-family: 'Cinzel', serif;
+        font-size: 3em;
+        color: #2c3e50;
+        text-transform: uppercase;
+        margin-bottom: 10px;
+      }
+      .subtitle {
+        font-size: 1.5em;
+        color: #555;
+        margin-bottom: 30px;
+      }
+      .recipient-name {
+        font-family: 'Cinzel', serif;
+        font-size: 3.5em;
+        color: #1a252f;
+        border-bottom: 2px solid #ccc;
+        display: inline-block;
+        padding: 0 20px 10px;
+        margin: 20px 0;
+      }
+      .event-details {
+        font-size: 1.3em;
+        line-height: 1.6;
+        color: #444;
+        margin: 30px 0;
+        padding: 0 50px;
+      }
+      .highlight {
+        font-weight: bold;
+        color: #2c3e50;
+      }
+      /* Sección de Firmas usando Flexbox */
+      .signatures-section {
+        display: flex;
+        justify-content: space-around; /* Separa las firmas equitativamente */
+        margin-top: 80px;
+      }
+      .signature-block {
+        text-align: center;
+        width: 30%;
+      }
+      /* La imagen de la firma debe ser PNG transparente */
+      .signature-image {
+        height: 80px; /* Altura fija para uniformidad */
+        margin-bottom: 10px;
+      }
+      .signer-name {
+        font-weight: bold;
+        border-top: 1px solid #333;
+        padding-top: 10px;
+      }
+      .signer-title {
+        font-size: 0.9em;
+        color: #666;
+      }
+      /* Código QR y Validación en una esquina */
+      .validation-corner {
+        position: absolute;
+        bottom: 20px;
+        right: 20px;
+        text-align: right;
+        font-size: 0.8em;
+        color: #777;
+      }
+      .qr-placeholder {
+        /* En producción, aquí iría una imagen real del QR generada dinámicamente */
+        width: 80px;
+        height: 80px;
+        background-color: #ddd;
+        margin-left: auto;
+        margin-bottom: 5px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.7em;
+        border: 1px solid #ccc;
+      }
+    </style>
+  </head>
+  <body>
+    <div class='certificate-container'>
+      <img
+        src='https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Escudo_del_Per%C3%BA_1825.svg/200px-Escudo_del_Per%C3%BA_1825.svg.png'
+        class='header-logo'
+        alt='Logo CIP'
+      />
+
+      <h1>Certificado de Asistencia</h1>
+      <p class='subtitle'>El Colegio de Ingenieros del Perú otorga el presente
+        a:</p>
+
+      <div class='recipient-name'>
+        {{recipientName}}
+      </div>
+
+      <p class='event-details'>
+        Por su participación en el evento
+        <span class='highlight'>"{{eventTitle}}"</span>, realizado el día
+        {{eventDate}}, con una duración total de
+        {{eventHours}}
+        horas académicas.
+      </p>
+
+      <div class='signatures-section'>
+        {{#each signers}}
+          <div class='signature-block'>
+            <img
+              src='https://upload.wikimedia.org/wikipedia/commons/2/2f/Firma_de_Francisco_Bolognesi.svg'
+              class='signature-image'
+              alt='Firma'
+            />
+            <div class='signer-name'>{{this.fullName}}</div>
+            <div class='signer-title'>{{this.title}}</div>
+          </div>
+        {{/each}}
+      </div>
+
+      <div class='validation-corner'>
+        <div class='qr-placeholder'>QR CODE</div>
+        <div>Código de Validación:</div>
+        <strong>{{validationCode}}</strong>
+        <div>Verificar en: cip.org.pe/validar</div>
+      </div>
+    </div>
+  </body>
+</html>
