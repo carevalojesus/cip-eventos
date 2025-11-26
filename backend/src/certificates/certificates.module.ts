@@ -7,10 +7,12 @@ import { Event } from '../events/entities/event.entity';
 import { Registration } from '../registrations/entities/registration.entity';
 import { Speaker } from '../speakers/entities/speaker.entity';
 import { User } from '../users/entities/user.entity';
+import { PdfModule } from '../pdf/pdf.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Certificate, Event, Registration, Speaker, User]),
+    PdfModule,
   ],
   controllers: [CertificatesController],
   providers: [CertificatesService],
