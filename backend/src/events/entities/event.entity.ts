@@ -22,6 +22,7 @@ import { Speaker } from '../../speakers/entities/speaker.entity';
 import { Organizer } from '../../organizers/entities/organizer.entity';
 import { EventTicket } from './event-ticket.entity';
 import { EventSession } from './event-session.entity';
+import { Signer } from '../../signers/entities/signer.entity';
 
 export enum EventStatus {
   DRAFT = 'DRAFT',
@@ -65,6 +66,12 @@ export class Event {
     default: EventStatus.DRAFT,
   })
   status: EventStatus;
+
+  @Column({ type: 'jsonb', nullable: true })
+  metadataSnapshot: {
+    eventTitle: string;
+    signers: { name: string; title: string }[];
+  };
 
   @ManyToOne(() => EventType, (type) => type.events, { eager: true })
   @JoinColumn({ name: 'typeId' })
@@ -133,6 +140,17 @@ export class Event {
     eager: true,
   })
   sessions: EventSession[];
+
+  @ManyToMany(() => Signer)
+  @JoinTable({ name: 'event_signers' })
+  signers: Signer[];
+  
+  // 👇 Configuración del Certificado
+  @Column({ type: 'boolean', default: false })
+  hasCertificate: boolean;
+
+  @Column({ type: 'int', default: 0 })
+  certificateHours: number;
 
   // -------------------------
   // Auditoría y soft delete
