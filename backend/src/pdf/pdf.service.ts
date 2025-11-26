@@ -5,6 +5,7 @@ import * as hbs from 'handlebars';
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import { v4 as uuidv4 } from 'uuid';
+import { UploadsService } from '../uploads/uploads.service';
 
 // Definimos la interfaz de los datos que espera la plantilla
 interface CertificateData {
@@ -20,20 +21,11 @@ interface CertificateData {
 @Injectable()
 export class PdfService {
   private readonly templatesPath = path.join(
-    process.cwd(),
-    'src/templates/certificates',
-  );
-  // Carpeta temporal donde guardaremos los PDFs generados localmente
-  private readonly outputPath = path.join(
-    process.cwd(),
-    'uploads',
-    'certificates',
+    __dirname,
+    '../certificates/templates/certificates',
   );
 
-  constructor() {
-    // Asegurar que la carpeta de salida exista al iniciar
-    fs.ensureDirSync(this.outputPath);
-  }
+  constructor(private readonly uploadsService: UploadsService) {}
 
   async generateCertificatePdf(data: CertificateData): Promise<string> {
     let browser: Browser | undefined;
@@ -61,30 +53,32 @@ export class PdfService {
       // waitUntil: 'networkidle0' asegura que carguen las fuentes e imágenes externas
       await page.setContent(htmlContent, { waitUntil: 'networkidle0' });
 
-      // 5. Generar el PDF
-      const fileName = `CERT-${data.validationCode}-${uuidv4().slice(0, 4)}.pdf`;
-      const filePath = path.join(this.outputPath, fileName);
-
-      await page.pdf({
-        path: filePath, // Dónde guardar localmente
+      // 5. Generar el PDF en memoria (Buffer)
+      const pdfBuffer = await page.pdf({
         format: 'A4',
         landscape: true, // ¡Importante! Diplomas suelen ser horizontales
         printBackground: true, // VITAL: Para que se impriman los colores y fondos CSS
         margin: { top: '0px', right: '0px', bottom: '0px', left: '0px' }, // Márgenes 0 para control total con CSS
       });
 
-      console.log(`✅ PDF generado en: ${filePath}`);
+      // 6. Subir a S3/MinIO
+      const fileName = `CERT-${data.validationCode}.pdf`;
+      const publicUrl = await this.uploadsService.uploadFile(
+        Buffer.from(pdfBuffer),
+        fileName,
+        'application/pdf',
+      );
 
-      // Retornamos la ruta relativa para guardarla en la DB
-      // En producción, AQUÍ subirías el archivo a S3/Cloudinary y retornarías la URL pública.
-      return `/uploads/certificates/${fileName}`;
+      console.log(`✅ PDF subido a: ${publicUrl}`);
+
+      return publicUrl;
     } catch (error) {
       console.error('Error generando PDF:', error);
       throw new InternalServerErrorException(
         'Error al generar el documento PDF',
       );
     } finally {
-      // 6. CERRAR EL NAVEGADOR SIEMPRE (Para no comerse la RAM del servidor)
+      // 7. CERRAR EL NAVEGADOR SIEMPRE (Para no comerse la RAM del servidor)
       if (browser) {
         await browser.close();
       }

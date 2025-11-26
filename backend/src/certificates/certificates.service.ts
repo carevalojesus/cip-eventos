@@ -13,7 +13,10 @@ import {
   CertificateType,
 } from './entities/certificate.entity';
 import { Event } from '../events/entities/event.entity';
-import { Registration } from '../registrations/entities/registration.entity';
+import {
+  Registration,
+  RegistrationStatus,
+} from '../registrations/entities/registration.entity';
 import { Speaker } from '../speakers/entities/speaker.entity';
 import { User } from '../users/entities/user.entity';
 import { PdfService } from '../pdf/pdf.service';
@@ -83,6 +86,70 @@ export class CertificatesService {
     });
 
     return await this.certificateRepository.save(cert);
+  }
+
+  async issueBatchCertificates(eventId: string) {
+    // Ejecutar en segundo plano (Fire and Forget)
+    this.processBatchCertificates(eventId).catch((err) => {
+      console.error(`Error en batch certificates para evento ${eventId}`, err);
+    });
+
+    return {
+      message: 'Proceso de emisión masiva iniciado en segundo plano.',
+      eventId,
+    };
+  }
+
+  private async processBatchCertificates(eventId: string) {
+    console.log(`🚀 Iniciando emisión masiva para evento: ${eventId}`);
+
+    // 1. Buscar inscripciones CONFIRMADAS y ASISTIDAS
+    const registrations = await this.registrationRepository.find({
+      where: {
+        event: { id: eventId },
+        status: RegistrationStatus.CONFIRMED,
+        attended: true,
+      },
+      relations: ['event', 'event.signers', 'attendee'],
+    });
+
+    console.log(`📋 Encontrados ${registrations.length} asistentes aptos.`);
+
+    let successCount = 0;
+    let errorCount = 0;
+
+    for (const reg of registrations) {
+      try {
+        // Verificar si ya tiene certificado para no duplicar
+        const existing = await this.certificateRepository.findOne({
+          where: { registration: { id: reg.id } },
+        });
+
+        if (existing) {
+          // console.log(`⏭️ El usuario ${reg.attendee.email} ya tiene certificado.`);
+          continue;
+        }
+
+        // Reutilizamos la lógica de emisión individual
+        // NOTA: issueAttendanceCertificate hace una query extra para buscar la registration,
+        // podríamos optimizarlo pasando la entidad, pero por simplicidad y robustez lo llamamos así.
+        await this.issueAttendanceCertificate(reg.id);
+        successCount++;
+
+        // Pequeña pausa para no saturar CPU/Memoria si son muchos
+        await new Promise((resolve) => setTimeout(resolve, 100));
+      } catch (error) {
+        console.error(
+          `❌ Error generando certificado para ${reg.attendee.email}:`,
+          error,
+        );
+        errorCount++;
+      }
+    }
+
+    console.log(
+      `🏁 Finalizado batch para evento ${eventId}. Éxitos: ${successCount}, Errores: ${errorCount}`,
+    );
   }
 
   async create(createCertificateDto: CreateCertificateDto) {

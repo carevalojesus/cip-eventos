@@ -20,6 +20,11 @@ export class CertificatesController {
     return this.certificatesService.create(createCertificateDto);
   }
 
+  @Post('issue-batch/:eventId')
+  issueBatch(@Param('eventId') eventId: string) {
+    return this.certificatesService.issueBatchCertificates(eventId);
+  }
+
   @Get()
   findAll() {
     return this.certificatesService.findAll();

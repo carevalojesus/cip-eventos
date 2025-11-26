@@ -52,6 +52,28 @@ export class UploadsService {
     return { uploadUrl, publicUrl, key };
   }
 
+  async uploadFile(
+    buffer: Buffer,
+    filename: string,
+    contentType: string,
+  ): Promise<string> {
+    const s3 = await this.getOrCreateClient();
+    await this.ensureBucketExists(s3);
+
+    const key = `certificates/${uuidv4()}-${filename}`;
+    const command = new PutObjectCommand({
+      Bucket: this.bucket,
+      Key: key,
+      Body: buffer,
+      ContentType: contentType,
+    });
+
+    await s3.send(command);
+
+    const normalizedEndpoint = this.endpoint.replace(/\/$/, '');
+    return `${normalizedEndpoint}/${this.bucket}/${key}`;
+  }
+
   private async getOrCreateClient(): Promise<S3Client> {
     if (this.s3) return this.s3;
 
