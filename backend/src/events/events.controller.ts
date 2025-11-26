@@ -23,6 +23,7 @@ import { EventOwnershipGuard } from './guards/event-ownership.guard';
 import { EventModalityValidatorPipe } from './pipes/event-modality-validator.pipe';
 import { CreateSessionDto } from './dto/create-session.dto';
 import { UpdateSessionDto } from './dto/update-session.dto';
+import { CreateTicketDto } from './dto/create-ticket.dto';
 
 @Controller('events')
 export class EventsController {
@@ -191,5 +192,14 @@ export class EventsController {
     });
 
     res.send(csvContent);
+  }
+
+  @UseGuards(EmailVerifiedGuard, EventOwnershipGuard)
+  @Post(':id/tickets')
+  createTicket(
+    @Param('id') id: string,
+    @Body() createTicketDto: CreateTicketDto,
+  ) {
+    return this.eventsService.createTicket(id, createTicketDto);
   }
 }

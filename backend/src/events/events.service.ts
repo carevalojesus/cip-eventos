@@ -17,6 +17,8 @@ import { User } from '../users/entities/user.entity';
 import { EventSession } from './entities/event-session.entity';
 import { CreateSessionDto } from './dto/create-session.dto';
 import { UpdateSessionDto } from './dto/update-session.dto';
+import { EventTicket } from './entities/event-ticket.entity';
+import { CreateTicketDto } from './dto/create-ticket.dto';
 
 @Injectable()
 export class EventsService {
@@ -37,6 +39,8 @@ export class EventsService {
     private readonly organizerRepository: Repository<Organizer>,
     @InjectRepository(EventSession)
     private readonly sessionRepository: Repository<EventSession>,
+    @InjectRepository(EventTicket)
+    private readonly ticketRepository: Repository<EventTicket>,
   ) {}
 
   async create(createEventDto: CreateEventDto, userId: string) {
@@ -614,5 +618,20 @@ export class EventsService {
     await this.sessionRepository.remove(session);
 
     return { message: 'Sesión eliminada correctamente' };
+  }
+
+  async createTicket(eventId: string, createTicketDto: CreateTicketDto) {
+    const event = await this.eventRepository.findOne({
+      where: { id: eventId, isActive: true },
+    });
+
+    if (!event) throw new NotFoundException('Event not found');
+
+    const ticket = this.ticketRepository.create({
+      ...createTicketDto,
+      event,
+    });
+
+    return this.ticketRepository.save(ticket);
   }
 }
