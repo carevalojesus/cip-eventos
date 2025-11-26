@@ -13,6 +13,7 @@ interface CertificateData {
   eventDate: string;
   eventHours: number;
   validationCode: string;
+  qrCode?: string;
   signers: { fullName: string; title: string; signatureUrl: string }[];
 }
 

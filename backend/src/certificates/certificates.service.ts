@@ -18,6 +18,7 @@ import { Speaker } from '../speakers/entities/speaker.entity';
 import { User } from '../users/entities/user.entity';
 import { PdfService } from '../pdf/pdf.service';
 import { v4 as uuidv4 } from 'uuid';
+import { QrService } from '../common/qr.service';
 
 @Injectable()
 export class CertificatesService {
@@ -33,6 +34,7 @@ export class CertificatesService {
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
     private readonly pdfService: PdfService,
+    private readonly qrService: QrService,
   ) {}
 
   async issueAttendanceCertificate(registrationId: string) {
@@ -54,6 +56,7 @@ export class CertificatesService {
     const validationCode = `CIP-${new Date().getFullYear()}-${uuidv4().slice(0, 6).toUpperCase()}`;
 
     // 2. 🔥 GENERAR EL PDF 🔥
+    const qrCode = await this.qrService.generateQrCode(validationCode);
     const pdfRelativePath = await this.pdfService.generateCertificatePdf({
       recipientName: `${registration.attendee.firstName} ${registration.attendee.lastName}`,
       eventTitle: registration.event.title,
@@ -61,6 +64,7 @@ export class CertificatesService {
       eventDate: registration.event.startAt.toLocaleDateString('es-PE'),
       eventHours: registration.event.certificateHours,
       validationCode: validationCode,
+      qrCode: qrCode,
       // Mapeamos los firmantes al formato que espera la plantilla
       signers: registration.event.signers.map((s) => ({
         fullName: s.fullName,

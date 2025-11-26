@@ -1,12 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { MailerService } from '@nestjs-modules/mailer';
 import { ConfigService } from '@nestjs/config';
+import { QrService } from '../common/qr.service';
 
 @Injectable()
 export class MailService {
   constructor(
     private mailerService: MailerService,
     private configService: ConfigService,
+    private qrService: QrService,
   ) {}
 
   async sendUserWelcome(email: string, name: string, token: string) {
@@ -71,6 +73,8 @@ export class MailService {
     eventDate: string,
     eventLocation: string,
   ) {
+    const qrCode = await this.qrService.generateQrCode(ticketCode);
+
     await this.mailerService.sendMail({
       to: email,
       subject: `Tu entrada para ${eventTitle}`,
@@ -81,6 +85,7 @@ export class MailService {
         ticketCode,
         eventDate,
         eventLocation,
+        qrCode,
       },
     });
   }
