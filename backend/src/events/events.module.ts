@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { EventsService } from './events.service';
 import { EventsController } from './events.controller';
@@ -15,6 +15,7 @@ import { Speaker } from '../speakers/entities/speaker.entity';
 import { Organizer } from '../organizers/entities/organizer.entity';
 import { EventTicket } from './entities/event-ticket.entity';
 import { EventSession } from './entities/event-session.entity';
+import { RegistrationsModule } from '../registrations/registrations.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { EventSession } from './entities/event-session.entity';
       EventSession,
     ]),
     AuthModule,
+    forwardRef(() => RegistrationsModule),
   ],
   controllers: [EventsController],
   providers: [EventsService, EventOwnershipGuard],

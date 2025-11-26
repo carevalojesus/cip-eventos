@@ -29,4 +29,11 @@ export class RegistrationsController {
   createMember(@Body() dto: CreateRegistrationDto, @CurrentUser() user: User) {
     return this.regService.create(dto, user);
   }
+
+  // 🚪 Endpoint Check-In (Staff/Admin)
+  // TODO: Proteger con RolesGuard (ADMIN, STAFF)
+  @Post('check-in')
+  checkIn(@Body('ticketCode') ticketCode: string) {
+    return this.regService.checkIn(ticketCode);
+  }
 }

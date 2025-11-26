@@ -12,7 +12,7 @@ import {
 import { Attendee } from '../../attendees/entities/attendee.entity';
 import { Event } from '../../events/entities/event.entity';
 import { EventTicket } from '../../events/entities/event-ticket.entity';
-import { Payment } from 'src/payments/entities/payment.entity';
+import { Payment } from '../../payments/entities/payment.entity';
 
 export enum RegistrationStatus {
   PENDING = 'PENDING',
@@ -40,6 +40,12 @@ export class Registration {
 
   @Column({ type: 'decimal', precision: 10, scale: 2 })
   finalPrice: number; // Precio congelado al momento de la compra
+
+  @Column({ default: false })
+  attended: boolean;
+
+  @Column({ type: 'timestamp', nullable: true })
+  attendedAt: Date;
 
   @ManyToOne(() => Attendee, (attendee: Attendee) => attendee.registrations, {
     eager: true,

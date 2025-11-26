@@ -22,6 +22,8 @@ import { PaymentsModule } from './payments/payments.module';
 import { SignersModule } from './signers/signers.module';
 import { CertificatesModule } from './certificates/certificates.module';
 import { PdfModule } from './pdf/pdf.module';
+import { CommonModule } from './common/common.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
@@ -71,6 +73,8 @@ import { PdfModule } from './pdf/pdf.module';
     SignersModule,
     CertificatesModule,
     PdfModule,
+    CommonModule,
+    ScheduleModule.forRoot(),
   ],
   controllers: [AppController],
   providers: [

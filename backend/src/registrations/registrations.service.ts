@@ -4,8 +4,9 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, Repository, In } from 'typeorm';
+import { DataSource, Repository, In, LessThan } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
+import { Cron, CronExpression } from '@nestjs/schedule';
 
 // Entidades
 import {
@@ -19,8 +20,8 @@ import { EventStatus } from '../events/entities/event.entity';
 
 // DTOs y Servicios
 import { CreateRegistrationDto } from './dto/create-registration.dto';
-import { MailService } from 'src/mail/mail.service';
-import { CipIntegrationService } from 'src/cip-integration/cip-integration.service';
+import { MailService } from '../mail/mail.service';
+import { CipIntegrationService } from '../cip-integration/cip-integration.service';
 
 @Injectable()
 export class RegistrationsService {
@@ -195,5 +196,104 @@ export class RegistrationsService {
     });
     if (!registration) throw new NotFoundException('Registration not found');
     return registration;
+  }
+
+  async checkIn(ticketCode: string) {
+    const registration = await this.regRepo.findOne({
+      where: { ticketCode },
+      relations: ['attendee', 'event'],
+    });
+
+    if (!registration) {
+      throw new NotFoundException('Entrada no encontrada');
+    }
+
+    if (registration.attended) {
+      throw new BadRequestException(
+        `El asistente ${registration.attendee.firstName} ya ingresó a las ${registration.attendedAt?.toLocaleTimeString()}`,
+      );
+    }
+
+    registration.attended = true;
+    registration.attendedAt = new Date();
+
+    await this.regRepo.save(registration);
+
+    return {
+      message: 'Ingreso exitoso',
+      attendee: `${registration.attendee.firstName} ${registration.attendee.lastName}`,
+      event: registration.event.title,
+      attendedAt: registration.attendedAt,
+    };
+  }
+
+  // 🧹 CRON: Limpiar registros pendientes antiguos
+  @Cron(CronExpression.EVERY_10_MINUTES)
+  async cleanupPendingRegistrations() {
+    console.log('🧹 Ejecutando limpieza de registros pendientes...');
+    const timeoutMinutes = 30;
+    const thresholdDate = new Date(Date.now() - timeoutMinutes * 60 * 1000);
+
+    const result = await this.regRepo.update(
+      {
+        status: RegistrationStatus.PENDING,
+        registeredAt: LessThan(thresholdDate),
+      },
+      {
+        status: RegistrationStatus.CANCELLED,
+      },
+    );
+
+    if (result.affected && result.affected > 0) {
+      console.log(
+        `✅ Se cancelaron ${result.affected} registros pendientes antiguos.`,
+      );
+    } else {
+      console.log('👍 No se encontraron registros para cancelar.');
+    }
+  }
+
+  // 📊 REPORTES: Estadísticas del evento
+  async getEventStats(eventId: string) {
+    const registrations = await this.regRepo.find({
+      where: {
+        event: { id: eventId },
+        status: In([RegistrationStatus.CONFIRMED, RegistrationStatus.PENDING]),
+      },
+    });
+
+    const totalRegistered = registrations.length;
+    const totalRevenue = registrations.reduce(
+      (sum, reg) => sum + Number(reg.finalPrice),
+      0,
+    );
+    const checkedInCount = registrations.filter((r) => r.attended).length;
+    const attendancePercentage =
+      totalRegistered > 0
+        ? ((checkedInCount / totalRegistered) * 100).toFixed(2)
+        : 0;
+
+    return {
+      totalRegistered,
+      totalRevenue,
+      checkedInCount,
+      attendancePercentage: `${attendancePercentage}%`,
+    };
+  }
+
+  // 📋 REPORTES: Lista de asistentes para exportar
+  async getEventAttendees(eventId: string) {
+    return this.regRepo.find({
+      where: {
+        event: { id: eventId },
+        status: In([RegistrationStatus.CONFIRMED, RegistrationStatus.PENDING]),
+      },
+      relations: ['attendee', 'eventTicket'],
+      order: {
+        attendee: {
+          lastName: 'ASC',
+        },
+      },
+    });
   }
 }

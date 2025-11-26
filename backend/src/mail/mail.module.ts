@@ -4,10 +4,12 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { join } from 'path';
 import { MailService } from './mail.service';
+import { CommonModule } from '../common/common.module';
 
 @Global()
 @Module({
   imports: [
+    CommonModule,
     MailerModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],

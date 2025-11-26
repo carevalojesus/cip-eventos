@@ -7,7 +7,12 @@ import {
   Param,
   Delete,
   UseGuards,
+  Inject,
+  forwardRef,
+  Res,
 } from '@nestjs/common';
+import type { Response } from 'express';
+import { RegistrationsService } from '../registrations/registrations.service';
 import { EventsService } from './events.service';
 import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
@@ -21,7 +26,11 @@ import { UpdateSessionDto } from './dto/update-session.dto';
 
 @Controller('events')
 export class EventsController {
-  constructor(private readonly eventsService: EventsService) {}
+  constructor(
+    private readonly eventsService: EventsService,
+    @Inject(forwardRef(() => RegistrationsService))
+    private readonly registrationsService: RegistrationsService,
+  ) {}
 
   @UseGuards(EmailVerifiedGuard)
   @Post()
@@ -140,5 +149,47 @@ export class EventsController {
     @Param('sessionId') sessionId: string,
   ) {
     return this.eventsService.deleteSession(eventId, sessionId);
+  }
+
+  // 📊 REPORTES: Estadísticas del evento
+  @UseGuards(EmailVerifiedGuard, EventOwnershipGuard)
+  @Get(':id/stats')
+  getEventStats(@Param('id') id: string) {
+    return this.registrationsService.getEventStats(id);
+  }
+
+  // 📋 REPORTES: Exportar asistentes
+  @UseGuards(EmailVerifiedGuard, EventOwnershipGuard)
+  @Get(':id/attendees/export')
+  async exportAttendees(@Param('id') id: string, @Res() res: Response) {
+    const attendees = await this.registrationsService.getEventAttendees(id);
+
+    // Generar CSV simple
+    const csvHeader =
+      'Apellido,Nombre,DNI,Email,Ticket,Precio,Estado,Asistió,Hora Ingreso\n';
+    const csvRows = attendees
+      .map((reg) => {
+        return [
+          reg.attendee.lastName,
+          reg.attendee.firstName,
+          reg.attendee.documentNumber,
+          reg.attendee.email,
+          reg.eventTicket.name,
+          reg.finalPrice,
+          reg.status,
+          reg.attended ? 'SI' : 'NO',
+          reg.attendedAt ? reg.attendedAt.toISOString() : '',
+        ].join(',');
+      })
+      .join('\n');
+
+    const csvContent = csvHeader + csvRows;
+
+    res.set({
+      'Content-Type': 'text/csv',
+      'Content-Disposition': `attachment; filename="asistentes-evento-${id}.csv"`,
+    });
+
+    res.send(csvContent);
   }
 }
