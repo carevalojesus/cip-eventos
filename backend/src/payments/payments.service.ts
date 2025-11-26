@@ -2,12 +2,14 @@ import {
   BadRequestException,
   Injectable,
   NotFoundException,
+  Logger,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreatePaymentDto } from './dto/create-payment.dto';
 import { ReportPaymentDto } from './dto/report-payment.dto';
 import { ReviewPaymentDto } from './dto/review-payment.dto';
+import { PaypalService } from './paypal.service';
 import {
   Payment,
   PaymentStatus,
@@ -23,11 +25,14 @@ import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class PaymentsService {
+  private readonly logger = new Logger(PaymentsService.name);
+
   constructor(
     @InjectRepository(Payment) private paymentRepo: Repository<Payment>,
     @InjectRepository(Registration)
     private registrationRepo: Repository<Registration>,
     private readonly mailService: MailService,
+    private readonly paypalService: PaypalService,
   ) {}
 
   // 1. INICIAR PAGO
@@ -57,7 +62,36 @@ export class PaymentsService {
       );
     }
 
-    // c. Crear registro de pago PENDING
+    const provider = dto.provider || PaymentProvider.SIMULATED;
+
+    // CASO PAYPAL:
+    if (provider === PaymentProvider.PAYPAL) {
+      // Crear la Orden en PayPal primero
+      const orderId = await this.paypalService.createOrder(
+        registration.finalPrice,
+        'PEN', // Cobro en Soles
+      );
+
+      // Guardamos el pago en estado PENDING con el ID de PayPal
+      const payment = this.paymentRepo.create({
+        amount: registration.finalPrice,
+        currency: 'PEN',
+        status: PaymentStatus.PENDING,
+        provider: PaymentProvider.PAYPAL,
+        registration: registration,
+        transactionId: orderId, // Guardamos el OrderID aquí temporalmente
+      });
+
+      await this.paymentRepo.save(payment);
+
+      return {
+        paymentId: payment.id,
+        provider: 'PAYPAL',
+        paypalOrderId: orderId, // 👈 El frontend usará esto para el botón
+      };
+    }
+
+    // c. Crear registro de pago PENDING (Simulado / Otros)
     const payment = this.paymentRepo.create({
       amount: registration.finalPrice,
       currency: 'PEN',
@@ -82,11 +116,10 @@ export class PaymentsService {
     };
   }
 
-  // 2. WEBHOOK (Confirmación del Banco)
-  // Este método sería llamado por Stripe/Niubiz automáticamente
-  async handlePaymentSuccess(transactionId: string) {
+  // 2.1 COMPLETAR PAGO PAYPAL (CAPTURE)
+  async completePaypalPayment(paymentId: string, paypalOrderId: string) {
     const payment = await this.paymentRepo.findOne({
-      where: { transactionId },
+      where: { id: paymentId },
       relations: [
         'registration',
         'registration.attendee',
@@ -95,32 +128,43 @@ export class PaymentsService {
       ],
     });
 
-    if (!payment) throw new NotFoundException('Transacción no encontrada');
+    if (!payment) throw new NotFoundException('Pago no encontrado');
     if (payment.status === PaymentStatus.COMPLETED)
-      return { message: 'Ya procesado' };
+      return { message: 'Ya pagado' };
 
-    // a. Actualizar Pago
-    payment.status = PaymentStatus.COMPLETED;
-    payment.metadata = { provider_response: 'APPROVED', timestamp: new Date() };
-    await this.paymentRepo.save(payment);
+    // Validación de seguridad: El ID que nos envían debe coincidir con el guardado
+    if (payment.transactionId !== paypalOrderId) {
+      throw new BadRequestException('El ID de orden de PayPal no coincide');
+    }
 
-    // b. Actualizar Inscripción
-    const registration = payment.registration;
-    registration.status = RegistrationStatus.CONFIRMED;
-    await this.registrationRepo.save(registration);
+    // CAPTURAR EL DINERO REALMENTE (Server-to-Server)
+    const captureResult =
+      await this.paypalService.capturePayment(paypalOrderId);
 
-    // c. Enviar Ticket
-    const { attendee, event } = registration;
-    await this.mailService.sendTicket(
-      attendee.email,
-      attendee.firstName,
-      event.title,
-      registration.ticketCode,
-      event.startAt.toString(),
-      event.location ? event.location.address : 'Virtual',
-    );
+    if (captureResult.success) {
+      payment.status = PaymentStatus.COMPLETED;
+      payment.metadata = captureResult.metadata;
+      await this.paymentRepo.save(payment);
 
-    return { message: 'Pago exitoso. Ticket enviado.' };
+      // Confirmar Inscripción y Enviar Ticket
+      const registration = payment.registration;
+      registration.status = RegistrationStatus.CONFIRMED;
+      await this.registrationRepo.save(registration);
+
+      const { attendee, event } = registration;
+      await this.mailService.sendTicket(
+        attendee.email,
+        attendee.firstName,
+        event.title,
+        registration.ticketCode,
+        event.startAt.toString(),
+        event.location ? event.location.address : 'Virtual',
+      );
+
+      return { message: 'Pago con PayPal exitoso' };
+    } else {
+      throw new BadRequestException('El pago no fue aprobado por PayPal');
+    }
   }
 
   async reportPayment(
@@ -206,7 +250,7 @@ export class PaymentsService {
       payment.reviewedBy = adminUser;
 
       // Opcional: Enviar correo de "Pago Rechazado"
-      console.log(
+      this.logger.log(
         `Enviar email de rechazo a ${payment.registration.attendee.email}`,
       );
     }

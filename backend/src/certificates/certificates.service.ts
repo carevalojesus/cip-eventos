@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Injectable,
   NotFoundException,
+  Logger,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -25,6 +26,8 @@ import { QrService } from '../common/qr.service';
 
 @Injectable()
 export class CertificatesService {
+  private readonly logger = new Logger(CertificatesService.name);
+
   constructor(
     @InjectRepository(Certificate)
     private readonly certificateRepository: Repository<Certificate>,
@@ -88,10 +91,13 @@ export class CertificatesService {
     return await this.certificateRepository.save(cert);
   }
 
-  async issueBatchCertificates(eventId: string) {
+  issueBatchCertificates(eventId: string) {
     // Ejecutar en segundo plano (Fire and Forget)
     this.processBatchCertificates(eventId).catch((err) => {
-      console.error(`Error en batch certificates para evento ${eventId}`, err);
+      this.logger.error(
+        `Error en batch certificates para evento ${eventId}`,
+        err,
+      );
     });
 
     return {
@@ -101,7 +107,7 @@ export class CertificatesService {
   }
 
   private async processBatchCertificates(eventId: string) {
-    console.log(`🚀 Iniciando emisión masiva para evento: ${eventId}`);
+    this.logger.log(`🚀 Iniciando emisión masiva para evento: ${eventId}`);
 
     // 1. Buscar inscripciones CONFIRMADAS y ASISTIDAS
     const registrations = await this.registrationRepository.find({
@@ -113,7 +119,7 @@ export class CertificatesService {
       relations: ['event', 'event.signers', 'attendee'],
     });
 
-    console.log(`📋 Encontrados ${registrations.length} asistentes aptos.`);
+    this.logger.log(`📋 Encontrados ${registrations.length} asistentes aptos.`);
 
     let successCount = 0;
     let errorCount = 0;
@@ -139,7 +145,7 @@ export class CertificatesService {
         // Pequeña pausa para no saturar CPU/Memoria si son muchos
         await new Promise((resolve) => setTimeout(resolve, 100));
       } catch (error) {
-        console.error(
+        this.logger.error(
           `❌ Error generando certificado para ${reg.attendee.email}:`,
           error,
         );
@@ -147,7 +153,7 @@ export class CertificatesService {
       }
     }
 
-    console.log(
+    this.logger.log(
       `🏁 Finalizado batch para evento ${eventId}. Éxitos: ${successCount}, Errores: ${errorCount}`,
     );
   }

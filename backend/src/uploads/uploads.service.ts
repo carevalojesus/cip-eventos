@@ -35,7 +35,7 @@ export class UploadsService {
     this.validateContentType(contentType);
     this.validateContentLength(contentLength);
 
-    const s3 = await this.getOrCreateClient();
+    const s3 = this.getOrCreateClient();
     await this.ensureBucketExists(s3);
 
     const key = `avatars/${uuidv4()}`;
@@ -57,7 +57,7 @@ export class UploadsService {
     filename: string,
     contentType: string,
   ): Promise<string> {
-    const s3 = await this.getOrCreateClient();
+    const s3 = this.getOrCreateClient();
     await this.ensureBucketExists(s3);
 
     const key = `certificates/${uuidv4()}-${filename}`;
@@ -74,7 +74,7 @@ export class UploadsService {
     return `${normalizedEndpoint}/${this.bucket}/${key}`;
   }
 
-  private async getOrCreateClient(): Promise<S3Client> {
+  private getOrCreateClient(): S3Client {
     if (this.s3) return this.s3;
 
     const region =

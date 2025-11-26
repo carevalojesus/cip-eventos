@@ -1,6 +1,10 @@
 import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { ValidationPipe, ClassSerializerInterceptor } from '@nestjs/common';
+import {
+  ValidationPipe,
+  ClassSerializerInterceptor,
+  Logger,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
 async function bootstrap() {
@@ -24,10 +28,12 @@ async function bootstrap() {
   app.enableCors();
 
   await app.listen(port);
-  console.log(`🚀 Servidor corriendo en: http://localhost:${port}/${prefix}`);
+  const logger = new Logger('Bootstrap');
+  logger.log(`🚀 Servidor corriendo en: http://localhost:${port}/${prefix}`);
 }
 
 bootstrap().catch((err) => {
-  console.error('Error al inicial el servidor:', err);
+  const logger = new Logger('Bootstrap');
+  logger.error('Error al inicial el servidor:', err);
   process.exit(1);
 });

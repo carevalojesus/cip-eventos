@@ -4,6 +4,7 @@ import { PaymentsService } from './payments.service';
 import { PaymentsController } from './payments.controller';
 import { Payment } from './entities/payment.entity';
 import { Registration } from '../registrations/entities/registration.entity';
+import { PaypalService } from './paypal.service';
 
 @Module({
   imports: [
@@ -11,6 +12,6 @@ import { Registration } from '../registrations/entities/registration.entity';
     // MailModule ya es Global, así que no hace falta importarlo aquí si tiene @Global()
   ],
   controllers: [PaymentsController],
-  providers: [PaymentsService],
+  providers: [PaymentsService, PaypalService],
 })
 export class PaymentsModule {}

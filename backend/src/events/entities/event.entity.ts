@@ -144,7 +144,7 @@ export class Event {
   @ManyToMany(() => Signer)
   @JoinTable({ name: 'event_signers' })
   signers: Signer[];
-  
+
   // 👇 Configuración del Certificado
   @Column({ type: 'boolean', default: false })
   hasCertificate: boolean;
