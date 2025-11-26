@@ -19,6 +19,8 @@ import { AttendeesModule } from './attendees/attendees.module';
 import { RegistrationsModule } from './registrations/registrations.module';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { PaymentsModule } from './payments/payments.module';
+import { SignersModule } from './signers/signers.module';
+import { CertificatesModule } from './certificates/certificates.module';
 
 @Module({
   imports: [
@@ -65,6 +67,8 @@ import { PaymentsModule } from './payments/payments.module';
     AttendeesModule,
     RegistrationsModule,
     PaymentsModule,
+    SignersModule,
+    CertificatesModule,
   ],
   controllers: [AppController],
   providers: [
