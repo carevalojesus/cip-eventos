@@ -13,11 +13,14 @@ export class EventModalityValidatorPipe implements PipeTransform {
 
     // 1. Validar Presencial
     if (value.modalityId === MODALITY_PRESENTIAL) {
+      // Relaxed validation: location is no longer mandatory on creation
+      /*
       if (!value.location) {
         throw new BadRequestException(
           'Para eventos Presenciales, la ubicación (location) es obligatoria',
         );
       }
+      */
       if (value.virtualAccess) {
         throw new BadRequestException(
           'Un evento Presencial no debe tener accesos virtuales',
@@ -27,11 +30,14 @@ export class EventModalityValidatorPipe implements PipeTransform {
 
     // 2. Validar Virtual
     if (value.modalityId === MODALITY_VIRTUAL) {
+      // Relaxed validation: virtualAccess is no longer mandatory on creation
+      /*
       if (!value.virtualAccess) {
         throw new BadRequestException(
           'Para eventos Virtuales, el acceso virtual es obligatorio',
         );
       }
+      */
       if (value.location) {
         throw new BadRequestException(
           'Un evento Virtual no debe tener ubicación física',
@@ -41,11 +47,14 @@ export class EventModalityValidatorPipe implements PipeTransform {
 
     // 3. Validar Híbrido
     if (value.modalityId === MODALITY_HYBRID) {
+      // Relaxed validation: location and virtualAccess are no longer mandatory on creation
+      /*
       if (!value.location || !value.virtualAccess) {
         throw new BadRequestException(
           'Para eventos Híbridos, se requiere tanto ubicación como acceso virtual',
         );
       }
+      */
     }
 
     // Si todo está bien, dejamos pasar los datos

@@ -182,6 +182,7 @@ export class EventsService {
     // Verificar que el evento existe y está activo
     const existingEvent = await this.eventRepository.findOne({
       where: { id, isActive: true },
+      relations: ['virtualAccess'],
     });
     if (!existingEvent)
       throw new NotFoundException(`Event with ID ${id} not found`);
@@ -242,6 +243,46 @@ export class EventsService {
     // Regenerate slug if title changed
     if (eventData.title) {
       event.slug = this.generateSlug(eventData.title);
+    }
+
+    // Validar consistencia de modalidad
+    // Determinamos la modalidad final
+    const finalModalityId = event.modality?.id ?? existingEvent.modality?.id;
+    const MODALITY_PRESENTIAL = 1;
+    const MODALITY_VIRTUAL = 2;
+    const MODALITY_HYBRID = 3;
+
+    // Determinamos location y virtualAccess finales
+    // Nota: location es eager, así que event.location debería tener el valor correcto (nuevo o existente)
+    // virtualAccess es lazy, así que si no se actualizó, podría no estar en 'event', usamos existingEvent
+    const finalLocation = event.location;
+    const finalVirtualAccess =
+      'virtualAccess' in updateEventDto
+        ? event.virtualAccess
+        : existingEvent.virtualAccess;
+
+    if (finalModalityId === MODALITY_PRESENTIAL) {
+      if (finalVirtualAccess) {
+        throw new BadRequestException(
+          'Un evento Presencial no debe tener accesos virtuales',
+        );
+      }
+    }
+
+    if (finalModalityId === MODALITY_VIRTUAL) {
+      if (finalLocation) {
+        throw new BadRequestException(
+          'Un evento Virtual no debe tener ubicación física',
+        );
+      }
+    }
+
+    if (finalModalityId === MODALITY_HYBRID) {
+      // Validación flexible: Evento híbrido puede tener:
+      // - Solo location (se agregará virtualAccess después)
+      // - Solo virtualAccess (se agregará location después)
+      // - Ambos (completo)
+      // No se aplica validación estricta para máxima flexibilidad
     }
 
     return this.eventRepository.save(event);
