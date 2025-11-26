@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Injectable,
   NotFoundException,
+  Logger,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository, In, LessThan } from 'typeorm';
@@ -25,6 +26,8 @@ import { CipIntegrationService } from '../cip-integration/cip-integration.servic
 
 @Injectable()
 export class RegistrationsService {
+  private readonly logger = new Logger(RegistrationsService.name);
+
   constructor(
     @InjectRepository(Registration) private regRepo: Repository<Registration>,
     @InjectRepository(EventTicket) private ticketRepo: Repository<EventTicket>,
@@ -172,7 +175,7 @@ export class RegistrationsService {
         if (savedReg.status === RegistrationStatus.CONFIRMED) {
           // TODO: Enviar email de confirmación
         } else if (finalPrice > 0) {
-          console.log('⏳ Enviar correo de instrucciones de pago...');
+          this.logger.log('⏳ Enviar correo de instrucciones de pago...');
         }
 
         return {
@@ -230,7 +233,7 @@ export class RegistrationsService {
   // 🧹 CRON: Limpiar registros pendientes antiguos
   @Cron(CronExpression.EVERY_10_MINUTES)
   async cleanupPendingRegistrations() {
-    console.log('🧹 Ejecutando limpieza de registros pendientes...');
+    this.logger.log('🧹 Ejecutando limpieza de registros pendientes...');
     const timeoutMinutes = 30;
     const thresholdDate = new Date(Date.now() - timeoutMinutes * 60 * 1000);
 
@@ -245,11 +248,11 @@ export class RegistrationsService {
     );
 
     if (result.affected && result.affected > 0) {
-      console.log(
+      this.logger.log(
         `✅ Se cancelaron ${result.affected} registros pendientes antiguos.`,
       );
     } else {
-      console.log('👍 No se encontraron registros para cancelar.');
+      this.logger.log('👍 No se encontraron registros para cancelar.');
     }
   }
 

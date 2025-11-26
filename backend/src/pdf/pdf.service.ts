@@ -1,10 +1,14 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+} from '@nestjs/common';
 import * as puppeteer from 'puppeteer';
 import { Browser, Page } from 'puppeteer';
 import * as hbs from 'handlebars';
 import * as fs from 'fs-extra';
 import * as path from 'path';
-import { v4 as uuidv4 } from 'uuid';
+
 import { UploadsService } from '../uploads/uploads.service';
 
 // Definimos la interfaz de los datos que espera la plantilla
@@ -20,6 +24,8 @@ interface CertificateData {
 
 @Injectable()
 export class PdfService {
+  private readonly logger = new Logger(PdfService.name);
+
   private readonly templatesPath = path.join(
     __dirname,
     '../certificates/templates/certificates',
@@ -69,11 +75,11 @@ export class PdfService {
         'application/pdf',
       );
 
-      console.log(`✅ PDF subido a: ${publicUrl}`);
+      this.logger.log(`✅ PDF subido a: ${publicUrl}`);
 
       return publicUrl;
     } catch (error) {
-      console.error('Error generando PDF:', error);
+      this.logger.error('Error generando PDF:', error);
       throw new InternalServerErrorException(
         'Error al generar el documento PDF',
       );

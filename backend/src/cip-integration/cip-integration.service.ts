@@ -11,6 +11,7 @@ export class CipIntegrationService {
   private readonly logger = new Logger(CipIntegrationService.name);
 
   async validateCip(cipCode: string): Promise<CipValidationResponse> {
+    await Promise.resolve(); // Simular operación asíncrona
     // ⚠️ ADVERTENCIA: Esta es una implementación SIMULADA
     // En producción, esto debe conectarse a la API real del CIP
 

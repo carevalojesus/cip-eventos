@@ -15,6 +15,7 @@ import { Speaker } from '../speakers/entities/speaker.entity';
 import { Organizer } from '../organizers/entities/organizer.entity';
 import { EventTicket } from './entities/event-ticket.entity';
 import { EventSession } from './entities/event-session.entity';
+import { Signer } from '../signers/entities/signer.entity';
 import { RegistrationsModule } from '../registrations/registrations.module';
 
 @Module({
@@ -31,6 +32,7 @@ import { RegistrationsModule } from '../registrations/registrations.module';
       Organizer,
       EventTicket,
       EventSession,
+      Signer,
     ]),
     AuthModule,
     forwardRef(() => RegistrationsModule),

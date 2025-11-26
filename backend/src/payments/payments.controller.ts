@@ -11,6 +11,7 @@ import { CreatePaymentDto } from './dto/create-payment.dto';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { ReportPaymentDto } from './dto/report-payment.dto';
 import { ReviewPaymentDto } from './dto/review-payment.dto';
+import { CapturePaymentDto } from './dto/capture-payment.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
@@ -50,6 +51,15 @@ export class PaymentsController {
     return this.paymentsService.createPaymentIntent(
       createPaymentDto,
       user.userId,
+    );
+  }
+
+  @Post('paypal/capture')
+  @UseGuards(JwtAuthGuard)
+  async capturePayment(@Body() dto: CapturePaymentDto) {
+    return this.paymentsService.completePaypalPayment(
+      dto.paymentId,
+      dto.orderId,
     );
   }
 }

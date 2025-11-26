@@ -1,18 +1,28 @@
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToOne,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 import { Registration } from '../../registrations/entities/registration.entity';
 import { User } from '../../users/entities/user.entity';
 
 export enum PaymentStatus {
-  PENDING = 'PENDING',                   // Creado, esperando acción
+  PENDING = 'PENDING', // Creado, esperando acción
   WAITING_APPROVAL = 'WAITING_APPROVAL', // Usuario reportó pago (Yapeó), falta que Admin revise
-  COMPLETED = 'COMPLETED',               // Dinero confirmado, Ticket enviado
-  REJECTED = 'REJECTED',                 // Admin rechazó (foto falsa, monto incorrecto)
+  COMPLETED = 'COMPLETED', // Dinero confirmado, Ticket enviado
+  REJECTED = 'REJECTED', // Admin rechazó (foto falsa, monto incorrecto)
   REFUNDED = 'REFUNDED',
 }
 
 export enum PaymentProvider {
   STRIPE = 'STRIPE',
   NIUBIZ = 'NIUBIZ',
+  PAYPAL = 'PAYPAL',
   // 👇 NUEVOS MÉTODOS
   YAPE = 'YAPE',
   PLIN = 'PLIN',
@@ -62,7 +72,7 @@ export class Payment {
 
   // ... (TransactionId, Metadata, Registration, Fechas) se quedan igual
   @Column({ type: 'text', nullable: true })
-  transactionId: string | null; 
+  transactionId: string | null;
 
   @Column({ type: 'jsonb', nullable: true })
   metadata: any;

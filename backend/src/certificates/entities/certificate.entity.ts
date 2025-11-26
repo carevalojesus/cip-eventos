@@ -1,4 +1,13 @@
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, Index, UpdateDateColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  Index,
+  UpdateDateColumn,
+} from 'typeorm';
 import { Event } from '../../events/entities/event.entity';
 import { Registration } from '../../registrations/entities/registration.entity';
 import { Speaker } from '../../speakers/entities/speaker.entity';
@@ -6,8 +15,8 @@ import { User } from '../../users/entities/user.entity';
 
 export enum CertificateType {
   ATTENDANCE = 'ATTENDANCE', // Asistencia
-  SPEAKER = 'SPEAKER',       // Ponente
-  ORGANIZER = 'ORGANIZER',   // Organizador
+  SPEAKER = 'SPEAKER', // Ponente
+  ORGANIZER = 'ORGANIZER', // Organizador
 }
 
 export enum CertificateStatus {
@@ -23,7 +32,11 @@ export class Certificate {
   @Column({ type: 'enum', enum: CertificateType })
   type: CertificateType;
 
-  @Column({ type: 'enum', enum: CertificateStatus, default: CertificateStatus.ACTIVE })
+  @Column({
+    type: 'enum',
+    enum: CertificateStatus,
+    default: CertificateStatus.ACTIVE,
+  })
   status: CertificateStatus;
 
   // 👇 CÓDIGO ÚNICO DE VALIDACIÓN (Vital para evitar fraudes)
@@ -46,7 +59,7 @@ export class Certificate {
   };
 
   // --- VINCULACIÓN (Polimórfica simplificada) ---
-  
+
   @ManyToOne(() => Event, { nullable: false })
   @JoinColumn({ name: 'eventId' })
   event: Event;
