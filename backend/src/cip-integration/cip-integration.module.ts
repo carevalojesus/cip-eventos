@@ -5,9 +5,10 @@ import { CipSeederService } from './cip-seeder.service';
 import { UploadsModule } from '../uploads/uploads.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CipMember } from './entities/cip-member.entity';
+import { AuthModule } from '../auth/auth.module';
 
 @Module({
-  imports: [UploadsModule, TypeOrmModule.forFeature([CipMember])],
+  imports: [TypeOrmModule.forFeature([CipMember]), AuthModule, UploadsModule],
   controllers: [CipController],
   providers: [CipIntegrationService, CipSeederService],
   exports: [CipIntegrationService],

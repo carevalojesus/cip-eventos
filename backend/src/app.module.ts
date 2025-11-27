@@ -24,6 +24,8 @@ import { CertificatesModule } from './certificates/certificates.module';
 import { PdfModule } from './pdf/pdf.module';
 import { CommonModule } from './common/common.module';
 import { ScheduleModule } from '@nestjs/schedule';
+import { WalletModule } from './wallet/wallet.module';
+import { CipIntegrationModule } from './cip-integration/cip-integration.module';
 
 @Module({
   imports: [
@@ -75,6 +77,8 @@ import { ScheduleModule } from '@nestjs/schedule';
     PdfModule,
     CommonModule,
     ScheduleModule.forRoot(),
+    WalletModule,
+    CipIntegrationModule,
   ],
   controllers: [AppController],
   providers: [
