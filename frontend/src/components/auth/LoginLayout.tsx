@@ -19,11 +19,11 @@ export const LoginLayout: React.FC<LoginLayoutProps> = ({
   const { t } = useTranslation();
 
   return (
-    <div className="container relative h-screen flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-[3fr_2fr] lg:px-0">
-      {/* Left Panel - Brand (60% width) */}
+    <div className="container relative h-screen flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-[7fr_3fr] lg:px-0">
+      {/* Left Panel - Brand (70% width) */}
       {brandPanel}
 
-      {/* Right Panel - Form (40% width) */}
+      {/* Right Panel - Form (30% width) */}
       <div className="relative flex h-full items-center p-4 lg:p-8 bg-background">
         <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
           <div className="flex flex-col space-y-2 text-center">

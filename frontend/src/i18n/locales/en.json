@@ -29,8 +29,24 @@
     "brand": {
       "council": "Departmental Council",
       "region": "Of Loreto",
-      "quote": "Engineering is not only knowing and understanding, but making known and making understood.",
-      "quote_author": "Engineers Association of Peru"
+      "quotes": [
+        {
+          "text": "Engineering is not only knowing and understanding, but making known and making understood.",
+          "author": "Engineers Association of Peru"
+        },
+        {
+          "text": "Engineering is the art of applying scientific knowledge to the invention, improvement and use of technique.",
+          "author": "Engineers Association of Peru"
+        },
+        {
+          "text": "Engineers transform dreams into reality, solving today's challenges to build tomorrow.",
+          "author": "Engineers Association of Peru"
+        },
+        {
+          "text": "Excellence in engineering requires passion, dedication and commitment to sustainable development.",
+          "author": "Engineers Association of Peru"
+        }
+      ]
     },
     "footer": {
       "platform": "Official platform of",
