@@ -56,10 +56,14 @@ export class PaymentsController {
 
   @Post('paypal/capture')
   @UseGuards(JwtAuthGuard)
-  async capturePayment(@Body() dto: CapturePaymentDto) {
+  async capturePayment(
+    @Body() dto: CapturePaymentDto,
+    @CurrentUser() user: { userId: string },
+  ) {
     return this.paymentsService.completePaypalPayment(
       dto.paymentId,
       dto.orderId,
+      user.userId,
     );
   }
 }

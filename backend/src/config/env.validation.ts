@@ -73,6 +73,69 @@ class EnvironmentVariables {
   @IsOptional()
   @IsString()
   FRONTEND_RESET_PATH?: string;
+
+  // --- Mail Configuration ---
+  @IsString()
+  @IsNotEmpty()
+  MAIL_HOST: string;
+
+  @IsNumber()
+  MAIL_PORT: number;
+
+  @IsString()
+  @IsNotEmpty()
+  MAIL_USER: string;
+
+  @IsString()
+  @IsNotEmpty()
+  MAIL_PASS: string;
+
+  @IsString()
+  @IsNotEmpty()
+  MAIL_FROM: string;
+
+  // --- MinIO/S3 Configuration ---
+  @IsString()
+  @IsNotEmpty()
+  MINIO_ACCESS_KEY: string;
+
+  @IsString()
+  @IsNotEmpty()
+  MINIO_SECRET_KEY: string;
+
+  @IsString()
+  @IsNotEmpty()
+  MINIO_ENDPOINT: string;
+
+  @IsString()
+  @IsNotEmpty()
+  MINIO_BUCKET: string;
+
+  @IsString()
+  @IsNotEmpty()
+  MINIO_REGION: string;
+
+  // --- PayPal Configuration ---
+  @IsOptional()
+  @IsString()
+  PAYPAL_API_URL?: string;
+
+  @IsOptional()
+  @IsString()
+  PAYPAL_CLIENT_ID?: string;
+
+  @IsOptional()
+  @IsString()
+  PAYPAL_CLIENT_SECRET?: string;
+
+  // --- JWT Expiration ---
+  @IsOptional()
+  @IsString()
+  JWT_EXPIRES_IN?: string;
+
+  @IsOptional()
+  @IsString()
+  JWT_REFRESH_EXPIRES_IN?: string;
 }
 
 export function validate(config: Record<string, unknown>) {
