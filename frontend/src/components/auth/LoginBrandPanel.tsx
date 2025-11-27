@@ -1,6 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { AUTH_ASSETS } from "@/constants/auth";
+import { QuoteCarousel } from "./QuoteCarousel";
 
 /**
  * LoginBrandPanel Component
@@ -45,17 +46,8 @@ export const LoginBrandPanel: React.FC = () => {
         </div>
       </div>
 
-      {/* Institutional Quote */}
-      <div className="relative z-20 mt-auto">
-        <blockquote className="space-y-2 border-l-4 border-primary pl-4">
-          <p className="text-lg italic text-gray-200">
-            &ldquo;{t("login.brand.quote")}&rdquo;
-          </p>
-          <footer className="text-sm font-bold text-primary">
-            {t("login.brand.quote_author")}
-          </footer>
-        </blockquote>
-      </div>
+      {/* Institutional Quote Carousel */}
+      <QuoteCarousel interval={8000} />
     </div>
   );
 };

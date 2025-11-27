@@ -29,8 +29,24 @@
     "brand": {
       "council": "Consejo Departamental",
       "region": "De Loreto",
-      "quote": "La ingeniería no es solo saber y conocer, sino hacer saber y hacer conocer.",
-      "quote_author": "Colegio de Ingenieros del Perú"
+      "quotes": [
+        {
+          "text": "La ingeniería no es solo saber y conocer, sino hacer saber y hacer conocer.",
+          "author": "Colegio de Ingenieros del Perú"
+        },
+        {
+          "text": "La ingeniería es el arte de aplicar los conocimientos científicos a la invención, perfeccionamiento y utilización de la técnica.",
+          "author": "Colegio de Ingenieros del Perú"
+        },
+        {
+          "text": "Los ingenieros transforman sueños en realidad, resolviendo los desafíos de hoy para construir el mañana.",
+          "author": "Colegio de Ingenieros del Perú"
+        },
+        {
+          "text": "La excelencia en la ingeniería requiere pasión, dedicación y compromiso con el desarrollo sostenible.",
+          "author": "Colegio de Ingenieros del Perú"
+        }
+      ]
     },
     "footer": {
       "platform": "Plataforma oficial del",
