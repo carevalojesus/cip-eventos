@@ -73,7 +73,7 @@ export class MailService {
     eventDate: string,
     eventLocation: string,
   ) {
-    const qrCode = await this.qrService.generateQrCode(ticketCode);
+    const qrCode = await this.qrService.generateQrBase64(ticketCode);
 
     await this.mailerService.sendMail({
       to: email,
