@@ -9,6 +9,7 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
+import { I18nService, I18nContext } from 'nestjs-i18n';
 import { LoginAuthDto } from './dto/login-auth.dto';
 import { RegisterAuthDto } from './dto/register-auth.dto';
 import { Public } from './decorators/public.decorator';
@@ -35,7 +36,10 @@ interface RequestWithRefreshToken {
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly i18n: I18nService,
+  ) {}
 
   @Public()
   @Post('login')
@@ -70,7 +74,11 @@ export class AuthController {
   @Get('confirm')
   async confirm(@Query('token') token: string) {
     if (!token) {
-      throw new BadRequestException('Token requerido');
+      throw new BadRequestException(
+        this.i18n.t('auth.token_required', {
+          lang: I18nContext.current()?.lang,
+        }),
+      );
     }
     return this.authService.verifyUser(token);
   }

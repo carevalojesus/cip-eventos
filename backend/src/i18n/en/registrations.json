@@ -1,0 +1,15 @@
+{
+  "ticket_not_found": "Ticket not found or unavailable",
+  "event_not_available": "Event not available",
+  "sold_out": "Sold out",
+  "incomplete_guest_data": "Incomplete guest data",
+  "invalid_cip_code": "Invalid CIP code. Please verify and try again.",
+  "already_registered": "You are already registered for this event",
+  "cip_required": "This ticket requires a CIP Code",
+  "not_habilitated": "You are not enabled. Please choose the General ticket.",
+  "process_started": "Process started",
+  "registration_not_found": "Registration not found",
+  "ticket_not_found_code": "Ticket not found",
+  "already_checked_in": "Attendee {{name}} already checked in at {{time}}",
+  "check_in_success": "Check-in successful"
+}

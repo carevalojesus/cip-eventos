@@ -1,0 +1,14 @@
+{
+  "not_found": "No encontrado",
+  "user_not_found": "Usuario no encontrado",
+  "already_exists": "Ya existe",
+  "created_successfully": "Creado exitosamente",
+  "updated_successfully": "Actualizado exitosamente",
+  "deleted_successfully": "Eliminado exitosamente",
+  "operation_successful": "Operación exitosa",
+  "invalid_data": "Datos inválidos",
+  "unauthorized": "No autorizado",
+  "forbidden": "Prohibido",
+  "internal_error": "Error interno del servidor",
+  "bad_request": "Solicitud incorrecta"
+}

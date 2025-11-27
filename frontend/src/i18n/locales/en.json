@@ -1,0 +1,84 @@
+{
+  "welcome": "Welcome to Dashboard",
+  "greeting": "Hello {{name}}",
+  "events": "Events",
+  "create_event": "Create Event",
+  "edit_event": "Edit Event",
+  "delete_event": "Delete Event",
+  "no_events": "No events available",
+  "event_count_one": "{{count}} event",
+  "event_count_other": "{{count}} events",
+  "login": {
+    "title": "Sign In",
+    "email": "Email Address",
+    "password": "Password",
+    "btn": "Login",
+    "forgot_password": "Forgot your password?",
+    "no_account": "Don't have an account?",
+    "sign_up": "Sign Up",
+    "error": "Login error",
+    "success": "Successfully logged in"
+  },
+  "logout": {
+    "btn": "Logout",
+    "confirm": "Are you sure you want to logout?",
+    "success": "Successfully logged out"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "stats": "Statistics",
+    "recent_events": "Recent Events",
+    "total_events": "Total Events",
+    "upcoming_events": "Upcoming Events"
+  },
+  "event": {
+    "title": "Title",
+    "description": "Description",
+    "date": "Date",
+    "location": "Location",
+    "capacity": "Capacity",
+    "attendees": "Attendees",
+    "status": "Status",
+    "created_at": "Created at",
+    "updated_at": "Updated at"
+  },
+  "form": {
+    "required": "This field is required",
+    "invalid_email": "Invalid email address",
+    "min_length": "Minimum {{count}} characters",
+    "max_length": "Maximum {{count}} characters",
+    "save": "Save",
+    "cancel": "Cancel",
+    "submit": "Submit",
+    "loading": "Loading...",
+    "success": "Operation successful",
+    "error": "An error occurred"
+  },
+  "common": {
+    "yes": "Yes",
+    "no": "No",
+    "ok": "OK",
+    "close": "Close",
+    "delete": "Delete",
+    "edit": "Edit",
+    "view": "View",
+    "search": "Search",
+    "filter": "Filter",
+    "sort": "Sort",
+    "export": "Export",
+    "import": "Import",
+    "settings": "Settings",
+    "help": "Help",
+    "about": "About",
+    "language": "Language"
+  },
+  "errors": {
+    "404": "Page not found",
+    "500": "Server error",
+    "network": "Connection error",
+    "unauthorized": "Unauthorized",
+    "forbidden": "Access denied",
+    "validation": "Validation error",
+    "unknown": "Unknown error"
+  }
+}

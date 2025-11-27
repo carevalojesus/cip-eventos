@@ -1,0 +1,16 @@
+{
+  "registration_not_found": "Inscripción no encontrada",
+  "already_paid": "Esta inscripción ya está pagada/confirmada",
+  "registration_cancelled": "Esta inscripción fue cancelada",
+  "no_permission": "No tienes permiso para pagar esta inscripción",
+  "payment_intent_created": "Intención de pago creada",
+  "payment_not_found": "Pago no encontrado",
+  "already_completed": "Ya pagado",
+  "no_permission_capture": "No tienes permiso para capturar este pago",
+  "order_id_mismatch": "El ID de orden de PayPal no coincide",
+  "paypal_success": "Pago con PayPal exitoso",
+  "paypal_not_approved": "El pago no fue aprobado por PayPal",
+  "no_permission_report": "No tienes permiso para reportar este pago",
+  "payment_completed": "Este pago ya fue completado",
+  "already_completed_review": "Ya completado"
+}

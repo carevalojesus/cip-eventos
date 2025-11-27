@@ -1,0 +1,5 @@
+{
+  "profile_already_exists": "El usuario ya tiene un perfil creado",
+  "user_not_found": "Usuario no encontrado",
+  "profile_not_found": "No se encontró el perfil del usuario"
+}
