@@ -17,8 +17,17 @@ const { title } = Astro.props;
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
         <meta name="generator" content={Astro.generator} />
         <title>{title}</title>
+        <script>
+            // Actualizar atributo lang del HTML según localStorage
+            const savedLang = localStorage.getItem('i18nextLng') || 'es';
+            document.documentElement.lang = savedLang;
+        </script>
     </head>
     <body>
         <slot />
+        <script>
+            // Inicializar i18next para componentes React
+            import '../i18n';
+        </script>
     </body>
 </html>

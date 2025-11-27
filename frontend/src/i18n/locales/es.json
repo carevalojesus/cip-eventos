@@ -1,0 +1,84 @@
+{
+  "welcome": "Bienvenido al Panel",
+  "greeting": "Hola {{name}}",
+  "events": "Eventos",
+  "create_event": "Crear Evento",
+  "edit_event": "Editar Evento",
+  "delete_event": "Eliminar Evento",
+  "no_events": "No hay eventos disponibles",
+  "event_count_one": "{{count}} evento",
+  "event_count_other": "{{count}} eventos",
+  "login": {
+    "title": "Iniciar Sesión",
+    "email": "Correo Electrónico",
+    "password": "Contraseña",
+    "btn": "Ingresar",
+    "forgot_password": "¿Olvidaste tu contraseña?",
+    "no_account": "¿No tienes cuenta?",
+    "sign_up": "Registrarse",
+    "error": "Error al iniciar sesión",
+    "success": "Sesión iniciada correctamente"
+  },
+  "logout": {
+    "btn": "Cerrar Sesión",
+    "confirm": "¿Estás seguro de que deseas cerrar sesión?",
+    "success": "Sesión cerrada correctamente"
+  },
+  "dashboard": {
+    "title": "Panel de Control",
+    "stats": "Estadísticas",
+    "recent_events": "Eventos Recientes",
+    "total_events": "Total de Eventos",
+    "upcoming_events": "Próximos Eventos"
+  },
+  "event": {
+    "title": "Título",
+    "description": "Descripción",
+    "date": "Fecha",
+    "location": "Ubicación",
+    "capacity": "Capacidad",
+    "attendees": "Asistentes",
+    "status": "Estado",
+    "created_at": "Creado el",
+    "updated_at": "Actualizado el"
+  },
+  "form": {
+    "required": "Este campo es obligatorio",
+    "invalid_email": "Correo electrónico inválido",
+    "min_length": "Mínimo {{count}} caracteres",
+    "max_length": "Máximo {{count}} caracteres",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "submit": "Enviar",
+    "loading": "Cargando...",
+    "success": "Operación exitosa",
+    "error": "Ocurrió un error"
+  },
+  "common": {
+    "yes": "Sí",
+    "no": "No",
+    "ok": "Aceptar",
+    "close": "Cerrar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "view": "Ver",
+    "search": "Buscar",
+    "filter": "Filtrar",
+    "sort": "Ordenar",
+    "export": "Exportar",
+    "import": "Importar",
+    "settings": "Configuración",
+    "help": "Ayuda",
+    "about": "Acerca de",
+    "language": "Idioma"
+  },
+  "errors": {
+    "404": "Página no encontrada",
+    "500": "Error del servidor",
+    "network": "Error de conexión",
+    "unauthorized": "No autorizado",
+    "forbidden": "Acceso denegado",
+    "validation": "Error de validación",
+    "unknown": "Error desconocido"
+  }
+}

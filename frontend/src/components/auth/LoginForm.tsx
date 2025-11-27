@@ -1,6 +1,7 @@
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
+import { useTranslation } from "react-i18next"
 
 // Componentes de Shadcn (se asume que ya los instalaste con npx shadcn@latest add form input button)
 import { Button } from "@/components/ui/button"
@@ -16,17 +17,18 @@ import { Input } from "@/components/ui/input"
 import api from "@/lib/api"
 import { useAuthStore } from "@/store/auth.store"
 
-// 1. Definir el esquema (Igual que tu DTO del backend)
-const loginSchema = z.object({
-  email: z.string().email({ message: "Correo inválido" }),
-  password: z.string().min(6, { message: "La contraseña debe tener al menos 6 caracteres" }),
-})
-
-// 2. Inferir el tipo automáticamente (No hace falta crear interface manual)
-type LoginFormValues = z.infer<typeof loginSchema>
-
 export function LoginForm() {
+  const { t } = useTranslation()
   const login = useAuthStore((state) => state.login)
+
+  // 1. Definir el esquema con mensajes traducidos (dentro del componente para acceder a t())
+  const loginSchema = z.object({
+    email: z.string().email({ message: t("form.invalid_email") }),
+    password: z.string().min(6, { message: t("form.min_length", { count: 6 }) }),
+  })
+
+  // 2. Inferir el tipo automáticamente
+  type LoginFormValues = z.infer<typeof loginSchema>
 
   // 3. Hook del formulario
   const form = useForm<LoginFormValues>({
@@ -45,8 +47,8 @@ export function LoginForm() {
       window.location.href = '/admin'
     } catch (error) {
       // Puedes setear errores generales en el formulario si falla la API
-      form.setError("root", { 
-        message: "Credenciales incorrectas" 
+      form.setError("root", {
+        message: t("login.error")
       })
     }
   }
@@ -60,11 +62,11 @@ export function LoginForm() {
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Correo Electrónico</FormLabel>
+              <FormLabel>{t("login.email")}</FormLabel>
               <FormControl>
                 <Input placeholder="admin@cip.org.pe" {...field} />
               </FormControl>
-              <FormMessage /> {/* Aquí sale el error de Zod automático */}
+              <FormMessage />
             </FormItem>
           )}
         />
@@ -74,7 +76,7 @@ export function LoginForm() {
           name="password"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Contraseña</FormLabel>
+              <FormLabel>{t("login.password")}</FormLabel>
               <FormControl>
                 <Input type="password" {...field} />
               </FormControl>
@@ -90,7 +92,7 @@ export function LoginForm() {
         )}
 
         <Button type="submit" className="w-full">
-          Ingresar
+          {t("login.btn")}
         </Button>
       </form>
     </Form>
