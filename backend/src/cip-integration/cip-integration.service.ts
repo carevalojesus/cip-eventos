@@ -1,82 +1,68 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { CipMember } from './entities/cip-member.entity';
 
 interface CipValidationResponse {
   isValid: boolean;
   isHabilitado: boolean;
   message?: string;
+  memberData?: {
+    fullName: string;
+    chapter: string;
+    condition: string;
+  };
 }
 
 @Injectable()
 export class CipIntegrationService {
   private readonly logger = new Logger(CipIntegrationService.name);
 
+  constructor(
+    @InjectRepository(CipMember)
+    private readonly memberRepo: Repository<CipMember>,
+  ) {}
+
   async validateCip(cipCode: string): Promise<CipValidationResponse> {
-    await Promise.resolve(); // Simular operación asíncrona
-    // ⚠️ ADVERTENCIA: Esta es una implementación SIMULADA
-    // En producción, esto debe conectarse a la API real del CIP
+    // 1. Consultar Base de Datos Local (Sincronizada con el Excel)
+    const member = await this.memberRepo.findOneBy({ cip: cipCode });
 
-    // Validación básica de formato
-    if (!cipCode || cipCode.length < 4) {
-      this.logger.warn(
-        `Intento de validación CIP con formato inválido: ${cipCode}`,
-      );
+    if (!member) {
       return {
         isValid: false,
         isHabilitado: false,
-        message: 'Formato de código CIP inválido',
+        message: 'Código CIP no encontrado en el padrón',
       };
     }
 
-    // Simulación mejorada con logging de seguridad
-    // Termina en 0 = Inválido
-    // Termina en 1 = No Habilitado
-    // Otro = Habilitado
-
-    if (cipCode.endsWith('0')) {
-      this.logger.warn(`Código CIP inválido detectado: ${cipCode}`);
+    // 2. Retornar estado real
+    if (member.isHabilitado) {
       return {
-        isValid: false,
-        isHabilitado: false,
-        message: 'Código CIP no existe en el sistema',
+        isValid: true,
+        isHabilitado: true,
+        message: 'Ingeniero Habilitado',
+        memberData: {
+          fullName: member.fullName,
+          chapter: member.chapter,
+          condition: member.condition,
+        },
       };
-    }
-
-    if (cipCode.endsWith('1')) {
-      this.logger.log(`Código CIP válido pero no habilitado: ${cipCode}`);
+    } else {
       return {
         isValid: true,
         isHabilitado: false,
-        message: 'Colegiado no habilitado',
+        message: 'Ingeniero NO Habilitado',
+        memberData: {
+          fullName: member.fullName,
+          chapter: member.chapter,
+          condition: member.condition,
+        },
       };
     }
+  }
 
-    this.logger.log(`Validación CIP exitosa para: ${cipCode}`);
-    return {
-      isValid: true,
-      isHabilitado: true,
-      message: 'Colegiado habilitado',
-    };
-
-    // TODO: Reemplazar con integración real a la API del CIP
-    // Ejemplo de implementación real:
-    /*
-    try {
-      const response = await this.httpService.get(
-        `${CIP_API_URL}/validate/${cipCode}`,
-        {
-          headers: { Authorization: `Bearer ${CIP_API_KEY}` }
-        }
-      ).toPromise();
-
-      return {
-        isValid: response.data.exists,
-        isHabilitado: response.data.status === 'HABILITADO',
-        message: response.data.message
-      };
-    } catch (error) {
-      this.logger.error(`Error validando CIP: ${error.message}`);
-      throw new BadRequestException('Error al validar código CIP');
-    }
-    */
+  // Método extra útil: Buscar por DNI (Para cuando se registran con DNI)
+  async findByDni(dni: string) {
+    return await this.memberRepo.findOneBy({ dni });
   }
 }
