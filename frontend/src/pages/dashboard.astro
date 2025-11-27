@@ -1,0 +1,28 @@
+---
+import Layout from "../layouts/Layout.astro";
+import LogoutButton from "@/components/auth/LogoutButton";
+---
+
+<Layout title="Dashboard - CIP Eventos">
+    <div class="container mx-auto mt-10 p-4">
+        <h1 class="text-2xl font-bold mb-4">Bienvenido al Dashboard</h1>
+        <p class="mb-4">Has iniciado sesión correctamente.</p>
+
+        <div class="p-4 border rounded bg-gray-50">
+            <p class="mb-2">
+                Aquí puedes gestionar tus eventos y configuraciones.
+            </p>
+            <LogoutButton client:load />
+        </div>
+    </div>
+
+    <script>
+        import { useAuthStore } from "@/store/auth.store";
+
+        // Protección básica del lado del cliente
+        const token = useAuthStore.getState().token;
+        if (!token) {
+            window.location.href = "/login";
+        }
+    </script>
+</Layout>
