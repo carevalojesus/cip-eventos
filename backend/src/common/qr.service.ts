@@ -5,7 +5,7 @@ import * as QRCode from 'qrcode';
 export class QrService {
   private readonly logger = new Logger(QrService.name);
 
-  async generateQrCode(text: string): Promise<string> {
+  async generateQrBase64(text: string): Promise<string> {
     try {
       return await QRCode.toDataURL(text);
     } catch (err) {

@@ -62,7 +62,7 @@ export class CertificatesService {
     const validationCode = `CIP-${new Date().getFullYear()}-${uuidv4().slice(0, 6).toUpperCase()}`;
 
     // 2. 🔥 GENERAR EL PDF 🔥
-    const qrCode = await this.qrService.generateQrCode(validationCode);
+    const qrCode = await this.qrService.generateQrBase64(validationCode);
     const pdfRelativePath = await this.pdfService.generateCertificatePdf({
       recipientName: `${registration.attendee.firstName} ${registration.attendee.lastName}`,
       eventTitle: registration.event.title,
