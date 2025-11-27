@@ -7,6 +7,8 @@ import { User } from 'src/users/entities/user.entity';
 import { Public } from 'src/auth/decorators/public.decorator';
 import { Throttle } from '@nestjs/throttler';
 import { EmailVerifiedGuard } from 'src/auth/guards/email-verified.guard';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { Roles } from 'src/auth/decorators/roles.decorator';
 
 @Controller('registrations')
 export class RegistrationsController {
@@ -31,8 +33,9 @@ export class RegistrationsController {
   }
 
   // 🚪 Endpoint Check-In (Staff/Admin)
-  // TODO: Proteger con RolesGuard (ADMIN, STAFF)
   @Post('check-in')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ADMIN', 'STAFF')
   checkIn(@Body('ticketCode') ticketCode: string) {
     return this.regService.checkIn(ticketCode);
   }
