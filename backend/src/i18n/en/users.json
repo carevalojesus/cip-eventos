@@ -1,0 +1,5 @@
+{
+  "role_not_found": "Role with ID {{roleId}} does not exist",
+  "email_already_registered": "Email is already registered",
+  "user_not_found_id": "User with ID {{id}} not found"
+}

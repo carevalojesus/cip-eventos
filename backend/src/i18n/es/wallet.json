@@ -1,0 +1,9 @@
+{
+  "registration_required": "Registration is required",
+  "registration_missing_event": "Registration must include event relation",
+  "registration_missing_attendee": "Registration must include attendee relation",
+  "missing_ticket_code": "Registration must have a valid ticket code",
+  "missing_event_fields": "Event is missing required fields (title, startAt, endAt)",
+  "missing_attendee_fields": "Attendee is missing required fields (firstName, lastName)",
+  "wallet_link_failed": "Failed to generate Google Wallet link"
+}

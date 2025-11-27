@@ -26,6 +26,8 @@ import { CommonModule } from './common/common.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { WalletModule } from './wallet/wallet.module';
 import { CipIntegrationModule } from './cip-integration/cip-integration.module';
+import { AcceptLanguageResolver, I18nModule, QueryResolver } from 'nestjs-i18n';
+import * as path from 'path';
 
 @Module({
   imports: [
@@ -79,6 +81,18 @@ import { CipIntegrationModule } from './cip-integration/cip-integration.module';
     ScheduleModule.forRoot(),
     WalletModule,
     CipIntegrationModule,
+
+    I18nModule.forRoot({
+      fallbackLanguage: 'es',
+      loaderOptions: {
+        path: path.join(__dirname, '/i18n/'),
+        watch: true,
+      },
+      resolvers: [
+        { use: QueryResolver, options: ['lang'] }, // ?lang=en
+        AcceptLanguageResolver, // Header 'Accept-Language'
+      ],
+    }),
   ],
   controllers: [AppController],
   providers: [

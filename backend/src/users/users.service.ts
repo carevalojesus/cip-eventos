@@ -6,6 +6,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
+import { I18nService, I18nContext } from 'nestjs-i18n';
 
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -19,6 +20,7 @@ export class UsersService {
     private readonly userRepository: Repository<User>,
     @InjectRepository(Role)
     private readonly roleRepository: Repository<Role>,
+    private readonly i18n: I18nService,
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
@@ -28,7 +30,10 @@ export class UsersService {
 
     if (!role) {
       throw new NotFoundException(
-        `El rol con ID ${createUserDto.roleId} no existe`,
+        this.i18n.t('users.role_not_found', {
+          lang: I18nContext.current()?.lang,
+          args: { roleId: createUserDto.roleId },
+        }),
       );
     }
 
@@ -37,7 +42,11 @@ export class UsersService {
     });
 
     if (emailExists) {
-      throw new BadRequestException('El correo electrónico ya está registrado');
+      throw new BadRequestException(
+        this.i18n.t('users.email_already_registered', {
+          lang: I18nContext.current()?.lang,
+        }),
+      );
     }
 
     const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
@@ -65,7 +74,12 @@ export class UsersService {
     });
 
     if (!user)
-      throw new NotFoundException(`Usuario con ID ${id} no encontrado`);
+      throw new NotFoundException(
+        this.i18n.t('users.user_not_found_id', {
+          lang: I18nContext.current()?.lang,
+          args: { id },
+        }),
+      );
 
     return user;
   }
@@ -97,7 +111,12 @@ export class UsersService {
     });
 
     if (!user)
-      throw new NotFoundException(`Usuario con ID ${id} no encontrado`);
+      throw new NotFoundException(
+        this.i18n.t('users.user_not_found_id', {
+          lang: I18nContext.current()?.lang,
+          args: { id },
+        }),
+      );
 
     return await this.userRepository.save(user);
   }
@@ -106,7 +125,12 @@ export class UsersService {
     const userEntity = await this.userRepository.findOneBy({ id });
 
     if (!userEntity) {
-      throw new NotFoundException(`Usuario con ID ${id} no encontrado`);
+      throw new NotFoundException(
+        this.i18n.t('users.user_not_found_id', {
+          lang: I18nContext.current()?.lang,
+          args: { id },
+        }),
+      );
     }
 
     userEntity.isActive = false;

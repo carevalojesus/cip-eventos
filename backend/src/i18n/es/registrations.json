@@ -1,0 +1,15 @@
+{
+  "ticket_not_found": "Entrada no encontrada o no disponible",
+  "event_not_available": "Evento no disponible",
+  "sold_out": "Entradas agotadas",
+  "incomplete_guest_data": "Datos incompletos para invitado",
+  "invalid_cip_code": "Código CIP inválido. Verifique e intente nuevamente.",
+  "already_registered": "Ya estás inscrito en este evento",
+  "cip_required": "Esta entrada requiere Código CIP",
+  "not_habilitated": "Usted no está habilitado. Elija la entrada General.",
+  "process_started": "Proceso iniciado",
+  "registration_not_found": "Registration not found",
+  "ticket_not_found_code": "Entrada no encontrada",
+  "already_checked_in": "El asistente {{name}} ya ingresó a las {{time}}",
+  "check_in_success": "Ingreso exitoso"
+}

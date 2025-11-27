@@ -1,0 +1,22 @@
+{
+  "user_not_found": "User not found",
+  "event_type_not_found": "Event Type not found",
+  "event_category_not_found": "Event Category not found",
+  "event_modality_not_found": "Event Modality not found",
+  "speakers_not_found": "One or more speakers not found",
+  "organizers_not_found": "One or more organizers not found",
+  "event_not_found_id": "Event with ID {{id}} not found",
+  "speaker_not_found_id": "Speaker with ID {{speakerId}} not found",
+  "organizer_not_found_id": "Organizer with ID {{organizerId}} not found",
+  "event_not_found": "Evento no encontrado",
+  "session_not_found": "Sesión no encontrada",
+  "start_before_end": "La fecha de inicio debe ser anterior a la fecha de fin",
+  "session_outside_event_range": "La sesión debe estar dentro del rango del evento ({{startAt}} - {{endAt}})",
+  "session_overlap_room": "Ya existe una sesión en la sala \"{{room}}\" que se solapa con el horario especificado",
+  "speakers_not_found_one": "Uno o más ponentes no encontrados",
+  "speakers_not_in_event": "Algunos ponentes no están asignados a este evento. Primero debes agregarlos al evento.",
+  "speakers_not_in_event_short": "Algunos ponentes no están asignados a este evento",
+  "session_deleted": "Sesión eliminada correctamente",
+  "presential_no_virtual": "Un evento Presencial no debe tener accesos virtuales",
+  "virtual_no_location": "Un evento Virtual no debe tener ubicación física"
+}

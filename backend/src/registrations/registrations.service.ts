@@ -8,6 +8,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository, In, LessThan } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 import { Cron, CronExpression } from '@nestjs/schedule';
+import { I18nService, I18nContext } from 'nestjs-i18n';
 
 // Entidades
 import {
@@ -35,6 +36,7 @@ export class RegistrationsService {
     private readonly mailService: MailService,
     private readonly cipService: CipIntegrationService,
     private readonly dataSource: DataSource,
+    private readonly i18n: I18nService,
   ) {}
 
   async create(dto: CreateRegistrationDto, user?: User | null) {
@@ -52,11 +54,19 @@ export class RegistrationsService {
         });
 
         if (!ticket)
-          throw new NotFoundException('Entrada no encontrada o no disponible');
+          throw new NotFoundException(
+            this.i18n.t('registrations.ticket_not_found', {
+              lang: I18nContext.current()?.lang,
+            }),
+          );
         const event = ticket.event;
 
         if (event.status !== EventStatus.PUBLISHED)
-          throw new BadRequestException('Evento no disponible');
+          throw new BadRequestException(
+            this.i18n.t('registrations.event_not_available', {
+              lang: I18nContext.current()?.lang,
+            }),
+          );
 
         // 2. 📉 VALIDAR STOCK DE FORMA ATÓMICA
         const reservedCount = await manager.count(Registration, {
@@ -70,7 +80,11 @@ export class RegistrationsService {
         });
 
         if (reservedCount >= ticket.stock)
-          throw new BadRequestException('Entradas agotadas');
+          throw new BadRequestException(
+            this.i18n.t('registrations.sold_out', {
+              lang: I18nContext.current()?.lang,
+            }),
+          );
 
         // 3. 🕵️‍♂️ RESOLVER ATTENDEE (Usuario vs Guest)
         let attendee: Attendee | null;
@@ -95,7 +109,11 @@ export class RegistrationsService {
         } else {
           // Guest: Validamos datos
           if (!dto.email || !dto.documentNumber || !dto.firstName) {
-            throw new BadRequestException('Datos incompletos para invitado');
+            throw new BadRequestException(
+              this.i18n.t('registrations.incomplete_guest_data', {
+                lang: I18nContext.current()?.lang,
+              }),
+            );
           }
           // Buscamos si ya existe (Find or Create)
           attendee = await manager.findOne(Attendee, {
@@ -119,7 +137,9 @@ export class RegistrationsService {
               );
               if (!cipValidation.isValid) {
                 throw new BadRequestException(
-                  'Código CIP inválido. Verifique e intente nuevamente.',
+                  this.i18n.t('registrations.invalid_cip_code', {
+                    lang: I18nContext.current()?.lang,
+                  }),
                 );
               }
               attendee.cipCode = dto.cipCode;
@@ -133,17 +153,27 @@ export class RegistrationsService {
           where: { attendee: { id: attendee.id }, event: { id: event.id } },
         });
         if (existing)
-          throw new BadRequestException('Ya estás inscrito en este evento');
+          throw new BadRequestException(
+            this.i18n.t('registrations.already_registered', {
+              lang: I18nContext.current()?.lang,
+            }),
+          );
 
         // 5. 👮‍♂️ REGLAS DE NEGOCIO (CIP)
         if (ticket.requiresCipValidation) {
           if (!attendee.cipCode)
-            throw new BadRequestException('Esta entrada requiere Código CIP');
+            throw new BadRequestException(
+              this.i18n.t('registrations.cip_required', {
+                lang: I18nContext.current()?.lang,
+              }),
+            );
 
           const cipStatus = await this.cipService.validateCip(attendee.cipCode);
           if (!cipStatus.isHabilitado) {
             throw new BadRequestException(
-              'Usted no está habilitado. Elija la entrada General.',
+              this.i18n.t('registrations.not_habilitated', {
+                lang: I18nContext.current()?.lang,
+              }),
             );
           }
         }
@@ -179,7 +209,9 @@ export class RegistrationsService {
         }
 
         return {
-          message: 'Proceso iniciado',
+          message: this.i18n.t('registrations.process_started', {
+            lang: I18nContext.current()?.lang,
+          }),
           registrationId: savedReg.id,
           status: savedReg.status,
           price: finalPrice,
@@ -197,7 +229,12 @@ export class RegistrationsService {
       where: { id },
       relations: ['attendee', 'event', 'eventTicket'],
     });
-    if (!registration) throw new NotFoundException('Registration not found');
+    if (!registration)
+      throw new NotFoundException(
+        this.i18n.t('registrations.registration_not_found', {
+          lang: I18nContext.current()?.lang,
+        }),
+      );
     return registration;
   }
 
@@ -208,12 +245,22 @@ export class RegistrationsService {
     });
 
     if (!registration) {
-      throw new NotFoundException('Entrada no encontrada');
+      throw new NotFoundException(
+        this.i18n.t('registrations.ticket_not_found_code', {
+          lang: I18nContext.current()?.lang,
+        }),
+      );
     }
 
     if (registration.attended) {
       throw new BadRequestException(
-        `El asistente ${registration.attendee.firstName} ya ingresó a las ${registration.attendedAt?.toLocaleTimeString()}`,
+        this.i18n.t('registrations.already_checked_in', {
+          lang: I18nContext.current()?.lang,
+          args: {
+            name: registration.attendee.firstName,
+            time: registration.attendedAt?.toLocaleTimeString(),
+          },
+        }),
       );
     }
 
@@ -223,7 +270,9 @@ export class RegistrationsService {
     await this.regRepo.save(registration);
 
     return {
-      message: 'Ingreso exitoso',
+      message: this.i18n.t('registrations.check_in_success', {
+        lang: I18nContext.current()?.lang,
+      }),
       attendee: `${registration.attendee.firstName} ${registration.attendee.lastName}`,
       event: registration.event.title,
       attendedAt: registration.attendedAt,

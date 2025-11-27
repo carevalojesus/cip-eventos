@@ -1,0 +1,22 @@
+{
+  "user_not_found": "User not found",
+  "event_type_not_found": "Event Type not found",
+  "event_category_not_found": "Event Category not found",
+  "event_modality_not_found": "Event Modality not found",
+  "speakers_not_found": "One or more speakers not found",
+  "organizers_not_found": "One or more organizers not found",
+  "event_not_found_id": "Event with ID {{id}} not found",
+  "speaker_not_found_id": "Speaker with ID {{speakerId}} not found",
+  "organizer_not_found_id": "Organizer with ID {{organizerId}} not found",
+  "event_not_found": "Event not found",
+  "session_not_found": "Session not found",
+  "start_before_end": "Start date must be before end date",
+  "session_outside_event_range": "Session must be within event range ({{startAt}} - {{endAt}})",
+  "session_overlap_room": "A session already exists in room \"{{room}}\" that overlaps with the specified schedule",
+  "speakers_not_found_one": "One or more speakers not found",
+  "speakers_not_in_event": "Some speakers are not assigned to this event. You must add them to the event first.",
+  "speakers_not_in_event_short": "Some speakers are not assigned to this event",
+  "session_deleted": "Session deleted successfully",
+  "presential_no_virtual": "An in-person event should not have virtual access",
+  "virtual_no_location": "A virtual event should not have a physical location"
+}

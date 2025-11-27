@@ -1,0 +1,16 @@
+{
+  "registration_not_found": "Registration not found",
+  "already_paid": "This registration is already paid/confirmed",
+  "registration_cancelled": "This registration was cancelled",
+  "no_permission": "You don't have permission to pay for this registration",
+  "payment_intent_created": "Payment intent created",
+  "payment_not_found": "Payment not found",
+  "already_completed": "Already paid",
+  "no_permission_capture": "You don't have permission to capture this payment",
+  "order_id_mismatch": "PayPal order ID does not match",
+  "paypal_success": "PayPal payment successful",
+  "paypal_not_approved": "Payment was not approved by PayPal",
+  "no_permission_report": "You don't have permission to report this payment",
+  "payment_completed": "This payment is already completed",
+  "already_completed_review": "Already completed"
+}

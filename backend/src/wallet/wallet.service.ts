@@ -2,6 +2,7 @@ import { Injectable, Logger, BadRequestException, InternalServerErrorException }
 import { ConfigService } from '@nestjs/config';
 import { GoogleAuth } from 'google-auth-library';
 import * as jwt from 'jsonwebtoken';
+import { I18nService, I18nContext } from 'nestjs-i18n';
 import { Registration } from '../registrations/entities/registration.entity';
 import { Event } from '../events/entities/event.entity';
 import * as fs from 'fs';
@@ -21,7 +22,10 @@ export class WalletService {
   private issuerName: string;
   private reviewStatus: string;
 
-  constructor(private configService: ConfigService) {
+  constructor(
+    private configService: ConfigService,
+    private readonly i18n: I18nService,
+  ) {
     // Validar configuración requerida
     const issuerId = this.configService.get<string>('GOOGLE_WALLET_ISSUER_ID');
     if (!issuerId) {
@@ -80,15 +84,27 @@ export class WalletService {
 
       // Validar datos requeridos
       if (!registration.ticketCode) {
-        throw new BadRequestException('Registration must have a valid ticket code');
+        throw new BadRequestException(
+          this.i18n.t('wallet.missing_ticket_code', {
+            lang: I18nContext.current()?.lang,
+          }),
+        );
       }
 
       if (!event.title || !event.startAt || !event.endAt) {
-        throw new BadRequestException('Event is missing required fields (title, startAt, endAt)');
+        throw new BadRequestException(
+          this.i18n.t('wallet.missing_event_fields', {
+            lang: I18nContext.current()?.lang,
+          }),
+        );
       }
 
       if (!attendee.firstName || !attendee.lastName) {
-        throw new BadRequestException('Attendee is missing required fields (firstName, lastName)');
+        throw new BadRequestException(
+          this.i18n.t('wallet.missing_attendee_fields', {
+            lang: I18nContext.current()?.lang,
+          }),
+        );
       }
 
       // Definimos IDs únicos para Google (Google permite puntos en los IDs)
@@ -126,22 +142,38 @@ export class WalletService {
         throw error;
       }
 
-      throw new InternalServerErrorException('Failed to generate Google Wallet link');
+      throw new InternalServerErrorException(
+        this.i18n.t('wallet.wallet_link_failed', {
+          lang: I18nContext.current()?.lang,
+        }),
+      );
     }
   }
 
   // Validar que la registration tenga todas las relaciones necesarias
   private validateRegistration(registration: Registration): void {
     if (!registration) {
-      throw new BadRequestException('Registration is required');
+      throw new BadRequestException(
+        this.i18n.t('wallet.registration_required', {
+          lang: I18nContext.current()?.lang,
+        }),
+      );
     }
 
     if (!registration.event) {
-      throw new BadRequestException('Registration must include event relation');
+      throw new BadRequestException(
+        this.i18n.t('wallet.registration_missing_event', {
+          lang: I18nContext.current()?.lang,
+        }),
+      );
     }
 
     if (!registration.attendee) {
-      throw new BadRequestException('Registration must include attendee relation');
+      throw new BadRequestException(
+        this.i18n.t('wallet.registration_missing_attendee', {
+          lang: I18nContext.current()?.lang,
+        }),
+      );
     }
   }
 

@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { I18nService, I18nContext } from 'nestjs-i18n';
 import { CreatePaymentDto } from './dto/create-payment.dto';
 import { ReportPaymentDto } from './dto/report-payment.dto';
 import { ReviewPaymentDto } from './dto/review-payment.dto';
@@ -33,6 +34,7 @@ export class PaymentsService {
     private registrationRepo: Repository<Registration>,
     private readonly mailService: MailService,
     private readonly paypalService: PaypalService,
+    private readonly i18n: I18nService,
   ) {}
 
   // 1. INICIAR PAGO
@@ -43,22 +45,35 @@ export class PaymentsService {
       relations: ['attendee', 'attendee.user', 'event'],
     });
 
-    if (!registration) throw new NotFoundException('Inscripción no encontrada');
+    if (!registration)
+      throw new NotFoundException(
+        this.i18n.t('payments.registration_not_found', {
+          lang: I18nContext.current()?.lang,
+        }),
+      );
 
     // b. Validaciones de seguridad
     if (registration.status === RegistrationStatus.CONFIRMED) {
       throw new BadRequestException(
-        'Esta inscripción ya está pagada/confirmada',
+        this.i18n.t('payments.already_paid', {
+          lang: I18nContext.current()?.lang,
+        }),
       );
     }
     if (registration.status === RegistrationStatus.CANCELLED) {
-      throw new BadRequestException('Esta inscripción fue cancelada');
+      throw new BadRequestException(
+        this.i18n.t('payments.registration_cancelled', {
+          lang: I18nContext.current()?.lang,
+        }),
+      );
     }
 
     // Validar que el usuario logueado sea el dueño
     if (registration.attendee?.user?.id !== userId) {
       throw new BadRequestException(
-        'No tienes permiso para pagar esta inscripción',
+        this.i18n.t('payments.no_permission', {
+          lang: I18nContext.current()?.lang,
+        }),
       );
     }
 
@@ -107,7 +122,9 @@ export class PaymentsService {
     // En producción, aquí llamarías a Stripe/Niubiz y devolverías su URL.
     // Aquí devolvemos nuestra URL de simulación.
     return {
-      message: 'Intención de pago creada',
+      message: this.i18n.t('payments.payment_intent_created', {
+        lang: I18nContext.current()?.lang,
+      }),
       paymentId: payment.id,
       amount: payment.amount,
       transactionId: payment.transactionId,
@@ -133,20 +150,35 @@ export class PaymentsService {
       ],
     });
 
-    if (!payment) throw new NotFoundException('Pago no encontrado');
+    if (!payment)
+      throw new NotFoundException(
+        this.i18n.t('payments.payment_not_found', {
+          lang: I18nContext.current()?.lang,
+        }),
+      );
     if (payment.status === PaymentStatus.COMPLETED)
-      return { message: 'Ya pagado' };
+      return {
+        message: this.i18n.t('payments.already_completed', {
+          lang: I18nContext.current()?.lang,
+        }),
+      };
 
     // Validación de seguridad: Verificar que el usuario sea el dueño del pago
     if (payment.registration.attendee?.user?.id !== userId) {
       throw new BadRequestException(
-        'No tienes permiso para capturar este pago',
+        this.i18n.t('payments.no_permission_capture', {
+          lang: I18nContext.current()?.lang,
+        }),
       );
     }
 
     // Validación de seguridad: El ID que nos envían debe coincidir con el guardado
     if (payment.transactionId !== paypalOrderId) {
-      throw new BadRequestException('El ID de orden de PayPal no coincide');
+      throw new BadRequestException(
+        this.i18n.t('payments.order_id_mismatch', {
+          lang: I18nContext.current()?.lang,
+        }),
+      );
     }
 
     // CAPTURAR EL DINERO REALMENTE (Server-to-Server)
@@ -166,9 +198,17 @@ export class PaymentsService {
       // Usar nuevo formato: pasar registration completo (incluye Google Wallet)
       await this.mailService.sendTicket(registration);
 
-      return { message: 'Pago con PayPal exitoso' };
+      return {
+        message: this.i18n.t('payments.paypal_success', {
+          lang: I18nContext.current()?.lang,
+        }),
+      };
     } else {
-      throw new BadRequestException('El pago no fue aprobado por PayPal');
+      throw new BadRequestException(
+        this.i18n.t('payments.paypal_not_approved', {
+          lang: I18nContext.current()?.lang,
+        }),
+      );
     }
   }
 
@@ -186,17 +226,28 @@ export class PaymentsService {
       ],
     });
 
-    if (!payment) throw new NotFoundException('Pago no encontrado');
+    if (!payment)
+      throw new NotFoundException(
+        this.i18n.t('payments.payment_not_found', {
+          lang: I18nContext.current()?.lang,
+        }),
+      );
 
     // Validar que el usuario sea el dueño (opcional pero recomendado)
     if (payment.registration.attendee?.user?.id !== userId) {
       throw new BadRequestException(
-        'No tienes permiso para reportar este pago',
+        this.i18n.t('payments.no_permission_report', {
+          lang: I18nContext.current()?.lang,
+        }),
       );
     }
 
     if (payment.status === PaymentStatus.COMPLETED) {
-      throw new BadRequestException('Este pago ya fue completado');
+      throw new BadRequestException(
+        this.i18n.t('payments.payment_completed', {
+          lang: I18nContext.current()?.lang,
+        }),
+      );
     }
 
     // Actualizamos datos
@@ -225,9 +276,18 @@ export class PaymentsService {
       ],
     });
 
-    if (!payment) throw new NotFoundException('Pago no encontrado');
+    if (!payment)
+      throw new NotFoundException(
+        this.i18n.t('payments.payment_not_found', {
+          lang: I18nContext.current()?.lang,
+        }),
+      );
     if (payment.status === PaymentStatus.COMPLETED)
-      throw new BadRequestException('Ya completado');
+      throw new BadRequestException(
+        this.i18n.t('payments.already_completed_review', {
+          lang: I18nContext.current()?.lang,
+        }),
+      );
 
     if (dto.isApproved) {
       // ✅ APROBAR

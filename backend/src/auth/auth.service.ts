@@ -12,6 +12,7 @@ import { LoginAuthDto } from './dto/login-auth.dto';
 import { RegisterAuthDto } from './dto/register-auth.dto';
 import { ConfigService } from '@nestjs/config';
 import * as crypto from 'crypto';
+import { I18nService, I18nContext } from 'nestjs-i18n';
 
 import { v4 as uuidv4 } from 'uuid';
 import { MailService } from 'src/mail/mail.service';
@@ -27,6 +28,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
     private readonly mailService: MailService,
+    private readonly i18n: I18nService,
   ) {}
 
   async login(loginDto: LoginAuthDto) {
@@ -34,14 +36,24 @@ export class AuthService {
     const user = await this.usersService.findOneByEmail(email);
 
     if (!user || !(await bcrypt.compare(password, user.password))) {
-      throw new UnauthorizedException('Credenciales inválidas');
+      throw new UnauthorizedException(
+        this.i18n.t('auth.invalid_credentials', {
+          lang: I18nContext.current()?.lang,
+        }),
+      );
     }
     if (!user.isActive) {
-      throw new ForbiddenException('Cuenta desactivada');
+      throw new ForbiddenException(
+        this.i18n.t('auth.account_disabled', {
+          lang: I18nContext.current()?.lang,
+        }),
+      );
     }
     if (!user.isVerified) {
       throw new ForbiddenException(
-        'Debes verificar tu email antes de ingresar',
+        this.i18n.t('auth.verify_email_before_login', {
+          lang: I18nContext.current()?.lang,
+        }),
       );
     }
 
@@ -61,7 +73,12 @@ export class AuthService {
 
   async register(registerDto: RegisterAuthDto) {
     const role = await this.usersService.findRoleByName('USER');
-    if (!role) throw new BadRequestException('Rol no configurado');
+    if (!role)
+      throw new BadRequestException(
+        this.i18n.t('auth.role_not_configured', {
+          lang: I18nContext.current()?.lang,
+        }),
+      );
 
     const newUser = await this.usersService.create({
       ...registerDto,
@@ -104,17 +121,25 @@ export class AuthService {
 
     if (!user) {
       throw new BadRequestException(
-        'Token de verificación inválido o expirado',
+        this.i18n.t('auth.invalid_or_expired_verification_token', {
+          lang: I18nContext.current()?.lang,
+        }),
       );
     }
 
     if (user.isVerified) {
-      throw new BadRequestException('El usuario ya está verificado');
+      throw new BadRequestException(
+        this.i18n.t('auth.user_already_verified', {
+          lang: I18nContext.current()?.lang,
+        }),
+      );
     }
 
     if (user.verificationExpires && new Date() > user.verificationExpires) {
       throw new BadRequestException(
-        'El token ha expirado. Solicita uno nuevo.',
+        this.i18n.t('auth.token_expired_request_new', {
+          lang: I18nContext.current()?.lang,
+        }),
       );
     }
 
@@ -122,7 +147,11 @@ export class AuthService {
 
     await this.mailService.sendAccountConfirmed(user.email, user.email);
 
-    return { message: 'Email verificado exitosamente' };
+    return {
+      message: this.i18n.t('auth.email_verified_success', {
+        lang: I18nContext.current()?.lang,
+      }),
+    };
   }
 
   async resendVerification(email: string) {
@@ -132,10 +161,18 @@ export class AuthService {
     // Por seguridad, no decimos si no existe o si ya está verificado explícitamente
     // Pero para UX, si ya está verificado, podemos avisar.
     if (!user) {
-      return { message: 'Si el correo existe, se ha enviado un enlace.' };
+      return {
+        message: this.i18n.t('auth.if_email_exists_link_sent', {
+          lang: I18nContext.current()?.lang,
+        }),
+      };
     }
     if (user.isVerified)
-      throw new BadRequestException('Este usuario ya está verificado');
+      throw new BadRequestException(
+        this.i18n.t('auth.user_already_verified', {
+          lang: I18nContext.current()?.lang,
+        }),
+      );
 
     const newToken = uuidv4();
     const newHashedToken = this.hashToken(newToken);
@@ -150,7 +187,11 @@ export class AuthService {
     await this.mailService.sendUserWelcome(user.email, user.email, newToken);
 
     this.registerThrottleHit(email, this.resendThrottle);
-    return { message: 'Nuevo correo de verificación enviado' };
+    return {
+      message: this.i18n.t('auth.new_verification_email_sent', {
+        lang: I18nContext.current()?.lang,
+      }),
+    };
   }
 
   async logout(userId: string) {
@@ -163,17 +204,32 @@ export class AuthService {
       user = await this.usersService.findOne(userId);
     } catch (error) {
       if (error instanceof NotFoundException) {
-        throw new ForbiddenException('Acceso Denegado');
+        throw new ForbiddenException(
+          this.i18n.t('auth.access_denied', {
+            lang: I18nContext.current()?.lang,
+          }),
+        );
       }
       throw error;
     }
 
     if (!user || !user.currentRefreshToken)
-      throw new ForbiddenException('Acceso Denegado');
-    if (!user.isActive) throw new ForbiddenException('Acceso Denegado');
+      throw new ForbiddenException(
+        this.i18n.t('auth.access_denied', {
+          lang: I18nContext.current()?.lang,
+        }),
+      );
+    if (!user.isActive)
+      throw new ForbiddenException(
+        this.i18n.t('auth.access_denied', {
+          lang: I18nContext.current()?.lang,
+        }),
+      );
     if (!user.isVerified)
       throw new ForbiddenException(
-        'Debes verificar tu email antes de renovar tokens',
+        this.i18n.t('auth.verify_email_before_renew', {
+          lang: I18nContext.current()?.lang,
+        }),
       );
 
     const refreshTokenMatches = await bcrypt.compare(
@@ -181,7 +237,12 @@ export class AuthService {
       user.currentRefreshToken,
     );
 
-    if (!refreshTokenMatches) throw new ForbiddenException('Acceso Denegado');
+    if (!refreshTokenMatches)
+      throw new ForbiddenException(
+        this.i18n.t('auth.access_denied', {
+          lang: I18nContext.current()?.lang,
+        }),
+      );
 
     const tokens = await this.getTokens(
       user.id,
@@ -240,7 +301,11 @@ export class AuthService {
     const user = await this.usersService.findOneByEmail(email);
 
     if (!user) {
-      return { message: 'Si el correo existe, se ha enviado un enlace.' };
+      return {
+        message: this.i18n.t('auth.if_email_exists_link_sent', {
+          lang: I18nContext.current()?.lang,
+        }),
+      };
     }
 
     const token = uuidv4();
@@ -252,7 +317,11 @@ export class AuthService {
     await this.mailService.sendPasswordReset(user.email, user.email, token);
 
     this.registerThrottleHit(email, this.forgotThrottle);
-    return { message: 'Si el correo existe, se ha enviado un enlace.' };
+    return {
+      message: this.i18n.t('auth.if_email_exists_link_sent', {
+        lang: I18nContext.current()?.lang,
+      }),
+    };
   }
 
   async resetPassword(token: string, newPassword: string) {
@@ -260,17 +329,29 @@ export class AuthService {
     const user = await this.usersService.findOneByResetToken(hashedToken);
 
     if (!user) {
-      throw new BadRequestException('Token inválido o expirado');
+      throw new BadRequestException(
+        this.i18n.t('auth.invalid_or_expired_token', {
+          lang: I18nContext.current()?.lang,
+        }),
+      );
     }
 
     if (user.resetPasswordExpires && new Date() > user.resetPasswordExpires) {
-      throw new BadRequestException('El token ha expirado');
+      throw new BadRequestException(
+        this.i18n.t('auth.token_expired', {
+          lang: I18nContext.current()?.lang,
+        }),
+      );
     }
 
     const hashedPassword = await bcrypt.hash(newPassword, 10);
     await this.usersService.updatePassword(user.id, hashedPassword);
 
-    return { message: 'Contraseña actualizada exitosamente' };
+    return {
+      message: this.i18n.t('auth.password_updated_success', {
+        lang: I18nContext.current()?.lang,
+      }),
+    };
   }
 
   private hashToken(token: string): string {
@@ -288,7 +369,9 @@ export class AuthService {
     const now = Date.now();
     if (now - lastHit < ttlMs) {
       throw new ForbiddenException(
-        'Demasiadas solicitudes. Intenta nuevamente en unos segundos.',
+        this.i18n.t('auth.too_many_requests', {
+          lang: I18nContext.current()?.lang,
+        }),
       );
     }
   }

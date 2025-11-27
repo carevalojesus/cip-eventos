@@ -1,0 +1,5 @@
+{
+  "role_not_found": "El rol con ID {{roleId}} no existe",
+  "email_already_registered": "El correo electrónico ya está registrado",
+  "user_not_found_id": "Usuario con ID {{id}} no encontrado"
+}

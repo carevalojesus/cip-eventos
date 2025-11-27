@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { I18nService, I18nContext } from 'nestjs-i18n';
 import { CreateProfileDto } from './dto/create-profile.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { Profile } from './entities/profile.entity';
@@ -17,6 +18,7 @@ export class ProfilesService {
     private readonly profileRepository: Repository<Profile>,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    private readonly i18n: I18nService,
   ) {}
 
   async create(
@@ -28,13 +30,21 @@ export class ProfilesService {
     });
 
     if (existingProfile) {
-      throw new BadRequestException('El usuario ya tiene un perfil creado');
+      throw new BadRequestException(
+        this.i18n.t('profiles.profile_already_exists', {
+          lang: I18nContext.current()?.lang,
+        }),
+      );
     }
 
     const user = await this.userRepository.findOneBy({ id: userId });
 
     if (!user) {
-      throw new BadRequestException('Usuario no encontrado');
+      throw new BadRequestException(
+        this.i18n.t('profiles.user_not_found', {
+          lang: I18nContext.current()?.lang,
+        }),
+      );
     }
 
     const newProfile = this.profileRepository.create({
@@ -54,7 +64,11 @@ export class ProfilesService {
     });
 
     if (!profile) {
-      throw new BadRequestException('No se encontró el perfil del usuario');
+      throw new BadRequestException(
+        this.i18n.t('profiles.profile_not_found', {
+          lang: I18nContext.current()?.lang,
+        }),
+      );
     }
 
     const updatedProfile = this.profileRepository.merge(
@@ -72,7 +86,11 @@ export class ProfilesService {
     });
 
     if (!profile) {
-      throw new NotFoundException('No se encontró el perfil del usuario');
+      throw new NotFoundException(
+        this.i18n.t('profiles.profile_not_found', {
+          lang: I18nContext.current()?.lang,
+        }),
+      );
     }
 
     return profile;
@@ -84,7 +102,11 @@ export class ProfilesService {
     });
 
     if (!profile) {
-      throw new NotFoundException('No se encontró el perfil del usuario');
+      throw new NotFoundException(
+        this.i18n.t('profiles.profile_not_found', {
+          lang: I18nContext.current()?.lang,
+        }),
+      );
     }
 
     return await this.profileRepository.remove(profile);
