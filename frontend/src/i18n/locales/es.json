@@ -9,15 +9,41 @@
   "event_count_one": "{{count}} evento",
   "event_count_other": "{{count}} eventos",
   "login": {
-    "title": "Iniciar Sesión",
+    "title": "Bienvenido",
+    "subtitle": "Ingresa tus credenciales para acceder al panel.",
     "email": "Correo Electrónico",
+    "email_placeholder": "admin@cip.org.pe",
     "password": "Contraseña",
-    "btn": "Ingresar",
+    "password_placeholder": "••••••••",
+    "btn": "Ingresar al Sistema",
+    "btn_loading": "Ingresando...",
     "forgot_password": "¿Olvidaste tu contraseña?",
+    "access_problems": "¿Problemas de acceso?",
+    "contact_support": "Contacta a",
+    "support_it": "Soporte TI",
+    "support_message": "si olvidaste tu contraseña.",
     "no_account": "¿No tienes cuenta?",
     "sign_up": "Registrarse",
     "error": "Error al iniciar sesión",
-    "success": "Sesión iniciada correctamente"
+    "success": "Sesión iniciada correctamente",
+    "brand": {
+      "council": "Consejo Departamental",
+      "region": "De Loreto",
+      "quote": "La ingeniería no es solo saber y conocer, sino hacer saber y hacer conocer.",
+      "quote_author": "Colegio de Ingenieros del Perú"
+    },
+    "footer": {
+      "platform": "Plataforma oficial del",
+      "council": "Consejo Departamental",
+      "developed_by": "Desarrollado con ❤️ por",
+      "company": "Devcloud"
+    },
+    "validation": {
+      "email_required": "El correo electrónico es requerido",
+      "email_invalid": "Ingresa un correo institucional válido",
+      "password_required": "La contraseña es requerida",
+      "password_min": "La contraseña debe tener al menos 6 caracteres"
+    }
   },
   "logout": {
     "btn": "Cerrar Sesión",

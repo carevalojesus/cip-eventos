@@ -9,15 +9,41 @@
   "event_count_one": "{{count}} event",
   "event_count_other": "{{count}} events",
   "login": {
-    "title": "Sign In",
+    "title": "Welcome",
+    "subtitle": "Enter your credentials to access the panel.",
     "email": "Email Address",
+    "email_placeholder": "admin@cip.org.pe",
     "password": "Password",
-    "btn": "Login",
+    "password_placeholder": "••••••••",
+    "btn": "Login to System",
+    "btn_loading": "Logging in...",
     "forgot_password": "Forgot your password?",
+    "access_problems": "Access problems?",
+    "contact_support": "Contact",
+    "support_it": "IT Support",
+    "support_message": "if you forgot your password.",
     "no_account": "Don't have an account?",
     "sign_up": "Sign Up",
     "error": "Login error",
-    "success": "Successfully logged in"
+    "success": "Successfully logged in",
+    "brand": {
+      "council": "Departmental Council",
+      "region": "Of Loreto",
+      "quote": "Engineering is not only knowing and understanding, but making known and making understood.",
+      "quote_author": "Engineers Association of Peru"
+    },
+    "footer": {
+      "platform": "Official platform of",
+      "council": "Departmental Council",
+      "developed_by": "Developed with ❤️ by",
+      "company": "Devcloud"
+    },
+    "validation": {
+      "email_required": "Email address is required",
+      "email_invalid": "Please enter a valid institutional email",
+      "password_required": "Password is required",
+      "password_min": "Password must be at least 6 characters"
+    }
   },
   "logout": {
     "btn": "Logout",
