@@ -1,6 +1,8 @@
 import {
   Controller,
   Post,
+  Get,
+  Param,
   UseInterceptors,
   UploadedFile,
   ParseFilePipe,
@@ -10,24 +12,27 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CipSeederService } from './cip-seeder.service';
+import { CipIntegrationService } from './cip-integration.service';
 import { memoryStorage } from 'multer';
 import { UploadsService } from '../uploads/uploads.service';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { Roles } from 'src/auth/decorators/roles.decorator';
+import { Public } from 'src/auth/decorators/public.decorator';
 
 @Controller('cip-integration')
-@UseGuards(JwtAuthGuard, RolesGuard)
-@Roles('SUPER_ADMIN') // Solo el super admin puede actualizar el padrón
 export class CipController {
   private readonly logger = new Logger(CipController.name);
 
   constructor(
     private readonly seederService: CipSeederService,
+    private readonly cipIntegrationService: CipIntegrationService,
     private readonly uploadsService: UploadsService,
   ) {}
 
   @Post('upload-padron')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('SUPER_ADMIN') // Solo el super admin puede actualizar el padrón
   @UseInterceptors(
     FileInterceptor('file', {
       storage: memoryStorage(),
@@ -84,5 +89,38 @@ export class CipController {
       );
       throw error;
     }
+  }
+
+  /**
+   * Obtiene estadísticas del padrón CIP
+   * Endpoint público para consultas
+   */
+  @Public()
+  @Get('stats')
+  async getStats() {
+    this.logger.log('Consultando estadísticas del padrón CIP');
+    return await this.cipIntegrationService.getStats();
+  }
+
+  /**
+   * Obtiene información de la última importación
+   * Endpoint público para verificar actualización
+   */
+  @Public()
+  @Get('last-import')
+  async getLastImport() {
+    this.logger.log('Consultando última importación del padrón');
+    return await this.cipIntegrationService.getLastImportInfo();
+  }
+
+  /**
+   * Verifica si un miembro CIP está habilitado
+   * Endpoint público para validaciones
+   */
+  @Public()
+  @Get('verify/:cip')
+  async verifyCipMember(@Param('cip') cip: string) {
+    this.logger.log(`Verificando miembro CIP: ${cip}`);
+    return await this.cipIntegrationService.verifyCipMember(cip);
   }
 }

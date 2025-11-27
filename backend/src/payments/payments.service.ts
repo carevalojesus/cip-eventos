@@ -163,15 +163,8 @@ export class PaymentsService {
       registration.status = RegistrationStatus.CONFIRMED;
       await this.registrationRepo.save(registration);
 
-      const { attendee, event } = registration;
-      await this.mailService.sendTicket(
-        attendee.email,
-        attendee.firstName,
-        event.title,
-        registration.ticketCode,
-        event.startAt.toString(),
-        event.location ? event.location.address : 'Virtual',
-      );
+      // Usar nuevo formato: pasar registration completo (incluye Google Wallet)
+      await this.mailService.sendTicket(registration);
 
       return { message: 'Pago con PayPal exitoso' };
     } else {
@@ -245,16 +238,8 @@ export class PaymentsService {
       payment.registration.status = RegistrationStatus.CONFIRMED;
       await this.registrationRepo.save(payment.registration);
 
-      // Enviar Ticket
-      const { attendee, event } = payment.registration;
-      await this.mailService.sendTicket(
-        attendee.email,
-        attendee.firstName,
-        event.title,
-        payment.registration.ticketCode,
-        event.startAt.toString(),
-        event.location ? event.location.address : 'Virtual',
-      );
+      // Enviar Ticket con Google Wallet incluido
+      await this.mailService.sendTicket(payment.registration);
     } else {
       // ❌ RECHAZAR
       payment.status = PaymentStatus.REJECTED;

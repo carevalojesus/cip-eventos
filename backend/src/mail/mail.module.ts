@@ -5,11 +5,13 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
 import { join } from 'path';
 import { MailService } from './mail.service';
 import { CommonModule } from '../common/common.module';
+import { WalletModule } from '../wallet/wallet.module';
 
 @Global()
 @Module({
   imports: [
     CommonModule,
+    WalletModule,
     MailerModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
