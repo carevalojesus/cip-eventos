@@ -8,24 +8,25 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
-  --color-popover: var(--popover);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-destructive: var(--destructive);
-  --color-border: var(--border);
-  --color-input: var(--input);
-  --color-ring: var(--ring);
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
   --color-chart-1: var(--chart-1);
   --color-chart-2: var(--chart-2);
   --color-chart-3: var(--chart-3);
@@ -42,25 +43,48 @@
 }
 
 :root {
-  --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
+  /* BASE: Blanco puro para limpieza, usando el negro CIP para texto */
+  --background: 0 0% 100%;
+  --foreground: 240 1% 16%; /* #2a2a29 - CIP Black */
+
+  /* CARD: Usamos blanco para tarjetas sobre fondo gris muy suave */
+  --card: 0 0% 100%;
+  --card-foreground: 240 1% 16%;
+
+  /* POPOVER: Menús desplegables */
+  --popover: 0 0% 100%;
+  --popover-foreground: 240 1% 16%;
+
+  /* PRIMARY: El Rojo CIP (#e31e24) */
+  --primary: 358 81% 50%;
+  --primary-foreground: 0 0% 100%; /* Texto blanco sobre rojo */
+
+  /* SECONDARY: El Crema CIP (#f0e4cc) */
+  /* Usamos esto para botones secundarios o áreas de énfasis suave */
+  --secondary: 40 54% 87%;
+  --secondary-foreground: 240 1% 16%; /* Texto negro sobre crema */
+
+  /* MUTED: El Gris CIP (#686564) pero muy suavizado para fondos */
+  --muted: 240 2% 94%;
+  --muted-foreground: 20 2% 40%; /* #686564 para texto deshabilitado */
+
+  /* ACCENT: El Dorado CIP (#d7b560) */
+  /* Usado para hovers en listas o elementos destacados */
+  --accent: 43 60% 61%;
+  --accent-foreground: 240 1% 16%; /* Texto negro sobre dorado */
+
+  /* DESTRUCTIVE: El Rojo Oscuro (#6c0e10) */
+  --destructive: 359 77% 24%;
+  --destructive-foreground: 0 0% 100%;
+
+  /* BORDES E INPUTS */
+  --border: 240 2% 90%;
+  --input: 240 2% 90%;
+  --ring: 358 81% 50%; /* El anillo de foco es rojo */
+
+  --radius: 0.5rem;
+
+  /* Charts & Sidebar (Preserved) */
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
@@ -77,24 +101,42 @@
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
+  /* MODO OSCURO: Invertimos la lógica */
+
+  /* Fondo: CIP Black (#2a2a29) */
+  --background: 240 1% 16%;
+  --foreground: 0 0% 98%;
+
+  /* Cards: Un poco más claro que el fondo */
+  --card: 240 1% 20%;
+  --card-foreground: 0 0% 98%;
+
+  --popover: 240 1% 16%;
+  --popover-foreground: 0 0% 98%;
+
+  /* Primary: Mantenemos el Rojo, quizás un poco más brillante para contraste */
+  --primary: 358 81% 50%;
+  --primary-foreground: 0 0% 100%;
+
+  /* Secondary: El Gris Oscuro para botones secundarios */
+  --secondary: 240 2% 26%;
+  --secondary-foreground: 0 0% 98%;
+
+  --muted: 240 2% 26%;
+  --muted-foreground: 240 2% 60%;
+
+  /* Accent: Dorado para destacar en modo oscuro se ve increíble */
+  --accent: 43 60% 61%;
+  --accent-foreground: 240 1% 16%;
+
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 0 0% 98%;
+
+  --border: 240 2% 26%;
+  --input: 240 2% 26%;
+  --ring: 358 81% 50%;
+
+  /* Charts & Sidebar (Preserved) */
   --chart-1: oklch(0.488 0.243 264.376);
   --chart-2: oklch(0.696 0.17 162.48);
   --chart-3: oklch(0.769 0.188 70.08);
@@ -112,7 +154,7 @@
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    @apply border-border;
   }
   body {
     @apply bg-background text-foreground;
