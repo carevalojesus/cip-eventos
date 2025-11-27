@@ -46,6 +46,7 @@ export class PaypalService {
             Authorization: `Basic ${auth}`,
             'Content-Type': 'application/x-www-form-urlencoded',
           },
+          timeout: 10000, // 10 segundos
         },
       );
       return data.access_token;
@@ -82,6 +83,7 @@ export class PaypalService {
             Authorization: `Bearer ${accessToken}`,
             'Content-Type': 'application/json',
           },
+          timeout: 10000, // 10 segundos
         },
       );
 
@@ -116,6 +118,7 @@ export class PaypalService {
             Authorization: `Bearer ${accessToken}`,
             'Content-Type': 'application/json',
           },
+          timeout: 10000, // 10 segundos
         },
       );
 

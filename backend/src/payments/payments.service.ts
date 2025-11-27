@@ -117,12 +117,17 @@ export class PaymentsService {
   }
 
   // 2.1 COMPLETAR PAGO PAYPAL (CAPTURE)
-  async completePaypalPayment(paymentId: string, paypalOrderId: string) {
+  async completePaypalPayment(
+    paymentId: string,
+    paypalOrderId: string,
+    userId: string,
+  ) {
     const payment = await this.paymentRepo.findOne({
       where: { id: paymentId },
       relations: [
         'registration',
         'registration.attendee',
+        'registration.attendee.user',
         'registration.event',
         'registration.event.location',
       ],
@@ -131,6 +136,13 @@ export class PaymentsService {
     if (!payment) throw new NotFoundException('Pago no encontrado');
     if (payment.status === PaymentStatus.COMPLETED)
       return { message: 'Ya pagado' };
+
+    // Validación de seguridad: Verificar que el usuario sea el dueño del pago
+    if (payment.registration.attendee?.user?.id !== userId) {
+      throw new BadRequestException(
+        'No tienes permiso para capturar este pago',
+      );
+    }
 
     // Validación de seguridad: El ID que nos envían debe coincidir con el guardado
     if (payment.transactionId !== paypalOrderId) {
