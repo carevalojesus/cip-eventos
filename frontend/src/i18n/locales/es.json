@@ -184,7 +184,9 @@
     "submit": "Enviar",
     "loading": "Cargando...",
     "success": "Operación exitosa",
-    "error": "Ocurrió un error"
+    "error": "Ocurrió un error",
+    "date_future": "La fecha de inicio debe ser futura",
+    "date_end_after_start": "La fecha de fin debe ser posterior a la fecha de inicio"
   },
   "common": {
     "yes": "Sí",

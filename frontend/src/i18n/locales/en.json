@@ -183,7 +183,9 @@
     "submit": "Submit",
     "loading": "Loading...",
     "success": "Operation successful",
-    "error": "An error occurred"
+    "error": "An error occurred",
+    "date_future": "Start date must be in the future",
+    "date_end_after_start": "End date must be after start date"
   },
   "common": {
     "yes": "Yes",

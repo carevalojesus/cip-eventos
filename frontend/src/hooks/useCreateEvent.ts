@@ -9,24 +9,29 @@ import { MODALITY_IDS, requiresLocation, requiresVirtualAccess } from "@/constan
 import type { EventType, EventCategory, EventModality } from "@/types/event";
 
 // Schema definition
-export const createEventSchema = z.object({
-  title: z.string().min(1, "El título es obligatorio"),
-  summary: z.string().max(150, "El resumen no puede exceder 150 caracteres").optional(),
-  description: z.string().min(1, "La descripción es obligatoria"),
-  typeId: z.string().min(1, "El tipo de evento es obligatorio"),
-  categoryId: z.string().min(1, "La categoría es obligatoria"),
-  modalityId: z.string().min(1, "La modalidad es obligatoria"),
-  startAt: z.string().min(1, "La fecha de inicio es obligatoria"),
-  endAt: z.string().min(1, "La fecha de fin es obligatoria"),
+import { useTranslation } from "react-i18next";
+
+// ... existing imports ...
+
+// Schema definition wrapper
+export const createEventSchema = (t: any) => z.object({
+  title: z.string().min(1, t("form.required")),
+  summary: z.string().max(150, t("form.max_length").replace("{{count}}", "150")).optional(),
+  description: z.string().min(1, t("form.required")),
+  typeId: z.string().min(1, t("form.required")),
+  categoryId: z.string().min(1, t("form.required")),
+  modalityId: z.string().min(1, t("form.required")),
+  startAt: z.string().min(1, t("form.required")),
+  endAt: z.string().min(1, t("form.required")),
   // Location fields
   locationName: z.string().optional(),
   locationAddress: z.string().optional(),
   locationCity: z.string().optional(),
   locationReference: z.string().optional(),
-  locationMapLink: z.string().url("Debe ser una URL válida").optional().or(z.literal("")),
+  locationMapLink: z.string().url(t("form.invalid_url") || "URL inválida").optional().or(z.literal("")),
   // Virtual fields
   virtualPlatform: z.string().optional(),
-  virtualMeetingUrl: z.string().url("Debe ser una URL válida").optional().or(z.literal("")),
+  virtualMeetingUrl: z.string().url(t("form.invalid_url") || "URL inválida").optional().or(z.literal("")),
   virtualMeetingPassword: z.string().optional(),
   virtualInstructions: z.string().optional(),
 }).refine((data) => {
@@ -47,7 +52,7 @@ export const createEventSchema = z.object({
 
   return true;
 }, {
-  message: "Para eventos presenciales o híbridos, el nombre del lugar, dirección y ciudad son obligatorios",
+  message: t("form.required"),
   path: ["locationName"],
 }).refine((data) => {
   const modalityId = parseInt(data.modalityId);
@@ -64,13 +69,32 @@ export const createEventSchema = z.object({
 
   return true;
 }, {
-  message: "Para eventos virtuales o híbridos, la plataforma y URL de reunión son obligatorias",
+  message: t("form.required"),
   path: ["virtualMeetingUrl"],
+}).refine((data) => {
+  if (!data.startAt) return true;
+  const start = new Date(data.startAt);
+  // Allow 1 minute grace period for "now"
+  const now = new Date();
+  now.setMinutes(now.getMinutes() - 1);
+  return start > now;
+}, {
+  message: t("form.date_future"),
+  path: ["startAt"],
+}).refine((data) => {
+  if (!data.startAt || !data.endAt) return true;
+  const start = new Date(data.startAt);
+  const end = new Date(data.endAt);
+  return end > start;
+}, {
+  message: t("form.date_end_after_start"),
+  path: ["endAt"],
 });
 
-export type CreateEventFormValues = z.infer<typeof createEventSchema>;
+export type CreateEventFormValues = z.infer<ReturnType<typeof createEventSchema>>;
 
 export const useCreateEvent = () => {
+  const { t } = useTranslation();
   const [types, setTypes] = useState<EventType[]>([]);
   const [categories, setCategories] = useState<EventCategory[]>([]);
   const [modalities, setModalities] = useState<EventModality[]>([]);
@@ -78,7 +102,7 @@ export const useCreateEvent = () => {
   const [submitting, setSubmitting] = useState(false);
 
   const form = useForm<CreateEventFormValues>({
-    resolver: zodResolver(createEventSchema),
+    resolver: zodResolver(createEventSchema(t)),
     defaultValues: {
       title: "",
       summary: "",
