@@ -17,6 +17,7 @@ import { EventTicket } from './entities/event-ticket.entity';
 import { EventSession } from './entities/event-session.entity';
 import { Signer } from '../signers/entities/signer.entity';
 import { RegistrationsModule } from '../registrations/registrations.module';
+import { UploadsModule } from '../uploads/uploads.module';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { RegistrationsModule } from '../registrations/registrations.module';
     ]),
     AuthModule,
     forwardRef(() => RegistrationsModule),
+    UploadsModule,
   ],
   controllers: [EventsController],
   providers: [EventsService, EventOwnershipGuard],

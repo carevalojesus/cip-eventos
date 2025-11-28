@@ -160,6 +160,12 @@
         "presential": "Presencial",
         "virtual": "Virtual",
         "hybrid": "Híbrido"
+      },
+      "actions": {
+        "title": "Acciones",
+        "manage": "Gestionar (Completo)",
+        "edit": "Editar info básica",
+        "delete": "Eliminar"
       }
     }
   },
@@ -183,6 +189,7 @@
   "form": {
     "required": "Este campo es obligatorio",
     "invalid_email": "Correo electrónico inválido",
+    "invalid_url": "URL inválida",
     "min_length": "Mínimo {{count}} caracteres",
     "max_length": "Máximo {{count}} caracteres",
     "save": "Guardar",
@@ -222,5 +229,70 @@
     "forbidden": "Acceso denegado",
     "validation": "Error de validación",
     "unknown": "Error desconocido"
+  },
+  "create_event": {
+    "type": "Tipo",
+    "type_placeholder": "Selecciona un tipo",
+    "category": "Categoría",
+    "category_placeholder": "Selecciona una categoría"
+  },
+  "event_management": {
+    "breadcrumb": {
+      "back": "Volver",
+      "title": "Gestión de Evento"
+    },
+    "actions": {
+      "preview": "Vista Previa",
+      "publish": "Publicar Evento",
+      "unpublish": "Despublicar",
+      "save": "Guardar Cambios"
+    },
+    "tabs": {
+      "general": "General",
+      "tickets": "Entradas",
+      "agenda": "Agenda",
+      "participants": "Participantes",
+      "attendees": "Inscritos"
+    },
+    "coming_soon": "Esta sección estará disponible próximamente.",
+    "general": {
+      "basic_info": "Información Básica",
+      "basic_info_desc": "Detalles principales del evento visibles para el público.",
+      "title": "Título del Evento",
+      "title_placeholder": "Ej: Congreso de Ingeniería Civil 2024",
+      "description": "Descripción",
+      "description_placeholder": "Describe el evento, sus objetivos y público objetivo...",
+      "modality": "Modalidad",
+      "modality_placeholder": "Selecciona una modalidad",
+      "start_date": "Inicio",
+      "end_date": "Fin"
+    },
+    "location": {
+      "title": "Ubicación Física",
+      "description": "Información del lugar donde se realizará el evento presencial.",
+      "name": "Nombre del Lugar",
+      "name_placeholder": "Ej: Auditorio Principal CIP",
+      "address": "Dirección",
+      "address_placeholder": "Ej: Av. Arequipa 4947",
+      "city": "Ciudad",
+      "city_placeholder": "Ej: Lima",
+      "reference": "Referencia",
+      "reference_placeholder": "Ej: Frente al parque Kennedy",
+      "map_link": "Enlace de Google Maps",
+      "map_link_placeholder": "https://maps.google.com/..."
+    },
+    "virtual": {
+      "title": "Accesos Virtuales",
+      "description": "Configuración de la plataforma virtual para el evento.",
+      "platform": "Plataforma",
+      "platform_placeholder": "Selecciona una plataforma",
+      "meeting_url": "URL de la Reunión",
+      "meeting_url_placeholder": "https://zoom.us/j/...",
+      "password": "Contraseña de Acceso",
+      "password_placeholder": "Opcional",
+      "instructions": "Instrucciones de Acceso",
+      "instructions_placeholder": "Instrucciones adicionales para los participantes...",
+      "other": "Otro"
+    }
   }
 }

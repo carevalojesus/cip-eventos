@@ -32,10 +32,10 @@ export const EventImageUpload: React.FC<EventImageUploadProps> = ({ form }) => {
   };
 
   return (
-    <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+    <div className="rounded-lg border bg-card p-6 shadow-sm">
       <div className="flex items-center gap-2 mb-4">
-        <ImageIcon className="h-5 w-5 text-gray-500" />
-        <h2 className="text-lg font-medium text-gray-900">Imagen del Evento</h2>
+        <ImageIcon className="h-5 w-5 text-muted-foreground" />
+        <h2 className="text-lg font-medium text-foreground">Imagen del Evento</h2>
       </div>
 
       <FileUpload
@@ -48,16 +48,16 @@ export const EventImageUpload: React.FC<EventImageUploadProps> = ({ form }) => {
         className="w-full"
       >
         {files.length === 0 ? (
-          <FileUploadDropzone className="min-h-[200px] border-2 border-dashed border-gray-300 hover:border-primary/50 transition-colors cursor-pointer">
+          <FileUploadDropzone className="min-h-[200px] border-2 border-dashed border-border hover:border-primary/50 transition-colors cursor-pointer">
             <div className="flex flex-col items-center justify-center gap-2 text-center">
-              <div className="rounded-full bg-gray-100 p-3">
-                <Upload className="h-6 w-6 text-gray-500" />
+              <div className="rounded-full bg-muted p-3">
+                <Upload className="h-6 w-6 text-muted-foreground" />
               </div>
               <div className="space-y-1">
-                <p className="text-sm font-medium text-gray-700">
+                <p className="text-sm font-medium text-foreground">
                   Arrastra una imagen o haz clic para seleccionar
                 </p>
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-muted-foreground">
                   PNG, JPG o WebP hasta 5MB. Tamaño recomendado: 1200x630px
                 </p>
               </div>
@@ -76,7 +76,7 @@ export const EventImageUpload: React.FC<EventImageUploadProps> = ({ form }) => {
                 value={file}
                 className="relative overflow-hidden rounded-lg border-0 p-0"
               >
-                <div className="relative aspect-[1200/630] w-full overflow-hidden rounded-lg bg-gray-100">
+                <div className="relative aspect-[1200/630] w-full overflow-hidden rounded-lg bg-muted">
                   <FileUploadItemPreview className="absolute inset-0 h-full w-full rounded-none border-0 bg-transparent [&>img]:object-cover" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
                   <div className="absolute bottom-0 left-0 right-0 p-4">
@@ -98,7 +98,7 @@ export const EventImageUpload: React.FC<EventImageUploadProps> = ({ form }) => {
         )}
       </FileUpload>
 
-      <p className="mt-3 text-xs text-gray-500">
+      <p className="mt-3 text-xs text-muted-foreground">
         Esta imagen se mostrará como banner del evento en el listado y la página de detalles.
       </p>
     </div>

@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Search, Filter, Calendar as CalendarIcon, FileSpreadsheet, X } from "lucide-react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
+import type { DateRange } from "react-day-picker";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -29,8 +30,8 @@ interface EventFiltersProps {
   onYearChange: (value: string) => void;
   monthFilter: string;
   onMonthChange: (value: string) => void;
-  dateFilter: { from: Date | undefined; to: Date | undefined } | undefined;
-  onDateChange: (date: { from: Date | undefined; to: Date | undefined } | undefined) => void;
+  dateFilter: DateRange | undefined;
+  onDateChange: (date: DateRange | undefined) => void;
   onClearFilters: () => void;
   onExport: () => void;
 }

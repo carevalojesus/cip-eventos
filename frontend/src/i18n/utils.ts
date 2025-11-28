@@ -6,8 +6,9 @@ import i18n from "./index";
  * @param key - La clave de traducción (ej: "login.title")
  * @param options - Opciones de interpolación (ej: { name: "Juan" })
  */
-export function t(key: string, options?: Record<string, unknown>) {
-  return i18n.t(key, options);
+export function t(key: string, options?: Record<string, unknown>): string {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return i18n.t(key, options as any);
 }
 
 /**

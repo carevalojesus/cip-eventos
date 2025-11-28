@@ -160,6 +160,12 @@
         "presential": "In-person",
         "virtual": "Virtual",
         "hybrid": "Hybrid"
+      },
+      "actions": {
+        "title": "Actions",
+        "manage": "Manage (Full)",
+        "edit": "Edit basic info",
+        "delete": "Delete"
       }
     }
   },
@@ -183,9 +189,11 @@
   "form": {
     "required": "This field is required",
     "invalid_email": "Invalid email address",
+    "invalid_url": "Invalid URL",
     "min_length": "Minimum {{count}} characters",
     "max_length": "Maximum {{count}} characters",
     "save": "Save",
+    "save_event": "Save Event",
     "cancel": "Cancel",
     "submit": "Submit",
     "loading": "Loading...",
@@ -221,5 +229,70 @@
     "forbidden": "Access denied",
     "validation": "Validation error",
     "unknown": "Unknown error"
+  },
+  "create_event": {
+    "type": "Type",
+    "type_placeholder": "Select a type",
+    "category": "Category",
+    "category_placeholder": "Select a category"
+  },
+  "event_management": {
+    "breadcrumb": {
+      "back": "Back",
+      "title": "Event Management"
+    },
+    "actions": {
+      "preview": "Preview",
+      "publish": "Publish Event",
+      "unpublish": "Unpublish",
+      "save": "Save Changes"
+    },
+    "tabs": {
+      "general": "General",
+      "tickets": "Tickets",
+      "agenda": "Agenda",
+      "participants": "Participants",
+      "attendees": "Attendees"
+    },
+    "coming_soon": "This section will be available soon.",
+    "general": {
+      "basic_info": "Basic Information",
+      "basic_info_desc": "Main event details visible to the public.",
+      "title": "Event Title",
+      "title_placeholder": "E.g: Civil Engineering Congress 2024",
+      "description": "Description",
+      "description_placeholder": "Describe the event, its objectives and target audience...",
+      "modality": "Modality",
+      "modality_placeholder": "Select a modality",
+      "start_date": "Start",
+      "end_date": "End"
+    },
+    "location": {
+      "title": "Physical Location",
+      "description": "Information about the venue for the in-person event.",
+      "name": "Venue Name",
+      "name_placeholder": "E.g: CIP Main Auditorium",
+      "address": "Address",
+      "address_placeholder": "E.g: 4947 Arequipa Ave",
+      "city": "City",
+      "city_placeholder": "E.g: Lima",
+      "reference": "Reference",
+      "reference_placeholder": "E.g: In front of Kennedy Park",
+      "map_link": "Google Maps Link",
+      "map_link_placeholder": "https://maps.google.com/..."
+    },
+    "virtual": {
+      "title": "Virtual Access",
+      "description": "Virtual platform configuration for the event.",
+      "platform": "Platform",
+      "platform_placeholder": "Select a platform",
+      "meeting_url": "Meeting URL",
+      "meeting_url_placeholder": "https://zoom.us/j/...",
+      "password": "Access Password",
+      "password_placeholder": "Optional",
+      "instructions": "Access Instructions",
+      "instructions_placeholder": "Additional instructions for participants...",
+      "other": "Other"
+    }
   }
 }

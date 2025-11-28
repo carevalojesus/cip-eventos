@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Plus, AlertCircle, ChevronLeft, ChevronRight } from "lucide-react";
+import type { DateRange } from "react-day-picker";
 import { Button } from "@/components/ui/button";
 import { EventFilters } from "./EventFilters";
 import { EventTable } from "./EventTable";
@@ -21,7 +22,7 @@ export const EventsView: React.FC<EventsViewProps> = ({ onNavigate }) => {
   const [statusFilter, setStatusFilter] = useState("ALL");
   const [yearFilter, setYearFilter] = useState("ALL");
   const [monthFilter, setMonthFilter] = useState("ALL");
-  const [dateFilter, setDateFilter] = useState<{ from: Date | undefined; to: Date | undefined } | undefined>(undefined);
+  const [dateFilter, setDateFilter] = useState<DateRange | undefined>(undefined);
   const [currentPage, setCurrentPage] = useState(1);
 
   const handleClearFilters = () => {
@@ -136,14 +137,14 @@ export const EventsView: React.FC<EventsViewProps> = ({ onNavigate }) => {
             <div className="flex-1">
               <p className="text-sm font-medium text-destructive">{error}</p>
             </div>
-            <Button variant="outline" size="sm" onClick={refetch}>
+            <Button variant="outline" size="sm" onClick={() => refetch()}>
               {t("common.retry", "Reintentar")}
             </Button>
           </div>
         </div>
       )}
 
-      {loading ? <EventTableSkeleton /> : <EventTable events={paginatedEvents} />}
+      {loading ? <EventTableSkeleton /> : <EventTable events={paginatedEvents} onNavigate={onNavigate} />}
 
       {/* Paginación - solo mostrar si hay más de 10 eventos */}
       {!loading && filteredEvents.length > ITEMS_PER_PAGE && (

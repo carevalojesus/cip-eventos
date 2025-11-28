@@ -1,5 +1,6 @@
 import React from "react";
 import { type UseFormReturn } from "react-hook-form";
+import { FileText } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import {
@@ -33,8 +34,11 @@ export const EventBasicInfoFields: React.FC<EventBasicInfoFieldsProps> = ({
   const { control } = form;
 
   return (
-    <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-      <h2 className="mb-4 text-lg font-medium text-gray-900">Información Básica</h2>
+    <div className="rounded-lg border bg-card p-6 shadow-sm">
+      <div className="flex items-center gap-2 mb-4">
+        <FileText className="h-5 w-5 text-muted-foreground" />
+        <h2 className="text-lg font-medium text-foreground">Información Básica</h2>
+      </div>
       <div className="space-y-4">
         <FormField
           control={control}
@@ -48,6 +52,7 @@ export const EventBasicInfoFields: React.FC<EventBasicInfoFieldsProps> = ({
                 <Input
                   {...field}
                   placeholder="Ej: Semana de la Ingeniería Civil 2024"
+                  className="bg-white"
                 />
               </FormControl>
               <FormMessage />
@@ -65,6 +70,7 @@ export const EventBasicInfoFields: React.FC<EventBasicInfoFieldsProps> = ({
                 <Input
                   {...field}
                   placeholder="Breve descripción para tarjetas (max 150 caracteres)"
+                  className="bg-white"
                 />
               </FormControl>
               <FormMessage />
@@ -85,6 +91,7 @@ export const EventBasicInfoFields: React.FC<EventBasicInfoFieldsProps> = ({
                   {...field}
                   rows={6}
                   placeholder="Información completa del evento..."
+                  className="bg-white"
                 />
               </FormControl>
               <FormMessage />
@@ -101,7 +108,7 @@ export const EventBasicInfoFields: React.FC<EventBasicInfoFieldsProps> = ({
                 <FormLabel>Tipo de Evento</FormLabel>
                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                   <FormControl>
-                    <SelectTrigger>
+                    <SelectTrigger className="bg-white">
                       <SelectValue placeholder="Seleccionar..." />
                     </SelectTrigger>
                   </FormControl>
@@ -126,7 +133,7 @@ export const EventBasicInfoFields: React.FC<EventBasicInfoFieldsProps> = ({
                 <FormLabel>Categoría / Capítulo</FormLabel>
                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                   <FormControl>
-                    <SelectTrigger>
+                    <SelectTrigger className="bg-white">
                       <SelectValue placeholder="Seleccionar..." />
                     </SelectTrigger>
                   </FormControl>

@@ -16,7 +16,7 @@ import {
   FormControl,
   FormMessage,
 } from "@/components/ui/form";
-import { Globe } from "lucide-react";
+import { Video } from "lucide-react";
 import type { CreateEventFormValues } from "@/hooks/useCreateEvent";
 
 interface EventVirtualFieldsProps {
@@ -27,10 +27,10 @@ export const EventVirtualFields: React.FC<EventVirtualFieldsProps> = ({ form }) 
   const { control } = form;
 
   return (
-    <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm border-l-4 border-l-purple-500">
+    <div className="rounded-lg border bg-card p-6 shadow-sm">
       <div className="flex items-center gap-2 mb-4">
-        <Globe className="h-5 w-5 text-purple-500" />
-        <h2 className="text-lg font-medium text-gray-900">Accesos Virtuales</h2>
+        <Video className="h-5 w-5 text-muted-foreground" />
+        <h2 className="text-lg font-medium text-foreground">Accesos Virtuales</h2>
       </div>
       <div className="space-y-4">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -44,7 +44,7 @@ export const EventVirtualFields: React.FC<EventVirtualFieldsProps> = ({ form }) 
                 </FormLabel>
                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                   <FormControl>
-                    <SelectTrigger>
+                    <SelectTrigger className="bg-white">
                       <SelectValue placeholder="Seleccionar..." />
                     </SelectTrigger>
                   </FormControl>
@@ -66,7 +66,7 @@ export const EventVirtualFields: React.FC<EventVirtualFieldsProps> = ({ form }) 
               <FormItem>
                 <FormLabel>Contraseña (Opcional)</FormLabel>
                 <FormControl>
-                  <Input {...field} placeholder="Ej: CIP2024" />
+                  <Input {...field} placeholder="Ej: CIP2024" className="bg-white" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -82,7 +82,7 @@ export const EventVirtualFields: React.FC<EventVirtualFieldsProps> = ({ form }) 
                 Link de Reunión <span className="text-red-500">*</span>
               </FormLabel>
               <FormControl>
-                <Input {...field} placeholder="https://zoom.us/j/..." />
+                <Input {...field} placeholder="https://zoom.us/j/..." className="bg-white" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -99,6 +99,7 @@ export const EventVirtualFields: React.FC<EventVirtualFieldsProps> = ({ form }) 
                   {...field}
                   rows={3}
                   placeholder="Instrucciones para unirse..."
+                  className="bg-white"
                 />
               </FormControl>
               <FormMessage />
