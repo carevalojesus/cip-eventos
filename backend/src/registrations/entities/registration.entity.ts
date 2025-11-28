@@ -24,6 +24,9 @@ export enum RegistrationStatus {
 @Entity('registrations')
 // Evita duplicados: Un Attendee no puede registrarse 2 veces al mismo Evento
 @Index(['attendee', 'event'], { unique: true })
+@Index(['status']) // Índice para filtrar por estado
+@Index(['ticketCode']) // Índice para búsqueda rápida de tickets
+@Index(['attended']) // Índice para filtrar asistencia
 export class Registration {
   @PrimaryGeneratedColumn('uuid')
   id: string;

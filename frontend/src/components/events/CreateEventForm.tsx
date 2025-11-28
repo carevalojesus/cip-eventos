@@ -32,6 +32,7 @@ import { cn } from "@/lib/utils";
 import { EventBasicInfoFields } from "./EventBasicInfoFields";
 import { EventLocationFields } from "./EventLocationFields";
 import { EventVirtualFields } from "./EventVirtualFields";
+import { EventImageUpload } from "./EventImageUpload";
 
 import type { EventType, EventCategory, EventModality } from "@/types/event";
 import type { CreateEventFormValues } from "@/hooks/useCreateEvent";
@@ -93,8 +94,7 @@ export const CreateEventForm: React.FC<CreateEventFormProps> = ({
         {/* Main Column */}
         <div className="lg:col-span-2 space-y-6">
           <EventBasicInfoFields form={form} types={types} categories={categories} />
-          {showLocation && <EventLocationFields form={form} />}
-          {showVirtual && <EventVirtualFields form={form} />}
+          <EventImageUpload form={form} />
         </div>
 
         {/* Sidebar Column */}
@@ -108,7 +108,7 @@ export const CreateEventForm: React.FC<CreateEventFormProps> = ({
                 name="modalityId"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Modalidad</FormLabel>
+                    <FormLabel>Modalidad <span className="text-red-500">*</span></FormLabel>
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
                         <SelectTrigger>
@@ -247,6 +247,12 @@ export const CreateEventForm: React.FC<CreateEventFormProps> = ({
               />
             </div>
           </div>
+
+          {/* Location Card - appears when presencial or híbrido */}
+          {showLocation && <EventLocationFields form={form} />}
+
+          {/* Virtual Card - appears when virtual or híbrido */}
+          {showVirtual && <EventVirtualFields form={form} />}
         </div>
       </div>
     </div>

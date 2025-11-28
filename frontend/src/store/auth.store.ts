@@ -7,16 +7,15 @@ interface User {
   firstName?: string;
   lastName?: string;
   avatar?: string;
-  // agrega más campos si necesitas
 }
 
 interface AuthState {
   token: string | null;
-  refreshToken: string | null;
   user: User | null;
   isAuthenticated: boolean;
-  login: (token: string, refreshToken: string, user: User) => void;
+  login: (token: string, user: User) => void;
   logout: () => void;
+  updateToken: (token: string) => void;
   updateUser: (user: Partial<User>) => void;
 }
 
@@ -24,19 +23,27 @@ export const useAuthStore = create<AuthState>()(
   persist(
     (set) => ({
       token: null,
-      refreshToken: null,
       user: null,
       isAuthenticated: false,
-      login: (token, refreshToken, user) => set({ token, refreshToken, user, isAuthenticated: true }),
-      logout: () => set({ token: null, refreshToken: null, user: null, isAuthenticated: false }),
+      // El refresh token ahora se maneja via cookies httpOnly (más seguro)
+      login: (token, user) => set({ token, user, isAuthenticated: true }),
+      logout: () => set({ token: null, user: null, isAuthenticated: false }),
+      updateToken: (token) => set({ token }),
       updateUser: (updates) =>
         set((state) => ({
           user: state.user ? { ...state.user, ...updates } : null,
         })),
     }),
     {
-      name: 'cip-auth-storage', // Nombre en sessionStorage
+      name: 'cip-auth-storage',
+      // Usamos sessionStorage solo para el access token (corta duración)
+      // El refresh token se maneja via cookies httpOnly del servidor
       storage: createJSONStorage(() => sessionStorage),
+      partialize: (state) => ({
+        token: state.token,
+        user: state.user,
+        isAuthenticated: state.isAuthenticated,
+      }),
     }
   )
 );

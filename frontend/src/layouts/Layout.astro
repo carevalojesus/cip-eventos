@@ -3,24 +3,24 @@ import "../styles/global.css";
 
 interface Props {
     title: string;
+    lang?: 'es' | 'en';
 }
 
-const { title } = Astro.props;
+const { title, lang = 'es' } = Astro.props;
 ---
 
 <!doctype html>
-<html lang="es">
+<html lang={lang}>
     <head>
         <meta charset="UTF-8" />
-        <meta name="description" content="CIP Eventos" />
+        <meta name="description" content="CIP Eventos - Sistema de gestión de eventos del Colegio de Ingenieros del Perú" />
         <meta name="viewport" content="width=device-width" />
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
         <meta name="generator" content={Astro.generator} />
         <title>{title}</title>
-        <script>
-            // Actualizar atributo lang del HTML según localStorage
-            const savedLang = localStorage.getItem('i18nextLng') || 'es';
-            document.documentElement.lang = savedLang;
+        <script define:vars={{ lang }}>
+            // Sincronizar idioma con localStorage e i18next
+            localStorage.setItem('i18nextLng', lang);
         </script>
     </head>
     <body>

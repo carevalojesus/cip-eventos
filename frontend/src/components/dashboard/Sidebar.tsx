@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { AUTH_ASSETS } from "@/constants/auth";
 import { useAuthStore } from "@/store/auth.store";
+import { getCurrentLocale, routes } from "@/lib/routes";
 
 interface SidebarProps {
   className?: string;
@@ -25,14 +26,15 @@ interface SidebarProps {
 
 interface NavItem {
   label: string;
-  labelKey: string; // i18n key
-  href: string;
+  labelKey: string;
+  hrefEs: string;
+  hrefEn: string;
   icon: React.ElementType;
 }
 
 interface NavGroup {
   title: string;
-  titleKey: string; // i18n key
+  titleKey: string;
   items: NavItem[];
 }
 
@@ -44,7 +46,8 @@ const navConfig: NavGroup[] = [
       {
         label: "Dashboard",
         labelKey: "dashboard.nav.dashboard",
-        href: "/dashboard",
+        hrefEs: "/",
+        hrefEn: "/en",
         icon: LayoutDashboard,
       },
     ],
@@ -56,19 +59,22 @@ const navConfig: NavGroup[] = [
       {
         label: "Mis Eventos",
         labelKey: "dashboard.nav.my_events",
-        href: "/dashboard/events",
+        hrefEs: "/eventos",
+        hrefEn: "/en/events",
         icon: Calendar,
       },
       {
         label: "Ponentes",
         labelKey: "dashboard.nav.speakers",
-        href: "/dashboard/speakers",
+        hrefEs: "/ponentes",
+        hrefEn: "/en/speakers",
         icon: Users,
       },
       {
         label: "Organizadores",
         labelKey: "dashboard.nav.organizers",
-        href: "/dashboard/organizers",
+        hrefEs: "/organizadores",
+        hrefEn: "/en/organizers",
         icon: Building2,
       },
     ],
@@ -80,19 +86,22 @@ const navConfig: NavGroup[] = [
       {
         label: "Inscripciones",
         labelKey: "dashboard.nav.registrations",
-        href: "/dashboard/registrations",
+        hrefEs: "/inscripciones",
+        hrefEn: "/en/registrations",
         icon: Ticket,
       },
       {
         label: "Control de Puerta",
         labelKey: "dashboard.nav.access_control",
-        href: "/dashboard/access-control",
+        hrefEs: "/control-acceso",
+        hrefEn: "/en/access-control",
         icon: ScanLine,
       },
       {
         label: "Certificados",
         labelKey: "dashboard.nav.certificates",
-        href: "/dashboard/certificates",
+        hrefEs: "/certificados",
+        hrefEn: "/en/certificates",
         icon: Award,
       },
     ],
@@ -104,7 +113,8 @@ const navConfig: NavGroup[] = [
       {
         label: "Pagos y Reportes",
         labelKey: "dashboard.nav.payments_reports",
-        href: "/dashboard/finance",
+        hrefEs: "/finanzas",
+        hrefEn: "/en/finance",
         icon: CreditCard,
       },
     ],
@@ -116,19 +126,22 @@ const navConfig: NavGroup[] = [
       {
         label: "Usuarios",
         labelKey: "dashboard.nav.users",
-        href: "/dashboard/users",
+        hrefEs: "/usuarios",
+        hrefEn: "/en/users",
         icon: UserCog,
       },
       {
         label: "Padrón CIP",
         labelKey: "dashboard.nav.cip_registry",
-        href: "/dashboard/cip-registry",
+        hrefEs: "/padron-cip",
+        hrefEn: "/en/cip-registry",
         icon: Database,
       },
       {
         label: "Configuración",
         labelKey: "dashboard.nav.settings",
-        href: "/dashboard/settings",
+        hrefEs: "/configuracion",
+        hrefEn: "/en/settings",
         icon: Settings,
       },
     ],
@@ -142,6 +155,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 }) => {
   const { t } = useTranslation();
   const { logout } = useAuthStore();
+  const locale = getCurrentLocale();
   const effectivePath =
     typeof window !== "undefined"
       ? currentPath ?? window.location.pathname
@@ -149,12 +163,18 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
   const handleLogout = () => {
     logout();
-    window.location.href = "/login";
+    window.location.href = routes[locale].login;
   };
 
-  const isActive = (href: string) => {
-    if (href === "/dashboard") {
-      return effectivePath === href;
+  const getHref = (item: NavItem) => {
+    return locale === 'en' ? item.hrefEn : item.hrefEs;
+  };
+
+  const isActive = (item: NavItem) => {
+    const href = getHref(item);
+    // Para el dashboard/home, solo coincidencia exacta
+    if (href === "/" || href === "/en") {
+      return effectivePath === href || effectivePath === `${href}/`;
     }
     return effectivePath.startsWith(href);
   };
@@ -195,12 +215,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
               </h3>
               <div className="space-y-1">
                 {group.items.map((item, itemIdx) => {
-                  const active = isActive(item.href);
+                  const href = getHref(item);
+                  const active = isActive(item);
                   return (
                     <a
                       key={itemIdx}
-                      href={item.href}
-                      onClick={(event) => handleNavigate(event, item.href)}
+                      href={href}
+                      onClick={(event) => handleNavigate(event, href)}
                       className={`group flex items-center rounded-lg px-3 py-2.5 text-sm font-medium transition-all ${
                         active
                           ? "bg-primary/10 text-primary"

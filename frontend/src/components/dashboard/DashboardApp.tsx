@@ -7,6 +7,7 @@ import { EventsView } from "@/components/events/EventsView";
 import { CreateEventView } from "@/components/events/CreateEventView";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "@/lib/queryClient";
+import { getCurrentLocale, routes } from "@/lib/routes";
 
 const SectionPlaceholder: React.FC<{ title: string; description?: string }> = ({
   title,
@@ -18,16 +19,21 @@ const SectionPlaceholder: React.FC<{ title: string; description?: string }> = ({
   </div>
 );
 
+interface DashboardAppProps {
+  initialPath?: string;
+}
+
 /**
  * DashboardApp
  * Cliente protegido: verifica sesión antes de renderizar el dashboard.
- * Redirige a /login si no hay token.
+ * Redirige a /iniciar-sesion si no hay token.
  */
-export const DashboardApp: React.FC = () => {
+export const DashboardApp: React.FC<DashboardAppProps> = ({ initialPath }) => {
   const { token } = useAuthStore();
   const [isReady, setIsReady] = useState(false);
-  const [activePath, setActivePath] = useState("/dashboard");
+  const [activePath, setActivePath] = useState(initialPath || "/");
   const [hydrated, setHydrated] = useState(false);
+  const locale = getCurrentLocale();
 
   // Espera a que el store persistente rehidrate antes de evaluar el token.
   useEffect(() => {
@@ -45,24 +51,25 @@ export const DashboardApp: React.FC = () => {
   useEffect(() => {
     if (!hydrated) return;
     if (!token) {
-      window.location.href = "/login";
+      window.location.href = routes[locale].login;
       return;
     }
     setIsReady(true);
-  }, [token, hydrated]);
+  }, [token, hydrated, locale]);
 
   // Sincroniza el path inicial y reacciona a navegación del navegador.
   useEffect(() => {
     if (typeof window === "undefined") return;
 
-    setActivePath(window.location.pathname || "/dashboard");
+    const currentPath = initialPath || window.location.pathname || "/";
+    setActivePath(currentPath);
 
     const onPopState = () => {
-      setActivePath(window.location.pathname || "/dashboard");
+      setActivePath(window.location.pathname || "/");
     };
     window.addEventListener("popstate", onPopState);
     return () => window.removeEventListener("popstate", onPopState);
-  }, []);
+  }, [initialPath]);
 
   const handleNavigate = (href: string) => {
     if (typeof window === "undefined") return;
@@ -71,41 +78,54 @@ export const DashboardApp: React.FC = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  // Helper para verificar rutas en ambos idiomas
+  const matchesRoute = (patterns: string[]) => {
+    return patterns.some(p => activePath === p || activePath === `${p}/`);
+  };
+
+  const startsWithRoute = (patterns: string[]) => {
+    return patterns.some(p => activePath.startsWith(p));
+  };
+
   const renderContent = () => {
-    if (activePath === "/dashboard" || activePath === "/dashboard/") {
+    // Home / Dashboard
+    if (matchesRoute(["/", "/en"])) {
       return <DashboardContent />;
     }
-    if (activePath === "/dashboard/events/new") {
+    // Crear evento
+    if (matchesRoute(["/eventos/nuevo", "/en/events/new"])) {
       return <CreateEventView />;
     }
-    if (activePath.startsWith("/dashboard/events")) {
+    // Lista de eventos
+    if (startsWithRoute(["/eventos", "/en/events"])) {
       return <EventsView onNavigate={handleNavigate} />;
     }
-    if (activePath.startsWith("/dashboard/speakers")) {
+    // Placeholders para otras secciones
+    if (startsWithRoute(["/ponentes", "/en/speakers"])) {
       return <SectionPlaceholder title="Ponentes" />;
     }
-    if (activePath.startsWith("/dashboard/organizers")) {
+    if (startsWithRoute(["/organizadores", "/en/organizers"])) {
       return <SectionPlaceholder title="Organizadores" />;
     }
-    if (activePath.startsWith("/dashboard/registrations")) {
+    if (startsWithRoute(["/inscripciones", "/en/registrations"])) {
       return <SectionPlaceholder title="Inscripciones" />;
     }
-    if (activePath.startsWith("/dashboard/access-control")) {
+    if (startsWithRoute(["/control-acceso", "/en/access-control"])) {
       return <SectionPlaceholder title="Control de Puerta" />;
     }
-    if (activePath.startsWith("/dashboard/certificates")) {
+    if (startsWithRoute(["/certificados", "/en/certificates"])) {
       return <SectionPlaceholder title="Certificados" />;
     }
-    if (activePath.startsWith("/dashboard/finance")) {
+    if (startsWithRoute(["/finanzas", "/en/finance"])) {
       return <SectionPlaceholder title="Pagos y Reportes" />;
     }
-    if (activePath.startsWith("/dashboard/users")) {
+    if (startsWithRoute(["/usuarios", "/en/users"])) {
       return <SectionPlaceholder title="Usuarios" />;
     }
-    if (activePath.startsWith("/dashboard/cip-registry")) {
+    if (startsWithRoute(["/padron-cip", "/en/cip-registry"])) {
       return <SectionPlaceholder title="Padrón CIP" />;
     }
-    if (activePath.startsWith("/dashboard/settings")) {
+    if (startsWithRoute(["/configuracion", "/en/settings"])) {
       return <SectionPlaceholder title="Configuración" />;
     }
     return (

@@ -39,18 +39,22 @@ export class PaymentsService {
 
   // 1. INICIAR PAGO
   async createPaymentIntent(dto: CreatePaymentDto, userId: string) {
+    this.logger.log(`[createPaymentIntent] Iniciando pago para usuario ${userId}, registro ${dto.registrationId}`);
+
     // a. Buscar inscripción
     const registration = await this.registrationRepo.findOne({
       where: { id: dto.registrationId },
       relations: ['attendee', 'attendee.user', 'event'],
     });
 
-    if (!registration)
+    if (!registration) {
+      this.logger.warn(`[createPaymentIntent] Registro no encontrado: ${dto.registrationId}`);
       throw new NotFoundException(
         this.i18n.t('payments.registration_not_found', {
           lang: I18nContext.current()?.lang,
         }),
       );
+    }
 
     // b. Validaciones de seguridad
     if (registration.status === RegistrationStatus.CONFIRMED) {
@@ -81,11 +85,15 @@ export class PaymentsService {
 
     // CASO PAYPAL:
     if (provider === PaymentProvider.PAYPAL) {
+      this.logger.log(`[createPaymentIntent] Creando orden PayPal para monto ${registration.finalPrice} PEN`);
+
       // Crear la Orden en PayPal primero
       const orderId = await this.paypalService.createOrder(
         registration.finalPrice,
         'PEN', // Cobro en Soles
       );
+
+      this.logger.log(`[createPaymentIntent] Orden PayPal creada: ${orderId}`);
 
       // Guardamos el pago en estado PENDING con el ID de PayPal
       const payment = this.paymentRepo.create({
@@ -98,6 +106,8 @@ export class PaymentsService {
       });
 
       await this.paymentRepo.save(payment);
+
+      this.logger.log(`[createPaymentIntent] Pago creado exitosamente: ${payment.id}, PayPal Order: ${orderId}`);
 
       return {
         paymentId: payment.id,
@@ -139,6 +149,8 @@ export class PaymentsService {
     paypalOrderId: string,
     userId: string,
   ) {
+    this.logger.log(`[completePaypalPayment] Capturando pago PayPal - Payment: ${paymentId}, Order: ${paypalOrderId}, User: ${userId}`);
+
     const payment = await this.paymentRepo.findOne({
       where: { id: paymentId },
       relations: [
@@ -150,18 +162,23 @@ export class PaymentsService {
       ],
     });
 
-    if (!payment)
+    if (!payment) {
+      this.logger.warn(`[completePaypalPayment] Pago no encontrado: ${paymentId}`);
       throw new NotFoundException(
         this.i18n.t('payments.payment_not_found', {
           lang: I18nContext.current()?.lang,
         }),
       );
-    if (payment.status === PaymentStatus.COMPLETED)
+    }
+
+    if (payment.status === PaymentStatus.COMPLETED) {
+      this.logger.log(`[completePaypalPayment] Pago ya completado previamente: ${paymentId}`);
       return {
         message: this.i18n.t('payments.already_completed', {
           lang: I18nContext.current()?.lang,
         }),
       };
+    }
 
     // Validación de seguridad: Verificar que el usuario sea el dueño del pago
     if (payment.registration.attendee?.user?.id !== userId) {
@@ -182,10 +199,13 @@ export class PaymentsService {
     }
 
     // CAPTURAR EL DINERO REALMENTE (Server-to-Server)
+    this.logger.log(`[completePaypalPayment] Capturando pago en PayPal: ${paypalOrderId}`);
     const captureResult =
       await this.paypalService.capturePayment(paypalOrderId);
 
     if (captureResult.success) {
+      this.logger.log(`[completePaypalPayment] Captura exitosa - PayPal Order: ${paypalOrderId}, Payment: ${paymentId}`);
+
       payment.status = PaymentStatus.COMPLETED;
       payment.metadata = captureResult.metadata;
       await this.paymentRepo.save(payment);
@@ -195,8 +215,12 @@ export class PaymentsService {
       registration.status = RegistrationStatus.CONFIRMED;
       await this.registrationRepo.save(registration);
 
+      this.logger.log(`[completePaypalPayment] Inscripción confirmada: ${registration.id}, enviando ticket por email`);
+
       // Usar nuevo formato: pasar registration completo (incluye Google Wallet)
       await this.mailService.sendTicket(registration);
+
+      this.logger.log(`[completePaypalPayment] Proceso completado exitosamente - Payment: ${paymentId}, Registration: ${registration.id}`);
 
       return {
         message: this.i18n.t('payments.paypal_success', {
@@ -204,6 +228,7 @@ export class PaymentsService {
         }),
       };
     } else {
+      this.logger.error(`[completePaypalPayment] Captura fallida - PayPal Order: ${paypalOrderId}, Payment: ${paymentId}`);
       throw new BadRequestException(
         this.i18n.t('payments.paypal_not_approved', {
           lang: I18nContext.current()?.lang,
@@ -217,6 +242,8 @@ export class PaymentsService {
     dto: ReportPaymentDto,
     userId: string,
   ) {
+    this.logger.log(`[reportPayment] Usuario ${userId} reportando pago ${paymentId} - Provider: ${dto.provider}, Op: ${dto.operationCode}`);
+
     const payment = await this.paymentRepo.findOne({
       where: { id: paymentId },
       relations: [
@@ -226,12 +253,14 @@ export class PaymentsService {
       ],
     });
 
-    if (!payment)
+    if (!payment) {
+      this.logger.warn(`[reportPayment] Pago no encontrado: ${paymentId}`);
       throw new NotFoundException(
         this.i18n.t('payments.payment_not_found', {
           lang: I18nContext.current()?.lang,
         }),
       );
+    }
 
     // Validar que el usuario sea el dueño (opcional pero recomendado)
     if (payment.registration.attendee?.user?.id !== userId) {
@@ -257,7 +286,10 @@ export class PaymentsService {
     payment.status = PaymentStatus.WAITING_APPROVAL; // 👈 Cambia estado
     payment.rejectionReason = null; // Limpiamos rechazos previos si reintenta
 
-    return await this.paymentRepo.save(payment);
+    const savedPayment = await this.paymentRepo.save(payment);
+    this.logger.log(`[reportPayment] Pago reportado exitosamente: ${paymentId}, Estado: WAITING_APPROVAL`);
+
+    return savedPayment;
   }
 
   // 👇 4. ADMIN REVISA PAGO (Conciliación)
@@ -266,6 +298,8 @@ export class PaymentsService {
     dto: ReviewPaymentDto,
     adminUser: User,
   ) {
+    this.logger.log(`[reviewPayment] Admin ${adminUser.email} revisando pago ${paymentId} - Aprobado: ${dto.isApproved}`);
+
     const payment = await this.paymentRepo.findOne({
       where: { id: paymentId },
       relations: [
@@ -276,21 +310,27 @@ export class PaymentsService {
       ],
     });
 
-    if (!payment)
+    if (!payment) {
+      this.logger.warn(`[reviewPayment] Pago no encontrado: ${paymentId}`);
       throw new NotFoundException(
         this.i18n.t('payments.payment_not_found', {
           lang: I18nContext.current()?.lang,
         }),
       );
-    if (payment.status === PaymentStatus.COMPLETED)
+    }
+
+    if (payment.status === PaymentStatus.COMPLETED) {
+      this.logger.warn(`[reviewPayment] Pago ya completado: ${paymentId}`);
       throw new BadRequestException(
         this.i18n.t('payments.already_completed_review', {
           lang: I18nContext.current()?.lang,
         }),
       );
+    }
 
     if (dto.isApproved) {
       // ✅ APROBAR
+      this.logger.log(`[reviewPayment] Aprobando pago ${paymentId}`);
       payment.status = PaymentStatus.COMPLETED;
       payment.reviewedBy = adminUser;
 
@@ -298,18 +338,20 @@ export class PaymentsService {
       payment.registration.status = RegistrationStatus.CONFIRMED;
       await this.registrationRepo.save(payment.registration);
 
+      this.logger.log(`[reviewPayment] Inscripción confirmada: ${payment.registration.id}, enviando ticket`);
+
       // Enviar Ticket con Google Wallet incluido
       await this.mailService.sendTicket(payment.registration);
+
+      this.logger.log(`[reviewPayment] Pago aprobado exitosamente: ${paymentId}, Admin: ${adminUser.email}`);
     } else {
       // ❌ RECHAZAR
+      this.logger.log(`[reviewPayment] Rechazando pago ${paymentId} - Razón: ${dto.rejectionReason}`);
       payment.status = PaymentStatus.REJECTED;
       payment.rejectionReason = dto.rejectionReason || 'Datos inconsistentes';
       payment.reviewedBy = adminUser;
 
-      // Opcional: Enviar correo de "Pago Rechazado"
-      this.logger.log(
-        `Enviar email de rechazo a ${payment.registration.attendee.email}`,
-      );
+      this.logger.log(`[reviewPayment] Pago rechazado: ${paymentId}, Email: ${payment.registration.attendee.email}`);
     }
 
     return await this.paymentRepo.save(payment);

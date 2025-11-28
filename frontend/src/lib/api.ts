@@ -1,11 +1,15 @@
 import axios from 'axios';
 import { useAuthStore } from '@/store/auth.store';
+import { getCurrentLocale, routes } from '@/lib/routes';
+
+const API_BASE_URL = import.meta.env.PUBLIC_API_URL || 'http://localhost:3000/api';
 
 const api = axios.create({
-  baseURL: import.meta.env.PUBLIC_API_URL || 'http://localhost:3000/api',
+  baseURL: API_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
   },
+  withCredentials: true, // Importante: enviar cookies en todas las peticiones
 });
 
 // Interceptor: Inyectar Token automáticamente
@@ -19,13 +23,13 @@ api.interceptors.request.use((config) => {
 
 // Refresh Token Logic
 let isRefreshing = false;
-let failedQueue: any[] = [];
+let failedQueue: { resolve: (token: string) => void; reject: (error: unknown) => void }[] = [];
 
-const processQueue = (error: any, token: string | null = null) => {
+const processQueue = (error: unknown, token: string | null = null) => {
   failedQueue.forEach((prom) => {
     if (error) {
       prom.reject(error);
-    } else {
+    } else if (token) {
       prom.resolve(token);
     }
   });
@@ -40,7 +44,7 @@ api.interceptors.response.use(
 
     if (error.response?.status === 401 && !originalRequest._retry) {
       if (isRefreshing) {
-        return new Promise(function (resolve, reject) {
+        return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject });
         })
           .then((token) => {
@@ -56,26 +60,16 @@ api.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        const refreshToken = useAuthStore.getState().refreshToken;
-
-        if (!refreshToken) {
-          throw new Error("No refresh token available");
-        }
-
-        // Usar una instancia nueva para evitar interceptores
+        // El refresh token se envía automáticamente via cookie httpOnly
         const response = await axios.post(
-          (import.meta.env.PUBLIC_API_URL || 'http://localhost:3000/api') + '/auth/refresh',
+          `${API_BASE_URL}/auth/refresh`,
           {},
-          {
-            headers: {
-              Authorization: `Bearer ${refreshToken}`,
-            },
-          }
+          { withCredentials: true }
         );
 
-        const { access_token, refresh_token } = response.data;
+        const { access_token } = response.data;
 
-        useAuthStore.setState({ token: access_token, refreshToken: refresh_token });
+        useAuthStore.getState().updateToken(access_token);
 
         api.defaults.headers.common['Authorization'] = 'Bearer ' + access_token;
         originalRequest.headers['Authorization'] = 'Bearer ' + access_token;
@@ -88,8 +82,12 @@ api.interceptors.response.use(
         processQueue(err, null);
         isRefreshing = false;
         useAuthStore.getState().logout();
-        if (window.location.pathname !== "/login") {
-          window.location.href = "/login";
+        if (typeof window !== 'undefined') {
+          const locale = getCurrentLocale();
+          const loginPath = routes[locale].login;
+          if (!window.location.pathname.includes('iniciar-sesion') && !window.location.pathname.includes('/login')) {
+            window.location.href = loginPath;
+          }
         }
         return Promise.reject(err);
       }

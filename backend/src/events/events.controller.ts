@@ -10,6 +10,7 @@ import {
   Inject,
   forwardRef,
   Res,
+  Query,
 } from '@nestjs/common';
 import type { Response } from 'express';
 import { RegistrationsService } from '../registrations/registrations.service';
@@ -24,6 +25,7 @@ import { EventModalityValidatorPipe } from './pipes/event-modality-validator.pip
 import { CreateSessionDto } from './dto/create-session.dto';
 import { UpdateSessionDto } from './dto/update-session.dto';
 import { CreateTicketDto } from './dto/create-ticket.dto';
+import { PaginationDto } from '../common/dto/pagination.dto';
 
 @Controller('events')
 export class EventsController {
@@ -62,8 +64,8 @@ export class EventsController {
 
   @Public()
   @Get()
-  findAll() {
-    return this.eventsService.findAll();
+  findAll(@Query() paginationDto: PaginationDto) {
+    return this.eventsService.findAll(paginationDto);
   }
 
   @Public()
@@ -183,29 +185,44 @@ export class EventsController {
   async exportAttendees(@Param('id') id: string, @Res() res: Response) {
     const attendees = await this.registrationsService.getEventAttendees(id);
 
-    // Generar CSV simple
+    // Helper para escapar valores CSV y prevenir inyección
+    const escapeCsvValue = (value: string | number | null | undefined): string => {
+      if (value === null || value === undefined) return '';
+      const stringValue = String(value);
+      // Si contiene comas, comillas, saltos de línea o empieza con caracteres peligrosos
+      // para inyección de fórmulas (=, +, -, @), escapar con comillas dobles
+      const needsQuoting = /[,"\n\r]|^[=+\-@\t\r]/.test(stringValue);
+      if (needsQuoting) {
+        // Escapar comillas dobles duplicándolas y envolver en comillas
+        return `"${stringValue.replace(/"/g, '""')}"`;
+      }
+      return stringValue;
+    };
+
+    // Generar CSV con BOM para Excel y caracteres especiales
+    const BOM = '\uFEFF';
     const csvHeader =
       'Apellido,Nombre,DNI,Email,Ticket,Precio,Estado,Asistió,Hora Ingreso\n';
     const csvRows = attendees
       .map((reg) => {
         return [
-          reg.attendee.lastName,
-          reg.attendee.firstName,
-          reg.attendee.documentNumber,
-          reg.attendee.email,
-          reg.eventTicket.name,
-          reg.finalPrice,
-          reg.status,
+          escapeCsvValue(reg.attendee.lastName),
+          escapeCsvValue(reg.attendee.firstName),
+          escapeCsvValue(reg.attendee.documentNumber),
+          escapeCsvValue(reg.attendee.email),
+          escapeCsvValue(reg.eventTicket.name),
+          escapeCsvValue(reg.finalPrice),
+          escapeCsvValue(reg.status),
           reg.attended ? 'SI' : 'NO',
           reg.attendedAt ? reg.attendedAt.toISOString() : '',
         ].join(',');
       })
       .join('\n');
 
-    const csvContent = csvHeader + csvRows;
+    const csvContent = BOM + csvHeader + csvRows;
 
     res.set({
-      'Content-Type': 'text/csv',
+      'Content-Type': 'text/csv; charset=utf-8',
       'Content-Disposition': `attachment; filename="asistentes-evento-${id}.csv"`,
     });
 

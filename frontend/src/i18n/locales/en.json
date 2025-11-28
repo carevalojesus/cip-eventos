@@ -1,4 +1,11 @@
 {
+  "routes": {
+    "home": "/en",
+    "login": "/en/login",
+    "events": "/en/events",
+    "events_new": "/en/events/new",
+    "dashboard": "/en/dashboard"
+  },
   "welcome": "Welcome to Dashboard",
   "greeting": "Hello {{name}}",
   "events": "Events",

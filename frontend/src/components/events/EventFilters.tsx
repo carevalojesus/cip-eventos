@@ -27,11 +27,28 @@ interface EventFiltersProps {
   onStatusChange: (value: string) => void;
   yearFilter: string;
   onYearChange: (value: string) => void;
+  monthFilter: string;
+  onMonthChange: (value: string) => void;
   dateFilter: { from: Date | undefined; to: Date | undefined } | undefined;
   onDateChange: (date: { from: Date | undefined; to: Date | undefined } | undefined) => void;
   onClearFilters: () => void;
   onExport: () => void;
 }
+
+const MONTHS = [
+  { value: "1", label: "Enero" },
+  { value: "2", label: "Febrero" },
+  { value: "3", label: "Marzo" },
+  { value: "4", label: "Abril" },
+  { value: "5", label: "Mayo" },
+  { value: "6", label: "Junio" },
+  { value: "7", label: "Julio" },
+  { value: "8", label: "Agosto" },
+  { value: "9", label: "Septiembre" },
+  { value: "10", label: "Octubre" },
+  { value: "11", label: "Noviembre" },
+  { value: "12", label: "Diciembre" },
+];
 
 export const EventFilters: React.FC<EventFiltersProps> = ({
   searchTerm,
@@ -40,6 +57,8 @@ export const EventFilters: React.FC<EventFiltersProps> = ({
   onStatusChange,
   yearFilter,
   onYearChange,
+  monthFilter,
+  onMonthChange,
   dateFilter,
   onDateChange,
   onClearFilters,
@@ -47,38 +66,41 @@ export const EventFilters: React.FC<EventFiltersProps> = ({
 }) => {
   const { t } = useTranslation();
 
-  const hasActiveFilters = searchTerm || statusFilter !== "ALL" || yearFilter !== "ALL" || dateFilter;
+  const hasActiveFilters = searchTerm || statusFilter !== "ALL" || yearFilter !== "ALL" || monthFilter !== "ALL" || dateFilter;
 
   return (
-    <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-      <div className="relative w-full sm:w-72">
-        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
-        <Input
-          placeholder={t("dashboard.events_view.search_placeholder")}
-          className="pl-9"
-          value={searchTerm}
-          onChange={(e) => onSearchChange(e.target.value)}
-        />
-      </div>
-      <div className="flex flex-wrap items-center gap-2">
-        <div className="relative">
-          <Filter className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
-          <Select value={statusFilter} onValueChange={onStatusChange}>
-            <SelectTrigger className="w-full sm:w-40 pl-9">
-              <SelectValue placeholder={t("dashboard.events_view.filter_status")} />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="ALL">{t("dashboard.events_view.filter_status")}</SelectItem>
-              <SelectItem value="PUBLISHED">{t("dashboard.events_view.status.PUBLISHED")}</SelectItem>
-              <SelectItem value="DRAFT">{t("dashboard.events_view.status.DRAFT")}</SelectItem>
-              <SelectItem value="COMPLETED">{t("dashboard.events_view.status.COMPLETED")}</SelectItem>
-              <SelectItem value="CANCELLED">{t("dashboard.events_view.status.CANCELLED")}</SelectItem>
-            </SelectContent>
-          </Select>
+    <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:flex-wrap">
+        <div className="relative w-full sm:w-72">
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+          <Input
+            placeholder={t("dashboard.events_view.search_placeholder")}
+            className="pl-9"
+            value={searchTerm}
+            onChange={(e) => onSearchChange(e.target.value)}
+          />
         </div>
 
-        <Select value={yearFilter} onValueChange={onYearChange}>
-          <SelectTrigger className="w-full sm:w-32">
+        <Select value={statusFilter} onValueChange={onStatusChange}>
+          <SelectTrigger className="w-full sm:w-44">
+            <SelectValue placeholder={t("dashboard.events_view.filter_status")} />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="ALL">Todos los estados</SelectItem>
+            <SelectItem value="PUBLISHED">{t("dashboard.events_view.status.PUBLISHED")}</SelectItem>
+            <SelectItem value="DRAFT">{t("dashboard.events_view.status.DRAFT")}</SelectItem>
+            <SelectItem value="COMPLETED">{t("dashboard.events_view.status.COMPLETED")}</SelectItem>
+            <SelectItem value="CANCELLED">{t("dashboard.events_view.status.CANCELLED")}</SelectItem>
+          </SelectContent>
+        </Select>
+
+        <Select value={yearFilter} onValueChange={(value) => {
+          onYearChange(value);
+          if (value === "ALL") {
+            onMonthChange("ALL");
+          }
+        }}>
+          <SelectTrigger className="w-full sm:w-36">
             <SelectValue placeholder="Año" />
           </SelectTrigger>
           <SelectContent>
@@ -89,12 +111,30 @@ export const EventFilters: React.FC<EventFiltersProps> = ({
           </SelectContent>
         </Select>
 
+        <Select
+          value={monthFilter}
+          onValueChange={onMonthChange}
+          disabled={yearFilter === "ALL"}
+        >
+          <SelectTrigger className="w-full sm:w-44">
+            <SelectValue placeholder="Mes" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="ALL">Todos los meses</SelectItem>
+            {MONTHS.map((month) => (
+              <SelectItem key={month.value} value={month.value}>
+                {month.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
         <Popover>
           <PopoverTrigger asChild>
             <Button
               variant={"outline"}
               className={cn(
-                "w-full justify-start text-left font-normal sm:w-[280px]",
+                "w-full justify-start text-left font-normal sm:w-[240px]",
                 !dateFilter && "text-muted-foreground"
               )}
             >
@@ -130,10 +170,12 @@ export const EventFilters: React.FC<EventFiltersProps> = ({
           </Button>
         )}
 
-        <Button variant="outline" onClick={onExport} className="gap-2">
-          <FileSpreadsheet className="h-4 w-4 text-green-600" />
-          {t("dashboard.events_view.export_excel", "Exportar")}
-        </Button>
+        <div className="sm:ml-auto">
+          <Button variant="outline" onClick={onExport} className="gap-2 w-full sm:w-auto">
+            <FileSpreadsheet className="h-4 w-4 text-green-600" />
+            {t("dashboard.events_view.export_excel", "Exportar")}
+          </Button>
+        </div>
       </div>
     </div>
   );

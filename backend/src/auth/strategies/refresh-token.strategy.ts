@@ -17,6 +17,20 @@ interface RefreshTokenPayload extends JwtPayload {
   refreshToken: string;
 }
 
+// Función para extraer el token de la cookie o del header
+const extractRefreshToken = (req: Request): string | null => {
+  // Primero intentar obtener de la cookie httpOnly
+  if (req.cookies && req.cookies.refresh_token) {
+    return req.cookies.refresh_token;
+  }
+  // Fallback: obtener del header Authorization (para retrocompatibilidad)
+  const authHeader = req.get('Authorization');
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    return authHeader.replace('Bearer ', '').trim();
+  }
+  return null;
+};
+
 @Injectable()
 export class RefreshTokenStrategy extends PassportStrategy(
   Strategy,
@@ -24,7 +38,7 @@ export class RefreshTokenStrategy extends PassportStrategy(
 ) {
   constructor(configService: ConfigService) {
     super({
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      jwtFromRequest: ExtractJwt.fromExtractors([extractRefreshToken]),
       secretOrKey:
         configService.get<string>('JWT_REFRESH_SECRET') || 'refresh_secret',
       passReqToCallback: true,
@@ -32,14 +46,11 @@ export class RefreshTokenStrategy extends PassportStrategy(
   }
 
   validate(req: Request, payload: JwtPayload): RefreshTokenPayload {
-    const authHeader = req.get('Authorization');
+    const refreshToken = extractRefreshToken(req);
 
-    if (!authHeader) {
+    if (!refreshToken) {
       throw new ForbiddenException('Token de refresco no encontrado');
     }
-
-    // Limpiamos el string "Bearer " para quedarnos solo con el token
-    const refreshToken = authHeader.replace('Bearer', '').trim();
 
     return {
       ...payload,

@@ -57,11 +57,22 @@ import { NotificationsModule } from './notifications/notifications.module';
         };
       },
     }),
-    // Rate Limiting Global - Protección contra ataques DoS
+    // Rate Limiting con múltiples configuraciones
     ThrottlerModule.forRoot([
       {
-        ttl: 60000, // Ventana de tiempo: 60 segundos
-        limit: 10, // Máximo 10 peticiones por ventana (default)
+        name: 'short',
+        ttl: 1000, // 1 segundo
+        limit: 3, // 3 peticiones por segundo (protección burst)
+      },
+      {
+        name: 'medium',
+        ttl: 10000, // 10 segundos
+        limit: 20, // 20 peticiones cada 10 segundos
+      },
+      {
+        name: 'long',
+        ttl: 60000, // 60 segundos
+        limit: 100, // 100 peticiones por minuto (usuarios autenticados)
       },
     ]),
     RolesModule,

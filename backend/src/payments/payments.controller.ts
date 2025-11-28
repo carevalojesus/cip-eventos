@@ -6,6 +6,7 @@ import {
   Param,
   UseGuards,
 } from '@nestjs/common';
+import { Throttle } from '@nestjs/throttler';
 import { PaymentsService } from './payments.service';
 import { CreatePaymentDto } from './dto/create-payment.dto';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
@@ -18,6 +19,7 @@ import { Roles } from '../auth/decorators/roles.decorator';
 import { User } from '../users/entities/user.entity';
 
 @Controller('payments')
+@Throttle({ short: { limit: 10, ttl: 60000 } }) // Rate limit global para pagos: 10 por minuto
 export class PaymentsController {
   constructor(private readonly paymentsService: PaymentsService) {}
 

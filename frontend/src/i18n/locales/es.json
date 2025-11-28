@@ -1,4 +1,11 @@
 {
+  "routes": {
+    "home": "/",
+    "login": "/iniciar-sesion",
+    "events": "/eventos",
+    "events_new": "/eventos/nuevo",
+    "dashboard": "/panel"
+  },
   "welcome": "Bienvenido al Panel",
   "greeting": "Hola {{name}}",
   "events": "Eventos",

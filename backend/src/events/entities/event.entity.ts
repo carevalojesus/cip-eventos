@@ -10,6 +10,7 @@ import {
   ManyToMany,
   JoinTable,
   OneToMany,
+  Index,
 } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
 // Importamos las nuevas entidades
@@ -32,6 +33,10 @@ export enum EventStatus {
 }
 
 @Entity('events')
+@Index(['status']) // Índice para filtrar por estado
+@Index(['isActive']) // Índice para soft delete
+@Index(['startAt']) // Índice para ordenar/filtrar por fecha
+@Index(['status', 'isActive']) // Índice compuesto para queries comunes
 export class Event {
   @PrimaryGeneratedColumn('uuid')
   id: string;

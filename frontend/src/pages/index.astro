@@ -1,16 +1,11 @@
 ---
+import { DashboardApp } from "@/components/dashboard/DashboardApp";
+import Layout from "@/layouts/Layout.astro";
 
+// Esta página sirve como home para usuarios logueados
+// Si no está logueado, el DashboardApp redirigirá a /iniciar-sesion
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<Layout title="CIP Eventos - Panel de Administración">
+  <DashboardApp client:only="react" />
+</Layout>

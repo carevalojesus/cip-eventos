@@ -22,6 +22,7 @@ import axios from "axios";
 import api from "@/lib/api";
 import { useAuthStore } from "@/store/auth.store";
 import { AUTH_ROUTES } from "@/constants/auth";
+import { getCurrentLocale, routes } from "@/lib/routes";
 
 /**
  * Creates a login schema with translated validation messages
@@ -72,13 +73,15 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
     setGlobalError(null);
     try {
       const response = await api.post("/auth/login", data);
-      login(response.data.access_token, response.data.refresh_token, response.data.user);
+      // El refresh token se maneja via cookies httpOnly (más seguro)
+      login(response.data.access_token, response.data.user);
 
       // Call onSuccess callback if provided, otherwise redirect
       if (onSuccess) {
         onSuccess();
       } else {
-        window.location.href = "/dashboard";
+        const locale = getCurrentLocale();
+        window.location.href = routes[locale].home;
       }
     } catch (err) {
       if (axios.isAxiosError(err)) {

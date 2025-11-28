@@ -6,6 +6,7 @@ import { z } from "zod";
 import { eventsService } from "@/services/events.service";
 import { logger } from "@/utils/logger";
 import { MODALITY_IDS, requiresLocation, requiresVirtualAccess } from "@/constants/modalities";
+import { getCurrentLocale, routes } from "@/lib/routes";
 import type { EventType, EventCategory, EventModality } from "@/types/event";
 
 // Schema definition
@@ -23,6 +24,8 @@ export const createEventSchema = (t: any) => z.object({
   modalityId: z.string().min(1, t("form.required")),
   startAt: z.string().min(1, t("form.required")),
   endAt: z.string().min(1, t("form.required")),
+  // Image field
+  coverImage: z.instanceof(File).nullable().optional(),
   // Location fields
   locationName: z.string().optional(),
   locationAddress: z.string().optional(),
@@ -112,9 +115,10 @@ export const useCreateEvent = () => {
       modalityId: "",
       startAt: "",
       endAt: "",
+      coverImage: null,
       locationName: "",
       locationAddress: "",
-      locationCity: "Lima",
+      locationCity: "",
       locationReference: "",
       locationMapLink: "",
       virtualPlatform: "",
@@ -176,8 +180,18 @@ export const useCreateEvent = () => {
         } : undefined,
       };
 
-      await eventsService.createEvent(payload);
-      window.location.href = "/dashboard/events";
+      // Si hay imagen, usar FormData
+      if (data.coverImage) {
+        const formData = new FormData();
+        formData.append('coverImage', data.coverImage);
+        formData.append('data', JSON.stringify(payload));
+        await eventsService.createEventWithImage(formData);
+      } else {
+        await eventsService.createEvent(payload);
+      }
+
+      const locale = getCurrentLocale();
+      window.location.href = routes[locale].events;
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
         logger.error("Backend validation error:", JSON.stringify(error.response.data, null, 2));

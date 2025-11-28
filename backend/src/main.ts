@@ -4,6 +4,7 @@ import { ClassSerializerInterceptor, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { I18nValidationPipe, I18nValidationExceptionFilter } from 'nestjs-i18n';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -11,8 +12,13 @@ async function bootstrap() {
 
   const port = configService.get<number>('PORT') || 3000;
   const prefix = configService.get<string>('API_PREFIX') || 'api';
+  const frontendUrl = configService.get<string>('FRONTEND_URL') || 'http://localhost:4321';
+  const isProduction = configService.get<string>('NODE_ENV') === 'production';
 
   app.setGlobalPrefix(prefix);
+
+  // Cookie parser para httpOnly cookies
+  app.use(cookieParser());
 
   app.useGlobalPipes(
     new I18nValidationPipe({
@@ -29,7 +35,14 @@ async function bootstrap() {
   );
 
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
-  app.enableCors();
+
+  // CORS configurado con origen específico y soporte para cookies
+  app.enableCors({
+    origin: isProduction ? frontendUrl : [frontendUrl, 'http://localhost:4321', 'http://localhost:3000'],
+    credentials: true,
+    methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Accept-Language'],
+  });
 
   // Swagger/OpenAPI Configuration
   const config = new DocumentBuilder()

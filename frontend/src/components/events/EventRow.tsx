@@ -25,59 +25,76 @@ export const EventRow = React.memo<EventRowProps>(({ event, statusVariantMap, ge
   };
 
   const formatDate = (dateString: string) => {
-    if (!dateString) return "";
-    return new Date(dateString).toLocaleDateString("es-PE", {
-      weekday: "short",
-      day: "numeric",
-      month: "short",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: true,
-    });
+    if (!dateString) return { date: "", time: "" };
+    const date = new Date(dateString);
+    return {
+      date: date.toLocaleDateString("es-PE", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+      }),
+      time: date.toLocaleTimeString("es-PE", {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true,
+      }),
+    };
   };
+
+  const startDate = formatDate(event.startAt);
 
   const variant = statusVariantMap[event.status] || "default";
   const ModalityIcon = getModalityIcon(event.modality.name);
 
   return (
     <TableRow className="hover:bg-gray-50">
-      <TableCell className="px-6 py-4 font-medium">
-        <div className="flex flex-col">
-          <span className="font-medium text-gray-900">{event.title}</span>
-          {event.location && (
-            <span className="text-xs text-gray-500">{event.location.address}</span>
+      {/* Evento (título + categoría) */}
+      <TableCell className="px-4 py-3 max-w-[320px]">
+        <div className="flex flex-col min-w-0 gap-0.5">
+          <span className="font-medium text-gray-900 truncate">{event.title}</span>
+          <span className="text-xs text-gray-500 truncate">
+            {event.category?.name || event.type?.name || ""}
+          </span>
+        </div>
+      </TableCell>
+
+      {/* Fecha y hora */}
+      <TableCell className="px-4 py-3">
+        <div className="flex flex-col gap-0.5">
+          <span className="text-sm text-gray-900">{startDate.date}</span>
+          <span className="text-xs text-gray-500">{startDate.time}</span>
+        </div>
+      </TableCell>
+
+      {/* Modalidad */}
+      <TableCell className="px-4 py-3">
+        <div className="flex items-center gap-1.5">
+          <ModalityIcon className="h-4 w-4 text-gray-400 flex-shrink-0" />
+          <span className="text-sm text-gray-700 truncate">{getModalityLabel(event.modality)}</span>
+        </div>
+      </TableCell>
+
+      {/* Ubicación */}
+      <TableCell className="px-4 py-3 max-w-[200px]">
+        <div className="flex flex-col min-w-0 gap-0.5">
+          <span className="text-sm text-gray-900 truncate">
+            {event.location?.name || (event.virtualAccess ? "Virtual" : "—")}
+          </span>
+          {event.location?.city && (
+            <span className="text-xs text-gray-500 truncate">{event.location.city}</span>
           )}
         </div>
       </TableCell>
-      <TableCell className="px-6 py-4">
-        <div className="flex items-center gap-2">
-          <Calendar className="h-4 w-4 text-gray-400" />
-          <span>{formatDate(event.startAt)}</span>
-        </div>
-      </TableCell>
-      <TableCell className="px-6 py-4">
-        <span className="text-sm text-gray-900">
-          {(event as any).organizer?.name || (event as any).organizers?.[0]?.name || "—"}
-        </span>
-      </TableCell>
-      <TableCell className="px-6 py-4">
-        <span className="text-sm text-gray-900">
-          {event.location?.name || event.location?.address || "—"}
-        </span>
-      </TableCell>
-      <TableCell className="px-6 py-4">
-        <div className="flex items-center gap-2">
-          <ModalityIcon className="h-4 w-4 text-gray-400" />
-          <span>{getModalityLabel(event.modality)}</span>
-        </div>
-      </TableCell>
-      <TableCell className="px-6 py-4">
+
+      {/* Estado */}
+      <TableCell className="px-4 py-3">
         <Badge variant={variant}>
           {getStatusLabel(event.status)}
         </Badge>
       </TableCell>
-      <TableCell className="px-6 py-4 text-right">
+
+      {/* Acciones */}
+      <TableCell className="px-4 py-3 text-right">
         <Button variant="ghost" size="icon" className="h-8 w-8">
           <MoreHorizontal className="h-4 w-4" />
           <span className="sr-only">{t("common.view")}</span>

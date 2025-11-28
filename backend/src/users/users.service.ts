@@ -70,7 +70,7 @@ export class UsersService {
   async findOne(id: string): Promise<User> {
     const user = await this.userRepository.findOne({
       where: { id, isActive: true },
-      relations: ['role'],
+      relations: ['role', 'profile'],
     });
 
     if (!user)
@@ -88,7 +88,7 @@ export class UsersService {
   async findOneByEmail(email: string): Promise<User | null> {
     return await this.userRepository.findOne({
       where: { email, isActive: true },
-      relations: ['role'],
+      relations: ['role', 'profile'],
     });
   }
 
