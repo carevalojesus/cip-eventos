@@ -38,7 +38,8 @@ export class UploadsService {
     const s3 = this.getOrCreateClient();
     await this.ensureBucketExists(s3);
 
-    const key = `avatars/${uuidv4()}`;
+    // Using 'uploads/' prefix to organize avatar files
+    const key = `uploads/${uuidv4()}`;
     const command = new PutObjectCommand({
       Bucket: this.bucket,
       Key: key,

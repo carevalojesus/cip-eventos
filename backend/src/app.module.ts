@@ -28,6 +28,8 @@ import { WalletModule } from './wallet/wallet.module';
 import { CipIntegrationModule } from './cip-integration/cip-integration.module';
 import { AcceptLanguageResolver, I18nModule, QueryResolver } from 'nestjs-i18n';
 import * as path from 'path';
+import { DashboardModule } from './dashboard/dashboard.module';
+import { NotificationsModule } from './notifications/notifications.module';
 
 @Module({
   imports: [
@@ -81,6 +83,8 @@ import * as path from 'path';
     ScheduleModule.forRoot(),
     WalletModule,
     CipIntegrationModule,
+    DashboardModule,
+    NotificationsModule,
 
     I18nModule.forRoot({
       fallbackLanguage: 'es',

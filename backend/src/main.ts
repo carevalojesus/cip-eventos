@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import { ClassSerializerInterceptor, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { I18nValidationPipe, I18nValidationExceptionFilter } from 'nestjs-i18n';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -30,9 +31,42 @@ async function bootstrap() {
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
   app.enableCors();
 
+  // Swagger/OpenAPI Configuration
+  const config = new DocumentBuilder()
+    .setTitle('CIP Eventos API')
+    .setDescription('API documentation for CIP Eventos - Event Management System')
+    .setVersion('1.0')
+    .addTag('auth', 'Authentication endpoints')
+    .addTag('users', 'User management')
+    .addTag('profiles', 'User profiles')
+    .addTag('events', 'Event management')
+    .addTag('registrations', 'Event registrations')
+    .addTag('payments', 'Payment processing')
+    .addTag('dashboard', 'Dashboard statistics')
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        name: 'JWT',
+        description: 'Enter JWT token',
+        in: 'header',
+      },
+      'JWT-auth',
+    )
+    .build();
+
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api/docs', app, document, {
+    customSiteTitle: 'CIP Eventos API Docs',
+    customfavIcon: 'https://nestjs.com/img/logo-small.svg',
+    customCss: '.swagger-ui .topbar { display: none }',
+  });
+
   await app.listen(port);
   const logger = new Logger('Bootstrap');
   logger.log(`🚀 Servidor corriendo en: http://localhost:${port}/${prefix}`);
+  logger.log(`📚 Documentación Swagger disponible en: http://localhost:${port}/api/docs`);
 }
 
 bootstrap().catch((err) => {

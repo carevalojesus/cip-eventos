@@ -77,7 +77,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
       if (onSuccess) {
         onSuccess();
       } else {
-        window.location.href = AUTH_ROUTES.admin;
+        window.location.href = "/dashboard";
       }
     } catch (err: any) {
       const msg = err.response?.data?.message || t("errors.network");

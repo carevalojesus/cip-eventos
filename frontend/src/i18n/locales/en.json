@@ -67,11 +67,61 @@
     "success": "Successfully logged out"
   },
   "dashboard": {
-    "title": "Dashboard",
-    "stats": "Statistics",
-    "recent_events": "Recent Events",
-    "total_events": "Total Events",
-    "upcoming_events": "Upcoming Events"
+    "title": "Overview",
+    "subtitle": "Welcome to the CIP Events administration panel.",
+    "new_event": "New Event",
+    "stats": {
+      "active_events": "Active Events",
+      "active_events_desc": "+{{count}} scheduled this week",
+      "total_registered": "Total Registered",
+      "total_registered_trend": "+{{percent}}% vs last month",
+      "monthly_income": "Monthly Income",
+      "monthly_income_desc": "Updated 1 hour ago",
+      "tickets_sold": "Tickets Sold",
+      "tickets_sold_desc": "{{percent}}% total occupancy"
+    },
+    "upcoming_events": {
+      "title": "Upcoming Events",
+      "subtitle": "You have {{count}} events scheduled for the next 7 days.",
+      "attendees": "{{count}} attendees",
+      "status": {
+        "confirmed": "Confirmed",
+        "pending": "Pending",
+        "cancelled": "Cancelled"
+      }
+    },
+    "recent_activity": {
+      "title": "Recent Activity",
+      "subtitle": "Latest movements on the platform.",
+      "actions": {
+        "registered_payment": "registered a",
+        "created_event": "created the event",
+        "updated_registry": "updated the CIP Registry"
+      },
+      "time": {
+        "minutes_ago": "{{count}} min ago",
+        "hours_ago": "{{count}} hour ago",
+        "days_ago": "{{count}} day ago"
+      }
+    },
+    "nav": {
+      "general": "GENERAL",
+      "dashboard": "Dashboard",
+      "events_management": "EVENTS MANAGEMENT",
+      "my_events": "My Events",
+      "speakers": "Speakers",
+      "organizers": "Organizers",
+      "operations": "OPERATIONS",
+      "registrations": "Registrations",
+      "access_control": "Access Control",
+      "certificates": "Certificates",
+      "finance": "FINANCE",
+      "payments_reports": "Payments & Reports",
+      "administration": "ADMINISTRATION",
+      "users": "Users",
+      "cip_registry": "CIP Registry",
+      "settings": "Settings"
+    }
   },
   "event": {
     "title": "Title",
