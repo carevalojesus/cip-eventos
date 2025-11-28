@@ -18,14 +18,16 @@ import {
 } from "@/components/ui/form";
 
 // Logic
+import axios from "axios";
 import api from "@/lib/api";
 import { useAuthStore } from "@/store/auth.store";
 import { AUTH_ROUTES } from "@/constants/auth";
+import { getCurrentLocale, routes } from "@/lib/routes";
 
 /**
  * Creates a login schema with translated validation messages
  */
-const createLoginSchema = (t: (key: string) => string) =>
+const createLoginSchema = (t: any) =>
   z.object({
     email: z
       .string()
@@ -71,17 +73,25 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
     setGlobalError(null);
     try {
       const response = await api.post("/auth/login", data);
+      // El refresh token se maneja via cookies httpOnly (más seguro)
       login(response.data.access_token, response.data.user);
 
       // Call onSuccess callback if provided, otherwise redirect
       if (onSuccess) {
         onSuccess();
       } else {
-        window.location.href = AUTH_ROUTES.admin;
+        const locale = getCurrentLocale();
+        window.location.href = routes[locale].home;
       }
-    } catch (err: any) {
-      const msg = err.response?.data?.message || t("errors.network");
-      setGlobalError(Array.isArray(msg) ? msg[0] : msg);
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        const msg = err.response?.data?.message || t("errors.network");
+        setGlobalError(Array.isArray(msg) ? msg[0] : msg);
+      } else if (err instanceof Error) {
+        setGlobalError(err.message);
+      } else {
+        setGlobalError(t("errors.unknown"));
+      }
     }
   };
 

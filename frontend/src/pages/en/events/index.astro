@@ -1,0 +1,8 @@
+---
+import { DashboardApp } from "@/components/dashboard/DashboardApp";
+import Layout from "@/layouts/Layout.astro";
+---
+
+<Layout title="My Events - CIP Events" lang="en">
+  <DashboardApp client:only="react" initialPath="/en/events" />
+</Layout>

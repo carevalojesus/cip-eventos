@@ -2,6 +2,10 @@ import { IsNotEmpty, IsOptional, IsString, IsUrl } from 'class-validator';
 
 export class EventLocationDto {
   @IsString()
+  @IsOptional()
+  name?: string;
+
+  @IsString()
   @IsNotEmpty()
   address: string;
 

@@ -7,6 +7,7 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
+  Index,
 } from 'typeorm';
 import { Registration } from '../../registrations/entities/registration.entity';
 import { User } from '../../users/entities/user.entity';
@@ -32,6 +33,10 @@ export enum PaymentProvider {
 }
 
 @Entity('payments')
+@Index(['status']) // Índice para filtrar por estado de pago
+@Index(['provider']) // Índice para filtrar por proveedor
+@Index(['transactionId']) // Índice para búsqueda por ID de transacción
+@Index(['status', 'provider']) // Índice compuesto para reportes
 export class Payment {
   @PrimaryGeneratedColumn('uuid')
   id: string;

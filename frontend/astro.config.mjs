@@ -9,6 +9,14 @@ import tailwindcss from '@tailwindcss/vite';
 export default defineConfig({
   integrations: [react()],
 
+  i18n: {
+    defaultLocale: 'es',
+    locales: ['es', 'en'],
+    routing: {
+      prefixDefaultLocale: false, // /login para español, /en/login para inglés
+    },
+  },
+
   vite: {
     plugins: [tailwindcss()]
   }

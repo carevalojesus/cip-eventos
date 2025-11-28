@@ -31,6 +31,9 @@ export const QuoteCarousel: React.FC<QuoteCarouselProps> = ({
   const quotes: Quote[] = t("login.brand.quotes", { returnObjects: true }) as Quote[];
 
   useEffect(() => {
+    // No iniciar el intervalo si no hay citas disponibles
+    if (!quotes || quotes.length === 0) return;
+
     const timer = setInterval(() => {
       // Fade out
       setIsVisible(false);

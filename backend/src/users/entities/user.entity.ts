@@ -7,12 +7,16 @@ import {
   ManyToOne,
   OneToOne,
   JoinColumn,
+  Index,
 } from 'typeorm';
 import { Exclude } from 'class-transformer';
 import { Role } from '../../roles/entities/role.entity';
 import { Profile } from '../../profiles/entities/profile.entity';
 
 @Entity('users')
+@Index(['email']) // Índice para búsquedas por email (login)
+@Index(['isActive']) // Índice para filtrar usuarios activos
+@Index(['isVerified']) // Índice para filtrar usuarios verificados
 export class User {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -50,11 +54,11 @@ export class User {
   @Column({ type: 'text', nullable: true })
   resetPasswordToken: string | null;
 
-  @ManyToOne(() => Role, (role) => role.users, { eager: true })
+  @ManyToOne(() => Role, (role) => role.users)
   @JoinColumn({ name: 'roleId' })
   role: Role;
 
-  @OneToOne(() => Profile, (profile) => profile.user, { eager: true })
+  @OneToOne(() => Profile, (profile) => profile.user)
   profile: Profile;
 
   @CreateDateColumn()

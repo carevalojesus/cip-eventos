@@ -1,4 +1,11 @@
 {
+  "routes": {
+    "home": "/",
+    "login": "/iniciar-sesion",
+    "events": "/eventos",
+    "events_new": "/eventos/nuevo",
+    "dashboard": "/panel"
+  },
   "welcome": "Bienvenido al Panel",
   "greeting": "Hola {{name}}",
   "events": "Eventos",
@@ -67,17 +74,106 @@
     "success": "Sesión cerrada correctamente"
   },
   "dashboard": {
-    "title": "Panel de Control",
-    "stats": "Estadísticas",
-    "recent_events": "Eventos Recientes",
-    "total_events": "Total de Eventos",
-    "upcoming_events": "Próximos Eventos"
+    "title": "Vista General",
+    "subtitle": "Bienvenido al panel de administración de CIP Eventos.",
+    "new_event": "Nuevo Evento",
+    "stats": {
+      "active_events": "Eventos Activos",
+      "active_events_desc": "+{{count}} programados esta semana",
+      "total_registered": "Total Inscritos",
+      "total_registered_trend": "+{{percent}}% vs mes anterior",
+      "monthly_income": "Ingresos (Mes)",
+      "monthly_income_desc": "Actualizado hace 1 hora",
+      "tickets_sold": "Entradas Vendidas",
+      "tickets_sold_desc": "{{percent}}% de ocupación total"
+    },
+    "upcoming_events": {
+      "title": "Eventos Próximos",
+      "subtitle": "Tienes {{count}} eventos programados para los próximos 7 días.",
+      "attendees": "{{count}} inscritos",
+      "status": {
+        "published": "Publicado",
+        "draft": "Borrador",
+        "completed": "Finalizado",
+        "cancelled": "Cancelado"
+      }
+    },
+    "recent_activity": {
+      "title": "Actividad Reciente",
+      "subtitle": "Últimos movimientos en la plataforma.",
+      "actions": {
+        "registered_payment": "registró un",
+        "created_event": "creó el evento",
+        "updated_registry": "actualizó el Padrón CIP"
+      },
+      "time": {
+        "minutes_ago": "Hace {{count}} min",
+        "hours_ago": "Hace {{count}} hora",
+        "days_ago": "Hace {{count}} día"
+      }
+    },
+    "nav": {
+      "general": "GENERAL",
+      "dashboard": "Dashboard",
+      "events_management": "GESTIÓN DE EVENTOS",
+      "my_events": "Mis Eventos",
+      "speakers": "Ponentes",
+      "organizers": "Organizadores",
+      "operations": "OPERACIONES",
+      "registrations": "Inscripciones",
+      "access_control": "Control de Puerta",
+      "certificates": "Certificados",
+      "finance": "FINANZAS",
+      "payments_reports": "Pagos y Reportes",
+      "administration": "ADMINISTRACIÓN",
+      "users": "Usuarios",
+      "cip_registry": "Padrón CIP",
+      "settings": "Configuración"
+    },
+    "events_view": {
+      "create_title": "Crear Nuevo Evento",
+      "create_subtitle": "Complete la información para publicar un evento en el calendario del CIP.",
+      "title": "Mis Eventos",
+      "subtitle": "Gestiona los eventos del capítulo y sus inscripciones.",
+      "search_placeholder": "Buscar evento...",
+      "filter_status": "Todos los estados",
+      "select_range": "Seleccionar rango",
+      "clear_filters": "Limpiar filtros",
+      "export_excel": "Exportar",
+      "table": {
+        "event": "Evento",
+        "date": "Fecha",
+        "organizer": "Organizador",
+        "location": "Ubicación",
+        "modality": "Modalidad",
+        "status": "Estado",
+        "actions": "Acciones",
+        "empty": "No se encontraron eventos"
+      },
+      "status": {
+        "PUBLISHED": "Publicado",
+        "DRAFT": "Borrador",
+        "COMPLETED": "Finalizado",
+        "CANCELLED": "Cancelado"
+      },
+      "modality": {
+        "presential": "Presencial",
+        "virtual": "Virtual",
+        "hybrid": "Híbrido"
+      }
+    }
   },
   "event": {
     "title": "Título",
     "description": "Descripción",
     "date": "Fecha",
-    "location": "Ubicación",
+    "location": {
+      "label": "Ubicación",
+      "search": "Buscar dirección...",
+      "no_results": "No se encontraron ubicaciones",
+      "create_new": "Escribe para crear una nueva dirección",
+      "recent": "Ubicaciones recientes"
+    },
     "capacity": "Capacidad",
     "attendees": "Asistentes",
     "status": "Estado",
@@ -90,11 +186,14 @@
     "min_length": "Mínimo {{count}} caracteres",
     "max_length": "Máximo {{count}} caracteres",
     "save": "Guardar",
+    "save_event": "Guardar Evento",
     "cancel": "Cancelar",
     "submit": "Enviar",
     "loading": "Cargando...",
     "success": "Operación exitosa",
-    "error": "Ocurrió un error"
+    "error": "Ocurrió un error",
+    "date_future": "La fecha de inicio debe ser futura",
+    "date_end_after_start": "La fecha de fin debe ser posterior a la fecha de inicio"
   },
   "common": {
     "yes": "Sí",
@@ -111,6 +210,7 @@
     "import": "Importar",
     "settings": "Configuración",
     "help": "Ayuda",
+    "retry": "Reintentar",
     "about": "Acerca de",
     "language": "Idioma"
   },

@@ -1,0 +1,90 @@
+export type EventStatus = 'PUBLISHED' | 'DRAFT' | 'COMPLETED' | 'CANCELLED';
+export type EventStatusLower = 'published' | 'draft' | 'completed' | 'cancelled';
+
+export interface EventModality {
+  id: number;
+  name: string;
+  description?: string;
+}
+
+export interface EventLocation {
+  id: string;
+  name?: string;
+  address: string;
+  reference?: string;
+  city: string;
+  mapLink?: string;
+}
+
+export interface EventVirtualAccess {
+  id: string;
+  platform: string;
+  meetingUrl: string;
+  meetingPassword?: string;
+  instructions?: string;
+}
+
+export interface Event {
+  id: string;
+  title: string;
+  slug: string;
+  summary?: string;
+  description: string;
+  startAt: string;
+  endAt: string;
+  timezone?: string;
+  imageUrl?: string;
+  status: EventStatus;
+  type: EventType;
+  category: EventCategory;
+  modality: EventModality;
+  location?: EventLocation;
+  virtualAccess?: EventVirtualAccess;
+  hasCertificate?: boolean;
+  certificateHours?: number;
+  isActive?: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface EventType {
+  id: number;
+  name: string;
+}
+
+export interface EventCategory {
+  id: number;
+  name: string;
+}
+
+export interface CreateEventDto {
+  title: string;
+  slug?: string;
+  summary?: string;
+  description: string;
+  typeId: number;
+  categoryId: number;
+  modalityId: number;
+  startAt: string;
+  endAt: string;
+  timezone?: string;
+  imageUrl?: string;
+  status?: EventStatus;
+  location?: {
+    name?: string;
+    address: string;
+    reference?: string;
+    city: string;
+    mapLink?: string;
+  };
+  virtualAccess?: {
+    platform: string;
+    meetingUrl: string;
+    meetingPassword?: string;
+    instructions?: string;
+  };
+  hasCertificate?: boolean;
+  certificateHours?: number;
+  speakersIds?: number[];
+  organizersIds?: number[];
+}

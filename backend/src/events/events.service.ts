@@ -19,6 +19,7 @@ import { CreateSessionDto } from './dto/create-session.dto';
 import { UpdateSessionDto } from './dto/update-session.dto';
 import { EventTicket } from './entities/event-ticket.entity';
 import { CreateTicketDto } from './dto/create-ticket.dto';
+import { PaginationDto, paginate, PaginatedResult } from '../common/dto/pagination.dto';
 
 @Injectable()
 export class EventsService {
@@ -55,47 +56,36 @@ export class EventsService {
       ...eventData
     } = createEventDto;
 
-    // Verificar que el usuario existe
-    const user = await this.userRepository.findOne({
-      where: { id: userId, isActive: true },
-    });
+    // Ejecutar todas las consultas en paralelo para evitar N+1
+    const [user, type, category, modality, speakers, organizers] = await Promise.all([
+      this.userRepository.findOne({
+        where: { id: userId, isActive: true },
+      }),
+      this.eventTypeRepository.findOneBy({ id: typeId }),
+      this.eventCategoryRepository.findOneBy({ id: categoryId }),
+      this.eventModalityRepository.findOneBy({ id: modalityId }),
+      speakersIds && speakersIds.length > 0
+        ? this.speakerRepository.findBy({ id: In(speakersIds), isActive: true })
+        : Promise.resolve([]),
+      organizersIds && organizersIds.length > 0
+        ? this.organizerRepository.findBy({ id: In(organizersIds), isActive: true })
+        : Promise.resolve([]),
+    ]);
+
+    // Validaciones
     if (!user) throw new NotFoundException('User not found');
-
-    const type = await this.eventTypeRepository.findOneBy({ id: typeId });
     if (!type) throw new NotFoundException('Event Type not found');
-
-    const category = await this.eventCategoryRepository.findOneBy({
-      id: categoryId,
-    });
     if (!category) throw new NotFoundException('Event Category not found');
-
-    const modality = await this.eventModalityRepository.findOneBy({
-      id: modalityId,
-    });
     if (!modality) throw new NotFoundException('Event Modality not found');
 
     // Validar speakers si se proporcionaron
-    let speakers: Speaker[] = [];
-    if (speakersIds && speakersIds.length > 0) {
-      speakers = await this.speakerRepository.findBy({
-        id: In(speakersIds),
-        isActive: true,
-      });
-      if (speakers.length !== speakersIds.length) {
-        throw new NotFoundException('One or more speakers not found');
-      }
+    if (speakersIds && speakersIds.length > 0 && speakers.length !== speakersIds.length) {
+      throw new NotFoundException('One or more speakers not found');
     }
 
     // Validar organizers si se proporcionaron
-    let organizers: Organizer[] = [];
-    if (organizersIds && organizersIds.length > 0) {
-      organizers = await this.organizerRepository.findBy({
-        id: In(organizersIds),
-        isActive: true,
-      });
-      if (organizers.length !== organizersIds.length) {
-        throw new NotFoundException('One or more organizers not found');
-      }
+    if (organizersIds && organizersIds.length > 0 && organizers.length !== organizersIds.length) {
+      throw new NotFoundException('One or more organizers not found');
     }
 
     const slug = this.generateSlug(eventData.title);
@@ -116,10 +106,28 @@ export class EventsService {
     return this.eventRepository.save(event);
   }
 
-  findAll() {
+
+
+  getTypes() {
+    return this.eventTypeRepository.find();
+  }
+
+  getCategories() {
+    return this.eventCategoryRepository.find();
+  }
+
+  getModalities() {
+    return this.eventModalityRepository.find();
+  }
+
+  async findAll(paginationDto?: PaginationDto): Promise<PaginatedResult<Event>> {
+    const page = paginationDto?.page || 1;
+    const limit = paginationDto?.limit || 10;
+    const skip = (page - 1) * limit;
+
     // No incluye virtualAccess por seguridad (lazy loading)
-    return this.eventRepository.find({
-      where: { isActive: true, status: EventStatus.PUBLISHED },
+    const [events, total] = await this.eventRepository.findAndCount({
+      where: { isActive: true },
       relations: [
         'type',
         'category',
@@ -129,7 +137,12 @@ export class EventsService {
         'speakers',
         'organizers',
       ],
+      skip,
+      take: limit,
+      order: { createdAt: 'DESC' },
     });
+
+    return paginate(events, total, page, limit);
   }
 
   async findOne(id: string) {
@@ -200,45 +213,40 @@ export class EventsService {
 
     if (!event) throw new NotFoundException(`Event with ID ${id} not found`);
 
+    // Cargar todas las relaciones necesarias en paralelo
+    const [type, category, modality, speakers, organizers] = await Promise.all([
+      typeId ? this.eventTypeRepository.findOneBy({ id: typeId }) : Promise.resolve(null),
+      categoryId ? this.eventCategoryRepository.findOneBy({ id: categoryId }) : Promise.resolve(null),
+      modalityId ? this.eventModalityRepository.findOneBy({ id: modalityId }) : Promise.resolve(null),
+      speakersIds ? this.speakerRepository.findBy({ id: In(speakersIds), isActive: true }) : Promise.resolve(null),
+      organizersIds ? this.organizerRepository.findBy({ id: In(organizersIds), isActive: true }) : Promise.resolve(null),
+    ]);
+
+    // Validaciones y asignaciones
     if (typeId) {
-      const type = await this.eventTypeRepository.findOneBy({ id: typeId });
       if (!type) throw new NotFoundException('Event Type not found');
       event.type = type;
     }
 
     if (categoryId) {
-      const category = await this.eventCategoryRepository.findOneBy({
-        id: categoryId,
-      });
       if (!category) throw new NotFoundException('Event Category not found');
       event.category = category;
     }
 
     if (modalityId) {
-      const modality = await this.eventModalityRepository.findOneBy({
-        id: modalityId,
-      });
       if (!modality) throw new NotFoundException('Event Modality not found');
       event.modality = modality;
     }
 
     if (speakersIds) {
-      const speakers = await this.speakerRepository.findBy({
-        id: In(speakersIds),
-        isActive: true,
-      });
-      if (speakers.length !== speakersIds.length) {
+      if (!speakers || speakers.length !== speakersIds.length) {
         throw new NotFoundException('One or more speakers not found');
       }
       event.speakers = speakers;
     }
 
     if (organizersIds) {
-      const organizers = await this.organizerRepository.findBy({
-        id: In(organizersIds),
-        isActive: true,
-      });
-      if (organizers.length !== organizersIds.length) {
+      if (!organizers || organizers.length !== organizersIds.length) {
         throw new NotFoundException('One or more organizers not found');
       }
       event.organizers = organizers;

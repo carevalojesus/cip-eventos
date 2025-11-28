@@ -6,8 +6,11 @@ export class EventLocation {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @Column({ type: 'text', nullable: true })
+  name: string; // Nombre del lugar (ej: "Facultad de Sistemas")
+
   @Column({ type: 'text' })
-  address: string; // Dirección completa
+  address: string; // Dirección completa (ej: "Av. Pevas Cuadra 4")
 
   @Column({ type: 'text', nullable: true })
   reference: string; // "Frente al parque"

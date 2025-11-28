@@ -40,12 +40,19 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+  --color-success: hsl(var(--success));
+  --color-success-foreground: hsl(var(--success-foreground));
+  --color-warning: hsl(var(--warning));
+  --color-warning-foreground: hsl(var(--warning-foreground));
+  --color-info: hsl(var(--info));
+  --color-info-foreground: hsl(var(--info-foreground));
 }
 
 :root {
   /* BASE: Blanco puro para limpieza, usando el negro CIP para texto */
   --background: 0 0% 100%;
-  --foreground: 240 1% 16%; /* #2a2a29 - CIP Black */
+  --foreground: 240 1% 16%;
+  /* #2a2a29 - CIP Black */
 
   /* CARD: Usamos blanco para tarjetas sobre fondo gris muy suave */
   --card: 0 0% 100%;
@@ -57,21 +64,25 @@
 
   /* PRIMARY: El Rojo CIP (#e31e24) */
   --primary: 358 81% 50%;
-  --primary-foreground: 0 0% 100%; /* Texto blanco sobre rojo */
+  --primary-foreground: 0 0% 100%;
+  /* Texto blanco sobre rojo */
 
   /* SECONDARY: El Crema CIP (#f0e4cc) */
   /* Usamos esto para botones secundarios o áreas de énfasis suave */
   --secondary: 40 54% 87%;
-  --secondary-foreground: 240 1% 16%; /* Texto negro sobre crema */
+  --secondary-foreground: 240 1% 16%;
+  /* Texto negro sobre crema */
 
   /* MUTED: El Gris CIP (#686564) pero muy suavizado para fondos */
   --muted: 240 2% 94%;
-  --muted-foreground: 20 2% 40%; /* #686564 para texto deshabilitado */
+  --muted-foreground: 20 2% 40%;
+  /* #686564 para texto deshabilitado */
 
   /* ACCENT: El Dorado CIP (#d7b560) */
   /* Usado para hovers en listas o elementos destacados */
   --accent: 43 60% 61%;
-  --accent-foreground: 240 1% 16%; /* Texto negro sobre dorado */
+  --accent-foreground: 240 1% 16%;
+  /* Texto negro sobre dorado */
 
   /* DESTRUCTIVE: El Rojo Oscuro (#6c0e10) */
   --destructive: 359 77% 24%;
@@ -80,9 +91,23 @@
   /* BORDES E INPUTS */
   --border: 240 2% 90%;
   --input: 240 2% 90%;
-  --ring: 358 81% 50%; /* El anillo de foco es rojo */
+  --ring: 358 81% 50%;
+  /* El anillo de foco es rojo */
 
   --radius: 0.5rem;
+
+  /* STATUS COLORS */
+  --success: 142 76% 36%;
+  /* Green */
+  --success-foreground: 0 0% 100%;
+
+  --warning: 38 92% 50%;
+  /* Amber/Yellow */
+  --warning-foreground: 0 0% 100%;
+
+  --info: 221 83% 53%;
+  /* Blue */
+  --info-foreground: 0 0% 100%;
 
   /* Charts & Sidebar (Preserved) */
   --chart-1: oklch(0.646 0.222 41.116);
@@ -136,6 +161,16 @@
   --input: 240 2% 26%;
   --ring: 358 81% 50%;
 
+  /* STATUS COLORS DARK */
+  --success: 142 70% 45%;
+  --success-foreground: 0 0% 100%;
+
+  --warning: 38 92% 50%;
+  --warning-foreground: 0 0% 100%;
+
+  --info: 221 83% 53%;
+  --info-foreground: 0 0% 100%;
+
   /* Charts & Sidebar (Preserved) */
   --chart-1: oklch(0.488 0.243 264.376);
   --chart-2: oklch(0.696 0.17 162.48);
@@ -156,6 +191,7 @@
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
   }

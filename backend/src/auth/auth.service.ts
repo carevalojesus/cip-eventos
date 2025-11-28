@@ -67,7 +67,13 @@ export class AuthService {
 
     return {
       ...tokens,
-      user: { email: user.email, role: user.role.name },
+      user: {
+        email: user.email,
+        role: user.role.name,
+        firstName: user.profile?.firstName || null,
+        lastName: user.profile?.lastName || null,
+        avatar: user.profile?.avatar || null,
+      },
     };
   }
 

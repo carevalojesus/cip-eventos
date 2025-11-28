@@ -13,5 +13,6 @@ import { PaypalService } from './paypal.service';
   ],
   controllers: [PaymentsController],
   providers: [PaymentsService, PaypalService],
+  exports: [PaymentsService],
 })
 export class PaymentsModule {}
