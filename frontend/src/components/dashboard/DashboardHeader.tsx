@@ -8,6 +8,7 @@ import { ASSETS_URL } from "@/constants/auth";
 interface DashboardHeaderProps {
   onMenuClick?: () => void;
   breadcrumbs?: Array<{ label: string; href?: string }>;
+  title?: string;
 }
 
 // Helper function to format role names
@@ -32,6 +33,7 @@ const formatRoleName = (role: string | undefined): string => {
 export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
   onMenuClick,
   breadcrumbs = [],
+  title,
 }) => {
   const { t } = useTranslation();
   const { user, logout, updateUser } = useAuthStore();

@@ -1,9 +1,9 @@
 import api from "@/lib/api";
+import { logger } from "@/utils/logger";
 import type {
   DashboardStats,
   UpcomingEvent,
   Activity,
-  ApiResponse,
 } from "@/types/dashboard";
 
 /**
@@ -17,12 +17,12 @@ class DashboardService {
    */
   async getStats(): Promise<DashboardStats> {
     try {
-      const response = await api.get<ApiResponse<DashboardStats>>(
+      const response = await api.get<DashboardStats>(
         "/dashboard/stats"
       );
-      return response.data.data;
+      return response.data;
     } catch (error) {
-      console.error("Error fetching dashboard stats:", error);
+      logger.error("Error fetching dashboard stats:", error);
       throw error;
     }
   }
@@ -32,13 +32,13 @@ class DashboardService {
    */
   async getUpcomingEvents(limit = 10): Promise<UpcomingEvent[]> {
     try {
-      const response = await api.get<ApiResponse<UpcomingEvent[]>>(
+      const response = await api.get<UpcomingEvent[]>(
         "/dashboard/upcoming-events",
         { params: { limit } }
       );
-      return response.data.data;
+      return response.data;
     } catch (error) {
-      console.error("Error fetching upcoming events:", error);
+      logger.error("Error fetching upcoming events:", error);
       throw error;
     }
   }
@@ -48,13 +48,13 @@ class DashboardService {
    */
   async getRecentActivity(limit = 10): Promise<Activity[]> {
     try {
-      const response = await api.get<ApiResponse<Activity[]>>(
+      const response = await api.get<Activity[]>(
         "/dashboard/activity",
         { params: { limit } }
       );
-      return response.data.data;
+      return response.data;
     } catch (error) {
-      console.error("Error fetching recent activity:", error);
+      logger.error("Error fetching recent activity:", error);
       throw error;
     }
   }
@@ -72,7 +72,7 @@ class DashboardService {
 
       return { stats, events, activity };
     } catch (error) {
-      console.error("Error fetching dashboard data:", error);
+      logger.error("Error fetching dashboard data:", error);
       throw error;
     }
   }

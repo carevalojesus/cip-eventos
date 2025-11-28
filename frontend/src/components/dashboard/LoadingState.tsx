@@ -13,9 +13,14 @@ export const LoadingState: React.FC<LoadingStateProps> = ({
   message = "Cargando...",
 }) => {
   return (
-    <div className="flex flex-col items-center justify-center py-12">
+    <div
+      className="flex flex-col items-center justify-center py-12"
+      role="status"
+      aria-live="polite"
+    >
       <Loader2 className="h-8 w-8 animate-spin text-primary" />
       <p className="mt-4 text-sm text-gray-500">{message}</p>
+      <span className="sr-only">Cargando...</span>
     </div>
   );
 };

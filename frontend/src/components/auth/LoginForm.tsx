@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/form";
 
 // Logic
+import axios from "axios";
 import api from "@/lib/api";
 import { useAuthStore } from "@/store/auth.store";
 import { AUTH_ROUTES } from "@/constants/auth";
@@ -25,7 +26,7 @@ import { AUTH_ROUTES } from "@/constants/auth";
 /**
  * Creates a login schema with translated validation messages
  */
-const createLoginSchema = (t: (key: string) => string) =>
+const createLoginSchema = (t: any) =>
   z.object({
     email: z
       .string()
@@ -71,7 +72,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
     setGlobalError(null);
     try {
       const response = await api.post("/auth/login", data);
-      login(response.data.access_token, response.data.user);
+      login(response.data.access_token, response.data.refresh_token, response.data.user);
 
       // Call onSuccess callback if provided, otherwise redirect
       if (onSuccess) {
@@ -79,9 +80,15 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
       } else {
         window.location.href = "/dashboard";
       }
-    } catch (err: any) {
-      const msg = err.response?.data?.message || t("errors.network");
-      setGlobalError(Array.isArray(msg) ? msg[0] : msg);
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        const msg = err.response?.data?.message || t("errors.network");
+        setGlobalError(Array.isArray(msg) ? msg[0] : msg);
+      } else if (err instanceof Error) {
+        setGlobalError(err.message);
+      } else {
+        setGlobalError(t("errors.unknown"));
+      }
     }
   };
 

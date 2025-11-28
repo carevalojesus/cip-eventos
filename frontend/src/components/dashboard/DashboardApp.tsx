@@ -3,6 +3,10 @@ import { useAuthStore } from "@/store/auth.store";
 import { LoadingState } from "./LoadingState";
 import { DashboardLayout } from "./DashboardLayout";
 import { DashboardContent } from "./DashboardContent";
+import { EventsView } from "@/components/events/EventsView";
+import { CreateEventView } from "@/components/events/CreateEventView";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { queryClient } from "@/lib/queryClient";
 
 const SectionPlaceholder: React.FC<{ title: string; description?: string }> = ({
   title,
@@ -71,8 +75,11 @@ export const DashboardApp: React.FC = () => {
     if (activePath === "/dashboard" || activePath === "/dashboard/") {
       return <DashboardContent />;
     }
+    if (activePath === "/dashboard/events/new") {
+      return <CreateEventView />;
+    }
     if (activePath.startsWith("/dashboard/events")) {
-      return <SectionPlaceholder title="Mis Eventos" />;
+      return <EventsView onNavigate={handleNavigate} />;
     }
     if (activePath.startsWith("/dashboard/speakers")) {
       return <SectionPlaceholder title="Ponentes" />;
@@ -114,11 +121,14 @@ export const DashboardApp: React.FC = () => {
   }
 
   return (
-    <DashboardLayout
-      currentPath={activePath}
-      onNavigate={handleNavigate}
-    >
-      {renderContent()}
-    </DashboardLayout>
+    <QueryClientProvider client={queryClient}>
+      <DashboardLayout
+        currentPath={activePath}
+        onNavigate={handleNavigate}
+      >
+        {renderContent()}
+      </DashboardLayout>
+    </QueryClientProvider>
   );
 };
+

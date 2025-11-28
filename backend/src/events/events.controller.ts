@@ -43,6 +43,24 @@ export class EventsController {
   }
 
   @Public()
+  @Get('types')
+  getTypes() {
+    return this.eventsService.getTypes();
+  }
+
+  @Public()
+  @Get('categories')
+  getCategories() {
+    return this.eventsService.getCategories();
+  }
+
+  @Public()
+  @Get('modalities')
+  getModalities() {
+    return this.eventsService.getModalities();
+  }
+
+  @Public()
   @Get()
   findAll() {
     return this.eventsService.findAll();

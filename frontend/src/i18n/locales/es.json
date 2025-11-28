@@ -85,8 +85,9 @@
       "subtitle": "Tienes {{count}} eventos programados para los próximos 7 días.",
       "attendees": "{{count}} inscritos",
       "status": {
-        "confirmed": "Confirmado",
-        "pending": "Por confirmar",
+        "published": "Publicado",
+        "draft": "Borrador",
+        "completed": "Finalizado",
         "cancelled": "Cancelado"
       }
     },
@@ -121,13 +122,51 @@
       "users": "Usuarios",
       "cip_registry": "Padrón CIP",
       "settings": "Configuración"
+    },
+    "events_view": {
+      "create_title": "Crear Nuevo Evento",
+      "create_subtitle": "Complete la información para publicar un evento en el calendario del CIP.",
+      "title": "Mis Eventos",
+      "subtitle": "Gestiona los eventos del capítulo y sus inscripciones.",
+      "search_placeholder": "Buscar evento...",
+      "filter_status": "Todos los estados",
+      "select_range": "Seleccionar rango",
+      "clear_filters": "Limpiar filtros",
+      "export_excel": "Exportar",
+      "table": {
+        "event": "Evento",
+        "date": "Fecha",
+        "organizer": "Organizador",
+        "location": "Ubicación",
+        "modality": "Modalidad",
+        "status": "Estado",
+        "actions": "Acciones",
+        "empty": "No se encontraron eventos"
+      },
+      "status": {
+        "PUBLISHED": "Publicado",
+        "DRAFT": "Borrador",
+        "COMPLETED": "Finalizado",
+        "CANCELLED": "Cancelado"
+      },
+      "modality": {
+        "presential": "Presencial",
+        "virtual": "Virtual",
+        "hybrid": "Híbrido"
+      }
     }
   },
   "event": {
     "title": "Título",
     "description": "Descripción",
     "date": "Fecha",
-    "location": "Ubicación",
+    "location": {
+      "label": "Ubicación",
+      "search": "Buscar dirección...",
+      "no_results": "No se encontraron ubicaciones",
+      "create_new": "Escribe para crear una nueva dirección",
+      "recent": "Ubicaciones recientes"
+    },
     "capacity": "Capacidad",
     "attendees": "Asistentes",
     "status": "Estado",
@@ -140,6 +179,7 @@
     "min_length": "Mínimo {{count}} caracteres",
     "max_length": "Máximo {{count}} caracteres",
     "save": "Guardar",
+    "save_event": "Guardar Evento",
     "cancel": "Cancelar",
     "submit": "Enviar",
     "loading": "Cargando...",
@@ -161,6 +201,7 @@
     "import": "Importar",
     "settings": "Configuración",
     "help": "Ayuda",
+    "retry": "Reintentar",
     "about": "Acerca de",
     "language": "Idioma"
   },

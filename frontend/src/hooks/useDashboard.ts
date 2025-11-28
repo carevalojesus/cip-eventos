@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { dashboardService } from "@/services/dashboard.service";
 import type {
   DashboardStats,
@@ -8,12 +8,13 @@ import type {
 
 /**
  * Hook state interface
+ * Kept for compatibility, though TanStack Query provides these natively
  */
 interface UseDataState<T> {
-  data: T | null;
+  data: T | undefined;
   loading: boolean;
   error: string | null;
-  refetch: () => Promise<void>;
+  refetch: () => void;
 }
 
 /**
@@ -21,61 +22,35 @@ interface UseDataState<T> {
  * Fetches and manages dashboard statistics
  */
 export function useDashboardStats(): UseDataState<DashboardStats> {
-  const [data, setData] = useState<DashboardStats | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { data, isLoading, error, refetch } = useQuery({
+    queryKey: ["dashboard", "stats"],
+    queryFn: () => dashboardService.getStats(),
+  });
 
-  const fetchData = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const stats = await dashboardService.getStats();
-      setData(stats);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Error desconocido");
-      console.error("Error in useDashboardStats:", err);
-    } finally {
-      setLoading(false);
-    }
+  return {
+    data,
+    loading: isLoading,
+    error: error instanceof Error ? error.message : error ? String(error) : null,
+    refetch,
   };
-
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  return { data, loading, error, refetch: fetchData };
 }
 
 /**
  * useUpcomingEvents Hook
  * Fetches and manages upcoming events
  */
-export function useUpcomingEvents(
-  limit = 5
-): UseDataState<UpcomingEvent[]> {
-  const [data, setData] = useState<UpcomingEvent[] | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+export function useUpcomingEvents(limit = 5): UseDataState<UpcomingEvent[]> {
+  const { data, isLoading, error, refetch } = useQuery({
+    queryKey: ["dashboard", "upcoming-events", limit],
+    queryFn: () => dashboardService.getUpcomingEvents(limit),
+  });
 
-  const fetchData = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const events = await dashboardService.getUpcomingEvents(limit);
-      setData(events);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Error desconocido");
-      console.error("Error in useUpcomingEvents:", err);
-    } finally {
-      setLoading(false);
-    }
+  return {
+    data,
+    loading: isLoading,
+    error: error instanceof Error ? error.message : error ? String(error) : null,
+    refetch,
   };
-
-  useEffect(() => {
-    fetchData();
-  }, [limit]);
-
-  return { data, loading, error, refetch: fetchData };
 }
 
 /**
@@ -83,29 +58,17 @@ export function useUpcomingEvents(
  * Fetches and manages recent activity
  */
 export function useRecentActivity(limit = 5): UseDataState<Activity[]> {
-  const [data, setData] = useState<Activity[] | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { data, isLoading, error, refetch } = useQuery({
+    queryKey: ["dashboard", "activity", limit],
+    queryFn: () => dashboardService.getRecentActivity(limit),
+  });
 
-  const fetchData = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const activity = await dashboardService.getRecentActivity(limit);
-      setData(activity);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Error desconocido");
-      console.error("Error in useRecentActivity:", err);
-    } finally {
-      setLoading(false);
-    }
+  return {
+    data,
+    loading: isLoading,
+    error: error instanceof Error ? error.message : error ? String(error) : null,
+    refetch,
   };
-
-  useEffect(() => {
-    fetchData();
-  }, [limit]);
-
-  return { data, loading, error, refetch: fetchData };
 }
 
 /**
@@ -113,39 +76,15 @@ export function useRecentActivity(limit = 5): UseDataState<Activity[]> {
  * Fetches all dashboard data at once
  */
 export function useDashboardData() {
-  const [data, setData] = useState<{
-    stats: DashboardStats | null;
-    events: UpcomingEvent[] | null;
-    activity: Activity[] | null;
-  }>({
-    stats: null,
-    events: null,
-    activity: null,
+  const { data, isLoading, error, refetch } = useQuery({
+    queryKey: ["dashboard", "all"],
+    queryFn: () => dashboardService.getDashboardData(),
   });
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
-  const fetchData = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const dashboardData = await dashboardService.getDashboardData();
-      setData({
-        stats: dashboardData.stats,
-        events: dashboardData.events,
-        activity: dashboardData.activity,
-      });
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Error desconocido");
-      console.error("Error in useDashboardData:", err);
-    } finally {
-      setLoading(false);
-    }
+  return {
+    data,
+    loading: isLoading,
+    error: error instanceof Error ? error.message : error ? String(error) : null,
+    refetch,
   };
-
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  return { data, loading, error, refetch: fetchData };
 }

@@ -11,7 +11,7 @@ interface ActivityItemProps {
  * ActivityItem Component
  * Reusable component for displaying activity feed items
  */
-export const ActivityItem: React.FC<ActivityItemProps> = ({
+export const ActivityItem = React.memo<ActivityItemProps>(({
   user,
   action,
   target,
@@ -26,4 +26,4 @@ export const ActivityItem: React.FC<ActivityItemProps> = ({
       <p className="text-xs text-gray-500">{timestamp}</p>
     </div>
   );
-};
+});

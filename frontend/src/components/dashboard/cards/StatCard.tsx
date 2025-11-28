@@ -26,7 +26,7 @@ const iconColorClasses = {
  * StatCard Component
  * Reusable card for displaying statistics with icon and trend
  */
-export const StatCard: React.FC<StatCardProps> = ({
+export const StatCard = React.memo<StatCardProps>(({
   title,
   value,
   description,
@@ -64,4 +64,4 @@ export const StatCard: React.FC<StatCardProps> = ({
       </div>
     </div>
   );
-};
+});

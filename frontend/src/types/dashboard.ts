@@ -17,22 +17,19 @@ export interface DashboardStats {
 }
 
 export interface UpcomingEvent {
-  id: number | string;
+  id: string;
   title: string;
   date: string;
   attendees: number;
-  status: "confirmed" | "pending" | "cancelled";
-  capacity?: number;
-  location?: string;
+  status: "published" | "draft" | "completed" | "cancelled";
 }
 
 export interface Activity {
-  id: number | string;
+  id: string;
   user: string;
   action: string;
   target?: string;
   timestamp: string;
-  type?: "payment" | "event" | "update" | "other";
 }
 
 export interface DashboardData {

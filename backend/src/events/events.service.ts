@@ -116,10 +116,24 @@ export class EventsService {
     return this.eventRepository.save(event);
   }
 
+
+
+  getTypes() {
+    return this.eventTypeRepository.find();
+  }
+
+  getCategories() {
+    return this.eventCategoryRepository.find();
+  }
+
+  getModalities() {
+    return this.eventModalityRepository.find();
+  }
+
   findAll() {
     // No incluye virtualAccess por seguridad (lazy loading)
     return this.eventRepository.find({
-      where: { isActive: true, status: EventStatus.PUBLISHED },
+      where: { isActive: true },
       relations: [
         'type',
         'category',

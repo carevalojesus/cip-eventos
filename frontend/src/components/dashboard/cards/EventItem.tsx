@@ -5,15 +5,18 @@ interface EventItemProps {
   title: string;
   date: string;
   attendees: number;
-  status: "confirmed" | "pending" | "cancelled";
+  status: "published" | "draft" | "completed" | "cancelled";
 }
 
 const statusConfig = {
-  confirmed: {
+  published: {
     className: "bg-green-100 text-green-800",
   },
-  pending: {
+  draft: {
     className: "bg-yellow-100 text-yellow-800",
+  },
+  completed: {
+    className: "bg-blue-100 text-blue-800",
   },
   cancelled: {
     className: "bg-red-100 text-red-800",
@@ -24,7 +27,7 @@ const statusConfig = {
  * EventItem Component
  * Reusable component for displaying event information with i18n support
  */
-export const EventItem: React.FC<EventItemProps> = ({
+export const EventItem = React.memo<EventItemProps>(({
   title,
   date,
   attendees,
@@ -51,4 +54,4 @@ export const EventItem: React.FC<EventItemProps> = ({
       </div>
     </div>
   );
-};
+});

@@ -85,8 +85,9 @@
       "subtitle": "You have {{count}} events scheduled for the next 7 days.",
       "attendees": "{{count}} attendees",
       "status": {
-        "confirmed": "Confirmed",
-        "pending": "Pending",
+        "published": "Published",
+        "draft": "Draft",
+        "completed": "Completed",
         "cancelled": "Cancelled"
       }
     },
@@ -121,13 +122,51 @@
       "users": "Users",
       "cip_registry": "CIP Registry",
       "settings": "Settings"
+    },
+    "events_view": {
+      "create_title": "Create New Event",
+      "create_subtitle": "Complete the information to publish an event on the CIP calendar.",
+      "title": "My Events",
+      "subtitle": "Manage chapter events and their registrations.",
+      "search_placeholder": "Search event...",
+      "filter_status": "All statuses",
+      "select_range": "Select range",
+      "clear_filters": "Clear filters",
+      "export_excel": "Export",
+      "table": {
+        "event": "Event",
+        "date": "Date",
+        "organizer": "Organizer",
+        "location": "Location",
+        "modality": "Modality",
+        "status": "Status",
+        "actions": "Actions",
+        "empty": "No events found"
+      },
+      "status": {
+        "PUBLISHED": "Published",
+        "DRAFT": "Draft",
+        "COMPLETED": "Completed",
+        "CANCELLED": "Cancelled"
+      },
+      "modality": {
+        "presential": "In-person",
+        "virtual": "Virtual",
+        "hybrid": "Hybrid"
+      }
     }
   },
   "event": {
     "title": "Title",
     "description": "Description",
     "date": "Date",
-    "location": "Location",
+    "location": {
+      "label": "Location",
+      "search": "Search address...",
+      "no_results": "No locations found",
+      "create_new": "Type to create a new address",
+      "recent": "Recent locations"
+    },
     "capacity": "Capacity",
     "attendees": "Attendees",
     "status": "Status",
@@ -161,6 +200,7 @@
     "import": "Import",
     "settings": "Settings",
     "help": "Help",
+    "retry": "Retry",
     "about": "About",
     "language": "Language"
   },
