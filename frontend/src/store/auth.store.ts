@@ -19,6 +19,20 @@ interface AuthState {
   updateUser: (user: Partial<User>) => void;
 }
 
+// Storage personalizado que funciona tanto en SSR como en el cliente
+const createBrowserStorage = () => {
+  // En SSR, retornar un storage vacío
+  if (typeof window === 'undefined') {
+    return {
+      getItem: () => null,
+      setItem: () => {},
+      removeItem: () => {},
+    };
+  }
+  // En el cliente, usar sessionStorage
+  return sessionStorage;
+};
+
 export const useAuthStore = create<AuthState>()(
   persist(
     (set) => ({
@@ -36,14 +50,16 @@ export const useAuthStore = create<AuthState>()(
     }),
     {
       name: 'cip-auth-storage',
-      // Usamos sessionStorage solo para el access token (corta duración)
+      // Usamos sessionStorage para el access token
       // El refresh token se maneja via cookies httpOnly del servidor
-      storage: createJSONStorage(() => sessionStorage),
+      storage: createJSONStorage(() => createBrowserStorage()),
       partialize: (state) => ({
         token: state.token,
         user: state.user,
         isAuthenticated: state.isAuthenticated,
       }),
+      // Configuración de hidratación
+      skipHydration: false,
     }
   )
 );

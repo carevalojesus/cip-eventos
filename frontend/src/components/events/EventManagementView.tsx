@@ -25,6 +25,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { GeneralTab } from "./tabs/GeneralTab";
+import { TicketsTab } from "./tabs/TicketsTab";
 import { PlaceholderTab } from "./tabs/PlaceholderTab";
 import { useEventDetails } from "@/hooks/useEventDetails";
 import { getCurrentLocale, routes } from "@/lib/routes";
@@ -158,11 +159,7 @@ export const EventManagementView: React.FC<EventManagementViewProps> = ({ eventI
           <GeneralTab event={event} onEdit={handleEdit} onChangeStatus={changeStatus} publishing={saving} />
         </TabsContent>
         <TabsContent value="tickets" className="mt-6">
-          <PlaceholderTab
-            title={t("event_management.tabs.tickets")}
-            description={t("event_management.coming_soon")}
-            icon={Ticket}
-          />
+          <TicketsTab eventId={eventId} />
         </TabsContent>
         <TabsContent value="agenda" className="mt-6">
           <PlaceholderTab

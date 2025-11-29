@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { type UseFormReturn } from "react-hook-form";
 import { Upload, X, ImageIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -21,8 +21,18 @@ interface EventImageUploadProps {
 
 export const EventImageUpload: React.FC<EventImageUploadProps> = ({ form, existingImageUrl }) => {
   const [files, setFiles] = useState<File[]>([]);
-  const [showExisting, setShowExisting] = useState(!!existingImageUrl);
+  const [showExisting, setShowExisting] = useState(false);
   const { setValue } = form;
+
+  // Sincronizar cuando cambia la URL de imagen existente
+  useEffect(() => {
+    if (existingImageUrl) {
+      setShowExisting(true);
+      setFiles([]);
+    } else {
+      setShowExisting(false);
+    }
+  }, [existingImageUrl]);
 
   const handleValueChange = (newFiles: File[]) => {
     setFiles(newFiles);

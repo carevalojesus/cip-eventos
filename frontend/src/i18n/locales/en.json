@@ -320,6 +320,88 @@
       "instructions": "Access Instructions",
       "instructions_placeholder": "Additional instructions for participants...",
       "other": "Other"
+    },
+    "tickets": {
+      "stats": {
+        "total": "Total Tickets",
+        "active": "active",
+        "total_stock": "Total Stock",
+        "available": "available in total",
+        "cip_validation": "With CIP Validation",
+        "requires_membership": "require active membership"
+      },
+      "table": {
+        "title": "Ticket Types",
+        "description": "Manage the ticket types available for this event.",
+        "name": "Name",
+        "price": "Price",
+        "stock": "Stock",
+        "cip_validation": "CIP Validation",
+        "status": "Status",
+        "actions": "Actions",
+        "required": "Required",
+        "active": "Active",
+        "inactive": "Inactive",
+        "free": "Free"
+      },
+      "empty": {
+        "title": "No tickets configured",
+        "description": "Create ticket types so attendees can register for the event.",
+        "create_first": "Create first ticket"
+      },
+      "dialog": {
+        "create_title": "New Ticket",
+        "edit_title": "Edit Ticket",
+        "create_description": "Create a new ticket type for the event.",
+        "edit_description": "Modify the ticket details.",
+        "name_label": "Name",
+        "name_placeholder": "E.g: General, Active Member, Student",
+        "pricing": "Price",
+        "free_ticket": "Free ticket",
+        "free_ticket_description": "This ticket will be free for attendees.",
+        "price_label": "Price (S/)",
+        "stock_label": "Stock (seats)",
+        "stock_hint": "Maximum number of tickets available for sale.",
+        "cip_validation_label": "Requires CIP validation",
+        "cip_validation_description": "Only licensed engineers with active membership can purchase this ticket.",
+        "cancel": "Cancel",
+        "save": "Save changes",
+        "create": "Create ticket"
+      },
+      "delete": {
+        "title": "Delete ticket?",
+        "description": "You are about to delete the ticket \"{{name}}\". If it already has associated registrations, it will be deactivated instead of deleted.",
+        "cancel": "Cancel",
+        "confirm": "Delete"
+      },
+      "actions": {
+        "new": "New Ticket",
+        "edit": "Edit",
+        "activate": "Activate",
+        "deactivate": "Deactivate",
+        "delete": "Delete"
+      },
+      "toast": {
+        "created": "Ticket created",
+        "created_desc": "\"{{name}}\" has been created successfully.",
+        "updated": "Ticket updated",
+        "updated_desc": "\"{{name}}\" has been updated successfully.",
+        "deleted": "Ticket deleted",
+        "deleted_desc": "\"{{name}}\" has been deleted.",
+        "activated": "Ticket activated",
+        "deactivated": "Ticket deactivated",
+        "status_changed_desc": "\"{{name}}\" has been {{status}}.",
+        "error": "Error",
+        "error_save": "Could not save the ticket. Please try again.",
+        "error_delete": "Could not delete the ticket.",
+        "error_status": "Could not change the ticket status."
+      },
+      "validation": {
+        "name_required": "Name is required",
+        "price_min": "Price must be greater than or equal to 0",
+        "stock_min": "Stock must be greater than or equal to 0"
+      },
+      "loading_error": "Error loading tickets"
     }
   }
 }

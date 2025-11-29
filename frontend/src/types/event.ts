@@ -120,6 +120,17 @@ export interface Event {
   updatedAt?: string;
 }
 
+export interface CreateTicketDto {
+  name: string;
+  price: number;
+  stock: number;
+  requiresCipValidation?: boolean;
+}
+
+export interface UpdateTicketDto extends Partial<CreateTicketDto> {
+  isActive?: boolean;
+}
+
 export interface CreateEventDto {
   title: string;
   slug?: string;

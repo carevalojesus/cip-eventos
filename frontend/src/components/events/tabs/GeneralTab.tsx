@@ -437,7 +437,7 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({
                       </div>
                     </div>
                     <p className="text-lg font-bold">
-                      {ticket.price > 0 ? `S/ ${ticket.price.toFixed(2)}` : "Gratis"}
+                      {parseFloat(String(ticket.price)) > 0 ? `S/ ${parseFloat(String(ticket.price)).toFixed(2)}` : "Gratis"}
                     </p>
                   </div>
                 ))}
