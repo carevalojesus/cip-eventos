@@ -67,14 +67,14 @@ export class AuthController {
       secure: isProduction,
       sameSite: isProduction ? 'strict' : 'lax',
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 días
-      path: '/api/auth',
+      path: '/', // Disponible en todas las rutas para que el refresh funcione
     });
   }
 
   private clearRefreshTokenCookie(res: Response) {
     res.clearCookie('refresh_token', {
       httpOnly: true,
-      path: '/api/auth',
+      path: '/',
     });
   }
 

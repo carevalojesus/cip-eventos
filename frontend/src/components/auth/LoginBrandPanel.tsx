@@ -5,49 +5,47 @@ import { QuoteCarousel } from "./QuoteCarousel";
 
 /**
  * LoginBrandPanel Component
- * Displays institutional branding, logo, and quote on the left side of the login page
+ * Panel izquierdo con branding institucional
+ * Refactored following Refactoring UI principles
  */
 export const LoginBrandPanel: React.FC = () => {
   const { t } = useTranslation();
 
   return (
-    <div className="relative hidden h-full flex-col bg-muted p-10 text-white dark:border-r lg:flex">
-      {/* Background Image Layer */}
+    <div className="relative h-full w-full">
+      {/* Background Image */}
       <div
-        className="absolute inset-0 bg-cover bg-left"
+        className="rui-branding-background"
         style={{
           backgroundImage: `url("${AUTH_ASSETS.background}")`,
         }}
       />
 
-      {/* Dark Overlay */}
-      <div className="absolute inset-0 bg-neutral-900/80" />
+      {/* Gradient Overlay - "Text needs consistent contrast" */}
+      <div className="rui-branding-overlay" />
 
-      {/* Logo and Brand */}
-      <div className="relative z-20 flex items-center gap-4">
-        <img
-          src={AUTH_ASSETS.logo}
-          alt="Logo CIP"
-          className="h-16 w-auto drop-shadow-2xl"
-        />
-        {/* Vertical Separator */}
-        <div className="h-12 w-px bg-white/80" />
+      {/* Content */}
+      <div className="rui-branding-content">
+        {/* Header con Logo */}
+        <header className="rui-brand-header">
+          <img
+            src={AUTH_ASSETS.logo}
+            alt="Logo CIP"
+            className="rui-brand-logo drop-shadow-2xl"
+          />
+          <div className="rui-brand-text">
+            <span className="rui-brand-title">
+              {t("login.brand.council")}
+            </span>
+            <span className="rui-brand-subtitle">
+              {t("login.brand.region")}
+            </span>
+          </div>
+        </header>
 
-        <div
-          className="flex flex-col justify-center text-white tracking-widest uppercase"
-          style={{ fontFamily: "Arial, sans-serif" }}
-        >
-          <span className="text-lg font-semibold leading-none drop-shadow-md">
-            {t("login.brand.council")}
-          </span>
-          <span className="text-lg font-semibold leading-none mt-1 text-primary-foreground drop-shadow-md">
-            {t("login.brand.region")}
-          </span>
-        </div>
+        {/* Quote Carousel */}
+        <QuoteCarousel interval={8000} />
       </div>
-
-      {/* Institutional Quote Carousel */}
-      <QuoteCarousel interval={8000} />
     </div>
   );
 };

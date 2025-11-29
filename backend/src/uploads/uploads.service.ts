@@ -65,6 +65,25 @@ export class UploadsService {
     return getSignedUrl(s3, command, { expiresIn: 3600 }); // 1 hour
   }
 
+  async getFileStream(key: string): Promise<{ stream: NodeJS.ReadableStream; contentType: string | undefined }> {
+    const s3 = this.getOrCreateClient();
+    const command = new GetObjectCommand({
+      Bucket: this.bucket,
+      Key: key,
+    });
+
+    const response = await s3.send(command);
+
+    if (!response.Body) {
+      throw new Error('File not found');
+    }
+
+    return {
+      stream: response.Body as NodeJS.ReadableStream,
+      contentType: response.ContentType,
+    };
+  }
+
   async uploadFile(
     buffer: Buffer,
     filename: string,
@@ -84,20 +103,13 @@ export class UploadsService {
 
     await s3.send(command);
 
-    await s3.send(command);
-
-    const normalizedEndpoint = this.configService.get<string>('API_URL') ?? 'http://localhost:3000';
-    
-    // Determine if folder is public or private
-    // Currently only 'events' is considered public for this example, or we can make everything private by default
-    // and expose specific endpoints.
-    // Based on requirements: "Profile photos, payment evidence, and CSV padrón backups are therefore accessible without auth."
-    // We want to secure these.
-    
-    const isPublic = folder === 'events'; // Only event images are public
+    // Siempre usar URLs del backend (proxy)
+    // Esto permite: cambiar storage sin cambiar URLs, control de CORS centralizado, métricas
+    const apiUrl = this.configService.get<string>('API_URL') ?? 'http://localhost:3000';
+    const isPublic = folder === 'events';
     const accessType = isPublic ? 'public' : 'private';
 
-    return `${normalizedEndpoint}/uploads/${accessType}/${key}`;
+    return `${apiUrl}/uploads/${accessType}/${key}`;
   }
 
   async uploadEventImage(

@@ -150,7 +150,7 @@ export const useCreateEvent = () => {
     fetchData();
   }, []);
 
-  const onSubmit = async (data: CreateEventFormValues) => {
+  const createEvent = async (data: CreateEventFormValues, status: "DRAFT" | "PUBLISHED") => {
     setSubmitting(true);
     try {
       const modalityId = parseInt(data.modalityId);
@@ -166,6 +166,7 @@ export const useCreateEvent = () => {
         modalityId: parseInt(data.modalityId),
         startAt: new Date(data.startAt).toISOString(),
         endAt: new Date(data.endAt).toISOString(),
+        status, // DRAFT o PUBLISHED
         location: isPresential && data.locationAddress && data.locationCity ? {
           name: data.locationName || undefined,
           address: data.locationAddress,
@@ -191,30 +192,43 @@ export const useCreateEvent = () => {
         await eventsService.createEvent(payload);
       }
 
-      toast.success("Evento creado exitosamente", {
-        description: "Ahora puedes editarlo o publicarlo desde la vista de gestión.",
-      });
+      const isDraft = status === "DRAFT";
+      toast.success(
+        isDraft ? t("create_event.toast.draft_success", "Borrador guardado") : t("create_event.toast.publish_success", "Evento publicado"),
+        {
+          description: isDraft
+            ? t("create_event.toast.draft_description", "El evento se guardó como borrador. Puedes editarlo y publicarlo después.")
+            : t("create_event.toast.publish_description", "El evento ya está visible en el calendario."),
+        }
+      );
 
       const locale = getCurrentLocale();
-      // Pequeño delay para que el usuario vea el toast
       setTimeout(() => {
         window.location.href = routes[locale].events;
       }, 1500);
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
         logger.error("Backend validation error:", JSON.stringify(error.response.data, null, 2));
-        toast.error("Error al crear el evento", {
-          description: error.response.data.message || "Por favor, revisa los datos e intenta nuevamente.",
+        toast.error(t("create_event.toast.error", "Error al crear el evento"), {
+          description: error.response.data.message || t("create_event.toast.error_description", "Por favor, revisa los datos e intenta nuevamente."),
         });
       } else {
         logger.error("Error creating event:", error);
-        toast.error("Error al crear el evento", {
-          description: "Ocurrió un error inesperado. Intenta nuevamente.",
+        toast.error(t("create_event.toast.error", "Error al crear el evento"), {
+          description: t("create_event.toast.error_unexpected", "Ocurrió un error inesperado. Intenta nuevamente."),
         });
       }
     } finally {
       setSubmitting(false);
     }
+  };
+
+  const onSubmit = async (data: CreateEventFormValues) => {
+    await createEvent(data, "PUBLISHED");
+  };
+
+  const onSaveDraft = async (data: CreateEventFormValues) => {
+    await createEvent(data, "DRAFT");
   };
 
   return {
@@ -225,5 +239,6 @@ export const useCreateEvent = () => {
     loading,
     submitting,
     onSubmit,
+    onSaveDraft,
   };
 };

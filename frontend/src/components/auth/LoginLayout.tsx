@@ -8,9 +8,8 @@ interface LoginLayoutProps {
 
 /**
  * LoginLayout Component
- * Two-column layout for the login page
- * - Left: Brand panel with institutional information
- * - Right: Login form and footer
+ * Two-column layout: 60% branding, 40% form
+ * Refactored following Refactoring UI principles
  */
 export const LoginLayout: React.FC<LoginLayoutProps> = ({
   brandPanel,
@@ -19,40 +18,36 @@ export const LoginLayout: React.FC<LoginLayoutProps> = ({
   const { t } = useTranslation();
 
   return (
-    <div className="container relative h-screen flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-[7fr_3fr] lg:px-0">
-      {/* Left Panel - Brand (70% width) */}
-      {brandPanel}
+    <div className="rui-login-page">
+      {/* Left Panel - Brand (60% width) */}
+      <div className="rui-branding-panel hidden lg:block">
+        {brandPanel}
+      </div>
 
-      {/* Right Panel - Form (30% width) */}
-      <div className="relative flex h-full items-center p-4 lg:p-8 bg-background">
-        <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
-          <div className="flex flex-col space-y-2 text-center">
-            <h1 className="text-3xl font-bold tracking-tight text-foreground">
+      {/* Right Panel - Form (40% width) */}
+      <div className="rui-login-panel">
+        <div className="rui-login-container">
+          {/* Header - Jerarquía clara */}
+          <div className="rui-form-header">
+            <h1 className="rui-title-primary">
               {t("login.title")}
             </h1>
-            <p className="text-sm text-muted-foreground">
+            <p className="rui-subtitle-secondary">
               {t("login.subtitle")}
             </p>
           </div>
 
           {/* Form Content */}
           {children}
-        </div>
 
-        {/* Footer */}
-        <div className="absolute bottom-6 left-0 right-0 text-center text-xs text-muted-foreground">
-          <p>
-            {t("login.footer.platform")}{" "}
-            <span className="font-semibold text-foreground">
-              {t("login.footer.council")}
-            </span>
-          </p>
-          <p className="mt-2">
-            {t("login.footer.developed_by")}{" "}
-            <span className="font-bold text-primary">
-              {t("login.footer.company")}
-            </span>
-          </p>
+          {/* Footer - Texto terciario */}
+          <div className="rui-form-footer rui-text-tertiary">
+            <p>{t("login.footer.platform")}</p>
+            <p>
+              {t("login.footer.developed_by")}{" "}
+              <a href="#">{t("login.footer.company")}</a>
+            </p>
+          </div>
         </div>
       </div>
     </div>

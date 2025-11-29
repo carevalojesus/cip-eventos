@@ -1,17 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { type UseFormReturn } from "react-hook-form";
-import { Upload, X, ImageIcon } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import {
-  FileUpload,
-  FileUploadDropzone,
-  FileUploadTrigger,
-  FileUploadList,
-  FileUploadItem,
-  FileUploadItemPreview,
-  FileUploadItemMetadata,
-  FileUploadItemDelete,
-} from "@/components/ui/file-upload";
+import { useTranslation } from "react-i18next";
+import { Upload, X } from "lucide-react";
 import type { CreateEventFormValues } from "@/hooks/useCreateEvent";
 
 interface EventImageUploadProps {
@@ -20,118 +10,171 @@ interface EventImageUploadProps {
 }
 
 export const EventImageUpload: React.FC<EventImageUploadProps> = ({ form, existingImageUrl }) => {
-  const [files, setFiles] = useState<File[]>([]);
-  const [showExisting, setShowExisting] = useState(!!existingImageUrl);
+  const { t } = useTranslation();
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [file, setFile] = useState<File | null>(null);
+  const [preview, setPreview] = useState<string | null>(null);
+  const [showExisting, setShowExisting] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
   const { setValue } = form;
 
-  const handleValueChange = (newFiles: File[]) => {
-    setFiles(newFiles);
-    setValue("coverImage", newFiles[0] || null);
-    if (newFiles.length > 0) {
+  useEffect(() => {
+    if (existingImageUrl) {
+      setShowExisting(true);
+      setFile(null);
+      setPreview(null);
+    } else {
       setShowExisting(false);
+    }
+  }, [existingImageUrl]);
+
+  useEffect(() => {
+    if (file) {
+      const objectUrl = URL.createObjectURL(file);
+      setPreview(objectUrl);
+      return () => URL.revokeObjectURL(objectUrl);
+    }
+    setPreview(null);
+  }, [file]);
+
+  const handleFileSelect = useCallback((selectedFile: File) => {
+    const validTypes = ["image/png", "image/jpeg", "image/jpg", "image/webp"];
+    if (!validTypes.includes(selectedFile.type)) {
+      return;
+    }
+    if (selectedFile.size > 5 * 1024 * 1024) {
+      return;
+    }
+    setFile(selectedFile);
+    setValue("coverImage", selectedFile);
+    setShowExisting(false);
+  }, [setValue]);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = e.target.files?.[0];
+    if (selectedFile) {
+      handleFileSelect(selectedFile);
     }
   };
 
-  const handleFileReject = (file: File, message: string) => {
-    console.warn(`Archivo rechazado: ${file.name} - ${message}`);
+  const handleRemove = () => {
+    setFile(null);
+    setPreview(null);
+    setValue("coverImage", null);
+    if (inputRef.current) {
+      inputRef.current.value = "";
+    }
   };
 
   const handleRemoveExisting = () => {
     setShowExisting(false);
   };
 
-  return (
-    <div className="rounded-lg border bg-card p-6 shadow-sm">
-      <div className="flex items-center gap-2 mb-4">
-        <ImageIcon className="h-5 w-5 text-muted-foreground" />
-        <h2 className="text-lg font-medium text-foreground">Imagen del Evento</h2>
-      </div>
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(true);
+  };
 
-      {/* Mostrar imagen existente */}
-      {showExisting && existingImageUrl && files.length === 0 ? (
-        <div className="relative aspect-[1200/630] w-full overflow-hidden rounded-lg bg-muted">
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+    const droppedFile = e.dataTransfer.files?.[0];
+    if (droppedFile) {
+      handleFileSelect(droppedFile);
+    }
+  };
+
+  const handleClick = () => {
+    inputRef.current?.click();
+  };
+
+  const formatFileSize = (bytes: number) => {
+    if (bytes < 1024) return bytes + " B";
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + " KB";
+    return (bytes / (1024 * 1024)).toFixed(1) + " MB";
+  };
+
+  return (
+    <div className="rui-form-card">
+      <h2 className="rui-form-section-title">
+        {t("create_event.image.title", "Imagen del Evento")}
+      </h2>
+
+      <input
+        ref={inputRef}
+        type="file"
+        accept="image/png,image/jpeg,image/jpg,image/webp"
+        onChange={handleInputChange}
+        style={{ display: "none" }}
+      />
+
+      {showExisting && existingImageUrl && !file ? (
+        <div className="rui-upload-preview">
           <img
             src={existingImageUrl}
-            alt="Imagen actual del evento"
-            className="h-full w-full object-cover"
+            alt={t("create_event.image.current", "Imagen actual")}
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-          <div className="absolute bottom-0 left-0 right-0 p-4">
-            <span className="text-sm text-white">Imagen actual</span>
+          <div className="rui-upload-preview-overlay" />
+          <div className="rui-upload-preview-info">
+            {t("create_event.image.current", "Imagen actual")}
           </div>
-          <Button
-            variant="destructive"
-            size="icon"
-            className="absolute top-2 right-2 h-8 w-8 rounded-full"
+          <button
+            type="button"
+            className="rui-upload-preview-remove"
             onClick={handleRemoveExisting}
+            aria-label="Eliminar imagen"
           >
-            <X className="h-4 w-4" />
-          </Button>
+            <X size={14} />
+          </button>
+        </div>
+      ) : preview && file ? (
+        <div className="rui-upload-preview">
+          <img src={preview} alt="Preview" />
+          <div className="rui-upload-preview-overlay" />
+          <div className="rui-upload-preview-info">
+            {file.name} • {formatFileSize(file.size)}
+          </div>
+          <button
+            type="button"
+            className="rui-upload-preview-remove"
+            onClick={handleRemove}
+            aria-label="Eliminar imagen"
+          >
+            <X size={14} />
+          </button>
         </div>
       ) : (
-        <FileUpload
-          value={files}
-          onValueChange={handleValueChange}
-          onFileReject={handleFileReject}
-          accept="image/png,image/jpeg,image/jpg,image/webp"
-          maxFiles={1}
-          maxSize={5 * 1024 * 1024}
-          className="w-full"
+        <div
+          className={`rui-upload-zone ${isDragging ? "rui-upload-zone--dragging" : ""}`}
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+          onDrop={handleDrop}
+          onClick={handleClick}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => e.key === "Enter" && handleClick()}
         >
-          {files.length === 0 ? (
-          <FileUploadDropzone className="min-h-[200px] border-2 border-dashed border-border hover:border-primary/50 transition-colors cursor-pointer">
-            <div className="flex flex-col items-center justify-center gap-2 text-center">
-              <div className="rounded-full bg-muted p-3">
-                <Upload className="h-6 w-6 text-muted-foreground" />
-              </div>
-              <div className="space-y-1">
-                <p className="text-sm font-medium text-foreground">
-                  Arrastra una imagen o haz clic para seleccionar
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  PNG, JPG o WebP hasta 5MB. Tamaño recomendado: 1200x630px
-                </p>
-              </div>
-              <FileUploadTrigger asChild>
-                <Button variant="outline" size="sm" className="mt-2">
-                  Seleccionar imagen
-                </Button>
-              </FileUploadTrigger>
-            </div>
-          </FileUploadDropzone>
-        ) : (
-          <FileUploadList className="mt-0">
-            {files.map((file) => (
-              <FileUploadItem
-                key={file.name}
-                value={file}
-                className="relative overflow-hidden rounded-lg border-0 p-0"
-              >
-                <div className="relative aspect-[1200/630] w-full overflow-hidden rounded-lg bg-muted">
-                  <FileUploadItemPreview className="absolute inset-0 h-full w-full rounded-none border-0 bg-transparent [&>img]:object-cover" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-                  <div className="absolute bottom-0 left-0 right-0 p-4">
-                    <FileUploadItemMetadata className="text-white [&>span]:text-white [&>span:last-child]:text-white/80" />
-                  </div>
-                  <FileUploadItemDelete asChild>
-                    <Button
-                      variant="destructive"
-                      size="icon"
-                      className="absolute top-2 right-2 h-8 w-8 rounded-full"
-                    >
-                      <X className="h-4 w-4" />
-                    </Button>
-                  </FileUploadItemDelete>
-                </div>
-              </FileUploadItem>
-            ))}
-          </FileUploadList>
-        )}
-        </FileUpload>
+          <Upload className="rui-upload-zone-icon" />
+          <p className="rui-upload-zone-text">
+            {t("create_event.image.drag_text", "Arrastra una imagen o")}{" "}
+            <strong>{t("create_event.image.click_text", "haz clic para subir")}</strong>
+          </p>
+          <p className="rui-upload-zone-hint">
+            {t("create_event.image.hint", "PNG, JPG o WebP • Máximo 5MB • Recomendado: 1200x630px")}
+          </p>
+        </div>
       )}
 
-      <p className="mt-3 text-xs text-muted-foreground">
-        Esta imagen se mostrará como banner del evento en el listado y la página de detalles.
+      <p className="rui-form-hint" style={{ marginTop: "12px" }}>
+        {t("create_event.image.banner_hint", "Esta imagen se mostrará como banner del evento.")}
       </p>
     </div>
   );

@@ -1,27 +1,23 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { MoreHorizontal, Settings, Pencil, Trash2 } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { TableCell, TableRow } from "@/components/ui/table";
+import { MoreHorizontal, Eye, Users, Pencil, Copy, Trash2, Globe } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { getCurrentLocale, routes } from "@/lib/routes";
-import type { Event, EventStatus, EventModality } from "@/types/event";
-import type { LucideIcon } from "lucide-react";
+import type { Event, EventStatus } from "@/types/event";
 
 interface EventRowProps {
   event: Event;
-  statusVariantMap: Record<EventStatus, "success" | "gray" | "info" | "destructive">;
-  getModalityIcon: (modalityName: string) => LucideIcon;
+  statusVariantMap: Record<EventStatus, "success" | "neutral" | "info" | "danger">;
   onNavigate?: (path: string) => void;
 }
 
-export const EventRow = React.memo<EventRowProps>(({ event, statusVariantMap, getModalityIcon, onNavigate }) => {
+export const EventRow = React.memo<EventRowProps>(({ event, statusVariantMap, onNavigate }) => {
   const { t } = useTranslation();
   const locale = getCurrentLocale();
 
@@ -29,7 +25,7 @@ export const EventRow = React.memo<EventRowProps>(({ event, statusVariantMap, ge
     return t(`dashboard.events_view.status.${status}`, status);
   };
 
-  const handleManage = () => {
+  const handleViewDetails = () => {
     const path = routes[locale].eventsManage(event.id.toString());
     if (onNavigate) {
       onNavigate(path);
@@ -38,18 +34,24 @@ export const EventRow = React.memo<EventRowProps>(({ event, statusVariantMap, ge
     }
   };
 
+  const handleViewEnrolled = () => {
+    // TODO: Navegar a vista de inscritos
+    console.log("View enrolled:", event.id);
+  };
+
   const handleEdit = () => {
-    // TODO: Abrir modal de edición rápida o navegar a edición
+    // TODO: Abrir modal de edición o navegar
     console.log("Edit event:", event.id);
+  };
+
+  const handleDuplicate = () => {
+    // TODO: Duplicar evento
+    console.log("Duplicate event:", event.id);
   };
 
   const handleDelete = () => {
     // TODO: Mostrar confirmación y eliminar
     console.log("Delete event:", event.id);
-  };
-
-  const getModalityLabel = (modality: EventModality) => {
-    return modality.name;
   };
 
   const formatDate = (dateString: string) => {
@@ -70,86 +72,117 @@ export const EventRow = React.memo<EventRowProps>(({ event, statusVariantMap, ge
   };
 
   const startDate = formatDate(event.startAt);
+  const variant = statusVariantMap[event.status] || "neutral";
 
-  const variant = statusVariantMap[event.status] || "default";
-  const ModalityIcon = getModalityIcon(event.modality.name);
+  // Determinar si es evento virtual (para mostrar badge)
+  const isVirtual = event.modality?.name?.toLowerCase().includes("virtual");
+  const isHybrid = event.modality?.name?.toLowerCase().includes("híbrido") ||
+                   event.modality?.name?.toLowerCase().includes("hybrid");
+
+  // Usar dato real del backend, o 0 si no existe
+  const enrolledCount = event.enrolledCount ?? 0;
+  const isHighEnrollment = enrolledCount >= 50;
 
   return (
-    <TableRow className="hover:bg-muted/50">
-      {/* Evento (título + categoría + fecha en móvil) */}
-      <TableCell className="px-4 py-3">
-        <div className="flex flex-col min-w-0 gap-0.5 overflow-hidden">
-          <span className="font-medium text-foreground truncate">{event.title}</span>
-          <span className="text-xs text-muted-foreground truncate">
-            {event.category?.name || event.type?.name || ""}
+    <div className="rui-table-row">
+      {/* EVENTO */}
+      <div className="rui-event-cell">
+        <span className="rui-event-title" onClick={handleViewDetails}>
+          {event.title}
+        </span>
+        <span className="rui-event-category">
+          {event.category?.name || event.type?.name || ""}
+        </span>
+      </div>
+
+      {/* FECHA */}
+      <div className="rui-date-cell">
+        <span className="rui-date-primary">{startDate.date}</span>
+        <span className="rui-date-secondary">{startDate.time}</span>
+      </div>
+
+      {/* UBICACIÓN */}
+      <div className="rui-location-cell">
+        {event.location?.name ? (
+          <>
+            <span className="rui-location-name">{event.location.name}</span>
+            {event.location.city && (
+              <span className="rui-location-city">{event.location.city}</span>
+            )}
+          </>
+        ) : isVirtual || event.virtualAccess ? (
+          <span className="rui-location-badge">
+            <Globe className="h-3 w-3" />
+            {t("dashboard.events_view.modality.virtual")}
           </span>
-          {/* Mostrar fecha en móvil */}
-          <span className="text-xs text-muted-foreground sm:hidden">
-            {startDate.date} · {startDate.time}
+        ) : isHybrid ? (
+          <span className="rui-location-badge">
+            <Globe className="h-3 w-3" />
+            {t("dashboard.events_view.modality.hybrid")}
           </span>
-        </div>
-      </TableCell>
+        ) : (
+          <span className="rui-location-name">—</span>
+        )}
+      </div>
 
-      {/* Fecha y hora - oculto en móvil */}
-      <TableCell className="hidden sm:table-cell px-4 py-3">
-        <div className="flex flex-col gap-0.5">
-          <span className="text-sm text-foreground">{startDate.date}</span>
-          <span className="text-xs text-muted-foreground">{startDate.time}</span>
-        </div>
-      </TableCell>
+      {/* INSCRITOS (NUEVA COLUMNA) */}
+      <div className="rui-inscritos-cell">
+        <span className={`rui-inscritos-number ${isHighEnrollment ? "rui-inscritos-number--highlight" : ""}`}>
+          {enrolledCount}
+        </span>
+        <span className="rui-inscritos-label">{t("dashboard.events_view.table.enrolled_label")}</span>
+      </div>
 
-      {/* Modalidad - oculto en móvil y tablet pequeña */}
-      <TableCell className="hidden md:table-cell px-4 py-3">
-        <div className="flex items-center gap-1.5">
-          <ModalityIcon className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-          <span className="text-sm text-foreground">{getModalityLabel(event.modality)}</span>
-        </div>
-      </TableCell>
-
-      {/* Ubicación - oculto hasta pantallas grandes */}
-      <TableCell className="hidden lg:table-cell px-4 py-3">
-        <div className="flex flex-col min-w-0 gap-0.5">
-          <span className="text-sm text-foreground line-clamp-1">
-            {event.location?.name || (event.virtualAccess ? "Virtual" : "—")}
-          </span>
-          {event.location?.city && (
-            <span className="text-xs text-muted-foreground">{event.location.city}</span>
-          )}
-        </div>
-      </TableCell>
-
-      {/* Estado */}
-      <TableCell className="px-4 py-3">
-        <Badge variant={variant}>
+      {/* ESTADO */}
+      <div>
+        <span className={`rui-badge rui-badge--${variant}`}>
           {getStatusLabel(event.status)}
-        </Badge>
-      </TableCell>
+        </span>
+      </div>
 
-      {/* Acciones */}
-      <TableCell className="px-4 py-3 text-right">
+      {/* ACCIONES - Refactoring UI */}
+      <div className="rui-actions-cell">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon" className="h-8 w-8">
-              <MoreHorizontal className="h-4 w-4" />
+            <button className="rui-actions-button">
+              <MoreHorizontal className="rui-actions-button-icon" />
               <span className="sr-only">{t("dashboard.events_view.actions.title")}</span>
-            </Button>
+            </button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-48">
-            <DropdownMenuItem className="cursor-pointer" onClick={handleManage}>
-              <Settings className="mr-2 h-4 w-4" />
-              {t("dashboard.events_view.actions.manage")}
+          <DropdownMenuContent align="end" sideOffset={4} className="rui-dropdown">
+            {/* Acciones de vista */}
+            <DropdownMenuItem className="rui-dropdown-item" onClick={handleViewDetails}>
+              <Eye className="rui-dropdown-item-icon" />
+              {t("dashboard.events_view.actions.view_details")}
             </DropdownMenuItem>
-            <DropdownMenuItem className="cursor-pointer" onClick={handleEdit}>
-              <Pencil className="mr-2 h-4 w-4" />
+            <DropdownMenuItem className="rui-dropdown-item" onClick={handleViewEnrolled}>
+              <Users className="rui-dropdown-item-icon" />
+              {t("dashboard.events_view.actions.view_enrolled")}
+              <span className="rui-dropdown-item-badge">{enrolledCount}</span>
+            </DropdownMenuItem>
+
+            <DropdownMenuSeparator className="rui-dropdown-separator" />
+
+            {/* Acciones de edición */}
+            <DropdownMenuItem className="rui-dropdown-item" onClick={handleEdit}>
+              <Pencil className="rui-dropdown-item-icon" />
               {t("dashboard.events_view.actions.edit")}
             </DropdownMenuItem>
-            <DropdownMenuItem variant="destructive" className="cursor-pointer" onClick={handleDelete}>
-              <Trash2 className="mr-2 h-4 w-4" />
+            <DropdownMenuItem className="rui-dropdown-item" onClick={handleDuplicate}>
+              <Copy className="rui-dropdown-item-icon" />
+              {t("dashboard.events_view.actions.duplicate")}
+            </DropdownMenuItem>
+
+            <DropdownMenuSeparator className="rui-dropdown-separator" />
+
+            {/* Acción destructiva - SEPARADA */}
+            <DropdownMenuItem className="rui-dropdown-item rui-dropdown-item--danger" onClick={handleDelete}>
+              <Trash2 className="rui-dropdown-item-icon" />
               {t("dashboard.events_view.actions.delete")}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
-      </TableCell>
-    </TableRow>
+      </div>
+    </div>
   );
 });

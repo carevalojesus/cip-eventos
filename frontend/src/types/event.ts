@@ -113,11 +113,24 @@ export interface Event {
   // Certificado
   hasCertificate?: boolean;
   certificateHours?: number;
+  // Estadísticas
+  enrolledCount?: number;
   // Auditoría
   isActive?: boolean;
   createdBy?: EventCreatedBy;
   createdAt?: string;
   updatedAt?: string;
+}
+
+export interface CreateTicketDto {
+  name: string;
+  price: number;
+  stock: number;
+  requiresCipValidation?: boolean;
+}
+
+export interface UpdateTicketDto extends Partial<CreateTicketDto> {
+  isActive?: boolean;
 }
 
 export interface CreateEventDto {

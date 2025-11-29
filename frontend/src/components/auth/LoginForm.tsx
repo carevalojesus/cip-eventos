@@ -5,15 +5,12 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AlertCircle, Loader2 } from "lucide-react";
 
-// UI Components
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+// UI Components - shadcn
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 
@@ -47,19 +44,13 @@ interface LoginFormProps {
 
 /**
  * LoginForm Component
- * Handles user authentication with email and password
- * Features:
- * - Form validation with Zod
- * - i18n support
- * - Loading states
- * - Error handling
+ * Refactored following Refactoring UI principles
  */
 export const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
   const { t } = useTranslation();
   const [globalError, setGlobalError] = useState<string | null>(null);
   const login = useAuthStore((state) => state.login);
 
-  // Create schema with current translations
   const loginSchema = createLoginSchema(t);
 
   const form = useForm<LoginFormValues>({
@@ -73,10 +64,8 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
     setGlobalError(null);
     try {
       const response = await api.post("/auth/login", data);
-      // El refresh token se maneja via cookies httpOnly (más seguro)
       login(response.data.access_token, response.data.user);
 
-      // Call onSuccess callback if provided, otherwise redirect
       if (onSuccess) {
         onSuccess();
       } else {
@@ -95,102 +84,80 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
     }
   };
 
+  const { errors } = form.formState;
+
   return (
-    <div className="grid gap-6">
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-          <FormField
-            control={form.control}
-            name="email"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>{t("login.email")}</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder={t("login.email_placeholder")}
-                    autoComplete="email"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="password"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>{t("login.password")}</FormLabel>
-                <FormControl>
-                  <Input
-                    type="password"
-                    placeholder={t("login.password_placeholder")}
-                    autoComplete="current-password"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          {/* Global Error Message */}
-          {globalError && (
-            <div className="flex items-center gap-2 rounded-md bg-destructive/10 p-3 text-sm text-destructive animate-in fade-in slide-in-from-top-2">
-              <AlertCircle className="h-4 w-4 shrink-0" />
-              <span className="font-medium">{globalError}</span>
-            </div>
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)}>
+        {/* Email Field */}
+        <FormField
+          control={form.control}
+          name="email"
+          render={({ field, fieldState }) => (
+            <FormItem className="rui-form-group">
+              <label className="rui-label">{t("login.email")}</label>
+              <FormControl>
+                <input
+                  type="email"
+                  className={`rui-input ${fieldState.error ? 'rui-input-error' : ''}`}
+                  placeholder={t("login.email_placeholder")}
+                  autoComplete="email"
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage className="rui-field-error" />
+            </FormItem>
           )}
+        />
 
-          <Button
-            disabled={isSubmitting}
+        {/* Password Field */}
+        <FormField
+          control={form.control}
+          name="password"
+          render={({ field, fieldState }) => (
+            <FormItem className="rui-form-group">
+              <label className="rui-label">{t("login.password")}</label>
+              <FormControl>
+                <input
+                  type="password"
+                  className={`rui-input ${fieldState.error ? 'rui-input-error' : ''}`}
+                  placeholder={t("login.password_placeholder")}
+                  autoComplete="current-password"
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage className="rui-field-error" />
+            </FormItem>
+          )}
+        />
+
+        {/* Global Error Message */}
+        {globalError && (
+          <div className="rui-error-message animate-in fade-in slide-in-from-top-2">
+            <AlertCircle />
+            <span>{globalError}</span>
+          </div>
+        )}
+
+        {/* Submit Button */}
+        <div className="rui-form-actions">
+          <button
             type="submit"
-            className="w-full font-bold"
-            size="lg"
+            disabled={isSubmitting}
+            className="rui-btn-primary"
           >
             {isSubmitting ? (
               <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                <Loader2 className="animate-spin" style={{ width: 16, height: 16 }} />
                 {t("login.btn_loading")}
               </>
             ) : (
               t("login.btn")
             )}
-          </Button>
+          </button>
+        </div>
 
-          {/* Forgot Password Link */}
-          <div className="text-right">
-            <a
-              href={AUTH_ROUTES.forgotPassword}
-              className="text-sm text-primary hover:underline font-medium"
-            >
-              {t("login.forgot_password")}
-            </a>
-          </div>
-
-          {/* Access Problems Section */}
-          <div className="relative my-6">
-            <div className="absolute inset-0 flex items-center">
-              <span className="w-full border-t" />
-            </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-background px-2 text-muted-foreground">
-                {t("login.access_problems")}
-              </span>
-            </div>
-          </div>
-
-          <div className="text-center text-sm text-muted-foreground space-y-4">
-            <p>
-              {t("login.contact_support")}{" "}
-              <strong className="text-foreground">{t("login.support_it")}</strong>{" "}
-              {t("login.support_message")}
-            </p>
-          </div>
-        </form>
-      </Form>
-    </div>
+      </form>
+    </Form>
   );
 };

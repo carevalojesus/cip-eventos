@@ -1,4 +1,4 @@
-import { Body, Controller, Post, UseGuards, Get, Param, Res, NotFoundException, BadRequestException } from '@nestjs/common';
+import { Body, Controller, Post, UseGuards, Get, Param, Res, NotFoundException, BadRequestException, StreamableFile } from '@nestjs/common';
 import { UploadsService } from './uploads.service';
 import { RequestAvatarUrlDto } from './dto/request-avatar-url.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
@@ -33,8 +33,17 @@ export class UploadsController {
     }
 
     const key = `${folder}/${file}`;
-    const url = await this.uploadsService.getSignedUrl(key);
-    return res.redirect(url);
+
+    try {
+      const { stream, contentType } = await this.uploadsService.getFileStream(key);
+
+      res.setHeader('Content-Type', contentType || 'application/octet-stream');
+      res.setHeader('Cache-Control', 'public, max-age=31536000'); // Cache por 1 año
+
+      stream.pipe(res);
+    } catch (error) {
+      throw new NotFoundException('File not found');
+    }
   }
 
   @UseGuards(JwtAuthGuard, EmailVerifiedGuard)

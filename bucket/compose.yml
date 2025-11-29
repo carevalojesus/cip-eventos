@@ -23,6 +23,8 @@ services:
     depends_on:
       - minio
     env_file: .env
+    volumes:
+      - ./cors.json:/cors.json
     entrypoint: >
       /bin/sh -c "
         echo 'Waiting for MinIO...';
@@ -30,9 +32,11 @@ services:
           sleep 2;
         done;
         mc mb -p local/\${MINIO_BUCKET} || true;
-        # Removed anonymous public access for security
-        # mc anonymous set public local/\${MINIO_BUCKET} || true;
-        echo 'Bucket ready';
+        echo 'Setting anonymous download policy...';
+        mc anonymous set download local/\${MINIO_BUCKET} || true;
+        echo 'Setting CORS policy...';
+        mc cors set /cors.json local/\${MINIO_BUCKET} || true;
+        echo 'Bucket ready with CORS enabled';
       "
 
   redis:

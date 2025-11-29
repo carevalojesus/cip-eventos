@@ -1,11 +1,9 @@
 import React from "react";
 import type { UseFormReturn } from "react-hook-form";
-import { Input } from "@/components/ui/input";
-import { MapPin } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import {
   FormField,
   FormItem,
-  FormLabel,
   FormControl,
   FormMessage,
 } from "@/components/ui/form";
@@ -18,6 +16,7 @@ interface EventLocationFieldsProps {
 }
 
 export const EventLocationFields: React.FC<EventLocationFieldsProps> = ({ form }) => {
+  const { t } = useTranslation();
   const { control, setValue } = form;
 
   const handleLocationSelect = (location: EventLocation | null) => {
@@ -31,91 +30,133 @@ export const EventLocationFields: React.FC<EventLocationFieldsProps> = ({ form }
   };
 
   return (
-    <div className="rounded-lg border bg-card p-6 shadow-sm">
-      <div className="flex items-center gap-2 mb-4">
-        <MapPin className="h-5 w-5 text-muted-foreground" />
-        <h2 className="text-lg font-medium text-foreground">Ubicación Presencial</h2>
-      </div>
-      <div className="space-y-4">
+    <div className="rui-form-card">
+      <h2 className="rui-form-section-title">
+        {t("create_event.location.title", "Ubicación Presencial")}
+      </h2>
+
+      {/* Nombre del Lugar */}
+      <div className="rui-form-group">
         <FormField
           control={control}
           name="locationName"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>
-                Nombre del Lugar <span className="text-red-500">*</span>
-              </FormLabel>
+              <label className="rui-form-label">
+                {t("create_event.location.name", "Nombre del Lugar")}
+                <span className="rui-form-label-required">*</span>
+              </label>
               <FormControl>
                 <LocationAutocomplete
                   value={field.value}
                   onSelect={handleLocationSelect}
                   onInputChange={field.onChange}
-                  placeholder="Buscar o escribir nombre del lugar..."
+                  placeholder={t("create_event.location.name_placeholder", "Buscar o escribir nombre del lugar...")}
                 />
               </FormControl>
-              <FormMessage />
+              <FormMessage className="rui-form-error" />
             </FormItem>
           )}
         />
+      </div>
+
+      {/* Dirección */}
+      <div className="rui-form-group">
         <FormField
           control={control}
           name="locationAddress"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>
-                Dirección <span className="text-red-500">*</span>
-              </FormLabel>
+              <label className="rui-form-label">
+                {t("create_event.location.address", "Dirección")}
+                <span className="rui-form-label-required">*</span>
+              </label>
               <FormControl>
-                <Input
+                <input
                   {...field}
-                  placeholder="Ej: Av. Pevas Cuadra 4"
-                  className="bg-white"
+                  type="text"
+                  className="rui-form-input"
+                  placeholder={t("create_event.location.address_placeholder", "Ej: Av. Pevas Cuadra 4")}
                 />
               </FormControl>
-              <FormMessage />
+              <FormMessage className="rui-form-error" />
             </FormItem>
           )}
         />
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      </div>
+
+      {/* Ciudad y Referencia */}
+      <div className="rui-form-row">
+        <div className="rui-form-group">
           <FormField
             control={control}
             name="locationCity"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>
-                  Ciudad <span className="text-red-500">*</span>
-                </FormLabel>
+                <label className="rui-form-label">
+                  {t("create_event.location.city", "Ciudad")}
+                  <span className="rui-form-label-required">*</span>
+                </label>
                 <FormControl>
-                  <Input {...field} placeholder="Lima" className="bg-white" />
+                  <input
+                    {...field}
+                    type="text"
+                    className="rui-form-input"
+                    placeholder={t("create_event.location.city_placeholder", "Lima")}
+                  />
                 </FormControl>
-                <FormMessage />
+                <FormMessage className="rui-form-error" />
               </FormItem>
             )}
           />
+        </div>
+
+        <div className="rui-form-group">
           <FormField
             control={control}
             name="locationReference"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Referencia</FormLabel>
+                <label className="rui-form-label">
+                  {t("create_event.location.reference", "Referencia")}
+                </label>
                 <FormControl>
-                  <Input {...field} placeholder="Frente al Parque..." className="bg-white" />
+                  <input
+                    {...field}
+                    type="text"
+                    className="rui-form-input"
+                    placeholder={t("create_event.location.reference_placeholder", "Frente al Parque...")}
+                  />
                 </FormControl>
-                <FormMessage />
+                <FormMessage className="rui-form-error" />
               </FormItem>
             )}
           />
         </div>
+      </div>
+
+      {/* Link de Mapa */}
+      <div className="rui-form-group">
         <FormField
           control={control}
           name="locationMapLink"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Link de Mapa (Google Maps)</FormLabel>
+              <label className="rui-form-label">
+                {t("create_event.location.map_link", "Link de Mapa (Google Maps)")}
+              </label>
               <FormControl>
-                <Input {...field} placeholder="https://maps.google.com/..." className="bg-white" />
+                <input
+                  {...field}
+                  type="text"
+                  className="rui-form-input"
+                  placeholder="https://maps.google.com/..."
+                />
               </FormControl>
-              <FormMessage />
+              <span className="rui-form-hint">
+                {t("create_event.location.map_hint", "Copia el enlace desde Google Maps para facilitar la ubicación")}
+              </span>
+              <FormMessage className="rui-form-error" />
             </FormItem>
           )}
         />

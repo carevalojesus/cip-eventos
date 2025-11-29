@@ -191,7 +191,3811 @@
     @apply border-border;
   }
 
+  html, body {
+    @apply m-0 p-0;
+    height: 100%;
+    overflow: hidden;
+  }
+
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+/* =====================================================
+   REFACTORING UI - Sistema de Diseño
+   Principios aplicados del libro "Refactoring UI"
+   ===================================================== */
+
+:root {
+  /* Sistema de colores - "You need more colors than you think" */
+
+  /* Grises - 10 tonos desde casi negro hasta casi blanco */
+  --rui-gray-900: #111827;
+  --rui-gray-800: #1F2937;
+  --rui-gray-700: #374151;
+  --rui-gray-600: #4B5563;
+  --rui-gray-500: #6B7280;
+  --rui-gray-400: #9CA3AF;
+  --rui-gray-300: #D1D5DB;
+  --rui-gray-200: #E5E7EB;
+  --rui-gray-100: #F3F4F6;
+  --rui-gray-50: #F9FAFB;
+
+  /* Color primario (rojo CIP) - 10 tonos */
+  --rui-primary-900: #7F1D1D;
+  --rui-primary-800: #991B1B;
+  --rui-primary-700: #B91C1C;
+  --rui-primary-600: #DC2626;
+  --rui-primary-500: #EF4444;
+  --rui-primary-400: #F87171;
+  --rui-primary-300: #FCA5A5;
+  --rui-primary-200: #FECACA;
+  --rui-primary-100: #FEE2E2;
+  --rui-primary-50: #FEF2F2;
+
+  /* Sistema de espaciado - "Establish a spacing and sizing system" */
+  --rui-space-1: 4px;
+  --rui-space-2: 8px;
+  --rui-space-3: 12px;
+  --rui-space-4: 16px;
+  --rui-space-5: 20px;
+  --rui-space-6: 24px;
+  --rui-space-7: 32px;
+  --rui-space-8: 48px;
+  --rui-space-9: 64px;
+  --rui-space-10: 96px;
+
+  /* Sistema tipográfico - "Establish a type scale" */
+  --rui-text-xs: 12px;
+  --rui-text-sm: 14px;
+  --rui-text-base: 15px;
+  --rui-text-lg: 18px;
+  --rui-text-xl: 20px;
+  --rui-text-2xl: 24px;
+  --rui-text-3xl: 32px;
+  --rui-text-4xl: 40px;
+
+  /* Line heights - "Line-height is proportional" */
+  --rui-leading-tight: 1.25;
+  --rui-leading-normal: 1.5;
+  --rui-leading-relaxed: 1.65;
+
+  /* Sombras - "Use shadows to convey elevation" */
+  --rui-shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+  --rui-shadow-md: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+  --rui-shadow-lg: 0 4px 6px rgba(0,0,0,0.12), 0 2px 4px rgba(0,0,0,0.24);
+  --rui-shadow-inset: inset 0 2px 4px rgba(0,0,0,0.06);
+
+  /* Border radius - "Choose a personality" */
+  --rui-radius-sm: 4px;
+  --rui-radius-md: 8px;
+  --rui-radius-lg: 12px;
+  --rui-radius-full: 9999px;
+
+  /* Focus ring - Para accesibilidad */
+  --rui-ring-primary: 0 0 0 3px rgba(220,38,38,0.15);
+}
+
+/* =====================================================
+   COMPONENTES REFACTORING UI
+   ===================================================== */
+
+@layer components {
+
+  /* ===== LOGIN PAGE LAYOUT ===== */
+  .rui-login-page {
+    display: flex;
+    min-height: 100vh;
+  }
+
+  /* ===== BRANDING PANEL (60%) ===== */
+  .rui-branding-panel {
+    position: relative;
+    width: 60%;
+    min-height: 100vh;
+    overflow: hidden;
+  }
+
+  .rui-branding-background {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+  }
+
+  /* "Text needs consistent contrast" - overlay con gradiente */
+  .rui-branding-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to bottom,
+      rgba(0,0,0,0.6) 0%,
+      rgba(0,0,0,0.4) 50%,
+      rgba(0,0,0,0.7) 100%
+    );
+  }
+
+  .rui-branding-content {
+    position: relative;
+    z-index: 10;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: var(--rui-space-8);
+  }
+
+  /* ===== BRAND HEADER ===== */
+  .rui-brand-header {
+    display: flex;
+    align-items: center;
+    gap: var(--rui-space-4);
+  }
+
+  .rui-brand-logo {
+    width: 56px;
+    height: 56px;
+    flex-shrink: 0;
+  }
+
+  .rui-brand-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .rui-brand-title {
+    font-size: var(--rui-text-sm);
+    font-weight: 600;
+    color: white;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  }
+
+  .rui-brand-subtitle {
+    font-size: var(--rui-text-xs);
+    font-weight: 400;
+    color: rgba(255,255,255,0.8);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+
+  /* ===== QUOTE SECTION ===== */
+  /* "Add color with accent borders" */
+  .rui-quote-container {
+    padding-bottom: var(--rui-space-8);
+  }
+
+  .rui-quote-wrapper {
+    display: flex;
+    gap: var(--rui-space-5);
+  }
+
+  .rui-quote-accent {
+    width: 4px;
+    background-color: var(--rui-primary-600);
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+
+  /* "Avoid ambiguous spacing" */
+  .rui-quote-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rui-space-4);
+  }
+
+  .rui-quote-text {
+    font-size: var(--rui-text-xl);
+    font-weight: 400;
+    font-style: italic;
+    color: white;
+    line-height: var(--rui-leading-relaxed);
+    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    max-width: 500px;
+  }
+
+  .rui-quote-attribution {
+    font-size: var(--rui-text-sm);
+    font-weight: 600;
+    font-style: normal;
+    color: rgba(255,255,255,0.9);
+    letter-spacing: 0.02em;
+  }
+
+  /* ===== CAROUSEL DOTS ===== */
+  /* "Don't rely on color alone" */
+  .rui-carousel-dots {
+    display: flex;
+    gap: var(--rui-space-2);
+    margin-top: var(--rui-space-6);
+  }
+
+  .rui-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: var(--rui-radius-full);
+    background-color: rgba(255,255,255,0.4);
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .rui-dot:hover {
+    background-color: rgba(255,255,255,0.6);
+  }
+
+  .rui-dot.active {
+    width: 32px;
+    border-radius: var(--rui-radius-sm);
+    background-color: var(--rui-primary-600);
+  }
+
+  /* ===== LOGIN PANEL (40%) ===== */
+  .rui-login-panel {
+    position: relative;
+    width: 40%;
+    min-height: 100vh;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--rui-space-8);
+  }
+
+  .rui-login-container {
+    width: 100%;
+    max-width: 380px;
+  }
+
+  /* ===== FORM HEADER ===== */
+  .rui-form-header {
+    margin-bottom: var(--rui-space-7);
+  }
+
+  /* "Size isn't everything" - usar peso y color también */
+  .rui-title-primary {
+    font-size: var(--rui-text-3xl);
+    font-weight: 700;
+    color: var(--rui-gray-900);
+    line-height: var(--rui-leading-tight);
+    margin: 0;
+  }
+
+  .rui-subtitle-secondary {
+    font-size: var(--rui-text-base);
+    font-weight: 400;
+    color: var(--rui-gray-500);
+    line-height: var(--rui-leading-normal);
+    margin-top: var(--rui-space-2);
+  }
+
+  /* ===== FORM GROUP ===== */
+  .rui-form-group {
+    margin-bottom: var(--rui-space-5);
+  }
+
+  /* ===== LABELS ===== */
+  /* "Labels are secondary" - de-enfatizadas */
+  .rui-label {
+    display: block;
+    font-size: var(--rui-text-xs);
+    font-weight: 600;
+    color: var(--rui-gray-500);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: var(--rui-space-2);
+  }
+
+  /* ===== INPUTS ===== */
+  /* "Emulate a light source" - inputs con efecto inset
+     Refactoring UI: Fondo gris cuando vacío, blanco cuando tiene contenido */
+  .rui-input {
+    width: 100%;
+    padding: var(--rui-space-3) var(--rui-space-4);
+    font-size: var(--rui-text-base);
+    color: var(--rui-gray-900);
+    background-color: var(--rui-gray-50);
+    border: 1px solid var(--rui-gray-300);
+    border-radius: var(--rui-radius-md);
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.06);
+    transition: all 0.2s ease;
+    outline: none;
+  }
+
+  .rui-input::placeholder {
+    color: var(--rui-gray-400);
+  }
+
+  .rui-input:hover {
+    border-color: var(--rui-gray-400);
+  }
+
+  /* Cuando el input tiene contenido - fondo blanco */
+  .rui-input:not(:placeholder-shown) {
+    background-color: #FFFFFF;
+    box-shadow: none;
+  }
+
+  .rui-input:focus,
+  .rui-input:focus-visible {
+    outline: none;
+    border-color: var(--rui-primary-600);
+    background-color: #FFFFFF;
+    box-shadow: 0 0 0 3px rgba(220,38,38,0.15);
+  }
+
+  /* Autofill styles - Sobrescribir el fondo celeste del navegador */
+  .rui-input:-webkit-autofill,
+  .rui-input:-webkit-autofill:hover,
+  .rui-input:-webkit-autofill:focus,
+  .rui-input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 1000px #FFFFFF inset !important;
+    -webkit-text-fill-color: var(--rui-gray-900) !important;
+    background-color: #FFFFFF !important;
+    transition: background-color 5000s ease-in-out 0s;
+    caret-color: var(--rui-gray-900);
+  }
+
+  /* ===== BOTÓN PRIMARIO ===== */
+  /* "Semantics are secondary" + "Shadows can have two parts" */
+  .rui-btn-primary {
+    width: 100%;
+    padding: var(--rui-space-3) var(--rui-space-6);
+    font-size: var(--rui-text-base);
+    font-weight: 600;
+    color: white;
+    background-color: var(--rui-primary-600);
+    border: none;
+    border-radius: var(--rui-radius-md);
+    cursor: pointer;
+    box-shadow:
+      var(--rui-shadow-md),
+      inset 0 1px 0 rgba(255,255,255,0.1);
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--rui-space-2);
+  }
+
+  .rui-btn-primary:hover {
+    background-color: var(--rui-primary-700);
+    box-shadow:
+      var(--rui-shadow-lg),
+      inset 0 1px 0 rgba(255,255,255,0.1);
+    transform: translateY(-1px);
+  }
+
+  .rui-btn-primary:active {
+    background-color: var(--rui-primary-800);
+    transform: translateY(0);
+    box-shadow:
+      var(--rui-shadow-sm),
+      inset 0 1px 0 rgba(255,255,255,0.1);
+  }
+
+  .rui-btn-primary:focus {
+    outline: none;
+    box-shadow:
+      var(--rui-shadow-md),
+      inset 0 1px 0 rgba(255,255,255,0.1),
+      var(--rui-ring-primary);
+  }
+
+  .rui-btn-primary:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  /* ===== LINKS SECUNDARIOS ===== */
+  /* "Not every link needs a color" */
+  .rui-link-secondary {
+    display: block;
+    text-align: center;
+    margin-top: var(--rui-space-6);
+    font-size: var(--rui-text-sm);
+    font-weight: 500;
+    color: var(--rui-gray-500);
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  .rui-link-secondary:hover {
+    color: var(--rui-primary-600);
+  }
+
+  /* ===== FOOTER ===== */
+  /* Jerarquía: primario > secundario > terciario */
+  /* Posición fija al fondo del panel */
+  .rui-form-footer {
+    position: absolute;
+    bottom: var(--rui-space-6);
+    left: 0;
+    right: 0;
+    text-align: center;
+  }
+
+  .rui-text-tertiary {
+    font-size: var(--rui-text-xs);
+    color: var(--rui-gray-400);
+    line-height: var(--rui-leading-relaxed);
+  }
+
+  .rui-text-tertiary a {
+    color: var(--rui-primary-600);
+    font-weight: 500;
+    text-decoration: none;
+  }
+
+  .rui-text-tertiary a:hover {
+    text-decoration: underline;
+  }
+
+  /* ===== ERROR MESSAGE (Global) ===== */
+  .rui-error-message {
+    display: flex;
+    align-items: center;
+    gap: var(--rui-space-2);
+    padding: var(--rui-space-3) var(--rui-space-4);
+    margin-bottom: var(--rui-space-5);
+    background-color: var(--rui-primary-50);
+    border: 1px solid var(--rui-primary-200);
+    border-radius: var(--rui-radius-md);
+    font-size: var(--rui-text-sm);
+    color: var(--rui-primary-700);
+  }
+
+  .rui-error-message svg {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+  }
+
+  /* ===== FIELD ERROR MESSAGE ===== */
+  /* "Use color sparingly" - errores sutiles pero claros */
+  .rui-field-error {
+    font-size: var(--rui-text-xs);
+    font-weight: 500;
+    color: var(--rui-primary-600);
+    margin-top: var(--rui-space-1);
+  }
+
+  /* Input con error - borde rojo sutil */
+  .rui-input-error {
+    border-color: var(--rui-primary-400) !important;
+  }
+
+  .rui-input-error:focus,
+  .rui-input-error:focus-visible {
+    border-color: var(--rui-primary-600) !important;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.06), 0 0 0 3px rgba(220,38,38,0.15) !important;
+  }
+
+  /* =====================================================
+     SIDEBAR REFACTORING UI
+     Principios: "Separate visual hierarchy from document hierarchy"
+     "Emphasize by de-emphasizing" - items inactivos sutiles
+     ===================================================== */
+
+  .rui-sidebar {
+    width: 260px;
+    min-height: 100vh;
+    background-color: #FFFFFF;
+    border-right: 1px solid var(--rui-gray-200);
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 50;
+  }
+
+  .rui-sidebar-header {
+    display: flex;
+    align-items: center;
+    gap: var(--rui-space-3);
+    padding: var(--rui-space-5) var(--rui-space-6);
+    border-bottom: 1px solid var(--rui-gray-200);
+  }
+
+  .rui-sidebar-logo {
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+  }
+
+  .rui-sidebar-brand {
+    font-size: var(--rui-text-lg);
+    font-weight: 700;
+    color: var(--rui-primary-600);
+  }
+
+  .rui-sidebar-nav {
+    flex: 1;
+    padding: var(--rui-space-4) var(--rui-space-3);
+    overflow-y: auto;
+  }
+
+  .rui-sidebar-footer {
+    padding: var(--rui-space-4) var(--rui-space-3);
+    border-top: 1px solid var(--rui-gray-200);
+  }
+
+  /* ===== SIDEBAR SECTION LABELS ===== */
+  /* "Separate visual hierarchy from document hierarchy" */
+  .rui-sidebar-section {
+    margin-bottom: var(--rui-space-2);
+  }
+
+  .rui-sidebar-section:not(:first-child) {
+    margin-top: var(--rui-space-6);
+  }
+
+  .rui-sidebar-section-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--rui-gray-400);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0 var(--rui-space-3);
+    margin-bottom: var(--rui-space-2);
+  }
+
+  /* ===== SIDEBAR NAV ITEMS ===== */
+  /* "Emphasize by de-emphasizing" - inactivos sutiles, activo destaca */
+  .rui-sidebar-nav-item {
+    display: flex;
+    align-items: center;
+    gap: var(--rui-space-3);
+    padding: 10px var(--rui-space-3);
+    border-radius: var(--rui-radius-md);
+    font-size: var(--rui-text-sm);
+    font-weight: 500;
+    color: var(--rui-gray-600);
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    position: relative;
+  }
+
+  .rui-sidebar-nav-item:hover {
+    background-color: var(--rui-gray-100);
+    color: var(--rui-gray-900);
+  }
+
+  /* Estado Activo - con borde de acento */
+  /* "Add color with accent borders" */
+  .rui-sidebar-nav-item.active {
+    background-color: var(--rui-primary-50);
+    color: var(--rui-primary-600);
+    font-weight: 600;
+  }
+
+  /* Borde de acento izquierdo para item activo */
+  .rui-sidebar-nav-item.active::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3px;
+    height: 20px;
+    background-color: var(--rui-primary-600);
+    border-radius: 0 2px 2px 0;
+  }
+
+  /* Iconos - de-enfatizados respecto al texto */
+  /* "Balance weight and contrast" */
+  .rui-sidebar-nav-item-icon {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    opacity: 0.7;
+  }
+
+  .rui-sidebar-nav-item:hover .rui-sidebar-nav-item-icon,
+  .rui-sidebar-nav-item.active .rui-sidebar-nav-item-icon {
+    opacity: 1;
+  }
+
+  /* ===== SIDEBAR LOGOUT BUTTON ===== */
+  .rui-sidebar-logout {
+    display: flex;
+    align-items: center;
+    gap: var(--rui-space-3);
+    padding: 10px var(--rui-space-3);
+    border-radius: var(--rui-radius-md);
+    font-size: var(--rui-text-sm);
+    font-weight: 500;
+    color: var(--rui-gray-500);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    text-align: left;
+    transition: all 0.15s ease;
+  }
+
+  .rui-sidebar-logout:hover {
+    background-color: var(--rui-primary-50);
+    color: var(--rui-primary-600);
+  }
+
+  /* =====================================================
+     NAVBAR REFACTORING UI
+     Principios: "Not all elements are equal"
+     Jerarquía clara entre nombre de usuario y rol
+     ===================================================== */
+
+  .rui-navbar {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    height: 64px;
+    padding: 0 var(--rui-space-7);
+    background-color: #FFFFFF;
+    border-bottom: 1px solid var(--rui-gray-200);
+    position: sticky;
+    top: 0;
+    z-index: 40;
+  }
+
+  .rui-navbar.has-menu-toggle {
+    justify-content: space-between;
+  }
+
+  .rui-navbar-content {
+    display: flex;
+    align-items: center;
+    gap: var(--rui-space-6);
+  }
+
+  /* ===== NOTIFICATION BUTTON ===== */
+  .rui-notification-button {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: var(--rui-radius-md);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--rui-gray-500);
+    transition: all 0.2s ease;
+  }
+
+  .rui-notification-button:hover {
+    background-color: var(--rui-gray-100);
+    color: var(--rui-gray-900);
+  }
+
+  /* Badge de notificación */
+  .rui-notification-badge {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 8px;
+    height: 8px;
+    background-color: var(--rui-primary-600);
+    border-radius: 50%;
+    border: 2px solid #FFFFFF;
+  }
+
+  /* ===== USER PROFILE ===== */
+  /* "Not all elements are equal" - jerarquía nombre > rol */
+  .rui-user-profile {
+    display: flex;
+    align-items: center;
+    gap: var(--rui-space-3);
+    padding: var(--rui-space-2) var(--rui-space-3);
+    border-radius: var(--rui-radius-md);
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+
+  .rui-user-profile:hover {
+    background-color: var(--rui-gray-100);
+  }
+
+  .rui-user-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
+  }
+
+  /* Nombre: prominente */
+  .rui-user-name {
+    font-size: var(--rui-text-sm);
+    font-weight: 600;
+    color: var(--rui-gray-900);
+    line-height: 1.2;
+  }
+
+  /* Rol: secundario, de-enfatizado */
+  .rui-user-role {
+    font-size: var(--rui-text-xs);
+    font-weight: 400;
+    color: var(--rui-gray-500);
+    line-height: 1.2;
+  }
+
+  .rui-user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: var(--rui-primary-600);
+    color: #FFFFFF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--rui-text-sm);
+    font-weight: 600;
+    flex-shrink: 0;
+    overflow: hidden;
+  }
+
+  .rui-user-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* ===== MENU TOGGLE (Mobile) ===== */
+  .rui-menu-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: var(--rui-radius-md);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--rui-gray-500);
+  }
+
+  .rui-menu-toggle:hover {
+    background-color: var(--rui-gray-100);
+    color: var(--rui-gray-900);
+  }
+
+  /* ===== DASHBOARD LAYOUT ===== */
+  .rui-dashboard-layout {
+    display: flex;
+    min-height: 100vh;
+    background-color: var(--rui-gray-50);
+  }
+
+  .rui-main-wrapper {
+    flex: 1;
+    margin-left: 260px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .rui-main-content {
+    flex: 1;
+    padding: var(--rui-space-7);
+  }
+
+  /* ===== SIDEBAR OVERLAY (Mobile) ===== */
+  .rui-sidebar-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0,0,0,0.5);
+    z-index: 45;
+  }
+
+  .rui-sidebar-overlay.visible {
+    display: block;
+  }
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 1024px) {
+  .rui-branding-panel {
+    display: none;
+  }
+
+  .rui-login-panel {
+    width: 100%;
+  }
+
+  /* Sidebar responsive */
+  .rui-sidebar {
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+  }
+
+  .rui-sidebar.open {
+    transform: translateX(0);
+  }
+
+  .rui-main-wrapper {
+    margin-left: 0;
+  }
+
+  /* Menu toggle visible en móvil */
+  .rui-menu-toggle {
+    display: flex;
+  }
+}
+
+@media (min-width: 1025px) {
+  .rui-menu-toggle {
+    display: none;
+  }
+}
+
+/* =====================================================
+   EVENTS PAGE - REFACTORING UI V2
+   Principios: "Labels are secondary", "Use fewer borders"
+   "Think outside the box" - nueva estructura de columnas
+   ===================================================== */
+
+@layer components {
+  /* ===== PAGE HEADER ===== */
+  /* "Semantics are secondary" - jerarquía visual clara */
+  .rui-page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--rui-space-4);
+    margin-bottom: var(--rui-space-6);
+  }
+
+  .rui-page-header-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rui-space-1);
+    min-width: 0; /* Permite que el texto se trunque si es necesario */
+  }
+
+  .rui-page-title {
+    font-size: var(--rui-text-2xl);
+    font-weight: 700;
+    color: var(--rui-gray-900);
+    line-height: 1.2;
+    letter-spacing: -0.025em;
+  }
+
+  .rui-page-subtitle {
+    font-size: var(--rui-text-sm);
+    font-weight: 400;
+    color: var(--rui-gray-500);
+    line-height: 1.5;
+  }
+
+  /* ===== PRIMARY BUTTON ===== */
+  /* "Offset your shadows" - botón con profundidad */
+  /* "Don't let buttons stretch" - ancho ajustado al contenido */
+  .rui-btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--rui-space-2);
+    padding: 10px 20px;
+    font-size: var(--rui-text-sm);
+    font-weight: 600;
+    color: white;
+    background-color: var(--rui-primary-600);
+    border: none;
+    border-radius: var(--rui-radius-md);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05),
+                0 1px 3px rgba(0, 0, 0, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    white-space: nowrap;
+    width: fit-content;
+    flex-shrink: 0;
+  }
+
+  .rui-btn-primary:hover {
+    background-color: var(--rui-primary-700);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1),
+                0 4px 6px rgba(0, 0, 0, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    transform: translateY(-1px);
+  }
+
+  .rui-btn-primary:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  }
+
+  .rui-btn-primary-icon {
+    width: 16px;
+    height: 16px;
+  }
+
+  /* ===== SECONDARY/OUTLINE BUTTON ===== */
+  .rui-btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--rui-space-2);
+    padding: 8px 16px;
+    font-size: var(--rui-text-sm);
+    font-weight: 500;
+    color: var(--rui-gray-700);
+    background-color: white;
+    border: 1px solid var(--rui-gray-300);
+    border-radius: var(--rui-radius-md);
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .rui-btn-secondary:hover {
+    background-color: var(--rui-gray-50);
+    border-color: var(--rui-gray-400);
+  }
+
+  /* ===== ALERT/ERROR STATE ===== */
+  /* "Don't overlook empty states" - estados de error claros */
+  .rui-alert {
+    display: flex;
+    align-items: center;
+    gap: var(--rui-space-3);
+    padding: var(--rui-space-4);
+    border-radius: var(--rui-radius-md);
+    margin-bottom: var(--rui-space-6);
+  }
+
+  .rui-alert--error {
+    background-color: #FEF2F2;
+    border: 1px solid #FECACA;
+  }
+
+  .rui-alert-icon {
+    width: 20px;
+    height: 20px;
+    color: #DC2626;
+    flex-shrink: 0;
+  }
+
+  .rui-alert-content {
+    flex: 1;
+  }
+
+  .rui-alert-message {
+    font-size: var(--rui-text-sm);
+    font-weight: 500;
+    color: #991B1B;
+  }
+
+  .rui-btn-alert {
+    padding: 6px 12px;
+    font-size: var(--rui-text-sm);
+    font-weight: 500;
+    color: #DC2626;
+    background-color: white;
+    border: 1px solid #FECACA;
+    border-radius: var(--rui-radius-md);
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .rui-btn-alert:hover {
+    background-color: #FEF2F2;
+    border-color: #DC2626;
+  }
+
+  /* ===== FILTERS BAR ===== */
+  /* "Give elements room to breathe" - espaciado generoso */
+  .rui-filters-bar {
+    display: flex;
+    align-items: center;
+    gap: var(--rui-space-4);
+    padding: var(--rui-space-4) var(--rui-space-5);
+    background-color: white;
+    border-radius: var(--rui-radius-md);
+    box-shadow: var(--rui-shadow-sm);
+    margin-bottom: var(--rui-space-6);
+    flex-wrap: wrap;
+  }
+
+  .rui-filters-group {
+    display: flex;
+    align-items: center;
+    gap: var(--rui-space-3);
+    flex-wrap: wrap;
+  }
+
+  .rui-filters-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--rui-space-2);
+    margin-left: auto;
+  }
+
+  /* ===== SEARCH INPUT ===== */
+  /* "Emulate a light source" - inputs con sombra inset */
+  .rui-search-wrapper {
+    position: relative;
+    min-width: 200px;
+    max-width: 280px;
+  }
+
+  .rui-search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 16px;
+    height: 16px;
+    color: var(--rui-gray-400);
+    pointer-events: none;
+  }
+
+  .rui-search-input {
+    width: 100%;
+    height: 40px;
+    padding: 0 12px 0 40px;
+    font-size: var(--rui-text-sm);
+    color: var(--rui-gray-900);
+    background-color: var(--rui-gray-50);
+    border: 1px solid var(--rui-gray-300);
+    border-radius: var(--rui-radius-md);
+    box-shadow: var(--rui-shadow-inset);
+    transition: all 0.2s ease;
+    outline: none;
+  }
+
+  .rui-search-input::placeholder {
+    color: var(--rui-gray-400);
+  }
+
+  .rui-search-input:hover {
+    border-color: var(--rui-gray-400);
+  }
+
+  /* Cuando tiene contenido - fondo blanco */
+  .rui-search-input:not(:placeholder-shown) {
+    background-color: #FFFFFF;
+    box-shadow: none;
+  }
+
+  .rui-search-input:focus {
+    border-color: var(--rui-primary-600);
+    background-color: white;
+    box-shadow: var(--rui-ring-primary);
+  }
+
+  /* Autofill styles */
+  .rui-search-input:-webkit-autofill,
+  .rui-search-input:-webkit-autofill:hover,
+  .rui-search-input:-webkit-autofill:focus,
+  .rui-search-input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 1000px #FFFFFF inset !important;
+    -webkit-text-fill-color: var(--rui-gray-900) !important;
+    background-color: #FFFFFF !important;
+  }
+
+  /* ===== FILTER SELECT ===== */
+  /* "Limit your choices" - todos los selects iguales */
+  .rui-select-wrapper {
+    position: relative;
+    display: inline-flex;
+  }
+
+  .rui-filter-select {
+    height: 40px;
+    padding: 0 36px 0 12px;
+    font-size: var(--rui-text-sm);
+    font-weight: 500;
+    color: var(--rui-gray-700);
+    background-color: white;
+    border: 1px solid var(--rui-gray-300);
+    border-radius: var(--rui-radius-md);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    outline: none;
+  }
+
+  .rui-select-icon {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 16px;
+    height: 16px;
+    color: var(--rui-gray-400);
+    pointer-events: none;
+  }
+
+  .rui-filter-select:hover {
+    border-color: var(--rui-gray-400);
+  }
+
+  .rui-filter-select:focus {
+    border-color: var(--rui-primary-600);
+    box-shadow: var(--rui-ring-primary);
+  }
+
+  .rui-filter-select:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  /* Filtro activo visualmente */
+  .rui-filter-select--active {
+    border-color: var(--rui-primary-600);
+    background-color: var(--rui-primary-50);
+    color: var(--rui-primary-700);
+  }
+
+  /* ===== DATE PICKER BUTTON ===== */
+  .rui-date-picker-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--rui-space-2);
+    height: 40px;
+    padding: 0 12px;
+    font-size: var(--rui-text-sm);
+    font-weight: 500;
+    color: var(--rui-gray-700);
+    background-color: white;
+    border: 1px solid var(--rui-gray-300);
+    border-radius: var(--rui-radius-md);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+  }
+
+  .rui-date-picker-btn:hover {
+    border-color: var(--rui-gray-400);
+  }
+
+  .rui-date-picker-btn--active {
+    border-color: var(--rui-primary-600);
+    background-color: var(--rui-primary-50);
+    color: var(--rui-primary-700);
+  }
+
+  .rui-date-picker-icon {
+    width: 16px;
+    height: 16px;
+    color: var(--rui-gray-400);
+  }
+
+  .rui-date-picker-text {
+    flex: 1;
+  }
+
+  .rui-date-picker-chevron {
+    width: 16px;
+    height: 16px;
+    color: var(--rui-gray-400);
+  }
+
+  /* ===== GHOST BUTTON ===== */
+  .rui-btn-ghost {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--rui-space-1);
+    height: 36px;
+    padding: 0 12px;
+    font-size: var(--rui-text-sm);
+    font-weight: 500;
+    color: var(--rui-gray-500);
+    background-color: transparent;
+    border: none;
+    border-radius: var(--rui-radius-md);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+  }
+
+  .rui-btn-ghost:hover {
+    background-color: var(--rui-gray-100);
+    color: var(--rui-gray-700);
+  }
+
+  .rui-btn-ghost-icon {
+    width: 16px;
+    height: 16px;
+  }
+
+  /* ===== TERTIARY BUTTON (SIN BORDE) ===== */
+  /* "Semantics are secondary" - acciones secundarias menos prominentes */
+  .rui-btn-tertiary {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--rui-space-2);
+    height: 36px;
+    padding: 0 12px;
+    font-size: var(--rui-text-sm);
+    font-weight: 500;
+    color: var(--rui-gray-600);
+    background-color: transparent;
+    border: none;
+    border-radius: var(--rui-radius-md);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+  }
+
+  .rui-btn-tertiary:hover {
+    background-color: var(--rui-gray-100);
+    color: var(--rui-gray-900);
+  }
+
+  .rui-btn-tertiary-icon {
+    width: 16px;
+    height: 16px;
+  }
+
+  /* ===== TABLE CONTAINER ===== */
+  /* "Use fewer borders" - usar sombra en lugar de muchos bordes */
+  .rui-table-container {
+    background-color: white;
+    border-radius: var(--rui-radius-md);
+    box-shadow: var(--rui-shadow-md);
+    overflow: hidden;
+    /* Sin margin-bottom extra - el contenedor padre ya tiene padding */
+  }
+
+  /* ===== TABLE HEADER ===== */
+  /* "Labels are secondary" - headers pequeños, GRISES CLAROS, uppercase */
+  .rui-table-header-row {
+    display: grid;
+    grid-template-columns: 2.5fr 120px 1.5fr 100px 100px 60px;
+    gap: var(--rui-space-4);
+    padding: var(--rui-space-3) var(--rui-space-5);
+    background-color: var(--rui-gray-50);
+    border-bottom: 1px solid var(--rui-gray-200);
+  }
+
+  .rui-table-header-cell {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--rui-gray-400); /* GRIS CLARO - no oscuro */
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .rui-table-header-cell--center {
+    text-align: center;
+  }
+
+  .rui-table-header-cell--right {
+    text-align: right;
+  }
+
+  /* ===== TABLE BODY & ROWS ===== */
+  /* "Use fewer borders" - hover sutil, sin bordes pesados */
+  .rui-table-row {
+    display: grid;
+    grid-template-columns: 2.5fr 120px 1.5fr 100px 100px 60px;
+    gap: var(--rui-space-4);
+    padding: var(--rui-space-4) var(--rui-space-5);
+    align-items: center;
+    transition: background-color 0.15s ease;
+  }
+
+  .rui-table-row:hover {
+    background-color: var(--rui-gray-50);
+  }
+
+  /* Separador MUY sutil entre filas */
+  .rui-table-row:not(:last-child) {
+    border-bottom: 1px solid var(--rui-gray-100);
+  }
+
+  /* ===== EVENT CELL ===== */
+  /* "Not all elements are equal" - título prominente, categoría secundaria */
+  .rui-event-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  .rui-event-title {
+    font-size: var(--rui-text-sm);
+    font-weight: 600;
+    color: var(--rui-gray-900);
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    transition: color 0.15s ease;
+    cursor: pointer;
+  }
+
+  .rui-event-title:hover {
+    color: var(--rui-primary-600);
+  }
+
+  .rui-event-category {
+    font-size: var(--rui-text-xs);
+    font-weight: 400;
+    color: var(--rui-gray-500);
+  }
+
+  /* ===== DATE CELL ===== */
+  .rui-date-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .rui-date-primary {
+    font-size: var(--rui-text-sm);
+    font-weight: 500;
+    color: var(--rui-gray-700);
+  }
+
+  .rui-date-secondary {
+    font-size: var(--rui-text-xs);
+    font-weight: 400;
+    color: var(--rui-gray-500);
+  }
+
+  /* ===== LOCATION CELL (Sin truncar, 2 líneas) ===== */
+  .rui-location-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  .rui-location-name {
+    font-size: var(--rui-text-sm);
+    font-weight: 500;
+    color: var(--rui-gray-700);
+    line-height: 1.3;
+    /* Permitir 2 líneas */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .rui-location-city {
+    font-size: var(--rui-text-xs);
+    font-weight: 400;
+    color: var(--rui-gray-500);
+  }
+
+  /* Badge de modalidad pequeño - solo si es Virtual */
+  .rui-location-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 4px;
+    padding: 2px 8px;
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--rui-gray-600);
+    background-color: var(--rui-gray-100);
+    border-radius: var(--rui-radius-full);
+    width: fit-content;
+  }
+
+  /* ===== INSCRITOS CELL (NUEVA) ===== */
+  .rui-inscritos-cell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+  }
+
+  .rui-inscritos-number {
+    font-size: var(--rui-text-sm);
+    font-weight: 600;
+    color: var(--rui-gray-900);
+  }
+
+  .rui-inscritos-label {
+    font-size: 10px;
+    font-weight: 400;
+    color: var(--rui-gray-500);
+  }
+
+  /* Si hay muchos inscritos, destacar en verde */
+  .rui-inscritos-number--highlight {
+    color: #16A34A;
+  }
+
+  /* ===== BADGES (AMBOS CON FONDO) ===== */
+  /* "Don't rely on color alone" - usar color + texto claro */
+  .rui-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 12px;
+    font-size: 12px;
+    font-weight: 500;
+    border-radius: var(--rui-radius-full);
+    white-space: nowrap;
+  }
+
+  /* Publicado - Verde CON FONDO */
+  .rui-badge--success {
+    background-color: #DCFCE7;
+    color: #15803D;
+  }
+
+  /* Borrador - Gris con fondo */
+  .rui-badge--neutral {
+    background-color: var(--rui-gray-100);
+    color: var(--rui-gray-600);
+  }
+
+  /* Completado - Azul */
+  .rui-badge--info {
+    background-color: #DBEAFE;
+    color: #1D4ED8;
+  }
+
+  /* Cancelado - Rojo */
+  .rui-badge--danger {
+    background-color: var(--rui-primary-50);
+    color: var(--rui-primary-600);
+  }
+
+  /* ===== ACTIONS CELL ===== */
+  .rui-actions-cell {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .rui-actions-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: var(--rui-radius-md);
+    background: transparent;
+    border: none;
+    color: var(--rui-gray-400);
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .rui-actions-button:hover {
+    background-color: var(--rui-gray-100);
+    color: var(--rui-gray-700);
+  }
+
+  .rui-actions-button-icon {
+    width: 18px;
+    height: 18px;
+  }
+
+  /* ===== DROPDOWN MENU ===== */
+  /* "Use fewer borders" - sombra en lugar de bordes */
+  /* "Offset your shadows" - sombras con profundidad */
+  /* "Give elements room to breathe" - espaciado generoso */
+  .rui-dropdown {
+    min-width: 220px;
+    padding: 8px;
+    background: white;
+    border: 1px solid var(--rui-gray-200);
+    border-radius: var(--rui-radius-lg);
+    box-shadow:
+      0 4px 6px -1px rgba(0, 0, 0, 0.1),
+      0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  }
+
+  /* ===== DROPDOWN ITEMS ===== */
+  /* "Balance weight and contrast" - iconos de-enfatizados */
+  .rui-dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 10px 14px;
+    font-size: var(--rui-text-sm);
+    font-weight: 500;
+    color: var(--rui-gray-700);
+    background: transparent;
+    border: none;
+    border-radius: var(--rui-radius-md);
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+    text-align: left;
+  }
+
+  .rui-dropdown-item:hover {
+    background-color: #F3F4F6;
+  }
+
+  /* Iconos DE-ENFATIZADOS - gris claro */
+  .rui-dropdown-item-icon {
+    width: 18px;
+    height: 18px;
+    color: var(--rui-gray-400);
+    flex-shrink: 0;
+  }
+
+  .rui-dropdown-item:hover .rui-dropdown-item-icon {
+    color: var(--rui-gray-600);
+  }
+
+  /* Badge de contador */
+  .rui-dropdown-item-badge {
+    margin-left: auto;
+    padding: 3px 10px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--rui-gray-600);
+    background-color: var(--rui-gray-100);
+    border-radius: var(--rui-radius-full);
+  }
+
+  /* Separador */
+  .rui-dropdown-separator {
+    height: 1px;
+    background-color: var(--rui-gray-100);
+    margin: 8px 0;
+  }
+
+  /* Item destructivo - SEPARADO visualmente */
+  .rui-dropdown-item--danger {
+    color: #DC2626;
+  }
+
+  .rui-dropdown-item--danger .rui-dropdown-item-icon {
+    color: #F87171;
+  }
+
+  .rui-dropdown-item--danger:hover {
+    background-color: #FEF2F2;
+  }
+
+  .rui-dropdown-item--danger:hover .rui-dropdown-item-icon {
+    color: #DC2626;
+  }
+
+  /* ===== EMPTY STATE ===== */
+  /* "Don't overlook empty states" */
+  .rui-empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--rui-space-9) var(--rui-space-8);
+    text-align: center;
+  }
+
+  .rui-empty-state-icon {
+    width: 80px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--rui-gray-100);
+    border-radius: 50%;
+    color: var(--rui-gray-400);
+    margin-bottom: var(--rui-space-6);
+  }
+
+  .rui-empty-state-title {
+    font-size: var(--rui-text-lg);
+    font-weight: 600;
+    color: var(--rui-gray-900);
+    margin-bottom: var(--rui-space-2);
+  }
+
+  .rui-empty-state-description {
+    font-size: var(--rui-text-sm);
+    color: var(--rui-gray-500);
+    max-width: 320px;
+  }
+
+  /* ===== PAGINATION (DENTRO DE TABLA) ===== */
+  .rui-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--rui-space-4) var(--rui-space-5);
+    border-top: 1px solid var(--rui-gray-200);
+    background-color: white;
+  }
+
+  .rui-pagination-info {
+    font-size: var(--rui-text-sm);
+    color: var(--rui-gray-500);
+  }
+
+  .rui-pagination-info-bold {
+    font-weight: 600;
+    color: var(--rui-gray-700);
+  }
+
+  .rui-pagination-controls {
+    display: flex;
+    align-items: center;
+    gap: var(--rui-space-2);
+  }
+
+  .rui-pagination-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: var(--rui-radius-md);
+    background: white;
+    border: 1px solid var(--rui-gray-300);
+    color: var(--rui-gray-600);
+    cursor: pointer;
+    transition: all 0.15s ease;
+    font-size: var(--rui-text-sm);
+    font-weight: 500;
+  }
+
+  .rui-pagination-btn:hover:not(:disabled) {
+    background-color: var(--rui-gray-50);
+    border-color: var(--rui-gray-400);
+  }
+
+  .rui-pagination-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .rui-pagination-btn--active {
+    background-color: var(--rui-primary-600);
+    border-color: var(--rui-primary-600);
+    color: white;
+  }
+
+  .rui-pagination-btn--active:hover {
+    background-color: var(--rui-primary-700);
+    border-color: var(--rui-primary-700);
+  }
+}
+
+/* ===== RESPONSIVE EVENTS TABLE ===== */
+@media (max-width: 1024px) {
+  .rui-table-header-row,
+  .rui-table-row {
+    grid-template-columns: 2fr 100px 100px 80px 60px;
+  }
+
+  /* Ocultar columna de ubicación en tablets */
+  .rui-table-header-cell:nth-child(3),
+  .rui-table-row > *:nth-child(3) {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  /* Page header en móvil - stack vertical */
+  .rui-page-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .rui-filters-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .rui-search-wrapper {
+    max-width: none;
+    width: 100%;
+  }
+
+  /* Cambiar tabla a cards en móvil */
+  .rui-table-header-row {
+    display: none;
+  }
+
+  .rui-table-row {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rui-space-3);
+    padding: var(--rui-space-4);
+    border: 1px solid var(--rui-gray-200);
+    border-radius: var(--rui-radius-md);
+    margin: var(--rui-space-3);
+    margin-top: 0;
+  }
+
+  .rui-table-row:first-child {
+    margin-top: var(--rui-space-3);
+  }
+
+  .rui-table-row:not(:last-child) {
+    border-bottom: 1px solid var(--rui-gray-200);
+  }
+
+  .rui-pagination {
+    flex-direction: column;
+    gap: var(--rui-space-3);
+    text-align: center;
+  }
+}
+
+/* =====================================================
+   CREATE EVENT FORM - REFACTORING UI
+   Principios: "Emulate a light source", "Use shadows to convey elevation"
+   "Labels are secondary", "Start with too much white space"
+   ===================================================== */
+
+@layer components {
+  /* ===== PAGE HEADER FOR FORMS ===== */
+  .rui-form-page-header {
+    margin-bottom: var(--rui-space-6);
+  }
+
+  /* Breadcrumb - Solo "← Volver" */
+  .rui-breadcrumb-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: var(--rui-text-sm);
+    font-weight: 500;
+    color: var(--rui-gray-500);
+    margin-bottom: var(--rui-space-3);
+    cursor: pointer;
+    transition: color 0.15s ease;
+    background: none;
+    border: none;
+    padding: 0;
+  }
+
+  .rui-breadcrumb-back:hover {
+    color: var(--rui-gray-900);
+  }
+
+  .rui-breadcrumb-back-icon {
+    width: 16px;
+    height: 16px;
+  }
+
+  /* Título de página - Prominente */
+  .rui-form-page-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--rui-gray-900);
+    line-height: 1.2;
+    letter-spacing: -0.025em;
+    margin-bottom: var(--rui-space-2);
+  }
+
+  .rui-form-page-subtitle {
+    font-size: 15px;
+    font-weight: 400;
+    color: var(--rui-gray-500);
+    line-height: 1.5;
+  }
+
+  /* ===== FORM LAYOUT ===== */
+  .rui-form-layout {
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: var(--rui-space-6);
+    align-items: start;
+  }
+
+  .rui-form-main {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rui-space-6);
+  }
+
+  .rui-form-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rui-space-6);
+    position: sticky;
+    top: 24px;
+  }
+
+  /* ===== FORM CARD ===== */
+  /* "Use shadows to convey elevation" - Sin borde, con sombra */
+  .rui-form-card {
+    background: white;
+    border-radius: var(--rui-radius-lg);
+    padding: var(--rui-space-6);
+    box-shadow: var(--rui-shadow-md);
+  }
+
+  /* Título de sección - Sin icono */
+  .rui-form-section-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--rui-gray-900);
+    margin-bottom: var(--rui-space-5);
+    padding-bottom: var(--rui-space-3);
+    border-bottom: 1px solid var(--rui-gray-100);
+  }
+
+  /* ===== FORM ELEMENTS ===== */
+  .rui-form-group {
+    margin-bottom: var(--rui-space-5);
+  }
+
+  .rui-form-group:last-child {
+    margin-bottom: 0;
+  }
+
+  /* Labels - "Labels are secondary" */
+  .rui-form-label {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--rui-gray-700);
+    margin-bottom: 6px;
+  }
+
+  .rui-form-label-required {
+    color: var(--rui-primary-600);
+    margin-left: 2px;
+  }
+
+  /* Inputs - "Emulate a light source" con sombra inset
+     Refactoring UI: Fondo gris cuando vacío, blanco cuando tiene contenido */
+  .rui-form-input {
+    width: 100%;
+    padding: 12px 14px;
+    font-size: var(--rui-text-sm);
+    color: var(--rui-gray-900);
+    background-color: var(--rui-gray-50);
+    border: 1px solid var(--rui-gray-300);
+    border-radius: var(--rui-radius-md);
+    box-shadow: var(--rui-shadow-inset);
+    transition: all 0.2s ease;
+    outline: none;
+  }
+
+  .rui-form-input::placeholder {
+    color: var(--rui-gray-400);
+  }
+
+  .rui-form-input:hover {
+    border-color: var(--rui-gray-400);
+  }
+
+  /* Cuando el input tiene contenido - fondo blanco */
+  .rui-form-input:not(:placeholder-shown) {
+    background-color: #FFFFFF;
+    box-shadow: none;
+  }
+
+  .rui-form-input:focus {
+    border-color: var(--rui-primary-600);
+    background-color: white;
+    box-shadow: var(--rui-ring-primary);
+  }
+
+  /* Autofill styles - Sobrescribir el fondo celeste del navegador */
+  .rui-form-input:-webkit-autofill,
+  .rui-form-input:-webkit-autofill:hover,
+  .rui-form-input:-webkit-autofill:focus,
+  .rui-form-input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 1000px #FFFFFF inset !important;
+    -webkit-text-fill-color: var(--rui-gray-900) !important;
+    background-color: #FFFFFF !important;
+    transition: background-color 5000s ease-in-out 0s;
+    caret-color: var(--rui-gray-900);
+  }
+
+  /* Estado de error */
+  .rui-form-input--error {
+    border-color: var(--rui-primary-600);
+    background-color: var(--rui-primary-50);
+  }
+
+  /* Estado de éxito */
+  .rui-form-input--success {
+    border-color: #16A34A;
+    background-color: #FFFFFF;
+  }
+
+  /* Textarea */
+  .rui-form-textarea {
+    min-height: 120px;
+    resize: vertical;
+  }
+
+  /* Select nativo - Refactoring UI: gris vacío, blanco con valor */
+  .rui-form-select {
+    width: 100%;
+    padding: 12px 36px 12px 14px;
+    font-size: var(--rui-text-sm);
+    color: var(--rui-gray-900);
+    background-color: var(--rui-gray-50);
+    border: 1px solid var(--rui-gray-300);
+    border-radius: var(--rui-radius-md);
+    box-shadow: var(--rui-shadow-inset);
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    transition: all 0.2s ease;
+    outline: none;
+  }
+
+  .rui-form-select:hover {
+    border-color: var(--rui-gray-400);
+  }
+
+  /* Cuando tiene un valor seleccionado (no es la opción por defecto) */
+  .rui-form-select:not(:invalid),
+  .rui-form-select.has-value {
+    background-color: #FFFFFF;
+    box-shadow: none;
+  }
+
+  .rui-form-select:focus {
+    border-color: var(--rui-primary-600);
+    background-color: white;
+    box-shadow: var(--rui-ring-primary);
+  }
+
+  /* Select de shadcn/radix - Override completo
+     Refactoring UI: gris cuando vacío (placeholder), blanco cuando tiene valor */
+  .rui-select-trigger {
+    display: flex !important;
+    height: auto !important;
+    width: 100% !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    padding: 12px 14px !important;
+    font-size: var(--rui-text-sm) !important;
+    font-weight: 400 !important;
+    color: var(--rui-gray-900) !important;
+    background-color: var(--rui-gray-50) !important;
+    border: 1px solid var(--rui-gray-300) !important;
+    border-radius: var(--rui-radius-md) !important;
+    box-shadow: var(--rui-shadow-inset) !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    outline: none !important;
+  }
+
+  .rui-select-trigger:hover {
+    border-color: var(--rui-gray-400) !important;
+  }
+
+  /* Cuando tiene valor seleccionado - fondo blanco */
+  .rui-select-trigger:not(:has([data-placeholder])) {
+    background-color: #FFFFFF !important;
+    box-shadow: none !important;
+  }
+
+  .rui-select-trigger:focus,
+  .rui-select-trigger[data-state="open"] {
+    border-color: var(--rui-primary-600) !important;
+    background-color: white !important;
+    box-shadow: var(--rui-ring-primary) !important;
+    outline: none !important;
+  }
+
+  .rui-select-trigger [data-placeholder] {
+    color: var(--rui-gray-400) !important;
+  }
+
+  .rui-select-trigger svg {
+    color: var(--rui-gray-400) !important;
+    opacity: 1 !important;
+  }
+
+  /* Cuando tiene valor, el icono se oscurece un poco */
+  .rui-select-trigger:not(:has([data-placeholder])) svg {
+    color: var(--rui-gray-500) !important;
+  }
+
+  /* ===== LOCATION AUTOCOMPLETE TRIGGER ===== */
+  /* Refactoring UI: gris cuando vacío, blanco cuando tiene valor */
+  .rui-location-trigger {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 12px 14px;
+    font-size: var(--rui-text-sm);
+    font-weight: 400;
+    color: var(--rui-gray-900);
+    background-color: var(--rui-gray-50);
+    border: 1px solid var(--rui-gray-300);
+    border-radius: var(--rui-radius-md);
+    box-shadow: var(--rui-shadow-inset);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: left;
+  }
+
+  .rui-location-trigger:hover {
+    border-color: var(--rui-gray-400);
+  }
+
+  .rui-location-trigger:focus,
+  .rui-location-trigger[aria-expanded="true"] {
+    outline: none;
+    border-color: var(--rui-primary-600);
+    background-color: white;
+    box-shadow: var(--rui-ring-primary);
+  }
+
+  /* Cuando tiene valor - fondo blanco */
+  .rui-location-trigger--has-value {
+    background-color: #FFFFFF;
+    box-shadow: none;
+  }
+
+  .rui-location-trigger-placeholder {
+    color: var(--rui-gray-400);
+    flex: 1;
+  }
+
+  .rui-location-trigger-icon {
+    width: 16px;
+    height: 16px;
+    color: var(--rui-gray-400);
+    flex-shrink: 0;
+  }
+
+  .rui-location-trigger--has-value .rui-location-trigger-icon {
+    color: var(--rui-gray-500);
+  }
+
+  .rui-location-trigger-chevron {
+    width: 16px;
+    height: 16px;
+    color: var(--rui-gray-400);
+    flex-shrink: 0;
+    margin-left: auto;
+  }
+
+  .rui-location-trigger:hover .rui-location-trigger-icon,
+  .rui-location-trigger:hover .rui-location-trigger-chevron,
+  .rui-location-trigger:focus .rui-location-trigger-icon,
+  .rui-location-trigger:focus .rui-location-trigger-chevron {
+    color: var(--rui-gray-600);
+  }
+
+  /* Form Hints */
+  .rui-form-hint {
+    font-size: 12px;
+    color: var(--rui-gray-500);
+    margin-top: 6px;
+  }
+
+  .rui-form-error {
+    font-size: 12px;
+    color: var(--rui-primary-600);
+    margin-top: 6px;
+  }
+
+  /* Contador de caracteres */
+  .rui-form-counter {
+    font-size: 12px;
+    color: var(--rui-gray-400);
+    text-align: right;
+    margin-top: 6px;
+  }
+
+  .rui-form-counter--warning {
+    color: #F59E0B;
+  }
+
+  .rui-form-counter--error {
+    color: var(--rui-primary-600);
+  }
+
+  /* Form Row (2 columnas) */
+  .rui-form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--rui-space-4);
+  }
+
+  /* ===== UPLOAD ZONE ===== */
+  .rui-upload-zone {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 200px;
+    border: 2px dashed var(--rui-gray-300);
+    border-radius: var(--rui-radius-lg);
+    padding: var(--rui-space-6);
+    text-align: center;
+    background-color: var(--rui-gray-50);
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .rui-upload-zone:hover {
+    border-color: var(--rui-primary-600);
+    background-color: var(--rui-primary-50);
+  }
+
+  .rui-upload-zone:hover .rui-upload-zone-icon {
+    color: var(--rui-primary-600);
+  }
+
+  .rui-upload-zone--dragging {
+    border-color: var(--rui-primary-600);
+    background-color: var(--rui-primary-50);
+    border-style: solid;
+  }
+
+  .rui-upload-zone-icon {
+    width: 40px;
+    height: 40px;
+    color: var(--rui-gray-400);
+    margin-bottom: var(--rui-space-3);
+    transition: color 0.2s ease;
+  }
+
+  .rui-upload-zone-text {
+    font-size: var(--rui-text-sm);
+    color: var(--rui-gray-600);
+    margin-bottom: var(--rui-space-1);
+    line-height: 1.5;
+  }
+
+  .rui-upload-zone-text strong {
+    color: var(--rui-primary-600);
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .rui-upload-zone-hint {
+    font-size: 12px;
+    color: var(--rui-gray-400);
+    margin-top: var(--rui-space-1);
+  }
+
+  /* Preview de imagen subida */
+  .rui-upload-preview {
+    position: relative;
+    border-radius: var(--rui-radius-lg);
+    overflow: hidden;
+    background-color: var(--rui-gray-100);
+  }
+
+  .rui-upload-preview img {
+    display: block;
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+  }
+
+  .rui-upload-preview-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.5) 0%, transparent 40%);
+    pointer-events: none;
+  }
+
+  .rui-upload-preview-info {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: var(--rui-space-3) var(--rui-space-4);
+    color: white;
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  .rui-upload-preview-remove {
+    position: absolute;
+    top: var(--rui-space-2);
+    right: var(--rui-space-2);
+    width: 28px;
+    height: 28px;
+    background: rgba(0,0,0,0.5);
+    border-radius: 50%;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s ease;
+    backdrop-filter: blur(4px);
+  }
+
+  .rui-upload-preview-remove:hover {
+    background: rgba(220,38,38,0.9);
+    transform: scale(1.1);
+  }
+
+  /* ===== FORM ACTIONS ===== */
+  .rui-form-actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: var(--rui-space-3);
+    margin-top: var(--rui-space-6);
+    padding-top: var(--rui-space-5);
+    border-top: 1px solid var(--rui-gray-200);
+    /* Sin margin-bottom extra - el contenedor padre ya tiene padding */
+  }
+
+  /* Botón Terciario - Cancelar */
+  .rui-btn-form-tertiary {
+    padding: 12px 20px;
+    font-size: var(--rui-text-sm);
+    font-weight: 500;
+    color: var(--rui-gray-600);
+    background: transparent;
+    border: none;
+    border-radius: var(--rui-radius-md);
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .rui-btn-form-tertiary:hover {
+    background-color: var(--rui-gray-100);
+    color: var(--rui-gray-900);
+  }
+
+  /* Botón Secundario - Guardar Borrador */
+  .rui-btn-form-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 20px;
+    font-size: var(--rui-text-sm);
+    font-weight: 500;
+    color: var(--rui-gray-700);
+    background: white;
+    border: 1px solid var(--rui-gray-300);
+    border-radius: var(--rui-radius-md);
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .rui-btn-form-secondary:hover {
+    background-color: var(--rui-gray-50);
+    border-color: var(--rui-gray-400);
+  }
+
+  .rui-btn-form-secondary-icon {
+    width: 16px;
+    height: 16px;
+  }
+
+  /* Botón Primario - Publicar Evento */
+  .rui-btn-form-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    font-size: var(--rui-text-sm);
+    font-weight: 600;
+    color: white;
+    background-color: var(--rui-primary-600);
+    border: none;
+    border-radius: var(--rui-radius-md);
+    cursor: pointer;
+    box-shadow: var(--rui-shadow-md), inset 0 1px 0 rgba(255,255,255,0.1);
+    transition: all 0.2s ease;
+  }
+
+  .rui-btn-form-primary:hover {
+    background-color: var(--rui-primary-700);
+    transform: translateY(-1px);
+    box-shadow: var(--rui-shadow-lg), inset 0 1px 0 rgba(255,255,255,0.1);
+  }
+
+  .rui-btn-form-primary:active {
+    transform: translateY(0);
+  }
+
+  .rui-btn-form-primary:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .rui-btn-form-primary-icon {
+    width: 16px;
+    height: 16px;
+  }
+
+  /* ===== SECCIÓN CONDICIONAL ===== */
+  .rui-conditional-section {
+    animation: ruiFadeIn 0.3s ease;
+  }
+
+  @keyframes ruiFadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(-8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* ===== DATE/TIME PICKER BUTTON ===== */
+  /* Refactoring UI: gris cuando vacío (placeholder), blanco cuando tiene valor */
+  .rui-datetime-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 11px 14px;
+    font-size: var(--rui-text-sm);
+    font-weight: 500;
+    color: var(--rui-gray-900);
+    background-color: var(--rui-gray-50);
+    border: 1px solid var(--rui-gray-300);
+    border-radius: var(--rui-radius-md);
+    box-shadow: var(--rui-shadow-inset);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: left;
+  }
+
+  .rui-datetime-btn:hover {
+    border-color: var(--rui-gray-400);
+  }
+
+  .rui-datetime-btn:focus,
+  .rui-datetime-btn[data-state="open"] {
+    outline: none;
+    border-color: var(--rui-primary-600);
+    background-color: white;
+    box-shadow: var(--rui-ring-primary);
+  }
+
+  /* Estado placeholder - gris con texto tenue */
+  .rui-datetime-btn--placeholder {
+    color: var(--rui-gray-400);
+    font-weight: 400;
+  }
+
+  /* Cuando tiene valor (NO tiene --placeholder) - fondo blanco */
+  .rui-datetime-btn:not(.rui-datetime-btn--placeholder) {
+    background-color: #FFFFFF;
+    box-shadow: none;
+  }
+
+  .rui-datetime-btn-icon {
+    width: 16px;
+    height: 16px;
+    color: var(--rui-gray-400);
+    flex-shrink: 0;
+  }
+
+  /* Icono más oscuro cuando tiene valor */
+  .rui-datetime-btn:not(.rui-datetime-btn--placeholder) .rui-datetime-btn-icon {
+    color: var(--rui-gray-500);
+  }
+
+  .rui-datetime-btn:hover .rui-datetime-btn-icon,
+  .rui-datetime-btn:focus .rui-datetime-btn-icon {
+    color: var(--rui-gray-600);
+  }
+
+  /* ===== TIME PICKER LIST ===== */
+  .rui-time-list {
+    padding: var(--rui-space-1);
+  }
+
+  .rui-time-option {
+    display: block;
+    width: 100%;
+    padding: 10px 14px;
+    font-size: var(--rui-text-sm);
+    font-weight: 400;
+    color: var(--rui-gray-700);
+    text-align: left;
+    background: transparent;
+    border: none;
+    border-radius: var(--rui-radius-sm);
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .rui-time-option:hover {
+    background-color: var(--rui-gray-100);
+    color: var(--rui-gray-900);
+  }
+
+  .rui-time-option--selected {
+    background-color: var(--rui-primary-50);
+    color: var(--rui-primary-700);
+    font-weight: 600;
+  }
+
+  .rui-time-option--selected:hover {
+    background-color: var(--rui-primary-100);
+  }
+
+  /* ===== LOADING STATE ===== */
+  .rui-form-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--rui-space-9);
+    text-align: center;
+  }
+
+  .rui-form-loading-spinner {
+    width: 32px;
+    height: 32px;
+    color: var(--rui-primary-600);
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  .rui-form-loading-text {
+    margin-top: var(--rui-space-4);
+    font-size: var(--rui-text-sm);
+    color: var(--rui-gray-500);
+  }
+}
+
+/* ===== RESPONSIVE FORM ===== */
+@media (max-width: 1024px) {
+  .rui-form-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .rui-form-sidebar {
+    position: static;
+  }
+}
+
+@media (max-width: 640px) {
+  .rui-form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .rui-form-actions {
+    flex-direction: column;
+  }
+
+  .rui-form-actions button {
+    width: 100%;
+  }
+
+  .rui-form-page-title {
+    font-size: 24px;
+  }
+}
+
+/* =====================================================
+   EVENT DETAIL VIEW - Refactoring UI
+   Vista de detalle/gestión de evento
+   ===================================================== */
+
+@layer components {
+  /* ===== EVENT DETAIL CONTAINER ===== */
+  .rui-event-detail {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rui-space-6);
+  }
+
+  /* ===== HERO SECTION ===== */
+  .rui-event-hero {
+    position: relative;
+    border-radius: var(--rui-radius-lg);
+    overflow: hidden;
+  }
+
+  .rui-event-hero-image {
+    width: 100%;
+    height: 320px;
+    object-fit: cover;
+  }
+
+  .rui-event-hero-placeholder {
+    width: 100%;
+    height: 320px;
+    background: linear-gradient(135deg, var(--rui-primary-100) 0%, var(--rui-gray-100) 100%);
+  }
+
+  /* Overlay con gradiente mejorado - mejor contraste */
+  .rui-event-hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to top,
+      rgba(0, 0, 0, 0.85) 0%,
+      rgba(0, 0, 0, 0.5) 40%,
+      rgba(0, 0, 0, 0.2) 100%
+    );
+  }
+
+  .rui-event-hero-content {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: var(--rui-space-6);
+  }
+
+  /* Badges de categoría en hero */
+  .rui-event-hero-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--rui-space-2);
+    margin-bottom: var(--rui-space-4);
+  }
+
+  /* RUI: "Differentiate by more than just color" */
+  .rui-event-hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px;
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: white;
+    background-color: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(4px);
+    border-radius: var(--rui-radius-sm);
+  }
+
+  .rui-event-hero-badge-icon {
+    width: 12px;
+    height: 12px;
+    opacity: 0.9;
+  }
+
+  /* Modalidad: colores diferenciados */
+  .rui-event-hero-badge--presencial {
+    background-color: rgba(34, 197, 94, 0.3);
+  }
+
+  .rui-event-hero-badge--virtual {
+    background-color: rgba(59, 130, 246, 0.3);
+  }
+
+  .rui-event-hero-badge--hibrido {
+    background-color: rgba(168, 85, 247, 0.3);
+  }
+
+  /* Título del evento en hero */
+  /* RUI: sin text-shadow, el overlay provee suficiente contraste */
+  .rui-event-hero-title {
+    font-size: 32px;
+    font-weight: 700;
+    color: white;
+    margin-bottom: var(--rui-space-3);
+    line-height: 1.2;
+  }
+
+  /* Meta info en hero (fecha, hora, ubicación) */
+  .rui-event-hero-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--rui-space-4);
+    font-size: var(--rui-text-sm);
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: var(--rui-space-5);
+  }
+
+  .rui-event-hero-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .rui-event-hero-meta-icon {
+    width: 16px;
+    height: 16px;
+    /* RUI: iconos al mismo nivel visual que el texto */
+  }
+
+  /* Acciones del hero */
+  .rui-event-hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--rui-space-3);
+  }
+
+  /* RUI: Jerarquía de botones - "Primary actions should be obvious" */
+
+  /* Botón terciario/ghost - acción menos importante (Compartir) */
+  .rui-btn-hero-ghost {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    font-size: 13px;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.8);
+    background: transparent;
+    border: none;
+    border-radius: var(--rui-radius-md);
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .rui-btn-hero-ghost:hover {
+    color: white;
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .rui-btn-hero-ghost:focus,
+  .rui-btn-hero-ghost:focus-visible {
+    outline: none;
+    box-shadow: none;
+  }
+
+  .rui-btn-hero-ghost-icon {
+    width: 14px;
+    height: 14px;
+  }
+
+  /* Botón secundario/outline - acción importante pero no principal (Editar) */
+  .rui-btn-hero-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    color: white;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: var(--rui-radius-md);
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .rui-btn-hero-primary:hover {
+    background: rgba(255, 255, 255, 0.25);
+    border-color: rgba(255, 255, 255, 0.6);
+  }
+
+  .rui-btn-hero-primary:focus,
+  .rui-btn-hero-primary:focus-visible {
+    outline: none;
+    box-shadow: none;
+  }
+
+  .rui-btn-hero-primary-icon {
+    width: 14px;
+    height: 14px;
+  }
+
+  /* Badge de estado en hero */
+  .rui-event-status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    font-size: 13px;
+    font-weight: 500;
+    color: white;
+    border: none;
+    border-radius: var(--rui-radius-md);
+    cursor: pointer;
+    outline: none;
+    transition: opacity 0.15s ease, transform 0.15s ease;
+  }
+
+  .rui-event-status-badge:focus,
+  .rui-event-status-badge:focus-visible {
+    outline: none;
+    box-shadow: none;
+  }
+
+  .rui-event-status-badge:hover {
+    opacity: 0.9;
+  }
+
+  .rui-event-status-badge:active {
+    transform: scale(0.98);
+  }
+
+  .rui-event-status-badge--published {
+    background: var(--rui-success-600);
+  }
+
+  .rui-event-status-badge--draft {
+    background: var(--rui-gray-500);
+  }
+
+  .rui-event-status-badge--cancelled {
+    background: var(--rui-primary-600);
+  }
+
+  .rui-event-status-badge--completed {
+    background: var(--rui-info-600, #2563EB);
+  }
+
+  .rui-event-status-dot {
+    width: 8px;
+    height: 8px;
+    background: white;
+    border-radius: 50%;
+  }
+
+  /* ===== MÉTRICAS - Barra horizontal compacta ===== */
+  /* RUI: "Combine related information", "Don't rely on labels" */
+  .rui-stats-bar {
+    display: flex;
+    align-items: stretch;
+    background: white;
+    border-radius: var(--rui-radius-lg);
+    box-shadow: var(--rui-shadow-sm);
+    overflow: hidden;
+  }
+
+  .rui-stat-item {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: var(--rui-space-3);
+    padding: var(--rui-space-4) var(--rui-space-5);
+    border-right: 1px solid var(--rui-gray-100);
+  }
+
+  .rui-stat-item:last-child {
+    border-right: none;
+  }
+
+  /* Estado destacado (en curso) */
+  .rui-stat-item--live {
+    background: var(--rui-success-50);
+  }
+
+  .rui-stat-item--live .rui-stat-icon-wrapper {
+    background: var(--rui-success-100);
+  }
+
+  .rui-stat-item--live .rui-stat-icon {
+    color: var(--rui-success-600);
+  }
+
+  .rui-stat-item--live .rui-stat-value {
+    color: var(--rui-success-600);
+  }
+
+  /* Estado pasado (finalizado) */
+  .rui-stat-item--past {
+    opacity: 0.6;
+  }
+
+  /* Icono con wrapper */
+  .rui-stat-icon-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background: var(--rui-gray-50);
+    border-radius: var(--rui-radius-md);
+    flex-shrink: 0;
+  }
+
+  .rui-stat-icon {
+    width: 20px;
+    height: 20px;
+    color: var(--rui-gray-500);
+  }
+
+  /* Contenido de la stat */
+  .rui-stat-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  .rui-stat-value {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--rui-gray-900);
+    line-height: 1.2;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .rui-stat-label {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--rui-gray-500);
+  }
+
+  /* Inscripciones con fracción */
+  .rui-stat-fraction {
+    display: flex;
+    align-items: baseline;
+    gap: 2px;
+  }
+
+  .rui-stat-fraction-current {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--rui-gray-900);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .rui-stat-fraction-separator {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--rui-gray-400);
+    margin: 0 2px;
+  }
+
+  .rui-stat-fraction-total {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--rui-gray-400);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Progress bar inline */
+  .rui-stat-progress {
+    width: 100%;
+    height: 3px;
+    background: var(--rui-gray-200);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-top: var(--rui-space-2);
+  }
+
+  .rui-stat-progress-bar {
+    height: 100%;
+    background: var(--rui-primary-500);
+    border-radius: 2px;
+    transition: width 0.3s ease;
+  }
+
+  .rui-stat-progress-bar--warning {
+    background: #F59E0B;
+  }
+
+  .rui-stat-progress-bar--full {
+    background: var(--rui-success-500);
+  }
+
+  /* ===== EMPTY STATE ===== */
+  /* RUI: Estados vacíos claros y útiles */
+  .rui-empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--rui-space-8) var(--rui-space-6);
+    text-align: center;
+    background: var(--rui-gray-50);
+    border: 2px dashed var(--rui-gray-200);
+    border-radius: var(--rui-radius-lg);
+  }
+
+  .rui-empty-state-icon {
+    width: 40px;
+    height: 40px;
+    color: var(--rui-gray-300);
+    margin-bottom: var(--rui-space-4);
+  }
+
+  .rui-empty-state-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--rui-gray-700);
+    margin-bottom: var(--rui-space-1);
+  }
+
+  .rui-empty-state-description {
+    font-size: 13px;
+    color: var(--rui-gray-500);
+    max-width: 280px;
+  }
+
+  /* ===== TABS - SIN ICONOS ===== */
+  .rui-event-tabs {
+    display: flex;
+    gap: var(--rui-space-1);
+    border-bottom: 1px solid var(--rui-gray-200);
+  }
+
+  .rui-event-tab {
+    padding: var(--rui-space-3) var(--rui-space-4);
+    font-size: var(--rui-text-sm);
+    font-weight: 500;
+    color: var(--rui-gray-500);
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    margin-bottom: -1px;
+  }
+
+  .rui-event-tab:hover {
+    color: var(--rui-gray-700);
+  }
+
+  .rui-event-tab--active {
+    color: var(--rui-primary-600);
+    border-bottom-color: var(--rui-primary-600);
+  }
+
+  /* ===== LAYOUT DE CONTENIDO ===== */
+  .rui-event-content {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: var(--rui-space-6);
+  }
+
+  .rui-event-main {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rui-space-7);
+  }
+
+  .rui-event-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rui-space-5);
+  }
+
+  /* ===== SECCIÓN DE CONTENIDO ===== */
+  /* RUI: "Lead with the most important info" */
+  .rui-content-section {
+    /* Sin margin - controlado por gap del padre */
+  }
+
+  .rui-content-section-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--rui-gray-900);
+    margin-bottom: var(--rui-space-4);
+  }
+
+  .rui-content-section-text {
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--rui-gray-600);
+    white-space: pre-line;
+  }
+
+  /* Descripción del evento - Sin título redundante */
+  .rui-event-description {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rui-space-4);
+  }
+
+  /* Lead paragraph - primer párrafo destacado */
+  .rui-description-lead {
+    font-size: 17px;
+    font-weight: 400;
+    line-height: 1.7;
+    color: var(--rui-gray-800);
+  }
+
+  /* Resto del texto */
+  .rui-description-body {
+    font-size: 15px;
+    line-height: 1.8;
+    color: var(--rui-gray-600);
+    white-space: pre-line;
+  }
+
+  /* Formato para listas dentro de descripción */
+  .rui-description-body ul,
+  .rui-description-body ol {
+    margin: var(--rui-space-3) 0;
+    padding-left: var(--rui-space-5);
+  }
+
+  .rui-description-body li {
+    margin-bottom: var(--rui-space-2);
+  }
+
+  /* Destacados dentro de descripción */
+  .rui-description-highlight {
+    padding: var(--rui-space-4);
+    background: var(--rui-gray-50);
+    border-left: 3px solid var(--rui-primary-500);
+    border-radius: 0 var(--rui-radius-md) var(--rui-radius-md) 0;
+    font-size: 14px;
+    color: var(--rui-gray-700);
+    line-height: 1.6;
+  }
+
+  /* ===== CARDS DE ENTRADAS ===== */
+  /* RUI: "Emphasize by de-emphasizing", "Use fewer borders" */
+  .rui-tickets-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rui-space-3);
+  }
+
+  .rui-ticket-card {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: var(--rui-space-4);
+    align-items: center;
+    background: white;
+    border-radius: var(--rui-radius-lg);
+    padding: var(--rui-space-5) var(--rui-space-6);
+    box-shadow: var(--rui-shadow-sm);
+    transition: all 0.15s ease;
+  }
+
+  .rui-ticket-card:hover {
+    box-shadow: var(--rui-shadow-md);
+    transform: translateY(-1px);
+  }
+
+  /* Estado agotado */
+  .rui-ticket-card--sold-out {
+    opacity: 0.6;
+    background: var(--rui-gray-50);
+  }
+
+  .rui-ticket-card--sold-out:hover {
+    transform: none;
+    box-shadow: var(--rui-shadow-sm);
+  }
+
+  /* Lado izquierdo: info del ticket */
+  .rui-ticket-info {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rui-space-2);
+  }
+
+  .rui-ticket-header {
+    display: flex;
+    align-items: center;
+    gap: var(--rui-space-3);
+  }
+
+  .rui-ticket-icon {
+    width: 20px;
+    height: 20px;
+    color: var(--rui-gray-400);
+    flex-shrink: 0;
+  }
+
+  .rui-ticket-name {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--rui-gray-900);
+  }
+
+  /* Metadata en línea */
+  .rui-ticket-meta {
+    display: flex;
+    align-items: center;
+    gap: var(--rui-space-2);
+    padding-left: 32px; /* Alineado con el nombre (20px icon + 12px gap) */
+  }
+
+  .rui-ticket-slots {
+    font-size: 13px;
+    color: var(--rui-gray-500);
+  }
+
+  .rui-ticket-separator {
+    width: 3px;
+    height: 3px;
+    background: var(--rui-gray-300);
+    border-radius: 50%;
+  }
+
+  .rui-ticket-status {
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  .rui-ticket-status--available {
+    color: var(--rui-success-600);
+  }
+
+  .rui-ticket-status--warning {
+    color: #F59E0B;
+  }
+
+  .rui-ticket-status--sold-out {
+    color: var(--rui-gray-500);
+  }
+
+  /* Badges */
+  .rui-ticket-badges {
+    display: flex;
+    gap: var(--rui-space-2);
+    padding-left: 32px;
+  }
+
+  .rui-ticket-badge {
+    padding: 2px 8px;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--rui-gray-500);
+    background: var(--rui-gray-100);
+    border-radius: var(--rui-radius-sm);
+  }
+
+  .rui-ticket-badge--cip {
+    color: var(--rui-primary-700);
+    background: var(--rui-primary-50);
+  }
+
+  /* Lado derecho: precio */
+  .rui-ticket-pricing {
+    text-align: right;
+    min-width: 100px;
+  }
+
+  .rui-ticket-price {
+    font-size: 24px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    color: var(--rui-gray-900);
+    line-height: 1;
+  }
+
+  .rui-ticket-price-currency {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--rui-gray-500);
+    margin-right: 2px;
+  }
+
+  /* Badge gratis - diseño distintivo */
+  .rui-ticket-price--free {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--rui-success-700);
+    background: var(--rui-success-50);
+    border-radius: var(--rui-radius-md);
+  }
+
+  /* Progress bar - solo visible cuando hay ventas */
+  .rui-ticket-progress-wrapper {
+    padding-left: 32px;
+    margin-top: var(--rui-space-1);
+  }
+
+  .rui-ticket-progress {
+    height: 3px;
+    background: var(--rui-gray-100);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .rui-ticket-progress-bar {
+    height: 100%;
+    background: var(--rui-success-500);
+    border-radius: 2px;
+    transition: width 0.3s ease;
+  }
+
+  .rui-ticket-progress-bar--warning {
+    background: #F59E0B;
+  }
+
+  .rui-ticket-progress-bar--full {
+    background: var(--rui-gray-400);
+  }
+
+  /* ===== SIDEBAR CARDS ===== */
+  /* RUI: "Labels are a last resort", "Combine labels and values" */
+  .rui-sidebar-card {
+    background: white;
+    border-radius: var(--rui-radius-lg);
+    padding: var(--rui-space-5);
+    box-shadow: var(--rui-shadow-sm);
+  }
+
+  /* ===== FECHA Y HORA - Diseño tipo Event Card ===== */
+  .rui-datetime-card {
+    display: flex;
+    gap: var(--rui-space-4);
+    align-items: flex-start;
+  }
+
+  /* Bloque de fecha destacado */
+  .rui-date-block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-width: 64px;
+    padding: var(--rui-space-3) var(--rui-space-4);
+    background: var(--rui-gray-50);
+    border-radius: var(--rui-radius-md);
+    flex-shrink: 0;
+  }
+
+  .rui-date-day {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--rui-gray-900);
+    line-height: 1;
+  }
+
+  .rui-date-month {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--rui-primary-600);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-top: 2px;
+  }
+
+  /* Información de fecha/hora */
+  .rui-datetime-info {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rui-space-1);
+    flex: 1;
+  }
+
+  .rui-datetime-weekday {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--rui-gray-900);
+    text-transform: capitalize;
+  }
+
+  .rui-datetime-time {
+    font-size: 14px;
+    color: var(--rui-gray-600);
+  }
+
+  .rui-datetime-duration {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    color: var(--rui-gray-400);
+    margin-top: var(--rui-space-1);
+  }
+
+  .rui-datetime-duration-icon {
+    width: 12px;
+    height: 12px;
+  }
+
+  .rui-datetime-timezone {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    color: var(--rui-gray-400);
+    margin-top: var(--rui-space-2);
+  }
+
+  .rui-datetime-timezone-icon {
+    width: 12px;
+    height: 12px;
+  }
+
+  /* Rango de fechas (multi-día) */
+  .rui-daterange {
+    display: flex;
+    align-items: center;
+    gap: var(--rui-space-3);
+  }
+
+  .rui-daterange-separator {
+    font-size: 14px;
+    color: var(--rui-gray-300);
+  }
+
+  /* ===== UBICACIÓN - Diseño más visual ===== */
+  .rui-location-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rui-space-3);
+  }
+
+  .rui-location-header {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--rui-space-3);
+  }
+
+  .rui-location-icon-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background: var(--rui-primary-50);
+    border-radius: var(--rui-radius-md);
+    flex-shrink: 0;
+  }
+
+  .rui-location-icon {
+    width: 18px;
+    height: 18px;
+    color: var(--rui-primary-600);
+  }
+
+  .rui-location-details {
+    flex: 1;
+  }
+
+  .rui-location-name {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--rui-gray-900);
+    margin-bottom: 2px;
+  }
+
+  .rui-location-address {
+    font-size: 13px;
+    color: var(--rui-gray-500);
+    line-height: 1.5;
+  }
+
+  .rui-location-reference {
+    font-size: 12px;
+    color: var(--rui-gray-400);
+    margin-top: var(--rui-space-1);
+  }
+
+  /* Botón de Maps */
+  .rui-location-map-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    width: 100%;
+    padding: var(--rui-space-3);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--rui-gray-700);
+    background: var(--rui-gray-50);
+    border: none;
+    border-radius: var(--rui-radius-md);
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.15s ease;
+  }
+
+  .rui-location-map-btn:hover {
+    background: var(--rui-gray-100);
+    color: var(--rui-gray-900);
+  }
+
+  .rui-location-map-btn-icon {
+    width: 16px;
+    height: 16px;
+  }
+
+  /* ===== ACCESO VIRTUAL ===== */
+  .rui-virtual-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rui-space-3);
+  }
+
+  .rui-virtual-header {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--rui-space-3);
+  }
+
+  .rui-virtual-icon-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background: var(--rui-info-50, #EFF6FF);
+    border-radius: var(--rui-radius-md);
+    flex-shrink: 0;
+  }
+
+  .rui-virtual-icon {
+    width: 18px;
+    height: 18px;
+    color: var(--rui-info-600, #2563EB);
+  }
+
+  .rui-virtual-details {
+    flex: 1;
+  }
+
+  .rui-virtual-platform {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--rui-gray-900);
+    margin-bottom: 2px;
+  }
+
+  .rui-virtual-url {
+    display: flex;
+    align-items: center;
+    gap: var(--rui-space-2);
+    margin-top: var(--rui-space-2);
+  }
+
+  .rui-virtual-url-text {
+    flex: 1;
+    font-size: 12px;
+    font-family: ui-monospace, monospace;
+    padding: 6px 10px;
+    background: var(--rui-gray-50);
+    border-radius: var(--rui-radius-md);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--rui-gray-600);
+  }
+
+  .rui-virtual-copy-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: transparent;
+    border: none;
+    border-radius: var(--rui-radius-md);
+    cursor: pointer;
+    color: var(--rui-gray-400);
+    transition: all 0.15s ease;
+  }
+
+  .rui-virtual-copy-btn:hover {
+    background: var(--rui-gray-100);
+    color: var(--rui-gray-600);
+  }
+
+  .rui-virtual-copy-icon {
+    width: 16px;
+    height: 16px;
+  }
+
+  .rui-virtual-password {
+    display: flex;
+    align-items: center;
+    gap: var(--rui-space-2);
+    font-size: 13px;
+    color: var(--rui-gray-500);
+    margin-top: var(--rui-space-1);
+  }
+
+  .rui-virtual-instructions {
+    font-size: 13px;
+    color: var(--rui-gray-500);
+    line-height: 1.5;
+    padding: var(--rui-space-3);
+    background: var(--rui-gray-50);
+    border-radius: var(--rui-radius-md);
+  }
+
+  /* ===== CERTIFICACIÓN ===== */
+  .rui-cert-card {
+    display: flex;
+    align-items: center;
+    gap: var(--rui-space-3);
+  }
+
+  .rui-cert-icon-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background: var(--rui-success-50);
+    border-radius: var(--rui-radius-md);
+    flex-shrink: 0;
+  }
+
+  .rui-cert-icon {
+    width: 18px;
+    height: 18px;
+    color: var(--rui-success-600);
+  }
+
+  .rui-cert-info {
+    flex: 1;
+  }
+
+  .rui-cert-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--rui-gray-900);
+  }
+
+  .rui-cert-hours {
+    font-size: 13px;
+    color: var(--rui-gray-500);
+  }
+
+  /* Legacy classes (mantener compatibilidad) */
+  .rui-sidebar-card-title {
+    display: flex;
+    align-items: center;
+    gap: var(--rui-space-2);
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--rui-gray-900);
+    margin-bottom: var(--rui-space-4);
+  }
+
+  .rui-sidebar-card-icon {
+    width: 18px;
+    height: 18px;
+    color: var(--rui-gray-400);
+  }
+
+  .rui-sidebar-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--rui-gray-400);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: var(--rui-space-1);
+  }
+
+  .rui-sidebar-value {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--rui-gray-900);
+  }
+
+  .rui-sidebar-value-secondary {
+    font-size: 14px;
+    color: var(--rui-gray-500);
+  }
+
+  .rui-sidebar-group {
+    margin-bottom: var(--rui-space-4);
+  }
+
+  .rui-sidebar-group:last-child {
+    margin-bottom: 0;
+  }
+
+  .rui-sidebar-divider {
+    height: 1px;
+    background: var(--rui-gray-100);
+    margin: var(--rui-space-4) 0;
+  }
+
+  /* ===== DROPDOWN DE ESTADO RUI ===== */
+  /* Contenedor del dropdown */
+  .rui-dropdown-content {
+    background: white;
+    border: 1px solid var(--rui-gray-200);
+    border-radius: var(--rui-radius-md);
+    padding: var(--rui-space-1);
+    box-shadow: var(--rui-shadow-lg);
+    min-width: 160px;
+  }
+
+  /* Item del dropdown */
+  .rui-dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: var(--rui-space-2);
+    padding: var(--rui-space-2) var(--rui-space-3);
+    font-size: var(--rui-text-sm);
+    color: var(--rui-gray-700);
+    border-radius: var(--rui-radius-sm);
+    cursor: pointer;
+    transition: background 0.1s ease;
+  }
+
+  .rui-dropdown-item:hover {
+    background: var(--rui-gray-50);
+  }
+
+  .rui-dropdown-item[data-disabled] {
+    opacity: 0.5;
+    cursor: default;
+  }
+
+  .rui-dropdown-item[data-disabled]:hover {
+    background: transparent;
+  }
+
+  /* Dot de estado en dropdown */
+  .rui-status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .rui-status-dot--published {
+    background: var(--rui-success-600);
+  }
+
+  .rui-status-dot--draft {
+    background: var(--rui-gray-500);
+  }
+
+  .rui-status-dot--cancelled {
+    background: var(--rui-primary-600);
+  }
+
+  .rui-status-dot--completed {
+    background: var(--rui-info-600, #2563EB);
+  }
+
+  /* Check icon en dropdown */
+  .rui-dropdown-check {
+    width: 16px;
+    height: 16px;
+    margin-left: auto;
+    color: var(--rui-primary-600);
+  }
+
+  /* ===== ALERT DIALOG RUI ===== */
+  .rui-dialog-content {
+    background: white;
+    border-radius: var(--rui-radius-lg);
+    padding: var(--rui-space-6);
+    box-shadow: var(--rui-shadow-xl);
+    max-width: 420px;
+  }
+
+  .rui-dialog-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--rui-gray-900);
+    margin-bottom: var(--rui-space-2);
+  }
+
+  .rui-dialog-description {
+    font-size: var(--rui-text-sm);
+    color: var(--rui-gray-500);
+    line-height: 1.6;
+  }
+
+  .rui-dialog-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--rui-space-3);
+    margin-top: var(--rui-space-6);
+  }
+
+  .rui-dialog-btn {
+    padding: var(--rui-space-2) var(--rui-space-4);
+    font-size: var(--rui-text-sm);
+    font-weight: 500;
+    border-radius: var(--rui-radius-md);
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .rui-dialog-btn--cancel {
+    background: white;
+    color: var(--rui-gray-700);
+    border: 1px solid var(--rui-gray-300);
+  }
+
+  .rui-dialog-btn--cancel:hover {
+    background: var(--rui-gray-50);
+  }
+
+  .rui-dialog-btn--confirm {
+    background: var(--rui-primary-600);
+    color: white;
+    border: none;
+  }
+
+  .rui-dialog-btn--confirm:hover {
+    background: var(--rui-primary-700);
+  }
+
+  .rui-dialog-btn--confirm:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  /* Loader inline */
+  .rui-loader-inline {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--rui-space-2);
+  }
+
+  .rui-loader-icon {
+    width: 16px;
+    height: 16px;
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+}
+
+/* ===== EVENT DETAIL RESPONSIVE ===== */
+@media (max-width: 1024px) {
+  .rui-event-content {
+    grid-template-columns: 1fr;
+  }
+
+  .rui-event-sidebar {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--rui-space-4);
+  }
+}
+
+@media (max-width: 768px) {
+  /* Stats bar responsive */
+  .rui-stats-bar {
+    flex-direction: column;
+  }
+
+  .rui-stat-item {
+    border-right: none;
+    border-bottom: 1px solid var(--rui-gray-100);
+  }
+
+  .rui-stat-item:last-child {
+    border-bottom: none;
+  }
+
+  .rui-event-hero-title {
+    font-size: 24px;
+  }
+
+  .rui-event-hero-meta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--rui-space-2);
+  }
+
+  .rui-event-sidebar {
+    grid-template-columns: 1fr;
+  }
+
+  .rui-event-tabs {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .rui-event-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Fecha responsive */
+  .rui-datetime-card {
+    flex-direction: column;
+    gap: var(--rui-space-3);
+  }
+
+  .rui-daterange {
+    justify-content: center;
   }
 }

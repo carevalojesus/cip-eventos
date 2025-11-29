@@ -139,17 +139,45 @@
       "search_placeholder": "Buscar evento...",
       "filter_status": "Todos los estados",
       "select_range": "Seleccionar rango",
-      "clear_filters": "Limpiar filtros",
+      "clear_filters": "Limpiar",
       "export_excel": "Exportar",
+      "filters": {
+        "year": "Año",
+        "month": "Mes",
+        "date_range": "Rango de fechas",
+        "months": {
+          "january": "Enero",
+          "february": "Febrero",
+          "march": "Marzo",
+          "april": "Abril",
+          "may": "Mayo",
+          "june": "Junio",
+          "july": "Julio",
+          "august": "Agosto",
+          "september": "Septiembre",
+          "october": "Octubre",
+          "november": "Noviembre",
+          "december": "Diciembre"
+        }
+      },
+      "pagination": {
+        "showing": "Mostrando",
+        "to": "a",
+        "of": "de",
+        "events": "eventos"
+      },
       "table": {
         "event": "Evento",
         "date": "Fecha",
         "organizer": "Organizador",
         "location": "Ubicación",
         "modality": "Modalidad",
+        "enrolled": "Inscritos",
+        "enrolled_label": "inscritos",
         "status": "Estado",
         "actions": "Acciones",
-        "empty": "No se encontraron eventos"
+        "empty": "No se encontraron eventos",
+        "empty_title": "No hay eventos"
       },
       "status": {
         "PUBLISHED": "Publicado",
@@ -164,9 +192,12 @@
       },
       "actions": {
         "title": "Acciones",
-        "manage": "Gestionar (Completo)",
-        "edit": "Editar info básica",
-        "delete": "Eliminar"
+        "view_details": "Ver detalles",
+        "view_enrolled": "Ver inscritos",
+        "edit": "Editar evento",
+        "duplicate": "Duplicar",
+        "delete": "Eliminar",
+        "manage": "Gestionar (Completo)"
       }
     }
   },
@@ -196,12 +227,15 @@
     "save": "Guardar",
     "save_event": "Guardar Evento",
     "save_changes": "Guardar Cambios",
+    "save_draft": "Guardar Borrador",
+    "publish_event": "Publicar Evento",
     "cancel": "Cancelar",
     "back": "Volver",
     "submit": "Enviar",
     "loading": "Guardando...",
     "select": "Seleccionar...",
     "date": "Fecha",
+    "time": "Hora",
     "success": "Operación exitosa",
     "error": "Ocurrió un error",
     "date_future": "La fecha de inicio debe ser futura",
@@ -236,16 +270,64 @@
     "unknown": "Error desconocido"
   },
   "create_event": {
-    "type": "Tipo",
-    "type_placeholder": "Selecciona un tipo",
-    "category": "Categoría",
-    "category_placeholder": "Selecciona una categoría",
-    "configuration": "Configuración",
-    "modality": "Modalidad",
-    "start": "Inicio",
-    "end": "Fin",
+    "back": "Volver",
     "breadcrumb": {
       "title": "Nuevo Evento"
+    },
+    "basic": {
+      "title": "Información Básica",
+      "event_title": "Título del Evento",
+      "event_title_placeholder": "Nombre del evento",
+      "event_title_hint": "Ej: Congreso de Ingeniería Civil 2024",
+      "summary": "Resumen Corto",
+      "summary_placeholder": "Descripción breve",
+      "summary_hint": "Se muestra en las tarjetas del listado",
+      "description": "Descripción Detallada",
+      "description_placeholder": "Información completa del evento...",
+      "type": "Tipo de Evento",
+      "category": "Categoría / Capítulo"
+    },
+    "image": {
+      "title": "Imagen del Evento",
+      "current": "Imagen actual del evento",
+      "drag_text": "Arrastra una imagen o",
+      "click_text": "haz clic para subir",
+      "hint": "PNG, JPG o WebP • Máximo 5MB • Recomendado: 1200x630px",
+      "banner_hint": "Esta imagen se mostrará como banner del evento en el listado y la página de detalles."
+    },
+    "config": {
+      "title": "Configuración",
+      "modality": "Modalidad",
+      "start": "Inicio",
+      "end": "Fin"
+    },
+    "location": {
+      "title": "Ubicación Presencial",
+      "name": "Nombre del Lugar",
+      "name_placeholder": "Buscar o escribir nombre del lugar...",
+      "address": "Dirección",
+      "address_placeholder": "Ej: Av. Pevas Cuadra 4",
+      "city": "Ciudad",
+      "city_placeholder": "Lima",
+      "reference": "Referencia",
+      "reference_placeholder": "Frente al Parque...",
+      "map_link": "Link de Mapa (Google Maps)",
+      "map_hint": "Copia el enlace desde Google Maps para facilitar la ubicación"
+    },
+    "virtual": {
+      "title": "Accesos Virtuales",
+      "platform": "Plataforma",
+      "password": "Contraseña",
+      "password_placeholder": "Ej: CIP2024",
+      "meeting_url": "Link de Reunión",
+      "meeting_url_hint": "El enlace se enviará a los inscritos antes del evento",
+      "instructions": "Instrucciones Adicionales",
+      "instructions_placeholder": "Instrucciones para unirse a la reunión...",
+      "other": "Otro"
+    },
+    "confirm": {
+      "title": "¿Guardar evento?",
+      "description": "Estás a punto de crear un nuevo evento. Una vez guardado, podrás editarlo o publicarlo desde la vista de gestión."
     }
   },
   "edit_event": {
@@ -320,6 +402,88 @@
       "instructions": "Instrucciones de Acceso",
       "instructions_placeholder": "Instrucciones adicionales para los participantes...",
       "other": "Otro"
+    },
+    "tickets": {
+      "stats": {
+        "total": "Total Entradas",
+        "active": "activas",
+        "total_stock": "Cupos Totales",
+        "available": "disponibles en total",
+        "cip_validation": "Con validación CIP",
+        "requires_membership": "requieren colegiatura habilitada"
+      },
+      "table": {
+        "title": "Tipos de Entrada",
+        "description": "Gestiona los tipos de entrada disponibles para este evento.",
+        "name": "Nombre",
+        "price": "Precio",
+        "stock": "Stock",
+        "cip_validation": "Validación CIP",
+        "status": "Estado",
+        "actions": "Acciones",
+        "required": "Requerida",
+        "active": "Activa",
+        "inactive": "Inactiva",
+        "free": "Gratis"
+      },
+      "empty": {
+        "title": "Sin entradas configuradas",
+        "description": "Crea tipos de entrada para que los asistentes puedan inscribirse al evento.",
+        "create_first": "Crear primera entrada"
+      },
+      "dialog": {
+        "create_title": "Nueva Entrada",
+        "edit_title": "Editar Entrada",
+        "create_description": "Crea un nuevo tipo de entrada para el evento.",
+        "edit_description": "Modifica los datos de la entrada.",
+        "name_label": "Nombre",
+        "name_placeholder": "Ej: General, Colegiado Habilitado, Estudiante",
+        "pricing": "Precio",
+        "free_ticket": "Entrada gratuita",
+        "free_ticket_description": "Esta entrada no tendrá costo para los asistentes.",
+        "price_label": "Precio (S/)",
+        "stock_label": "Stock (cupos)",
+        "stock_hint": "Cantidad máxima de entradas disponibles para la venta.",
+        "cip_validation_label": "Requiere validación CIP",
+        "cip_validation_description": "Solo ingenieros colegiados habilitados podrán adquirir esta entrada.",
+        "cancel": "Cancelar",
+        "save": "Guardar cambios",
+        "create": "Crear entrada"
+      },
+      "delete": {
+        "title": "¿Eliminar entrada?",
+        "description": "Estás a punto de eliminar la entrada \"{{name}}\". Si ya tiene registros asociados, será desactivada en lugar de eliminarse.",
+        "cancel": "Cancelar",
+        "confirm": "Eliminar"
+      },
+      "actions": {
+        "new": "Nueva Entrada",
+        "edit": "Editar",
+        "activate": "Activar",
+        "deactivate": "Desactivar",
+        "delete": "Eliminar"
+      },
+      "toast": {
+        "created": "Entrada creada",
+        "created_desc": "\"{{name}}\" ha sido creada correctamente.",
+        "updated": "Entrada actualizada",
+        "updated_desc": "\"{{name}}\" ha sido actualizada correctamente.",
+        "deleted": "Entrada eliminada",
+        "deleted_desc": "\"{{name}}\" ha sido eliminada.",
+        "activated": "Entrada activada",
+        "deactivated": "Entrada desactivada",
+        "status_changed_desc": "\"{{name}}\" ha sido {{status}}.",
+        "error": "Error",
+        "error_save": "No se pudo guardar la entrada. Intenta nuevamente.",
+        "error_delete": "No se pudo eliminar la entrada.",
+        "error_status": "No se pudo cambiar el estado de la entrada."
+      },
+      "validation": {
+        "name_required": "El nombre es obligatorio",
+        "price_min": "El precio debe ser mayor o igual a 0",
+        "stock_min": "El stock debe ser mayor o igual a 0"
+      },
+      "loading_error": "Error al cargar las entradas"
     }
   }
 }

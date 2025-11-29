@@ -17,7 +17,9 @@ async function bootstrap() {
   const frontendUrl = configService.get<string>('FRONTEND_URL') || 'http://localhost:4321';
   const isProduction = configService.get<string>('NODE_ENV') === 'production';
 
-  app.setGlobalPrefix(prefix);
+  app.setGlobalPrefix(prefix, {
+    exclude: ['uploads/public/(.*)', 'uploads/private/(.*)'],
+  });
 
   // Security Headers (Helmet)
   app.use(

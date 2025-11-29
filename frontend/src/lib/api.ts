@@ -12,8 +12,41 @@ const api = axios.create({
   withCredentials: true, // Importante: enviar cookies en todas las peticiones
 });
 
+// Flag para saber si el store ya está hidratado
+let isHydrated = false;
+
+// Esperar a que el store se hidrate
+const waitForHydration = (): Promise<void> => {
+  if (isHydrated) return Promise.resolve();
+
+  return new Promise((resolve) => {
+    // Verificar si ya está hidratado
+    if (useAuthStore.persist?.hasHydrated?.()) {
+      isHydrated = true;
+      resolve();
+      return;
+    }
+
+    // Esperar a que se hidrate
+    const unsub = useAuthStore.persist?.onFinishHydration?.(() => {
+      isHydrated = true;
+      unsub?.();
+      resolve();
+    });
+
+    // Timeout de seguridad (2 segundos)
+    setTimeout(() => {
+      isHydrated = true;
+      resolve();
+    }, 2000);
+  });
+};
+
 // Interceptor: Inyectar Token automáticamente
-api.interceptors.request.use((config) => {
+api.interceptors.request.use(async (config) => {
+  // Esperar hidratación antes de cualquier petición
+  await waitForHydration();
+
   const token = useAuthStore.getState().token;
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
@@ -36,13 +69,31 @@ const processQueue = (error: unknown, token: string | null = null) => {
   failedQueue = [];
 };
 
+// Verificar si debemos intentar refresh (solo si hay token guardado)
+const shouldAttemptRefresh = (): boolean => {
+  const { token, isAuthenticated } = useAuthStore.getState();
+  return !!(token || isAuthenticated);
+};
+
 // Interceptor: Manejar errores de respuesta (401)
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    // Solo intentar refresh si:
+    // 1. Es un 401
+    // 2. No es un retry
+    // 3. No es la misma petición de refresh
+    // 4. El usuario estaba autenticado
+    const isRefreshEndpoint = originalRequest?.url?.includes('/auth/refresh');
+
+    if (
+      error.response?.status === 401 &&
+      !originalRequest._retry &&
+      !isRefreshEndpoint &&
+      shouldAttemptRefresh()
+    ) {
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject });
@@ -78,18 +129,25 @@ api.interceptors.response.use(
         isRefreshing = false;
 
         return api(originalRequest);
-      } catch (err) {
-        processQueue(err, null);
+      } catch (refreshError) {
+        processQueue(refreshError, null);
         isRefreshing = false;
-        useAuthStore.getState().logout();
-        if (typeof window !== 'undefined') {
-          const locale = getCurrentLocale();
-          const loginPath = routes[locale].login;
-          if (!window.location.pathname.includes('iniciar-sesion') && !window.location.pathname.includes('/login')) {
-            window.location.href = loginPath;
+
+        // Solo hacer logout si el refresh falló con 401 o 403
+        // (significa que el refresh token es inválido/expirado)
+        const refreshStatus = (refreshError as { response?: { status?: number } })?.response?.status;
+        if (refreshStatus === 401 || refreshStatus === 403) {
+          useAuthStore.getState().logout();
+          if (typeof window !== 'undefined') {
+            const locale = getCurrentLocale();
+            const loginPath = routes[locale].login;
+            if (!window.location.pathname.includes('iniciar-sesion') && !window.location.pathname.includes('/login')) {
+              window.location.href = loginPath;
+            }
           }
         }
-        return Promise.reject(err);
+
+        return Promise.reject(refreshError);
       }
     }
 

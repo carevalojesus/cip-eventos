@@ -101,6 +101,7 @@ export const EditEventView: React.FC<EditEventViewProps> = ({
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [imageTimestamp, setImageTimestamp] = useState<number>(Date.now());
 
   const [startDateOpen, setStartDateOpen] = useState(false);
   const [endDateOpen, setEndDateOpen] = useState(false);
@@ -157,6 +158,7 @@ export const EditEventView: React.FC<EditEventViewProps> = ({
         setTypes(typesData);
         setCategories(categoriesData);
         setModalities(modalitiesData);
+        setImageTimestamp(Date.now());
 
         // Poblar el formulario con los datos del evento
         reset({
@@ -369,7 +371,7 @@ export const EditEventView: React.FC<EditEventViewProps> = ({
             {/* Main Column */}
             <div className="lg:col-span-2 space-y-6">
               <EventBasicInfoFields form={form} types={types} categories={categories} />
-              <EventImageUpload form={form} existingImageUrl={event.imageUrl} />
+              <EventImageUpload form={form} existingImageUrl={event.imageUrl ? `${event.imageUrl}?t=${imageTimestamp}` : undefined} />
             </div>
 
             {/* Sidebar Column */}
