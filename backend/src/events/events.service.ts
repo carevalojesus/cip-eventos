@@ -20,6 +20,7 @@ import { UpdateSessionDto } from './dto/update-session.dto';
 import { EventTicket } from './entities/event-ticket.entity';
 import { EventLocation } from './entities/event-location.entity';
 import { CreateTicketDto } from './dto/create-ticket.dto';
+import { UpdateTicketDto } from './dto/update-ticket.dto';
 import { PaginationDto, paginate, PaginatedResult } from '../common/dto/pagination.dto';
 import { RedisService } from '../redis/redis.service';
 
@@ -751,6 +752,67 @@ export class EventsService {
     });
 
     return this.ticketRepository.save(ticket);
+  }
+
+  async getTickets(eventId: string) {
+    const event = await this.eventRepository.findOne({
+      where: { id: eventId, isActive: true },
+    });
+
+    if (!event) throw new NotFoundException('Event not found');
+
+    return this.ticketRepository.find({
+      where: { event: { id: eventId } },
+      order: { name: 'ASC' },
+    });
+  }
+
+  async getTicket(eventId: string, ticketId: string) {
+    const ticket = await this.ticketRepository.findOne({
+      where: { id: ticketId, event: { id: eventId, isActive: true } },
+      relations: ['event'],
+    });
+
+    if (!ticket) throw new NotFoundException('Ticket not found');
+
+    return ticket;
+  }
+
+  async updateTicket(
+    eventId: string,
+    ticketId: string,
+    updateTicketDto: UpdateTicketDto,
+  ) {
+    const ticket = await this.ticketRepository.findOne({
+      where: { id: ticketId, event: { id: eventId, isActive: true } },
+      relations: ['event'],
+    });
+
+    if (!ticket) throw new NotFoundException('Ticket not found');
+
+    Object.assign(ticket, updateTicketDto);
+
+    return this.ticketRepository.save(ticket);
+  }
+
+  async deleteTicket(eventId: string, ticketId: string) {
+    const ticket = await this.ticketRepository.findOne({
+      where: { id: ticketId, event: { id: eventId, isActive: true } },
+      relations: ['registrations'],
+    });
+
+    if (!ticket) throw new NotFoundException('Ticket not found');
+
+    // Si tiene registros, solo desactivar (soft delete)
+    if (ticket.registrations && ticket.registrations.length > 0) {
+      ticket.isActive = false;
+      await this.ticketRepository.save(ticket);
+      return { message: 'Ticket desactivado (tiene registros asociados)' };
+    }
+
+    // Si no tiene registros, eliminar completamente
+    await this.ticketRepository.remove(ticket);
+    return { message: 'Ticket eliminado correctamente' };
   }
 
   async publish(id: string) {

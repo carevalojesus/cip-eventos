@@ -31,6 +31,7 @@ import { EventModalityValidatorPipe } from './pipes/event-modality-validator.pip
 import { CreateSessionDto } from './dto/create-session.dto';
 import { UpdateSessionDto } from './dto/update-session.dto';
 import { CreateTicketDto } from './dto/create-ticket.dto';
+import { UpdateTicketDto } from './dto/update-ticket.dto';
 import { PaginationDto } from '../common/dto/pagination.dto';
 
 @Controller('events')
@@ -335,5 +336,33 @@ export class EventsController {
     @Body() createTicketDto: CreateTicketDto,
   ) {
     return this.eventsService.createTicket(id, createTicketDto);
+  }
+
+  @UseGuards(EmailVerifiedGuard, EventOwnershipGuard)
+  @Get(':id/tickets')
+  getTickets(@Param('id') id: string) {
+    return this.eventsService.getTickets(id);
+  }
+
+  @UseGuards(EmailVerifiedGuard, EventOwnershipGuard)
+  @Get(':id/tickets/:ticketId')
+  getTicket(@Param('id') id: string, @Param('ticketId') ticketId: string) {
+    return this.eventsService.getTicket(id, ticketId);
+  }
+
+  @UseGuards(EmailVerifiedGuard, EventOwnershipGuard)
+  @Patch(':id/tickets/:ticketId')
+  updateTicket(
+    @Param('id') id: string,
+    @Param('ticketId') ticketId: string,
+    @Body() updateTicketDto: UpdateTicketDto,
+  ) {
+    return this.eventsService.updateTicket(id, ticketId, updateTicketDto);
+  }
+
+  @UseGuards(EmailVerifiedGuard, EventOwnershipGuard)
+  @Delete(':id/tickets/:ticketId')
+  deleteTicket(@Param('id') id: string, @Param('ticketId') ticketId: string) {
+    return this.eventsService.deleteTicket(id, ticketId);
   }
 }
