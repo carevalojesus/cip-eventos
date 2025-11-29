@@ -1,9 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
+import { toast } from "sonner";
 import {
-  ArrowLeft,
-  Share2,
-  Globe,
   Settings,
   Ticket,
   Calendar,
@@ -12,16 +10,19 @@ import {
   Loader2,
   AlertCircle,
 } from "lucide-react";
+import type { Breadcrumb as BreadcrumbData } from "@/components/dashboard/DashboardApp";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { GeneralTab } from "./tabs/GeneralTab";
 import { PlaceholderTab } from "./tabs/PlaceholderTab";
@@ -32,31 +33,28 @@ import type { EventStatus } from "@/types/event";
 interface EventManagementViewProps {
   eventId: string;
   onNavigate?: (path: string) => void;
+  onBreadcrumbsChange?: (breadcrumbs: BreadcrumbData[]) => void;
 }
 
-const statusVariantMap: Record<EventStatus, "success" | "gray" | "default" | "destructive"> = {
+const statusVariantMap: Record<EventStatus, "success" | "gray" | "info" | "destructive"> = {
   PUBLISHED: "success",
   DRAFT: "gray",
-  COMPLETED: "default",
+  COMPLETED: "info",
   CANCELLED: "destructive",
 };
 
-export const EventManagementView: React.FC<EventManagementViewProps> = ({ eventId, onNavigate }) => {
+export const EventManagementView: React.FC<EventManagementViewProps> = ({ eventId, onNavigate, onBreadcrumbsChange }) => {
   const { t } = useTranslation();
   const locale = getCurrentLocale();
   const [activeTab, setActiveTab] = useState("general");
 
   const {
     event,
-    form,
-    types,
-    categories,
-    modalities,
     loading,
     saving,
     error,
-    onSubmit,
     publishEvent,
+    changeStatus,
   } = useEventDetails(eventId);
 
   const handleBack = () => {
@@ -68,10 +66,12 @@ export const EventManagementView: React.FC<EventManagementViewProps> = ({ eventI
     }
   };
 
-  const handlePublish = async () => {
-    const success = await publishEvent();
-    if (success) {
-      // Podría mostrar un toast de éxito
+  const handleEdit = () => {
+    const editPath = routes[locale].eventsEdit(eventId);
+    if (onNavigate) {
+      onNavigate(editPath);
+    } else {
+      window.location.href = editPath;
     }
   };
 
@@ -82,6 +82,21 @@ export const EventManagementView: React.FC<EventManagementViewProps> = ({ eventI
     { id: "participants", label: t("event_management.tabs.participants"), icon: Users },
     { id: "attendees", label: t("event_management.tabs.attendees"), icon: UserCheck },
   ];
+
+  // Report breadcrumbs to parent
+  useEffect(() => {
+    if (onBreadcrumbsChange) {
+      const eventsPath = routes[locale].events;
+      onBreadcrumbsChange([
+        { label: t("event_management.breadcrumb.back"), href: eventsPath },
+        { label: t("event_management.breadcrumb.title") },
+      ]);
+    }
+    // Cleanup breadcrumbs when unmounting
+    return () => {
+      onBreadcrumbsChange?.([]);
+    };
+  }, [onBreadcrumbsChange, locale, t]);
 
   // Loading state
   if (loading) {
@@ -114,82 +129,33 @@ export const EventManagementView: React.FC<EventManagementViewProps> = ({ eventI
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="space-y-4">
-        {/* Breadcrumb */}
-        <Breadcrumb>
-          <BreadcrumbList>
-            <BreadcrumbItem>
-              <BreadcrumbLink
-                onClick={handleBack}
-                className="flex items-center gap-1 text-muted-foreground hover:text-foreground cursor-pointer"
-              >
-                <ArrowLeft className="h-4 w-4" />
-                {t("event_management.breadcrumb.back")}
-              </BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbPage>{t("event_management.breadcrumb.title")}</BreadcrumbPage>
-            </BreadcrumbItem>
-          </BreadcrumbList>
-        </Breadcrumb>
-
-        {/* Title & Actions */}
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center gap-3 flex-wrap">
-            <h1 className="text-2xl font-bold tracking-tight text-gray-900">
-              {event.title}
-            </h1>
-            <Badge variant={statusVariantMap[event.status]}>
-              {t(`dashboard.events_view.status.${event.status}`)}
-            </Badge>
-          </div>
-          <div className="flex items-center gap-2">
-            <Button variant="outline" className="gap-2">
-              <Share2 className="h-4 w-4" />
-              {t("event_management.actions.preview")}
-            </Button>
-            {event.status === "DRAFT" && (
-              <Button className="gap-2" onClick={handlePublish} disabled={saving}>
-                {saving ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <Globe className="h-4 w-4" />
-                )}
-                {t("event_management.actions.publish")}
-              </Button>
-            )}
-          </div>
-        </div>
+      <div className="flex items-center gap-3 flex-wrap min-w-0">
+        <h1 className="text-2xl font-bold tracking-tight text-foreground truncate">
+          {event.title}
+        </h1>
+        <Badge variant={statusVariantMap[event.status]}>
+          {t(`dashboard.events_view.status.${event.status}`)}
+        </Badge>
       </div>
 
       {/* Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <div className="border-b border-gray-200">
-          <TabsList className="h-auto bg-transparent p-0 w-full justify-start gap-0">
-            {tabs.map((tab) => (
-              <TabsTrigger
-                key={tab.id}
-                value={tab.id}
-                className="relative rounded-none border-b-2 border-transparent bg-transparent px-4 py-3 font-medium text-muted-foreground shadow-none transition-colors data-[state=active]:border-gray-900 data-[state=active]:text-gray-900 data-[state=active]:shadow-none hover:text-gray-700 hover:bg-gray-50"
-              >
-                <tab.icon className="mr-2 h-4 w-4" />
-                {tab.label}
-              </TabsTrigger>
-            ))}
-          </TabsList>
-        </div>
+        <TabsList className="h-auto bg-muted/50 p-1 rounded-lg">
+          {tabs.map((tab) => (
+            <TabsTrigger
+              key={tab.id}
+              value={tab.id}
+              className="rounded-md px-4 py-2 text-sm font-medium text-muted-foreground transition-all data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
+            >
+              <tab.icon className="mr-2 h-4 w-4" />
+              {tab.label}
+            </TabsTrigger>
+          ))}
+        </TabsList>
 
         {/* Tab Contents */}
         <TabsContent value="general" className="mt-6">
-          <GeneralTab
-            form={form}
-            types={types}
-            categories={categories}
-            modalities={modalities}
-            onSubmit={onSubmit}
-            saving={saving}
-          />
+          <GeneralTab event={event} onEdit={handleEdit} onChangeStatus={changeStatus} publishing={saving} />
         </TabsContent>
         <TabsContent value="tickets" className="mt-6">
           <PlaceholderTab

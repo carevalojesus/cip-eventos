@@ -60,7 +60,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   const { isHelpOpen, closeHelp } = useKeyboardShortcuts(shortcuts);
 
   return (
-    <div className="flex h-screen overflow-hidden bg-gray-50/50">
+    <div className="flex h-screen overflow-hidden bg-muted/30">
       {/* Skip to content link */}
       <a
         href="#main-content"
@@ -93,9 +93,10 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
           onMenuClick={() => setIsSidebarOpen(true)}
           title={title}
           breadcrumbs={breadcrumbs}
+          onNavigate={onNavigate}
         />
         <main id="main-content" className="flex-1 overflow-y-auto" tabIndex={-1}>
-          <div className="w-full px-6 py-6 lg:px-10">{children}</div>
+          <div className="mx-auto w-full max-w-7xl px-6 py-6 lg:px-10">{children}</div>
         </main>
       </div>
 

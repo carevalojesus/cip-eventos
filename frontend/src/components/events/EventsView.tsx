@@ -78,8 +78,20 @@ export const EventsView: React.FC<EventsViewProps> = ({ onNavigate }) => {
       return matchesSearch && matchesStatus && matchesYear && matchesMonth && matchesDate;
     });
 
-    // Ordenar del más actual al más antiguo
+    // Ordenar: primero PUBLISHED, luego DRAFT, luego otros, y dentro de cada grupo por fecha descendente
+    const statusOrder: Record<string, number> = {
+      PUBLISHED: 0,
+      DRAFT: 1,
+      COMPLETED: 2,
+      CANCELLED: 3,
+    };
+
     return filtered.sort((a, b) => {
+      // Primero ordenar por estado
+      const statusDiff = (statusOrder[a.status] ?? 4) - (statusOrder[b.status] ?? 4);
+      if (statusDiff !== 0) return statusDiff;
+
+      // Luego por fecha descendente (más reciente primero)
       const dateA = new Date(a.startAt).getTime();
       const dateB = new Date(b.startAt).getTime();
       return dateB - dateA;
@@ -102,10 +114,10 @@ export const EventsView: React.FC<EventsViewProps> = ({ onNavigate }) => {
     <div className="space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-gray-900">
+          <h1 className="text-2xl font-bold tracking-tight text-foreground">
             {t("dashboard.events_view.title")}
           </h1>
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-muted-foreground">
             {t("dashboard.events_view.subtitle")}
           </p>
         </div>
@@ -148,7 +160,7 @@ export const EventsView: React.FC<EventsViewProps> = ({ onNavigate }) => {
 
       {/* Paginación - solo mostrar si hay más de 10 eventos */}
       {!loading && filteredEvents.length > ITEMS_PER_PAGE && (
-        <div className="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6 rounded-lg">
+        <div className="flex items-center justify-between border border-border bg-card px-4 py-3 rounded-lg">
           <div className="flex flex-1 justify-between sm:hidden">
             <Button
               variant="outline"
@@ -168,49 +180,58 @@ export const EventsView: React.FC<EventsViewProps> = ({ onNavigate }) => {
             </Button>
           </div>
           <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
-            <div>
-              <p className="text-sm text-gray-700">
-                Mostrando{" "}
-                <span className="font-medium">
-                  {(currentPage - 1) * ITEMS_PER_PAGE + 1}
-                </span>{" "}
-                a{" "}
-                <span className="font-medium">
-                  {Math.min(currentPage * ITEMS_PER_PAGE, filteredEvents.length)}
-                </span>{" "}
-                de <span className="font-medium">{filteredEvents.length}</span> eventos
-              </p>
-            </div>
-            <div className="flex items-center gap-2">
+            <p className="text-sm text-muted-foreground">
+              Mostrando{" "}
+              <span className="font-medium text-foreground">
+                {(currentPage - 1) * ITEMS_PER_PAGE + 1}
+              </span>{" "}
+              a{" "}
+              <span className="font-medium text-foreground">
+                {Math.min(currentPage * ITEMS_PER_PAGE, filteredEvents.length)}
+              </span>{" "}
+              de <span className="font-medium text-foreground">{filteredEvents.length}</span> eventos
+            </p>
+            <div className="flex items-center gap-1">
               <Button
                 variant="outline"
-                size="sm"
+                size="icon"
+                className="h-8 w-8"
                 onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                 disabled={currentPage === 1}
               >
                 <ChevronLeft className="h-4 w-4" />
-                Anterior
               </Button>
-              <div className="flex items-center gap-1">
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+              {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
+                // Mostrar máximo 5 páginas centradas en la actual
+                let page: number;
+                if (totalPages <= 5) {
+                  page = i + 1;
+                } else if (currentPage <= 3) {
+                  page = i + 1;
+                } else if (currentPage >= totalPages - 2) {
+                  page = totalPages - 4 + i;
+                } else {
+                  page = currentPage - 2 + i;
+                }
+                return (
                   <Button
                     key={page}
-                    variant={currentPage === page ? "default" : "outline"}
-                    size="sm"
-                    className="w-8 h-8 p-0"
+                    variant={currentPage === page ? "default" : "ghost"}
+                    size="icon"
+                    className="h-8 w-8"
                     onClick={() => setCurrentPage(page)}
                   >
                     {page}
                   </Button>
-                ))}
-              </div>
+                );
+              })}
               <Button
                 variant="outline"
-                size="sm"
+                size="icon"
+                className="h-8 w-8"
                 onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
                 disabled={currentPage === totalPages}
               >
-                Siguiente
                 <ChevronRight className="h-4 w-4" />
               </Button>
             </div>

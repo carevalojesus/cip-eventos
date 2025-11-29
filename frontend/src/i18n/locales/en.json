@@ -128,7 +128,8 @@
       "administration": "ADMINISTRATION",
       "users": "Users",
       "cip_registry": "CIP Registry",
-      "settings": "Settings"
+      "settings": "Settings",
+      "logout": "Logout"
     },
     "events_view": {
       "create_title": "Create New Event",
@@ -194,9 +195,13 @@
     "max_length": "Maximum {{count}} characters",
     "save": "Save",
     "save_event": "Save Event",
+    "save_changes": "Save Changes",
     "cancel": "Cancel",
+    "back": "Back",
     "submit": "Submit",
-    "loading": "Loading...",
+    "loading": "Saving...",
+    "select": "Select...",
+    "date": "Date",
     "success": "Operation successful",
     "error": "An error occurred",
     "date_future": "Start date must be in the future",
@@ -234,7 +239,28 @@
     "type": "Type",
     "type_placeholder": "Select a type",
     "category": "Category",
-    "category_placeholder": "Select a category"
+    "category_placeholder": "Select a category",
+    "configuration": "Configuration",
+    "modality": "Modality",
+    "start": "Start",
+    "end": "End",
+    "breadcrumb": {
+      "title": "New Event"
+    }
+  },
+  "edit_event": {
+    "title": "Edit Event",
+    "subtitle": "Modify the event information.",
+    "breadcrumb": {
+      "title": "Edit"
+    },
+    "success_title": "Event updated",
+    "success_description": "Changes have been saved successfully.",
+    "error_title": "Update error",
+    "error_description": "Please check the data and try again.",
+    "error_unknown": "An unexpected error occurred. Please try again.",
+    "confirm_title": "Save changes?",
+    "confirm_description": "Changes will be applied immediately to the event."
   },
   "event_management": {
     "breadcrumb": {
@@ -242,8 +268,9 @@
       "title": "Event Management"
     },
     "actions": {
+      "edit": "Edit",
+      "publish": "Publish",
       "preview": "Preview",
-      "publish": "Publish Event",
       "unpublish": "Unpublish",
       "save": "Save Changes"
     },

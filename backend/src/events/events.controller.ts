@@ -141,6 +141,53 @@ export class EventsController {
   }
 
   @UseGuards(EmailVerifiedGuard, EventOwnershipGuard)
+  @Patch(':id/with-image')
+  @UseInterceptors(FileInterceptor('coverImage', { storage: memoryStorage() }))
+  async updateWithImage(
+    @Param('id') id: string,
+    @UploadedFile() file: Express.Multer.File,
+    @Body('data') dataString: string,
+  ) {
+    if (!dataString) {
+      throw new BadRequestException('Event data is required');
+    }
+
+    let updateEventDto: UpdateEventDto;
+    try {
+      updateEventDto = JSON.parse(dataString);
+    } catch {
+      throw new BadRequestException('Invalid JSON data');
+    }
+
+    // Si hay archivo, subirlo a S3/MinIO
+    if (file) {
+      const allowedMimeTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/webp'];
+      if (!allowedMimeTypes.includes(file.mimetype)) {
+        throw new BadRequestException('Invalid image type. Allowed: PNG, JPG, WebP');
+      }
+
+      if (file.size > 5 * 1024 * 1024) {
+        throw new BadRequestException('Image size exceeds 5MB limit');
+      }
+
+      const imageUrl = await this.uploadsService.uploadEventImage(
+        file.buffer,
+        file.originalname,
+        file.mimetype,
+      );
+      updateEventDto.imageUrl = imageUrl;
+    }
+
+    return this.eventsService.update(id, updateEventDto);
+  }
+
+  @UseGuards(EmailVerifiedGuard, EventOwnershipGuard)
+  @Patch(':id/publish')
+  publish(@Param('id') id: string) {
+    return this.eventsService.publish(id);
+  }
+
+  @UseGuards(EmailVerifiedGuard, EventOwnershipGuard)
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.eventsService.remove(id);

@@ -24,6 +24,70 @@ export interface EventVirtualAccess {
   instructions?: string;
 }
 
+export interface EventType {
+  id: number;
+  name: string;
+}
+
+export interface EventCategory {
+  id: number;
+  name: string;
+}
+
+export interface Speaker {
+  id: string;
+  firstName: string;
+  lastName: string;
+  profession: string;
+  bio?: string;
+  photoUrl?: string;
+  knowledge?: string;
+  companyName?: string;
+}
+
+export interface Organizer {
+  id: string;
+  name: string;
+  logoUrl?: string;
+  website?: string;
+}
+
+export interface EventTicket {
+  id: string;
+  name: string;
+  price: number;
+  stock: number;
+  requiresCipValidation: boolean;
+  isActive: boolean;
+}
+
+export interface EventSession {
+  id: string;
+  title: string;
+  description?: string;
+  startAt: string;
+  endAt: string;
+  room?: string;
+  meetingUrl?: string;
+  speakers?: Speaker[];
+}
+
+export interface Signer {
+  id: string;
+  name: string;
+  title: string;
+  signatureUrl?: string;
+}
+
+export interface EventCreatedBy {
+  id: string;
+  email: string;
+  profile?: {
+    firstName: string;
+    lastName: string;
+  };
+}
+
 export interface Event {
   id: string;
   title: string;
@@ -40,21 +104,20 @@ export interface Event {
   modality: EventModality;
   location?: EventLocation;
   virtualAccess?: EventVirtualAccess;
+  // Relaciones
+  speakers?: Speaker[];
+  organizers?: Organizer[];
+  tickets?: EventTicket[];
+  sessions?: EventSession[];
+  signers?: Signer[];
+  // Certificado
   hasCertificate?: boolean;
   certificateHours?: number;
+  // Auditoría
   isActive?: boolean;
+  createdBy?: EventCreatedBy;
   createdAt?: string;
   updatedAt?: string;
-}
-
-export interface EventType {
-  id: number;
-  name: string;
-}
-
-export interface EventCategory {
-  id: number;
-  name: string;
 }
 
 export interface CreateEventDto {

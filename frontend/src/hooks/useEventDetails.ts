@@ -185,6 +185,21 @@ export const useEventDetails = (eventId: string) => {
     }
   };
 
+  const changeStatus = async (status: string) => {
+    setSaving(true);
+    try {
+      const updatedEvent = await eventsService.update(eventId, { status: status as "DRAFT" | "PUBLISHED" | "CANCELLED" | "COMPLETED" });
+      setEvent(updatedEvent);
+      return true;
+    } catch (err) {
+      logger.error("Error changing event status:", err);
+      setError(t("errors.unknown"));
+      return false;
+    } finally {
+      setSaving(false);
+    }
+  };
+
   const refetch = async () => {
     setLoading(true);
     try {
@@ -208,6 +223,7 @@ export const useEventDetails = (eventId: string) => {
     error,
     onSubmit,
     publishEvent,
+    changeStatus,
     refetch,
   };
 };

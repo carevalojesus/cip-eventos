@@ -16,7 +16,7 @@ import type { LucideIcon } from "lucide-react";
 
 interface EventRowProps {
   event: Event;
-  statusVariantMap: Record<EventStatus, "success" | "gray" | "default" | "destructive">;
+  statusVariantMap: Record<EventStatus, "success" | "gray" | "info" | "destructive">;
   getModalityIcon: (modalityName: string) => LucideIcon;
   onNavigate?: (path: string) => void;
 }
@@ -76,40 +76,44 @@ export const EventRow = React.memo<EventRowProps>(({ event, statusVariantMap, ge
 
   return (
     <TableRow className="hover:bg-muted/50">
-      {/* Evento (título + categoría) */}
-      <TableCell className="px-4 py-3 max-w-[320px]">
-        <div className="flex flex-col min-w-0 gap-0.5">
+      {/* Evento (título + categoría + fecha en móvil) */}
+      <TableCell className="px-4 py-3">
+        <div className="flex flex-col min-w-0 gap-0.5 overflow-hidden">
           <span className="font-medium text-foreground truncate">{event.title}</span>
           <span className="text-xs text-muted-foreground truncate">
             {event.category?.name || event.type?.name || ""}
           </span>
+          {/* Mostrar fecha en móvil */}
+          <span className="text-xs text-muted-foreground sm:hidden">
+            {startDate.date} · {startDate.time}
+          </span>
         </div>
       </TableCell>
 
-      {/* Fecha y hora */}
-      <TableCell className="px-4 py-3">
+      {/* Fecha y hora - oculto en móvil */}
+      <TableCell className="hidden sm:table-cell px-4 py-3">
         <div className="flex flex-col gap-0.5">
           <span className="text-sm text-foreground">{startDate.date}</span>
           <span className="text-xs text-muted-foreground">{startDate.time}</span>
         </div>
       </TableCell>
 
-      {/* Modalidad */}
-      <TableCell className="px-4 py-3">
+      {/* Modalidad - oculto en móvil y tablet pequeña */}
+      <TableCell className="hidden md:table-cell px-4 py-3">
         <div className="flex items-center gap-1.5">
           <ModalityIcon className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-          <span className="text-sm text-foreground truncate">{getModalityLabel(event.modality)}</span>
+          <span className="text-sm text-foreground">{getModalityLabel(event.modality)}</span>
         </div>
       </TableCell>
 
-      {/* Ubicación */}
-      <TableCell className="px-4 py-3 max-w-[200px]">
+      {/* Ubicación - oculto hasta pantallas grandes */}
+      <TableCell className="hidden lg:table-cell px-4 py-3">
         <div className="flex flex-col min-w-0 gap-0.5">
-          <span className="text-sm text-foreground truncate">
+          <span className="text-sm text-foreground line-clamp-1">
             {event.location?.name || (event.virtualAccess ? "Virtual" : "—")}
           </span>
           {event.location?.city && (
-            <span className="text-xs text-muted-foreground truncate">{event.location.city}</span>
+            <span className="text-xs text-muted-foreground">{event.location.city}</span>
           )}
         </div>
       </TableCell>

@@ -16,19 +16,28 @@ import type { CreateEventFormValues } from "@/hooks/useCreateEvent";
 
 interface EventImageUploadProps {
   form: UseFormReturn<CreateEventFormValues>;
+  existingImageUrl?: string;
 }
 
-export const EventImageUpload: React.FC<EventImageUploadProps> = ({ form }) => {
+export const EventImageUpload: React.FC<EventImageUploadProps> = ({ form, existingImageUrl }) => {
   const [files, setFiles] = useState<File[]>([]);
+  const [showExisting, setShowExisting] = useState(!!existingImageUrl);
   const { setValue } = form;
 
   const handleValueChange = (newFiles: File[]) => {
     setFiles(newFiles);
     setValue("coverImage", newFiles[0] || null);
+    if (newFiles.length > 0) {
+      setShowExisting(false);
+    }
   };
 
   const handleFileReject = (file: File, message: string) => {
     console.warn(`Archivo rechazado: ${file.name} - ${message}`);
+  };
+
+  const handleRemoveExisting = () => {
+    setShowExisting(false);
   };
 
   return (
@@ -38,16 +47,38 @@ export const EventImageUpload: React.FC<EventImageUploadProps> = ({ form }) => {
         <h2 className="text-lg font-medium text-foreground">Imagen del Evento</h2>
       </div>
 
-      <FileUpload
-        value={files}
-        onValueChange={handleValueChange}
-        onFileReject={handleFileReject}
-        accept="image/png,image/jpeg,image/jpg,image/webp"
-        maxFiles={1}
-        maxSize={5 * 1024 * 1024}
-        className="w-full"
-      >
-        {files.length === 0 ? (
+      {/* Mostrar imagen existente */}
+      {showExisting && existingImageUrl && files.length === 0 ? (
+        <div className="relative aspect-[1200/630] w-full overflow-hidden rounded-lg bg-muted">
+          <img
+            src={existingImageUrl}
+            alt="Imagen actual del evento"
+            className="h-full w-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+          <div className="absolute bottom-0 left-0 right-0 p-4">
+            <span className="text-sm text-white">Imagen actual</span>
+          </div>
+          <Button
+            variant="destructive"
+            size="icon"
+            className="absolute top-2 right-2 h-8 w-8 rounded-full"
+            onClick={handleRemoveExisting}
+          >
+            <X className="h-4 w-4" />
+          </Button>
+        </div>
+      ) : (
+        <FileUpload
+          value={files}
+          onValueChange={handleValueChange}
+          onFileReject={handleFileReject}
+          accept="image/png,image/jpeg,image/jpg,image/webp"
+          maxFiles={1}
+          maxSize={5 * 1024 * 1024}
+          className="w-full"
+        >
+          {files.length === 0 ? (
           <FileUploadDropzone className="min-h-[200px] border-2 border-dashed border-border hover:border-primary/50 transition-colors cursor-pointer">
             <div className="flex flex-col items-center justify-center gap-2 text-center">
               <div className="rounded-full bg-muted p-3">
@@ -96,7 +127,8 @@ export const EventImageUpload: React.FC<EventImageUploadProps> = ({ form }) => {
             ))}
           </FileUploadList>
         )}
-      </FileUpload>
+        </FileUpload>
+      )}
 
       <p className="mt-3 text-xs text-muted-foreground">
         Esta imagen se mostrará como banner del evento en el listado y la página de detalles.

@@ -37,6 +37,15 @@ export const eventsService = {
     return response.data;
   },
 
+  async updateWithImage(id: string, formData: FormData): Promise<Event> {
+    const response = await api.patch<Event>(`/events/${id}/with-image`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return response.data;
+  },
+
   async publish(id: string): Promise<Event> {
     const response = await api.patch<Event>(`/events/${id}/publish`);
     return response.data;

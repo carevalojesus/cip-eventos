@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { Bell, Menu, LogOut, User as UserIcon } from "lucide-react";
+import { Bell, Menu, LogOut, User as UserIcon, ArrowLeft } from "lucide-react";
 import { useAuthStore } from "@/store/auth.store";
 import api from "@/lib/api";
 import { ASSETS_URL } from "@/constants/auth";
@@ -9,6 +9,7 @@ interface DashboardHeaderProps {
   onMenuClick?: () => void;
   breadcrumbs?: Array<{ label: string; href?: string }>;
   title?: string;
+  onNavigate?: (path: string) => void;
 }
 
 // Helper function to format role names
@@ -34,6 +35,7 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
   onMenuClick,
   breadcrumbs = [],
   title,
+  onNavigate,
 }) => {
   const { t } = useTranslation();
   const { user, logout, updateUser } = useAuthStore();
@@ -105,52 +107,55 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
   };
 
   return (
-    <header className="sticky top-0 z-10 flex h-16 items-center justify-between border-b border-gray-200 bg-white px-6 shadow-sm">
+    <header className="sticky top-0 z-10 flex h-16 items-center justify-between border-b border-border bg-background px-6 shadow-sm">
       {/* Left Side - Mobile Menu + Breadcrumbs */}
       <div className="flex items-center gap-4">
         <button
           onClick={onMenuClick}
-          className="text-gray-500 hover:text-gray-700 lg:hidden"
+          className="text-muted-foreground hover:text-foreground lg:hidden"
           aria-label="Open menu"
         >
           <Menu className="h-6 w-6" />
         </button>
 
         {/* Breadcrumbs */}
-        <nav className="flex items-center text-sm text-gray-500">
-          {breadcrumbs.map((crumb, index) => (
-            <React.Fragment key={index}>
-              {index > 0 && <span className="mx-2 text-gray-300">/</span>}
-              {crumb.href ? (
-                <a
-                  href={crumb.href}
-                  className="hover:text-gray-900 transition-colors"
-                >
-                  {crumb.label}
-                </a>
-              ) : (
-                <span
-                  className={
-                    index === breadcrumbs.length - 1
-                      ? "font-medium text-gray-900"
-                      : ""
-                  }
-                >
-                  {crumb.label}
-                </span>
-              )}
-            </React.Fragment>
-          ))}
-        </nav>
+        {breadcrumbs.length > 0 && (
+          <nav className="flex items-center text-sm text-muted-foreground">
+            {breadcrumbs.map((crumb, index) => (
+              <React.Fragment key={index}>
+                {index > 0 && <span className="mx-2 text-muted-foreground/50">/</span>}
+                {crumb.href ? (
+                  <button
+                    onClick={() => onNavigate?.(crumb.href!)}
+                    className="flex items-center gap-1 hover:text-foreground transition-colors"
+                  >
+                    {index === 0 && <ArrowLeft className="h-4 w-4" />}
+                    {crumb.label}
+                  </button>
+                ) : (
+                  <span
+                    className={
+                      index === breadcrumbs.length - 1
+                        ? "font-medium text-foreground"
+                        : ""
+                    }
+                  >
+                    {crumb.label}
+                  </span>
+                )}
+              </React.Fragment>
+            ))}
+          </nav>
+        )}
       </div>
 
       {/* Right Side - Actions */}
       <div className="flex items-center gap-4">
         {/* Notifications */}
-        <button className="relative text-gray-500 hover:text-gray-700 transition-colors">
+        <button className="relative text-muted-foreground hover:text-foreground transition-colors">
           <Bell className="h-5 w-5" />
           {unreadCount > 0 && (
-            <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-medium text-white">
+            <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-destructive text-[10px] font-medium text-destructive-foreground">
               {unreadCount > 9 ? '9+' : unreadCount}
             </span>
           )}
@@ -160,10 +165,10 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
         <div className="relative flex items-center gap-3" ref={dropdownRef}>
           {/* User Name */}
           <div className="hidden sm:block text-right">
-            <p className="text-sm font-medium text-gray-900">
+            <p className="text-sm font-medium text-foreground">
               {user?.firstName ? `${user.firstName} ${user.lastName || ''}` : user?.email}
             </p>
-            <p className="text-xs text-gray-500 capitalize">
+            <p className="text-xs text-muted-foreground capitalize">
               {formatRoleName(user?.role)}
             </p>
           </div>
@@ -171,7 +176,7 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
           {/* Avatar Button */}
           <button
             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-            className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-white shadow-sm hover:bg-primary/90 transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 overflow-hidden"
+            className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-sm hover:bg-primary/90 transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 overflow-hidden"
           >
              {user?.avatar && !imageError && getAvatarUrl(user.avatar) ? (
                <img
@@ -187,29 +192,29 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
 
           {/* Dropdown Menu */}
           {isDropdownOpen && (
-            <div className="absolute right-0 top-full mt-2 w-56 origin-top-right rounded-md bg-white py-1 shadow-lg focus:outline-none z-50">
-              <div className="border-b border-gray-100 px-4 py-3 sm:hidden">
-                <p className="text-sm font-medium text-gray-900 truncate">
+            <div className="absolute right-0 top-full mt-2 w-56 origin-top-right rounded-md bg-popover border border-border py-1 shadow-lg focus:outline-none z-50">
+              <div className="border-b border-border px-4 py-3 sm:hidden">
+                <p className="text-sm font-medium text-foreground truncate">
                    {user?.firstName ? `${user.firstName} ${user.lastName || ''}` : user?.email}
                 </p>
-                <p className="text-xs text-gray-500 truncate">
+                <p className="text-xs text-muted-foreground truncate">
                   {formatRoleName(user?.role)}
                 </p>
               </div>
-              
+
               <div className="py-1">
                 <a
                   href="/dashboard/profile"
-                  className="flex w-full items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  className="flex w-full items-center px-4 py-2 text-sm text-popover-foreground hover:bg-accent"
                 >
-                  <UserIcon className="mr-3 h-4 w-4 text-gray-500" />
+                  <UserIcon className="mr-3 h-4 w-4 text-muted-foreground" />
                   Mi Perfil
                 </a>
                 <button
                   onClick={handleLogout}
-                  className="flex w-full items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  className="flex w-full items-center px-4 py-2 text-sm text-popover-foreground hover:bg-accent"
                 >
-                  <LogOut className="mr-3 h-4 w-4 text-gray-500" />
+                  <LogOut className="mr-3 h-4 w-4 text-muted-foreground" />
                   Cerrar Sesión
                 </button>
               </div>

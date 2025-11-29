@@ -70,10 +70,12 @@ export const EventFilters: React.FC<EventFiltersProps> = ({
   const hasActiveFilters = searchTerm || statusFilter !== "ALL" || yearFilter !== "ALL" || monthFilter !== "ALL" || dateFilter;
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:flex-wrap">
-        <div className="relative w-full sm:w-72">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+    <div className="rounded-lg border bg-card p-4">
+      {/* Fila principal de filtros */}
+      <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
+        {/* Búsqueda */}
+        <div className="relative flex-1 min-w-0 lg:max-w-xs">
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             placeholder={t("dashboard.events_view.search_placeholder")}
             className="pl-9"
@@ -82,99 +84,102 @@ export const EventFilters: React.FC<EventFiltersProps> = ({
           />
         </div>
 
-        <Select value={statusFilter} onValueChange={onStatusChange}>
-          <SelectTrigger className="w-full sm:w-44">
-            <SelectValue placeholder={t("dashboard.events_view.filter_status")} />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="ALL">Todos los estados</SelectItem>
-            <SelectItem value="PUBLISHED">{t("dashboard.events_view.status.PUBLISHED")}</SelectItem>
-            <SelectItem value="DRAFT">{t("dashboard.events_view.status.DRAFT")}</SelectItem>
-            <SelectItem value="COMPLETED">{t("dashboard.events_view.status.COMPLETED")}</SelectItem>
-            <SelectItem value="CANCELLED">{t("dashboard.events_view.status.CANCELLED")}</SelectItem>
-          </SelectContent>
-        </Select>
+        {/* Filtros en grid */}
+        <div className="flex flex-wrap items-center gap-2">
+          <Select value={statusFilter} onValueChange={onStatusChange}>
+            <SelectTrigger className="w-[140px]">
+              <SelectValue placeholder={t("dashboard.events_view.filter_status")} />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="ALL">Todos los estados</SelectItem>
+              <SelectItem value="PUBLISHED">{t("dashboard.events_view.status.PUBLISHED")}</SelectItem>
+              <SelectItem value="DRAFT">{t("dashboard.events_view.status.DRAFT")}</SelectItem>
+              <SelectItem value="COMPLETED">{t("dashboard.events_view.status.COMPLETED")}</SelectItem>
+              <SelectItem value="CANCELLED">{t("dashboard.events_view.status.CANCELLED")}</SelectItem>
+            </SelectContent>
+          </Select>
 
-        <Select value={yearFilter} onValueChange={(value) => {
-          onYearChange(value);
-          if (value === "ALL") {
-            onMonthChange("ALL");
-          }
-        }}>
-          <SelectTrigger className="w-full sm:w-36">
-            <SelectValue placeholder="Año" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="ALL">Todos los años</SelectItem>
-            <SelectItem value="2025">2025</SelectItem>
-            <SelectItem value="2024">2024</SelectItem>
-            <SelectItem value="2023">2023</SelectItem>
-          </SelectContent>
-        </Select>
+          <Select value={yearFilter} onValueChange={(value) => {
+            onYearChange(value);
+            if (value === "ALL") {
+              onMonthChange("ALL");
+            }
+          }}>
+            <SelectTrigger className="w-[120px]">
+              <SelectValue placeholder="Año" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="ALL">Todos</SelectItem>
+              <SelectItem value="2025">2025</SelectItem>
+              <SelectItem value="2024">2024</SelectItem>
+              <SelectItem value="2023">2023</SelectItem>
+            </SelectContent>
+          </Select>
 
-        <Select
-          value={monthFilter}
-          onValueChange={onMonthChange}
-          disabled={yearFilter === "ALL"}
-        >
-          <SelectTrigger className="w-full sm:w-44">
-            <SelectValue placeholder="Mes" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="ALL">Todos los meses</SelectItem>
-            {MONTHS.map((month) => (
-              <SelectItem key={month.value} value={month.value}>
-                {month.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+          <Select
+            value={monthFilter}
+            onValueChange={onMonthChange}
+            disabled={yearFilter === "ALL"}
+          >
+            <SelectTrigger className="w-[130px]">
+              <SelectValue placeholder="Mes" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="ALL">Todos</SelectItem>
+              {MONTHS.map((month) => (
+                <SelectItem key={month.value} value={month.value}>
+                  {month.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
 
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button
-              variant={"outline"}
-              className={cn(
-                "w-full justify-start text-left font-normal sm:w-[240px]",
-                !dateFilter && "text-muted-foreground"
-              )}
-            >
-              <CalendarIcon className="mr-2 h-4 w-4" />
-              {dateFilter?.from ? (
-                dateFilter.to ? (
-                  <>
-                    {format(dateFilter.from, "dd MMM", { locale: es })} - {format(dateFilter.to, "dd MMM", { locale: es })}
-                  </>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                className={cn(
+                  "w-[200px] justify-start text-left font-normal",
+                  !dateFilter && "text-muted-foreground"
+                )}
+              >
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {dateFilter?.from ? (
+                  dateFilter.to ? (
+                    <>
+                      {format(dateFilter.from, "dd MMM", { locale: es })} - {format(dateFilter.to, "dd MMM", { locale: es })}
+                    </>
+                  ) : (
+                    format(dateFilter.from, "dd MMM yyyy", { locale: es })
+                  )
                 ) : (
-                  format(dateFilter.from, "dd MMM yyyy", { locale: es })
-                )
-              ) : (
-                <span>{t("dashboard.events_view.select_range", "Seleccionar rango")}</span>
-              )}
+                  <span>Rango de fechas</span>
+                )}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="start">
+              <Calendar
+                mode="range"
+                selected={dateFilter}
+                onSelect={onDateChange}
+                initialFocus
+                numberOfMonths={2}
+              />
+            </PopoverContent>
+          </Popover>
+        </div>
+
+        {/* Botones de acción */}
+        <div className="flex items-center gap-2 lg:ml-auto">
+          {hasActiveFilters && (
+            <Button variant="ghost" size="sm" onClick={onClearFilters} className="gap-1.5 text-muted-foreground">
+              <X className="h-4 w-4" />
+              Limpiar
             </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-auto p-0" align="start">
-            <Calendar
-              mode="range"
-              selected={dateFilter}
-              onSelect={onDateChange}
-              initialFocus
-              numberOfMonths={2}
-            />
-          </PopoverContent>
-        </Popover>
-
-        {hasActiveFilters && (
-          <Button variant="outline" onClick={onClearFilters} className="gap-2">
-            <X className="h-4 w-4" />
-            {t("dashboard.events_view.clear_filters", "Limpiar filtros")}
-          </Button>
-        )}
-
-        <div className="sm:ml-auto">
-          <Button variant="outline" onClick={onExport} className="gap-2 w-full sm:w-auto">
+          )}
+          <Button variant="outline" size="sm" onClick={onExport} className="gap-1.5">
             <FileSpreadsheet className="h-4 w-4 text-green-600" />
-            {t("dashboard.events_view.export_excel", "Exportar")}
+            Exportar
           </Button>
         </div>
       </div>
