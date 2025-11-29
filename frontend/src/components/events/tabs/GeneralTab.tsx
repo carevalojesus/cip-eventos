@@ -15,16 +15,13 @@ import {
   Pencil,
   Check,
   Globe,
-  Building2,
-  User,
-  Link2,
   Timer,
   Loader2,
+  ChevronDown,
+  Presentation,
+  Video,
+  Blend,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -41,30 +38,27 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { ChevronDown } from "lucide-react";
 import type { Event, EventStatus } from "@/types/event";
 
 interface GeneralTabProps {
   event: Event;
   isAdmin?: boolean;
   onEdit?: () => void;
-  onPublish?: () => Promise<boolean>;
   onChangeStatus?: (status: EventStatus) => Promise<boolean>;
   publishing?: boolean;
 }
 
-const STATUS_CONFIG: Record<EventStatus, { label: string; color: string }> = {
-  DRAFT: { label: "Borrador", color: "bg-gray-500" },
-  PUBLISHED: { label: "Publicado", color: "bg-green-500" },
-  CANCELLED: { label: "Cancelado", color: "bg-red-500" },
-  COMPLETED: { label: "Finalizado", color: "bg-blue-500" },
+const STATUS_CONFIG: Record<EventStatus, { label: string; className: string }> = {
+  DRAFT: { label: "Borrador", className: "rui-event-status-badge--draft" },
+  PUBLISHED: { label: "Publicado", className: "rui-event-status-badge--published" },
+  CANCELLED: { label: "Cancelado", className: "rui-event-status-badge--cancelled" },
+  COMPLETED: { label: "Finalizado", className: "rui-event-status-badge--completed" },
 };
 
 export const GeneralTab: React.FC<GeneralTabProps> = ({
   event,
   isAdmin = true,
   onEdit,
-  onPublish,
   onChangeStatus,
   publishing = false,
 }) => {
@@ -152,6 +146,7 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({
   const copyToClipboard = async (text: string) => {
     await navigator.clipboard.writeText(text);
     setCopied(true);
+    toast.success("Copiado al portapapeles");
     setTimeout(() => setCopied(false), 2000);
   };
 
@@ -160,129 +155,118 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({
     return `https://www.google.com/maps/search/?api=1&query=${query}`;
   };
 
-  return (
-    <div className="space-y-8">
-      {/* Banner Hero - Más alto */}
-      <div className="relative overflow-hidden rounded-xl border bg-card">
-        {/* Imagen de fondo */}
-        <div className="absolute inset-0">
-          {event.imageUrl ? (
-            <img
-              src={event.imageUrl}
-              alt=""
-              className="h-full w-full object-cover"
-            />
-          ) : (
-            <div className="h-full w-full bg-gradient-to-br from-primary/30 via-primary/10 to-muted" />
-          )}
-          {/* Overlay con degradado oscuro elegante */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-black/20" />
-        </div>
+  // Calcular porcentaje de ocupación (simulado - 0 inscritos por ahora)
+  const enrolledCount = 0;
+  const occupancyPercent = totalStock > 0 ? Math.round((enrolledCount / totalStock) * 100) : 0;
 
-        {/* Contenido del banner */}
-        <div className="relative px-6 pt-16 pb-6 sm:pt-24 sm:pb-8">
-          {/* Badges superiores - solo tipo, categoría y modalidad */}
-          <div className="flex flex-wrap items-center gap-2 mb-4">
+  return (
+    <div className="rui-event-detail">
+      {/* Hero Section */}
+      <div className="rui-event-hero">
+        {event.imageUrl ? (
+          <img src={event.imageUrl} alt="" className="rui-event-hero-image" />
+        ) : (
+          <div className="rui-event-hero-placeholder" />
+        )}
+        <div className="rui-event-hero-overlay" />
+
+        <div className="rui-event-hero-content">
+          {/* Badges - RUI: diferenciar información de diferente naturaleza */}
+          <div className="rui-event-hero-badges">
             {event.type && (
-              <Badge variant="secondary" className="bg-white/20 text-white backdrop-blur-sm border-white/30">
-                {event.type.name}
-              </Badge>
+              <span className="rui-event-hero-badge">{event.type.name}</span>
             )}
             {event.category && (
-              <Badge variant="secondary" className="bg-white/20 text-white backdrop-blur-sm border-white/30">
-                {event.category.name}
-              </Badge>
+              <span className="rui-event-hero-badge">{event.category.name}</span>
             )}
             {event.modality && (
-              <Badge variant="outline" className="bg-white/20 text-white backdrop-blur-sm border-white/30">
+              <span className={`rui-event-hero-badge ${
+                event.modality.name.toLowerCase().includes("presencial") ? "rui-event-hero-badge--presencial" :
+                event.modality.name.toLowerCase().includes("virtual") ? "rui-event-hero-badge--virtual" :
+                "rui-event-hero-badge--hibrido"
+              }`}>
+                {event.modality.name.toLowerCase().includes("presencial") && <Presentation className="rui-event-hero-badge-icon" />}
+                {event.modality.name.toLowerCase().includes("virtual") && <Video className="rui-event-hero-badge-icon" />}
+                {event.modality.name.toLowerCase().includes("híbrido") && <Blend className="rui-event-hero-badge-icon" />}
                 {event.modality.name}
-              </Badge>
+              </span>
             )}
           </div>
 
-          {/* Título del evento */}
-          <h1 className="text-2xl sm:text-3xl font-bold text-white mb-4">
-            {event.title}
-          </h1>
+          {/* Título */}
+          <h1 className="rui-event-hero-title">{event.title}</h1>
 
-          {/* Info esencial */}
-          <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6 text-sm text-white/90">
-            {/* Fecha */}
-            <div className="flex items-center gap-2">
-              <Calendar className="h-4 w-4 text-white/70" />
-              <span className="font-medium">
-                {isSameDay ? (
-                  <>{start.weekday}, {start.day} de {start.monthLong} {start.year}</>
-                ) : (
-                  <>{start.day} {start.month} - {end.day} {end.month} {end.year}</>
-                )}
+          {/* Meta info */}
+          <div className="rui-event-hero-meta">
+            <span className="rui-event-hero-meta-item">
+              <Calendar className="rui-event-hero-meta-icon" />
+              {isSameDay ? (
+                <>{start.weekday}, {start.day} de {start.monthLong} {start.year}</>
+              ) : (
+                <>{start.day} {start.month} - {end.day} {end.month} {end.year}</>
+              )}
+            </span>
+            <span className="rui-event-hero-meta-item">
+              <Clock className="rui-event-hero-meta-icon" />
+              {start.time} - {end.time}
+            </span>
+            {event.location && (
+              <span className="rui-event-hero-meta-item">
+                <MapPin className="rui-event-hero-meta-icon" />
+                {event.location.name || event.location.address}, {event.location.city}
               </span>
-            </div>
-
-            {/* Hora */}
-            <div className="flex items-center gap-2">
-              <Clock className="h-4 w-4 text-white/70" />
-              <span>{start.time} - {end.time}</span>
-            </div>
-
-            {/* Ubicación */}
-            <div className="flex items-center gap-2">
-              {event.location ? (
-                <>
-                  <MapPin className="h-4 w-4 text-white/70" />
-                  <span className="truncate max-w-[250px]">
-                    {event.location.name || event.location.address}, {event.location.city}
-                  </span>
-                </>
-              ) : event.virtualAccess ? (
-                <>
-                  <Monitor className="h-4 w-4 text-white/70" />
-                  <span>{event.virtualAccess.platform} (Virtual)</span>
-                </>
-              ) : null}
-            </div>
+            )}
+            {!event.location && event.virtualAccess && (
+              <span className="rui-event-hero-meta-item">
+                <Monitor className="rui-event-hero-meta-icon" />
+                {event.virtualAccess.platform} (Virtual)
+              </span>
+            )}
           </div>
 
           {/* Acciones */}
-          <div className="flex items-center gap-2 mt-6">
-            <Button variant="secondary" size="sm" className="gap-2 bg-white/20 text-white hover:bg-white/30 border-white/30">
-              <Share2 className="h-4 w-4" />
+          <div className="rui-event-hero-actions">
+            <button className="rui-btn-hero-ghost">
+              <Share2 className="rui-btn-hero-ghost-icon" />
               Compartir
-            </Button>
+            </button>
             {isAdmin && onEdit && (
-              <Button variant="secondary" size="sm" className="gap-2 bg-white/20 text-white hover:bg-white/30 border-white/30" onClick={onEdit}>
-                <Pencil className="h-4 w-4" />
+              <button className="rui-btn-hero-primary" onClick={onEdit}>
+                <Pencil className="rui-btn-hero-primary-icon" />
                 Editar
-              </Button>
+              </button>
             )}
             {isAdmin && onChangeStatus && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button
-                    size="sm"
-                    className="gap-2"
+                  <button
+                    className={`rui-event-status-badge ${STATUS_CONFIG[event.status].className}`}
                     disabled={changingStatus || publishing}
                   >
                     {(changingStatus || publishing) ? (
-                      <Loader2 className="h-4 w-4 animate-spin" />
+                      <Loader2 className="rui-event-status-dot animate-spin" style={{ width: 14, height: 14 }} />
                     ) : (
-                      <span className={`h-2 w-2 rounded-full ${STATUS_CONFIG[event.status].color}`} />
+                      <span className="rui-event-status-dot" />
                     )}
                     {STATUS_CONFIG[event.status].label}
-                    <ChevronDown className="h-4 w-4" />
-                  </Button>
+                    <ChevronDown style={{ width: 14, height: 14 }} />
+                  </button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
+                <DropdownMenuContent align="end" className="rui-dropdown-content">
                   {(Object.keys(STATUS_CONFIG) as EventStatus[]).map((status) => (
                     <DropdownMenuItem
                       key={status}
                       onClick={() => setPendingStatus(status)}
                       disabled={status === event.status}
-                      className="gap-2"
+                      className="rui-dropdown-item"
                     >
-                      <span className={`h-2 w-2 rounded-full ${STATUS_CONFIG[status].color}`} />
+                      <span className={`rui-status-dot ${
+                        status === "PUBLISHED" ? "rui-status-dot--published" :
+                        status === "DRAFT" ? "rui-status-dot--draft" :
+                        status === "CANCELLED" ? "rui-status-dot--cancelled" : "rui-status-dot--completed"
+                      }`} />
                       {STATUS_CONFIG[status].label}
-                      {status === event.status && <Check className="h-4 w-4 ml-auto" />}
+                      {status === event.status && <Check className="rui-dropdown-check" />}
                     </DropdownMenuItem>
                   ))}
                 </DropdownMenuContent>
@@ -292,363 +276,321 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({
         </div>
       </div>
 
-      {/* Quick Stats - Siempre 4 cards */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+      {/* Métricas - Barra horizontal compacta RUI */}
+      <div className="rui-stats-bar">
         {/* Cuenta regresiva */}
-        <div className={`rounded-lg border p-4 text-center ${
-          timeRemaining.isLive
-            ? "bg-green-500/10 border-green-500/30"
-            : timeRemaining.isPast
-              ? "bg-muted"
-              : "bg-card"
-        }`}>
-          <Timer className={`h-5 w-5 mx-auto mb-1 ${
-            timeRemaining.isLive
-              ? "text-green-500"
-              : "text-muted-foreground"
-          }`} />
-          <p className={`text-2xl font-bold ${
-            timeRemaining.isLive ? "text-green-600" : ""
-          }`}>
-            {timeRemaining.value}
-          </p>
-          <p className="text-xs text-muted-foreground">{timeRemaining.label}</p>
-        </div>
-
-        {/* Inscritos */}
-        <div className="rounded-lg border bg-card p-4 text-center">
-          <Users className="h-5 w-5 mx-auto text-muted-foreground mb-1" />
-          <p className="text-2xl font-bold">0</p>
-          <p className="text-xs text-muted-foreground">Inscritos</p>
-        </div>
-
-        {/* Cupos */}
-        <div className="rounded-lg border bg-card p-4 text-center">
-          <Ticket className="h-5 w-5 mx-auto text-muted-foreground mb-1" />
-          <p className="text-2xl font-bold">{totalStock}</p>
-          <p className="text-xs text-muted-foreground">Cupos totales</p>
-        </div>
-
-        {/* Duración o Certificado */}
-        {event.hasCertificate ? (
-          <div className="rounded-lg border bg-card p-4 text-center">
-            <Award className="h-5 w-5 mx-auto text-muted-foreground mb-1" />
-            <p className="text-2xl font-bold">{event.certificateHours || durationHours}h</p>
-            <p className="text-xs text-muted-foreground">Certificado</p>
+        <div className={`rui-stat-item ${timeRemaining.isLive ? "rui-stat-item--live" : timeRemaining.isPast ? "rui-stat-item--past" : ""}`}>
+          <div className="rui-stat-icon-wrapper">
+            <Timer className="rui-stat-icon" />
           </div>
-        ) : (
-          <div className="rounded-lg border bg-card p-4 text-center">
-            <Clock className="h-5 w-5 mx-auto text-muted-foreground mb-1" />
-            <p className="text-2xl font-bold">{durationHours}h</p>
-            <p className="text-xs text-muted-foreground">Duración</p>
+          <div className="rui-stat-content">
+            <span className="rui-stat-value">{timeRemaining.value}</span>
+            <span className="rui-stat-label">{timeRemaining.label}</span>
           </div>
-        )}
+        </div>
+
+        {/* Inscritos / Total */}
+        <div className="rui-stat-item">
+          <div className="rui-stat-icon-wrapper">
+            <Users className="rui-stat-icon" />
+          </div>
+          <div className="rui-stat-content">
+            <div className="rui-stat-fraction">
+              <span className="rui-stat-fraction-current">{enrolledCount}</span>
+              <span className="rui-stat-fraction-separator">/</span>
+              <span className="rui-stat-fraction-total">{totalStock}</span>
+            </div>
+            <span className="rui-stat-label">Inscritos</span>
+            {totalStock > 0 && occupancyPercent > 0 && (
+              <div className="rui-stat-progress">
+                <div
+                  className={`rui-stat-progress-bar ${occupancyPercent >= 100 ? "rui-stat-progress-bar--full" : occupancyPercent >= 80 ? "rui-stat-progress-bar--warning" : ""}`}
+                  style={{ width: `${Math.min(occupancyPercent, 100)}%` }}
+                />
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Certificado o Duración */}
+        <div className="rui-stat-item">
+          <div className="rui-stat-icon-wrapper">
+            {event.hasCertificate ? <Award className="rui-stat-icon" /> : <Clock className="rui-stat-icon" />}
+          </div>
+          <div className="rui-stat-content">
+            <span className="rui-stat-value">{event.certificateHours || durationHours}h</span>
+            <span className="rui-stat-label">{event.hasCertificate ? "Certificado" : "Duración"}</span>
+          </div>
+        </div>
       </div>
 
       {/* Contenido principal en 2 columnas */}
-      <div className="grid gap-8 lg:grid-cols-3">
-        {/* Columna izquierda - 2/3 */}
-        <div className="lg:col-span-2 space-y-8">
-          {/* Descripción */}
-          <section>
-            <h2 className="text-lg font-semibold mb-3">Sobre el evento</h2>
-            <div className="prose prose-sm prose-neutral max-w-none">
-              <p className="text-muted-foreground leading-relaxed whitespace-pre-line">
-                {event.description}
-              </p>
-              {event.summary && (
-                <blockquote className="border-l-2 border-primary pl-4 mt-4 italic text-muted-foreground">
-                  {event.summary}
-                </blockquote>
-              )}
-            </div>
+      <div className="rui-event-content">
+        {/* Columna izquierda */}
+        <div className="rui-event-main">
+          {/* Descripción - RUI: sin título redundante, con lead paragraph */}
+          <section className="rui-event-description">
+            {(() => {
+              // Dividir descripción en párrafos
+              const paragraphs = event.description.split(/\n\n+/).filter(p => p.trim());
+              const leadParagraph = paragraphs[0] || "";
+              const restParagraphs = paragraphs.slice(1).join("\n\n");
+
+              return (
+                <>
+                  {leadParagraph && (
+                    <p className="rui-description-lead">{leadParagraph}</p>
+                  )}
+                  {restParagraphs && (
+                    <div className="rui-description-body">{restParagraphs}</div>
+                  )}
+                </>
+              );
+            })()}
           </section>
 
-          {/* Ponentes */}
-          {event.speakers && event.speakers.length > 0 && (
-            <section>
-              <h2 className="text-lg font-semibold mb-4">Ponentes</h2>
-              <div className="grid gap-4 sm:grid-cols-2">
-                {event.speakers.map((speaker) => (
-                  <div key={speaker.id} className="flex items-start gap-3 rounded-lg border p-4">
-                    <Avatar className="h-12 w-12">
-                      <AvatarImage src={speaker.photoUrl} alt={`${speaker.firstName} ${speaker.lastName}`} />
-                      <AvatarFallback>
-                        {speaker.firstName[0]}{speaker.lastName[0]}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="flex-1 min-w-0">
-                      <p className="font-medium truncate">
-                        {speaker.firstName} {speaker.lastName}
-                      </p>
-                      <p className="text-sm text-muted-foreground truncate">
-                        {speaker.profession}
-                      </p>
-                      {speaker.companyName && (
-                        <p className="text-xs text-muted-foreground truncate">
-                          {speaker.companyName}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                ))}
+          {/* Entradas disponibles - RUI: "Emphasize by de-emphasizing" */}
+          <section className="rui-content-section">
+            <h2 className="rui-content-section-title">Entradas disponibles</h2>
+            {(!event.tickets || event.tickets.length === 0) ? (
+              /* Estado vacío cuando no hay entradas */
+              <div className="rui-empty-state">
+                <Ticket className="rui-empty-state-icon" />
+                <div className="rui-empty-state-title">Sin entradas configuradas</div>
+                <div className="rui-empty-state-description">
+                  Este evento aún no tiene entradas disponibles para inscripción.
+                </div>
               </div>
-            </section>
-          )}
+            ) : (
+              <div className="rui-tickets-list">
+                {event.tickets.filter(t => t.isActive).map((ticket) => {
+                  const price = typeof ticket.price === "string" ? parseFloat(ticket.price) : ticket.price;
+                  const isFree = price === 0;
+                  const sold = 0; // Simulado
+                  const remaining = ticket.stock - sold;
+                  const percentSold = ticket.stock > 0 ? (sold / ticket.stock) * 100 : 0;
+                  const isWarning = remaining > 0 && remaining <= 20;
+                  const isSoldOut = remaining === 0;
 
-          {/* Organizadores */}
-          {event.organizers && event.organizers.length > 0 && (
-            <section>
-              <h2 className="text-lg font-semibold mb-4">Organizadores</h2>
-              <div className="flex flex-wrap gap-3">
-                {event.organizers.map((org) => (
-                  <div key={org.id} className="flex items-center gap-2 rounded-lg border px-3 py-2">
-                    {org.logoUrl ? (
-                      <img src={org.logoUrl} alt={org.name} className="h-6 w-6 object-contain" />
-                    ) : (
-                      <Building2 className="h-5 w-5 text-muted-foreground" />
-                    )}
-                    <span className="text-sm font-medium">{org.name}</span>
-                    {org.website && (
-                      <a href={org.website} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground">
-                        <ExternalLink className="h-3.5 w-3.5" />
-                      </a>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </section>
-          )}
+                  return (
+                    <div
+                      key={ticket.id}
+                      className={`rui-ticket-card ${isSoldOut ? "rui-ticket-card--sold-out" : ""}`}
+                    >
+                      {/* Lado izquierdo: información */}
+                      <div className="rui-ticket-info">
+                        <div className="rui-ticket-header">
+                          <Ticket className="rui-ticket-icon" />
+                          <span className="rui-ticket-name">{ticket.name}</span>
+                        </div>
 
-          {/* Entradas disponibles */}
-          {event.tickets && event.tickets.length > 0 && (
-            <section>
-              <h2 className="text-lg font-semibold mb-4">Entradas</h2>
-              <div className="space-y-3">
-                {event.tickets.filter(t => t.isActive).map((ticket) => (
-                  <div key={ticket.id} className="flex items-center justify-between rounded-lg border p-4">
-                    <div>
-                      <p className="font-medium">{ticket.name}</p>
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <span>{ticket.stock} cupos</span>
+                        <div className="rui-ticket-meta">
+                          <span className="rui-ticket-slots">{ticket.stock} cupos</span>
+                          <span className="rui-ticket-separator" />
+                          <span className={`rui-ticket-status ${
+                            isSoldOut ? "rui-ticket-status--sold-out" :
+                            isWarning ? "rui-ticket-status--warning" :
+                            "rui-ticket-status--available"
+                          }`}>
+                            {isSoldOut ? "Agotado" :
+                             isWarning ? `¡${remaining} restantes!` :
+                             "Disponible"}
+                          </span>
+                        </div>
+
                         {ticket.requiresCipValidation && (
-                          <Badge variant="outline" className="text-xs">Requiere CIP</Badge>
+                          <div className="rui-ticket-badges">
+                            <span className="rui-ticket-badge rui-ticket-badge--cip">CIP requerido</span>
+                          </div>
+                        )}
+
+                        {/* Progress bar solo si hay ventas */}
+                        {percentSold > 0 && (
+                          <div className="rui-ticket-progress-wrapper">
+                            <div className="rui-ticket-progress">
+                              <div
+                                className={`rui-ticket-progress-bar ${
+                                  isSoldOut ? "rui-ticket-progress-bar--full" :
+                                  isWarning ? "rui-ticket-progress-bar--warning" : ""
+                                }`}
+                                style={{ width: `${percentSold}%` }}
+                              />
+                            </div>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Lado derecho: precio */}
+                      <div className="rui-ticket-pricing">
+                        {isFree ? (
+                          <span className="rui-ticket-price--free">Gratis</span>
+                        ) : (
+                          <span className="rui-ticket-price">
+                            <span className="rui-ticket-price-currency">S/</span>
+                            {price.toFixed(2)}
+                          </span>
                         )}
                       </div>
                     </div>
-                    <p className="text-lg font-bold">
-                      {parseFloat(String(ticket.price)) > 0 ? `S/ ${parseFloat(String(ticket.price)).toFixed(2)}` : "Gratis"}
-                    </p>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
-            </section>
-          )}
+            )}
+          </section>
         </div>
 
-        {/* Columna derecha - 1/3 */}
-        <div className="space-y-6">
-          {/* Fecha y hora */}
-          <div className="rounded-lg border bg-card p-4">
-            <h3 className="flex items-center gap-2 font-medium mb-4">
-              <Calendar className="h-4 w-4 text-muted-foreground" />
-              Fecha y hora
-            </h3>
-            <div className="space-y-3 text-sm">
-              <div>
-                <p className="text-muted-foreground text-xs uppercase tracking-wide mb-1">Inicio</p>
-                <p className="font-medium capitalize">{start.weekday}, {start.day} de {start.monthLong} {start.year}</p>
-                <p className="text-muted-foreground">{start.time}</p>
+        {/* Sidebar - RUI: "Labels are a last resort" */}
+        <div className="rui-event-sidebar">
+          {/* Fecha y hora - Diseño tipo Event Card */}
+          <div className="rui-sidebar-card">
+            {isSameDay ? (
+              /* Mismo día: bloque de fecha + info */
+              <div className="rui-datetime-card">
+                <div className="rui-date-block">
+                  <span className="rui-date-day">{start.day}</span>
+                  <span className="rui-date-month">{start.month}</span>
+                </div>
+                <div className="rui-datetime-info">
+                  <span className="rui-datetime-weekday">{start.weekday}</span>
+                  <span className="rui-datetime-time">{start.time} - {end.time}</span>
+                  <span className="rui-datetime-duration">
+                    <Clock className="rui-datetime-duration-icon" />
+                    {durationHours} horas
+                  </span>
+                  {event.timezone && (
+                    <span className="rui-datetime-timezone">
+                      <Globe className="rui-datetime-timezone-icon" />
+                      {event.timezone}
+                    </span>
+                  )}
+                </div>
               </div>
-              <Separator />
-              <div>
-                <p className="text-muted-foreground text-xs uppercase tracking-wide mb-1">Fin</p>
-                <p className="font-medium capitalize">
-                  {isSameDay ? "Mismo día" : `${end.weekday}, ${end.day} de ${end.monthLong} ${end.year}`}
-                </p>
-                <p className="text-muted-foreground">{end.time}</p>
-              </div>
-              {event.timezone && (
-                <>
-                  <Separator />
-                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                    <Globe className="h-3.5 w-3.5" />
-                    Zona horaria: {event.timezone}
+            ) : (
+              /* Multi-día: rango de fechas */
+              <div className="rui-datetime-card">
+                <div className="rui-daterange">
+                  <div className="rui-date-block">
+                    <span className="rui-date-day">{start.day}</span>
+                    <span className="rui-date-month">{start.month}</span>
                   </div>
-                </>
-              )}
-            </div>
+                  <span className="rui-daterange-separator">→</span>
+                  <div className="rui-date-block">
+                    <span className="rui-date-day">{end.day}</span>
+                    <span className="rui-date-month">{end.month}</span>
+                  </div>
+                </div>
+                <div className="rui-datetime-info">
+                  <span className="rui-datetime-time">{start.time} - {end.time}</span>
+                  {event.timezone && (
+                    <span className="rui-datetime-timezone">
+                      <Globe className="rui-datetime-timezone-icon" />
+                      {event.timezone}
+                    </span>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
 
-          {/* Ubicación */}
+          {/* Ubicación - Diseño más visual */}
           {event.location && (
-            <div className="rounded-lg border bg-card p-4">
-              <h3 className="flex items-center gap-2 font-medium mb-4">
-                <MapPin className="h-4 w-4 text-muted-foreground" />
-                Ubicación
-              </h3>
-              <div className="space-y-3 text-sm">
-                {event.location.name && (
-                  <p className="font-medium">{event.location.name}</p>
-                )}
-                <p className="text-muted-foreground">{event.location.address}</p>
-                <p className="text-muted-foreground">{event.location.city}</p>
-                {event.location.reference && (
-                  <p className="text-xs text-muted-foreground italic">
-                    Referencia: {event.location.reference}
-                  </p>
-                )}
-                <Button variant="outline" size="sm" className="w-full gap-2" asChild>
-                  <a
-                    href={event.location.mapLink || getGoogleMapsUrl(event.location.address, event.location.city)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <ExternalLink className="h-3.5 w-3.5" />
-                    Ver en Google Maps
-                  </a>
-                </Button>
+            <div className="rui-sidebar-card">
+              <div className="rui-location-card">
+                <div className="rui-location-header">
+                  <div className="rui-location-icon-wrapper">
+                    <MapPin className="rui-location-icon" />
+                  </div>
+                  <div className="rui-location-details">
+                    {event.location.name && (
+                      <div className="rui-location-name">{event.location.name}</div>
+                    )}
+                    <div className="rui-location-address">
+                      {event.location.address}, {event.location.city}
+                    </div>
+                    {event.location.reference && (
+                      <div className="rui-location-reference">{event.location.reference}</div>
+                    )}
+                  </div>
+                </div>
+                <a
+                  href={event.location.mapLink || getGoogleMapsUrl(event.location.address, event.location.city)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="rui-location-map-btn"
+                >
+                  <MapPin className="rui-location-map-btn-icon" />
+                  Abrir en Google Maps
+                </a>
               </div>
             </div>
           )}
 
-          {/* Acceso virtual */}
+          {/* Acceso virtual - Diseño limpio */}
           {event.virtualAccess && (
-            <div className="rounded-lg border bg-card p-4">
-              <h3 className="flex items-center gap-2 font-medium mb-4">
-                <Monitor className="h-4 w-4 text-muted-foreground" />
-                Acceso virtual
-              </h3>
-              <div className="space-y-3 text-sm">
-                <div className="flex items-center gap-2">
-                  <div className="flex h-8 w-8 items-center justify-center rounded bg-muted">
-                    <Monitor className="h-4 w-4" />
+            <div className="rui-sidebar-card">
+              <div className="rui-virtual-card">
+                <div className="rui-virtual-header">
+                  <div className="rui-virtual-icon-wrapper">
+                    <Monitor className="rui-virtual-icon" />
                   </div>
-                  <span className="font-medium">{event.virtualAccess.platform}</span>
-                </div>
-
-                <div className="space-y-1">
-                  <p className="text-xs text-muted-foreground">Enlace de acceso</p>
-                  <div className="flex items-center gap-1">
-                    <code className="flex-1 truncate rounded bg-muted px-2 py-1 text-xs">
-                      {event.virtualAccess.meetingUrl}
-                    </code>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-7 w-7 shrink-0"
-                      onClick={() => copyToClipboard(event.virtualAccess!.meetingUrl)}
-                    >
-                      {copied ? <Check className="h-3.5 w-3.5 text-success" /> : <Copy className="h-3.5 w-3.5" />}
-                    </Button>
+                  <div className="rui-virtual-details">
+                    <div className="rui-virtual-platform">{event.virtualAccess.platform}</div>
+                    {event.virtualAccess.meetingPassword && (
+                      <div className="rui-virtual-password">
+                        Contraseña: {event.virtualAccess.meetingPassword}
+                      </div>
+                    )}
                   </div>
                 </div>
 
-                {event.virtualAccess.meetingPassword && (
-                  <div className="space-y-1">
-                    <p className="text-xs text-muted-foreground">Contraseña</p>
-                    <code className="block rounded bg-muted px-2 py-1 text-xs">
-                      {event.virtualAccess.meetingPassword}
-                    </code>
-                  </div>
-                )}
+                <div className="rui-virtual-url">
+                  <code className="rui-virtual-url-text">
+                    {event.virtualAccess.meetingUrl}
+                  </code>
+                  <button
+                    onClick={() => copyToClipboard(event.virtualAccess!.meetingUrl)}
+                    className="rui-virtual-copy-btn"
+                  >
+                    {copied ? (
+                      <Check className="rui-virtual-copy-icon" style={{ color: "var(--rui-success-600)" }} />
+                    ) : (
+                      <Copy className="rui-virtual-copy-icon" />
+                    )}
+                  </button>
+                </div>
 
                 {event.virtualAccess.instructions && (
-                  <div className="space-y-1">
-                    <p className="text-xs text-muted-foreground">Instrucciones</p>
-                    <p className="text-xs text-muted-foreground bg-muted/50 rounded p-2">
-                      {event.virtualAccess.instructions}
-                    </p>
+                  <div className="rui-virtual-instructions">
+                    {event.virtualAccess.instructions}
                   </div>
                 )}
-
-                <Button className="w-full gap-2" size="sm" asChild>
-                  <a href={event.virtualAccess.meetingUrl} target="_blank" rel="noopener noreferrer">
-                    <ExternalLink className="h-3.5 w-3.5" />
-                    Unirse a la reunión
-                  </a>
-                </Button>
               </div>
             </div>
           )}
 
-          {/* Certificación */}
+          {/* Certificación - Diseño compacto */}
           {event.hasCertificate && (
-            <div className="rounded-lg border bg-card p-4">
-              <h3 className="flex items-center gap-2 font-medium mb-3">
-                <Award className="h-4 w-4 text-muted-foreground" />
-                Certificación
-              </h3>
-              <p className="text-sm text-muted-foreground">
-                Este evento otorga certificado de{" "}
-                <strong className="text-foreground">{event.certificateHours || durationHours} horas</strong> académicas.
-              </p>
-              {event.signers && event.signers.length > 0 && (
-                <div className="mt-3 pt-3 border-t">
-                  <p className="text-xs text-muted-foreground mb-2">Firmantes:</p>
-                  <div className="space-y-1">
-                    {event.signers.map((signer) => (
-                      <p key={signer.id} className="text-xs">
-                        <span className="font-medium">{signer.name}</span>
-                        <span className="text-muted-foreground"> - {signer.title}</span>
-                      </p>
-                    ))}
-                  </div>
+            <div className="rui-sidebar-card">
+              <div className="rui-cert-card">
+                <div className="rui-cert-icon-wrapper">
+                  <Award className="rui-cert-icon" />
                 </div>
-              )}
+                <div className="rui-cert-info">
+                  <div className="rui-cert-title">Certificado incluido</div>
+                  <div className="rui-cert-hours">{event.certificateHours || durationHours} horas académicas</div>
+                </div>
+              </div>
             </div>
           )}
-
-          {/* Información adicional */}
-          <div className="rounded-lg border bg-card p-4">
-            <h3 className="font-medium mb-3">Información adicional</h3>
-            <div className="space-y-2 text-sm">
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">ID del evento</span>
-                <code className="text-xs bg-muted px-1.5 py-0.5 rounded">{event.id.slice(0, 8)}...</code>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Slug</span>
-                <span className="font-mono text-xs">{event.slug}</span>
-              </div>
-              {event.createdBy && (
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Creado por</span>
-                  <span className="text-xs">
-                    {event.createdBy.profile
-                      ? `${event.createdBy.profile.firstName} ${event.createdBy.profile.lastName}`
-                      : event.createdBy.email
-                    }
-                  </span>
-                </div>
-              )}
-              {event.createdAt && (
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Fecha creación</span>
-                  <span className="text-xs">
-                    {new Date(event.createdAt).toLocaleDateString("es-PE")}
-                  </span>
-                </div>
-              )}
-              {event.updatedAt && (
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Última actualización</span>
-                  <span className="text-xs">
-                    {new Date(event.updatedAt).toLocaleDateString("es-PE")}
-                  </span>
-                </div>
-              )}
-            </div>
-          </div>
         </div>
       </div>
 
       {/* Diálogo de confirmación para cambio de estado */}
       <AlertDialog open={!!pendingStatus} onOpenChange={(open) => !open && setPendingStatus(null)}>
-        <AlertDialogContent>
+        <AlertDialogContent className="rui-dialog-content">
           <AlertDialogHeader>
-            <AlertDialogTitle>¿Cambiar estado del evento?</AlertDialogTitle>
-            <AlertDialogDescription>
+            <AlertDialogTitle className="rui-dialog-title">¿Cambiar estado del evento?</AlertDialogTitle>
+            <AlertDialogDescription className="rui-dialog-description">
               {pendingStatus && (
                 <>
                   El evento pasará de <strong>{STATUS_CONFIG[event.status].label}</strong> a{" "}
@@ -660,14 +602,16 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({
               )}
             </AlertDialogDescription>
           </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel disabled={changingStatus}>Cancelar</AlertDialogCancel>
-            <AlertDialogAction onClick={handleStatusChange} disabled={changingStatus}>
+          <AlertDialogFooter className="rui-dialog-footer">
+            <AlertDialogCancel disabled={changingStatus} className="rui-dialog-btn rui-dialog-btn--cancel">
+              Cancelar
+            </AlertDialogCancel>
+            <AlertDialogAction onClick={handleStatusChange} disabled={changingStatus} className="rui-dialog-btn rui-dialog-btn--confirm">
               {changingStatus ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                <span className="rui-loader-inline">
+                  <Loader2 className="rui-loader-icon" />
                   Cambiando...
-                </>
+                </span>
               ) : (
                 "Confirmar"
               )}

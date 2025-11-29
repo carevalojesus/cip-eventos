@@ -137,7 +137,7 @@ export const DashboardApp: React.FC<DashboardAppProps> = ({ initialPath }) => {
     // Gestión de evento específico (debe ir antes de lista de eventos)
     const eventId = getEventIdFromPath(activePath);
     if (eventId) {
-      return <EventManagementView eventId={eventId} onNavigate={handleNavigate} onBreadcrumbsChange={setBreadcrumbs} />;
+      return <EventManagementView eventId={eventId} onNavigate={handleNavigate} />;
     }
     // Lista de eventos
     if (startsWithRoute(["/eventos", "/en/events"])) {

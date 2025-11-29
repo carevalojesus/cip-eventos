@@ -2678,3 +2678,1324 @@
     font-size: 24px;
   }
 }
+
+/* =====================================================
+   EVENT DETAIL VIEW - Refactoring UI
+   Vista de detalle/gestión de evento
+   ===================================================== */
+
+@layer components {
+  /* ===== EVENT DETAIL CONTAINER ===== */
+  .rui-event-detail {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rui-space-6);
+  }
+
+  /* ===== HERO SECTION ===== */
+  .rui-event-hero {
+    position: relative;
+    border-radius: var(--rui-radius-lg);
+    overflow: hidden;
+  }
+
+  .rui-event-hero-image {
+    width: 100%;
+    height: 320px;
+    object-fit: cover;
+  }
+
+  .rui-event-hero-placeholder {
+    width: 100%;
+    height: 320px;
+    background: linear-gradient(135deg, var(--rui-primary-100) 0%, var(--rui-gray-100) 100%);
+  }
+
+  /* Overlay con gradiente mejorado - mejor contraste */
+  .rui-event-hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to top,
+      rgba(0, 0, 0, 0.85) 0%,
+      rgba(0, 0, 0, 0.5) 40%,
+      rgba(0, 0, 0, 0.2) 100%
+    );
+  }
+
+  .rui-event-hero-content {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: var(--rui-space-6);
+  }
+
+  /* Badges de categoría en hero */
+  .rui-event-hero-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--rui-space-2);
+    margin-bottom: var(--rui-space-4);
+  }
+
+  /* RUI: "Differentiate by more than just color" */
+  .rui-event-hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px;
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: white;
+    background-color: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(4px);
+    border-radius: var(--rui-radius-sm);
+  }
+
+  .rui-event-hero-badge-icon {
+    width: 12px;
+    height: 12px;
+    opacity: 0.9;
+  }
+
+  /* Modalidad: colores diferenciados */
+  .rui-event-hero-badge--presencial {
+    background-color: rgba(34, 197, 94, 0.3);
+  }
+
+  .rui-event-hero-badge--virtual {
+    background-color: rgba(59, 130, 246, 0.3);
+  }
+
+  .rui-event-hero-badge--hibrido {
+    background-color: rgba(168, 85, 247, 0.3);
+  }
+
+  /* Título del evento en hero */
+  /* RUI: sin text-shadow, el overlay provee suficiente contraste */
+  .rui-event-hero-title {
+    font-size: 32px;
+    font-weight: 700;
+    color: white;
+    margin-bottom: var(--rui-space-3);
+    line-height: 1.2;
+  }
+
+  /* Meta info en hero (fecha, hora, ubicación) */
+  .rui-event-hero-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--rui-space-4);
+    font-size: var(--rui-text-sm);
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: var(--rui-space-5);
+  }
+
+  .rui-event-hero-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .rui-event-hero-meta-icon {
+    width: 16px;
+    height: 16px;
+    /* RUI: iconos al mismo nivel visual que el texto */
+  }
+
+  /* Acciones del hero */
+  .rui-event-hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--rui-space-3);
+  }
+
+  /* RUI: Jerarquía de botones - "Primary actions should be obvious" */
+
+  /* Botón terciario/ghost - acción menos importante (Compartir) */
+  .rui-btn-hero-ghost {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    font-size: 13px;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.8);
+    background: transparent;
+    border: none;
+    border-radius: var(--rui-radius-md);
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .rui-btn-hero-ghost:hover {
+    color: white;
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .rui-btn-hero-ghost:focus,
+  .rui-btn-hero-ghost:focus-visible {
+    outline: none;
+    box-shadow: none;
+  }
+
+  .rui-btn-hero-ghost-icon {
+    width: 14px;
+    height: 14px;
+  }
+
+  /* Botón secundario/outline - acción importante pero no principal (Editar) */
+  .rui-btn-hero-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    color: white;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: var(--rui-radius-md);
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .rui-btn-hero-primary:hover {
+    background: rgba(255, 255, 255, 0.25);
+    border-color: rgba(255, 255, 255, 0.6);
+  }
+
+  .rui-btn-hero-primary:focus,
+  .rui-btn-hero-primary:focus-visible {
+    outline: none;
+    box-shadow: none;
+  }
+
+  .rui-btn-hero-primary-icon {
+    width: 14px;
+    height: 14px;
+  }
+
+  /* Badge de estado en hero */
+  .rui-event-status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    font-size: 13px;
+    font-weight: 500;
+    color: white;
+    border: none;
+    border-radius: var(--rui-radius-md);
+    cursor: pointer;
+    outline: none;
+    transition: opacity 0.15s ease, transform 0.15s ease;
+  }
+
+  .rui-event-status-badge:focus,
+  .rui-event-status-badge:focus-visible {
+    outline: none;
+    box-shadow: none;
+  }
+
+  .rui-event-status-badge:hover {
+    opacity: 0.9;
+  }
+
+  .rui-event-status-badge:active {
+    transform: scale(0.98);
+  }
+
+  .rui-event-status-badge--published {
+    background: var(--rui-success-600);
+  }
+
+  .rui-event-status-badge--draft {
+    background: var(--rui-gray-500);
+  }
+
+  .rui-event-status-badge--cancelled {
+    background: var(--rui-primary-600);
+  }
+
+  .rui-event-status-badge--completed {
+    background: var(--rui-info-600, #2563EB);
+  }
+
+  .rui-event-status-dot {
+    width: 8px;
+    height: 8px;
+    background: white;
+    border-radius: 50%;
+  }
+
+  /* ===== MÉTRICAS - Barra horizontal compacta ===== */
+  /* RUI: "Combine related information", "Don't rely on labels" */
+  .rui-stats-bar {
+    display: flex;
+    align-items: stretch;
+    background: white;
+    border-radius: var(--rui-radius-lg);
+    box-shadow: var(--rui-shadow-sm);
+    overflow: hidden;
+  }
+
+  .rui-stat-item {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: var(--rui-space-3);
+    padding: var(--rui-space-4) var(--rui-space-5);
+    border-right: 1px solid var(--rui-gray-100);
+  }
+
+  .rui-stat-item:last-child {
+    border-right: none;
+  }
+
+  /* Estado destacado (en curso) */
+  .rui-stat-item--live {
+    background: var(--rui-success-50);
+  }
+
+  .rui-stat-item--live .rui-stat-icon-wrapper {
+    background: var(--rui-success-100);
+  }
+
+  .rui-stat-item--live .rui-stat-icon {
+    color: var(--rui-success-600);
+  }
+
+  .rui-stat-item--live .rui-stat-value {
+    color: var(--rui-success-600);
+  }
+
+  /* Estado pasado (finalizado) */
+  .rui-stat-item--past {
+    opacity: 0.6;
+  }
+
+  /* Icono con wrapper */
+  .rui-stat-icon-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background: var(--rui-gray-50);
+    border-radius: var(--rui-radius-md);
+    flex-shrink: 0;
+  }
+
+  .rui-stat-icon {
+    width: 20px;
+    height: 20px;
+    color: var(--rui-gray-500);
+  }
+
+  /* Contenido de la stat */
+  .rui-stat-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  .rui-stat-value {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--rui-gray-900);
+    line-height: 1.2;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .rui-stat-label {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--rui-gray-500);
+  }
+
+  /* Inscripciones con fracción */
+  .rui-stat-fraction {
+    display: flex;
+    align-items: baseline;
+    gap: 2px;
+  }
+
+  .rui-stat-fraction-current {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--rui-gray-900);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .rui-stat-fraction-separator {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--rui-gray-400);
+    margin: 0 2px;
+  }
+
+  .rui-stat-fraction-total {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--rui-gray-400);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Progress bar inline */
+  .rui-stat-progress {
+    width: 100%;
+    height: 3px;
+    background: var(--rui-gray-200);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-top: var(--rui-space-2);
+  }
+
+  .rui-stat-progress-bar {
+    height: 100%;
+    background: var(--rui-primary-500);
+    border-radius: 2px;
+    transition: width 0.3s ease;
+  }
+
+  .rui-stat-progress-bar--warning {
+    background: #F59E0B;
+  }
+
+  .rui-stat-progress-bar--full {
+    background: var(--rui-success-500);
+  }
+
+  /* ===== EMPTY STATE ===== */
+  /* RUI: Estados vacíos claros y útiles */
+  .rui-empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--rui-space-8) var(--rui-space-6);
+    text-align: center;
+    background: var(--rui-gray-50);
+    border: 2px dashed var(--rui-gray-200);
+    border-radius: var(--rui-radius-lg);
+  }
+
+  .rui-empty-state-icon {
+    width: 40px;
+    height: 40px;
+    color: var(--rui-gray-300);
+    margin-bottom: var(--rui-space-4);
+  }
+
+  .rui-empty-state-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--rui-gray-700);
+    margin-bottom: var(--rui-space-1);
+  }
+
+  .rui-empty-state-description {
+    font-size: 13px;
+    color: var(--rui-gray-500);
+    max-width: 280px;
+  }
+
+  /* ===== TABS - SIN ICONOS ===== */
+  .rui-event-tabs {
+    display: flex;
+    gap: var(--rui-space-1);
+    border-bottom: 1px solid var(--rui-gray-200);
+  }
+
+  .rui-event-tab {
+    padding: var(--rui-space-3) var(--rui-space-4);
+    font-size: var(--rui-text-sm);
+    font-weight: 500;
+    color: var(--rui-gray-500);
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    margin-bottom: -1px;
+  }
+
+  .rui-event-tab:hover {
+    color: var(--rui-gray-700);
+  }
+
+  .rui-event-tab--active {
+    color: var(--rui-primary-600);
+    border-bottom-color: var(--rui-primary-600);
+  }
+
+  /* ===== LAYOUT DE CONTENIDO ===== */
+  .rui-event-content {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: var(--rui-space-6);
+  }
+
+  .rui-event-main {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rui-space-7);
+  }
+
+  .rui-event-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rui-space-5);
+  }
+
+  /* ===== SECCIÓN DE CONTENIDO ===== */
+  /* RUI: "Lead with the most important info" */
+  .rui-content-section {
+    /* Sin margin - controlado por gap del padre */
+  }
+
+  .rui-content-section-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--rui-gray-900);
+    margin-bottom: var(--rui-space-4);
+  }
+
+  .rui-content-section-text {
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--rui-gray-600);
+    white-space: pre-line;
+  }
+
+  /* Descripción del evento - Sin título redundante */
+  .rui-event-description {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rui-space-4);
+  }
+
+  /* Lead paragraph - primer párrafo destacado */
+  .rui-description-lead {
+    font-size: 17px;
+    font-weight: 400;
+    line-height: 1.7;
+    color: var(--rui-gray-800);
+  }
+
+  /* Resto del texto */
+  .rui-description-body {
+    font-size: 15px;
+    line-height: 1.8;
+    color: var(--rui-gray-600);
+    white-space: pre-line;
+  }
+
+  /* Formato para listas dentro de descripción */
+  .rui-description-body ul,
+  .rui-description-body ol {
+    margin: var(--rui-space-3) 0;
+    padding-left: var(--rui-space-5);
+  }
+
+  .rui-description-body li {
+    margin-bottom: var(--rui-space-2);
+  }
+
+  /* Destacados dentro de descripción */
+  .rui-description-highlight {
+    padding: var(--rui-space-4);
+    background: var(--rui-gray-50);
+    border-left: 3px solid var(--rui-primary-500);
+    border-radius: 0 var(--rui-radius-md) var(--rui-radius-md) 0;
+    font-size: 14px;
+    color: var(--rui-gray-700);
+    line-height: 1.6;
+  }
+
+  /* ===== CARDS DE ENTRADAS ===== */
+  /* RUI: "Emphasize by de-emphasizing", "Use fewer borders" */
+  .rui-tickets-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rui-space-3);
+  }
+
+  .rui-ticket-card {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: var(--rui-space-4);
+    align-items: center;
+    background: white;
+    border-radius: var(--rui-radius-lg);
+    padding: var(--rui-space-5) var(--rui-space-6);
+    box-shadow: var(--rui-shadow-sm);
+    transition: all 0.15s ease;
+  }
+
+  .rui-ticket-card:hover {
+    box-shadow: var(--rui-shadow-md);
+    transform: translateY(-1px);
+  }
+
+  /* Estado agotado */
+  .rui-ticket-card--sold-out {
+    opacity: 0.6;
+    background: var(--rui-gray-50);
+  }
+
+  .rui-ticket-card--sold-out:hover {
+    transform: none;
+    box-shadow: var(--rui-shadow-sm);
+  }
+
+  /* Lado izquierdo: info del ticket */
+  .rui-ticket-info {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rui-space-2);
+  }
+
+  .rui-ticket-header {
+    display: flex;
+    align-items: center;
+    gap: var(--rui-space-3);
+  }
+
+  .rui-ticket-icon {
+    width: 20px;
+    height: 20px;
+    color: var(--rui-gray-400);
+    flex-shrink: 0;
+  }
+
+  .rui-ticket-name {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--rui-gray-900);
+  }
+
+  /* Metadata en línea */
+  .rui-ticket-meta {
+    display: flex;
+    align-items: center;
+    gap: var(--rui-space-2);
+    padding-left: 32px; /* Alineado con el nombre (20px icon + 12px gap) */
+  }
+
+  .rui-ticket-slots {
+    font-size: 13px;
+    color: var(--rui-gray-500);
+  }
+
+  .rui-ticket-separator {
+    width: 3px;
+    height: 3px;
+    background: var(--rui-gray-300);
+    border-radius: 50%;
+  }
+
+  .rui-ticket-status {
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  .rui-ticket-status--available {
+    color: var(--rui-success-600);
+  }
+
+  .rui-ticket-status--warning {
+    color: #F59E0B;
+  }
+
+  .rui-ticket-status--sold-out {
+    color: var(--rui-gray-500);
+  }
+
+  /* Badges */
+  .rui-ticket-badges {
+    display: flex;
+    gap: var(--rui-space-2);
+    padding-left: 32px;
+  }
+
+  .rui-ticket-badge {
+    padding: 2px 8px;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--rui-gray-500);
+    background: var(--rui-gray-100);
+    border-radius: var(--rui-radius-sm);
+  }
+
+  .rui-ticket-badge--cip {
+    color: var(--rui-primary-700);
+    background: var(--rui-primary-50);
+  }
+
+  /* Lado derecho: precio */
+  .rui-ticket-pricing {
+    text-align: right;
+    min-width: 100px;
+  }
+
+  .rui-ticket-price {
+    font-size: 24px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    color: var(--rui-gray-900);
+    line-height: 1;
+  }
+
+  .rui-ticket-price-currency {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--rui-gray-500);
+    margin-right: 2px;
+  }
+
+  /* Badge gratis - diseño distintivo */
+  .rui-ticket-price--free {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--rui-success-700);
+    background: var(--rui-success-50);
+    border-radius: var(--rui-radius-md);
+  }
+
+  /* Progress bar - solo visible cuando hay ventas */
+  .rui-ticket-progress-wrapper {
+    padding-left: 32px;
+    margin-top: var(--rui-space-1);
+  }
+
+  .rui-ticket-progress {
+    height: 3px;
+    background: var(--rui-gray-100);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .rui-ticket-progress-bar {
+    height: 100%;
+    background: var(--rui-success-500);
+    border-radius: 2px;
+    transition: width 0.3s ease;
+  }
+
+  .rui-ticket-progress-bar--warning {
+    background: #F59E0B;
+  }
+
+  .rui-ticket-progress-bar--full {
+    background: var(--rui-gray-400);
+  }
+
+  /* ===== SIDEBAR CARDS ===== */
+  /* RUI: "Labels are a last resort", "Combine labels and values" */
+  .rui-sidebar-card {
+    background: white;
+    border-radius: var(--rui-radius-lg);
+    padding: var(--rui-space-5);
+    box-shadow: var(--rui-shadow-sm);
+  }
+
+  /* ===== FECHA Y HORA - Diseño tipo Event Card ===== */
+  .rui-datetime-card {
+    display: flex;
+    gap: var(--rui-space-4);
+    align-items: flex-start;
+  }
+
+  /* Bloque de fecha destacado */
+  .rui-date-block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-width: 64px;
+    padding: var(--rui-space-3) var(--rui-space-4);
+    background: var(--rui-gray-50);
+    border-radius: var(--rui-radius-md);
+    flex-shrink: 0;
+  }
+
+  .rui-date-day {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--rui-gray-900);
+    line-height: 1;
+  }
+
+  .rui-date-month {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--rui-primary-600);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-top: 2px;
+  }
+
+  /* Información de fecha/hora */
+  .rui-datetime-info {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rui-space-1);
+    flex: 1;
+  }
+
+  .rui-datetime-weekday {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--rui-gray-900);
+    text-transform: capitalize;
+  }
+
+  .rui-datetime-time {
+    font-size: 14px;
+    color: var(--rui-gray-600);
+  }
+
+  .rui-datetime-duration {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    color: var(--rui-gray-400);
+    margin-top: var(--rui-space-1);
+  }
+
+  .rui-datetime-duration-icon {
+    width: 12px;
+    height: 12px;
+  }
+
+  .rui-datetime-timezone {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    color: var(--rui-gray-400);
+    margin-top: var(--rui-space-2);
+  }
+
+  .rui-datetime-timezone-icon {
+    width: 12px;
+    height: 12px;
+  }
+
+  /* Rango de fechas (multi-día) */
+  .rui-daterange {
+    display: flex;
+    align-items: center;
+    gap: var(--rui-space-3);
+  }
+
+  .rui-daterange-separator {
+    font-size: 14px;
+    color: var(--rui-gray-300);
+  }
+
+  /* ===== UBICACIÓN - Diseño más visual ===== */
+  .rui-location-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rui-space-3);
+  }
+
+  .rui-location-header {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--rui-space-3);
+  }
+
+  .rui-location-icon-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background: var(--rui-primary-50);
+    border-radius: var(--rui-radius-md);
+    flex-shrink: 0;
+  }
+
+  .rui-location-icon {
+    width: 18px;
+    height: 18px;
+    color: var(--rui-primary-600);
+  }
+
+  .rui-location-details {
+    flex: 1;
+  }
+
+  .rui-location-name {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--rui-gray-900);
+    margin-bottom: 2px;
+  }
+
+  .rui-location-address {
+    font-size: 13px;
+    color: var(--rui-gray-500);
+    line-height: 1.5;
+  }
+
+  .rui-location-reference {
+    font-size: 12px;
+    color: var(--rui-gray-400);
+    margin-top: var(--rui-space-1);
+  }
+
+  /* Botón de Maps */
+  .rui-location-map-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    width: 100%;
+    padding: var(--rui-space-3);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--rui-gray-700);
+    background: var(--rui-gray-50);
+    border: none;
+    border-radius: var(--rui-radius-md);
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.15s ease;
+  }
+
+  .rui-location-map-btn:hover {
+    background: var(--rui-gray-100);
+    color: var(--rui-gray-900);
+  }
+
+  .rui-location-map-btn-icon {
+    width: 16px;
+    height: 16px;
+  }
+
+  /* ===== ACCESO VIRTUAL ===== */
+  .rui-virtual-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rui-space-3);
+  }
+
+  .rui-virtual-header {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--rui-space-3);
+  }
+
+  .rui-virtual-icon-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background: var(--rui-info-50, #EFF6FF);
+    border-radius: var(--rui-radius-md);
+    flex-shrink: 0;
+  }
+
+  .rui-virtual-icon {
+    width: 18px;
+    height: 18px;
+    color: var(--rui-info-600, #2563EB);
+  }
+
+  .rui-virtual-details {
+    flex: 1;
+  }
+
+  .rui-virtual-platform {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--rui-gray-900);
+    margin-bottom: 2px;
+  }
+
+  .rui-virtual-url {
+    display: flex;
+    align-items: center;
+    gap: var(--rui-space-2);
+    margin-top: var(--rui-space-2);
+  }
+
+  .rui-virtual-url-text {
+    flex: 1;
+    font-size: 12px;
+    font-family: ui-monospace, monospace;
+    padding: 6px 10px;
+    background: var(--rui-gray-50);
+    border-radius: var(--rui-radius-md);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--rui-gray-600);
+  }
+
+  .rui-virtual-copy-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: transparent;
+    border: none;
+    border-radius: var(--rui-radius-md);
+    cursor: pointer;
+    color: var(--rui-gray-400);
+    transition: all 0.15s ease;
+  }
+
+  .rui-virtual-copy-btn:hover {
+    background: var(--rui-gray-100);
+    color: var(--rui-gray-600);
+  }
+
+  .rui-virtual-copy-icon {
+    width: 16px;
+    height: 16px;
+  }
+
+  .rui-virtual-password {
+    display: flex;
+    align-items: center;
+    gap: var(--rui-space-2);
+    font-size: 13px;
+    color: var(--rui-gray-500);
+    margin-top: var(--rui-space-1);
+  }
+
+  .rui-virtual-instructions {
+    font-size: 13px;
+    color: var(--rui-gray-500);
+    line-height: 1.5;
+    padding: var(--rui-space-3);
+    background: var(--rui-gray-50);
+    border-radius: var(--rui-radius-md);
+  }
+
+  /* ===== CERTIFICACIÓN ===== */
+  .rui-cert-card {
+    display: flex;
+    align-items: center;
+    gap: var(--rui-space-3);
+  }
+
+  .rui-cert-icon-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background: var(--rui-success-50);
+    border-radius: var(--rui-radius-md);
+    flex-shrink: 0;
+  }
+
+  .rui-cert-icon {
+    width: 18px;
+    height: 18px;
+    color: var(--rui-success-600);
+  }
+
+  .rui-cert-info {
+    flex: 1;
+  }
+
+  .rui-cert-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--rui-gray-900);
+  }
+
+  .rui-cert-hours {
+    font-size: 13px;
+    color: var(--rui-gray-500);
+  }
+
+  /* Legacy classes (mantener compatibilidad) */
+  .rui-sidebar-card-title {
+    display: flex;
+    align-items: center;
+    gap: var(--rui-space-2);
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--rui-gray-900);
+    margin-bottom: var(--rui-space-4);
+  }
+
+  .rui-sidebar-card-icon {
+    width: 18px;
+    height: 18px;
+    color: var(--rui-gray-400);
+  }
+
+  .rui-sidebar-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--rui-gray-400);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: var(--rui-space-1);
+  }
+
+  .rui-sidebar-value {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--rui-gray-900);
+  }
+
+  .rui-sidebar-value-secondary {
+    font-size: 14px;
+    color: var(--rui-gray-500);
+  }
+
+  .rui-sidebar-group {
+    margin-bottom: var(--rui-space-4);
+  }
+
+  .rui-sidebar-group:last-child {
+    margin-bottom: 0;
+  }
+
+  .rui-sidebar-divider {
+    height: 1px;
+    background: var(--rui-gray-100);
+    margin: var(--rui-space-4) 0;
+  }
+
+  /* ===== DROPDOWN DE ESTADO RUI ===== */
+  /* Contenedor del dropdown */
+  .rui-dropdown-content {
+    background: white;
+    border: 1px solid var(--rui-gray-200);
+    border-radius: var(--rui-radius-md);
+    padding: var(--rui-space-1);
+    box-shadow: var(--rui-shadow-lg);
+    min-width: 160px;
+  }
+
+  /* Item del dropdown */
+  .rui-dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: var(--rui-space-2);
+    padding: var(--rui-space-2) var(--rui-space-3);
+    font-size: var(--rui-text-sm);
+    color: var(--rui-gray-700);
+    border-radius: var(--rui-radius-sm);
+    cursor: pointer;
+    transition: background 0.1s ease;
+  }
+
+  .rui-dropdown-item:hover {
+    background: var(--rui-gray-50);
+  }
+
+  .rui-dropdown-item[data-disabled] {
+    opacity: 0.5;
+    cursor: default;
+  }
+
+  .rui-dropdown-item[data-disabled]:hover {
+    background: transparent;
+  }
+
+  /* Dot de estado en dropdown */
+  .rui-status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .rui-status-dot--published {
+    background: var(--rui-success-600);
+  }
+
+  .rui-status-dot--draft {
+    background: var(--rui-gray-500);
+  }
+
+  .rui-status-dot--cancelled {
+    background: var(--rui-primary-600);
+  }
+
+  .rui-status-dot--completed {
+    background: var(--rui-info-600, #2563EB);
+  }
+
+  /* Check icon en dropdown */
+  .rui-dropdown-check {
+    width: 16px;
+    height: 16px;
+    margin-left: auto;
+    color: var(--rui-primary-600);
+  }
+
+  /* ===== ALERT DIALOG RUI ===== */
+  .rui-dialog-content {
+    background: white;
+    border-radius: var(--rui-radius-lg);
+    padding: var(--rui-space-6);
+    box-shadow: var(--rui-shadow-xl);
+    max-width: 420px;
+  }
+
+  .rui-dialog-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--rui-gray-900);
+    margin-bottom: var(--rui-space-2);
+  }
+
+  .rui-dialog-description {
+    font-size: var(--rui-text-sm);
+    color: var(--rui-gray-500);
+    line-height: 1.6;
+  }
+
+  .rui-dialog-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--rui-space-3);
+    margin-top: var(--rui-space-6);
+  }
+
+  .rui-dialog-btn {
+    padding: var(--rui-space-2) var(--rui-space-4);
+    font-size: var(--rui-text-sm);
+    font-weight: 500;
+    border-radius: var(--rui-radius-md);
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .rui-dialog-btn--cancel {
+    background: white;
+    color: var(--rui-gray-700);
+    border: 1px solid var(--rui-gray-300);
+  }
+
+  .rui-dialog-btn--cancel:hover {
+    background: var(--rui-gray-50);
+  }
+
+  .rui-dialog-btn--confirm {
+    background: var(--rui-primary-600);
+    color: white;
+    border: none;
+  }
+
+  .rui-dialog-btn--confirm:hover {
+    background: var(--rui-primary-700);
+  }
+
+  .rui-dialog-btn--confirm:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  /* Loader inline */
+  .rui-loader-inline {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--rui-space-2);
+  }
+
+  .rui-loader-icon {
+    width: 16px;
+    height: 16px;
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+}
+
+/* ===== EVENT DETAIL RESPONSIVE ===== */
+@media (max-width: 1024px) {
+  .rui-event-content {
+    grid-template-columns: 1fr;
+  }
+
+  .rui-event-sidebar {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--rui-space-4);
+  }
+}
+
+@media (max-width: 768px) {
+  /* Stats bar responsive */
+  .rui-stats-bar {
+    flex-direction: column;
+  }
+
+  .rui-stat-item {
+    border-right: none;
+    border-bottom: 1px solid var(--rui-gray-100);
+  }
+
+  .rui-stat-item:last-child {
+    border-bottom: none;
+  }
+
+  .rui-event-hero-title {
+    font-size: 24px;
+  }
+
+  .rui-event-hero-meta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--rui-space-2);
+  }
+
+  .rui-event-sidebar {
+    grid-template-columns: 1fr;
+  }
+
+  .rui-event-tabs {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .rui-event-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Fecha responsive */
+  .rui-datetime-card {
+    flex-direction: column;
+    gap: var(--rui-space-3);
+  }
+
+  .rui-daterange {
+    justify-content: center;
+  }
+}

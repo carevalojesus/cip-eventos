@@ -1,32 +1,20 @@
 import React from "react";
-import { useTranslation } from "react-i18next";
-import type { LucideIcon } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
+import { Construction } from "lucide-react";
 
 interface PlaceholderTabProps {
   title: string;
   description: string;
-  icon: LucideIcon;
 }
 
 export const PlaceholderTab: React.FC<PlaceholderTabProps> = ({
   title,
   description,
-  icon: Icon,
 }) => {
-  const { t } = useTranslation();
-
   return (
-    <Card>
-      <CardContent className="flex flex-col items-center justify-center py-16">
-        <div className="rounded-full bg-muted p-4 mb-4">
-          <Icon className="h-8 w-8 text-muted-foreground" />
-        </div>
-        <h3 className="text-lg font-semibold text-foreground mb-2">{title}</h3>
-        <p className="text-sm text-muted-foreground text-center max-w-md">
-          {description}
-        </p>
-      </CardContent>
-    </Card>
+    <div className="rui-sidebar-card" style={{ textAlign: "center", padding: "64px 24px" }}>
+      <Construction className="rui-metric-icon" style={{ width: 32, height: 32, marginBottom: 16 }} />
+      <h3 className="rui-content-section-title" style={{ marginBottom: 8 }}>{title}</h3>
+      <p className="rui-sidebar-value-secondary">{description}</p>
+    </div>
   );
 };
