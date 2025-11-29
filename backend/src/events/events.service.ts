@@ -23,8 +23,10 @@ import { CreateTicketDto } from './dto/create-ticket.dto';
 import { PaginationDto, paginate, PaginatedResult } from '../common/dto/pagination.dto';
 import { RedisService } from '../redis/redis.service';
 
-// Cache TTL: 1 hora para catálogos (raramente cambian)
-const CATALOG_CACHE_TTL = 60 * 60 * 1000;
+// Cache TTLs
+const CATALOG_CACHE_TTL = 60 * 60 * 1000; // 1 hora para catálogos
+const EVENT_CACHE_TTL = 5 * 60 * 1000; // 5 minutos para eventos individuales
+const EVENTS_LIST_CACHE_TTL = 2 * 60 * 1000; // 2 minutos para listados
 
 @Injectable()
 export class EventsService {
@@ -178,9 +180,27 @@ export class EventsService {
     ]);
   }
 
+  async invalidateEventCache(eventId: string) {
+    await Promise.all([
+      this.redisService.del(`event:${eventId}`),
+      // Invalidar listados (las primeras páginas más comunes)
+      this.redisService.del('events:list:1:10'),
+      this.redisService.del('events:list:1:20'),
+      this.redisService.del('events:list:2:10'),
+    ]);
+  }
+
   async findAll(paginationDto?: PaginationDto): Promise<PaginatedResult<Event>> {
     const page = paginationDto?.page || 1;
     const limit = paginationDto?.limit || 10;
+
+    // Intentar obtener del cache
+    const cacheKey = `events:list:${page}:${limit}`;
+    const cached = await this.redisService.get<PaginatedResult<Event>>(cacheKey);
+    if (cached) {
+      return cached;
+    }
+
     const skip = (page - 1) * limit;
 
     // No incluye virtualAccess por seguridad (lazy loading)
@@ -200,10 +220,19 @@ export class EventsService {
       order: { createdAt: 'DESC' },
     });
 
-    return paginate(events, total, page, limit);
+    const result = paginate(events, total, page, limit);
+    await this.redisService.set(cacheKey, result, EVENTS_LIST_CACHE_TTL);
+    return result;
   }
 
   async findOne(id: string) {
+    // Intentar obtener del cache
+    const cacheKey = `event:${id}`;
+    const cached = await this.redisService.get<Event>(cacheKey);
+    if (cached) {
+      return cached;
+    }
+
     // No incluye virtualAccess por seguridad (lazy loading)
     const event = await this.eventRepository.findOne({
       where: { id, isActive: true, status: EventStatus.PUBLISHED },
@@ -219,6 +248,7 @@ export class EventsService {
 
     if (!event) throw new NotFoundException(`Event with ID ${id} not found`);
 
+    await this.redisService.set(cacheKey, event, EVENT_CACHE_TTL);
     return event;
   }
 
@@ -373,7 +403,9 @@ export class EventsService {
       // No se aplica validación estricta para máxima flexibilidad
     }
 
-    return this.eventRepository.save(event);
+    const savedEvent = await this.eventRepository.save(event);
+    await this.invalidateEventCache(id);
+    return savedEvent;
   }
 
   async remove(id: string) {
@@ -385,7 +417,9 @@ export class EventsService {
 
     // Soft delete: marcar como inactivo
     event.isActive = false;
-    return this.eventRepository.save(event);
+    const savedEvent = await this.eventRepository.save(event);
+    await this.invalidateEventCache(id);
+    return savedEvent;
   }
 
   async addSpeaker(id: string, speakerId: string) {

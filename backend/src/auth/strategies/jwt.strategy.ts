@@ -10,6 +10,7 @@ export interface JwtPayload {
   role: string;
   isVerified: boolean;
   jti?: string;
+  sid?: string; // Session ID
   iat?: number;
 }
 
@@ -56,6 +57,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       role: payload.role,
       isVerified: payload.isVerified,
       jti: payload.jti,
+      sid: payload.sid,
       iat: payload.iat,
     };
   }

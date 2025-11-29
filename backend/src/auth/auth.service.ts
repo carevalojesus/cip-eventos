@@ -30,7 +30,7 @@ export class AuthService {
     private readonly redisService: RedisService,
   ) {}
 
-  async login(loginDto: LoginAuthDto) {
+  async login(loginDto: LoginAuthDto, metadata?: { userAgent?: string; ip?: string }) {
     const { email, password } = loginDto;
     const user = await this.usersService.findOneByEmail(email);
 
@@ -64,6 +64,16 @@ export class AuthService {
     );
     await this.updateRefreshToken(user.id, tokens.refresh_token);
 
+    // Registrar sesión activa
+    const refreshExpires = this.configService.get<string>('JWT_REFRESH_EXPIRES_IN') ?? '7d';
+    const expiresMs = this.parseExpiresIn(refreshExpires);
+    await this.redisService.registerActiveSession(user.id, tokens.sessionId, {
+      userAgent: metadata?.userAgent,
+      ip: metadata?.ip,
+      createdAt: Date.now(),
+      expiresAt: Date.now() + expiresMs,
+    });
+
     return {
       ...tokens,
       user: {
@@ -74,6 +84,22 @@ export class AuthService {
         avatar: user.profile?.avatar || null,
       },
     };
+  }
+
+  private parseExpiresIn(expiresIn: string): number {
+    const match = expiresIn.match(/^(\d+)([smhd])$/);
+    if (!match) return 7 * 24 * 60 * 60 * 1000; // Default 7 días
+
+    const value = parseInt(match[1], 10);
+    const unit = match[2];
+
+    switch (unit) {
+      case 's': return value * 1000;
+      case 'm': return value * 60 * 1000;
+      case 'h': return value * 60 * 60 * 1000;
+      case 'd': return value * 24 * 60 * 60 * 1000;
+      default: return 7 * 24 * 60 * 60 * 1000;
+    }
   }
 
   async register(registerDto: RegisterAuthDto) {
@@ -292,11 +318,12 @@ export class AuthService {
     role: string,
     isVerified: boolean,
   ) {
+    const sessionId = uuidv4(); // ID único de sesión
     const accessJti = uuidv4();
     const refreshJti = uuidv4();
 
-    const accessPayload = { sub: userId, email, role, isVerified, jti: accessJti };
-    const refreshPayload = { sub: userId, email, role, isVerified, jti: refreshJti };
+    const accessPayload = { sub: userId, email, role, isVerified, jti: accessJti, sid: sessionId };
+    const refreshPayload = { sub: userId, email, role, isVerified, jti: refreshJti, sid: sessionId };
 
     const accessSecret = this.configService.get<string>('JWT_SECRET');
     const accessExpires =
@@ -320,7 +347,36 @@ export class AuthService {
     return {
       access_token: at,
       refresh_token: rt,
+      sessionId,
     };
+  }
+
+  /**
+   * Obtener sesiones activas de un usuario
+   */
+  async getActiveSessions(userId: string, currentSessionId?: string) {
+    const sessions = await this.redisService.getActiveSessions(userId);
+    return sessions.map(session => ({
+      ...session,
+      isCurrent: session.sessionId === currentSessionId,
+    }));
+  }
+
+  /**
+   * Revocar una sesión específica
+   */
+  async revokeSession(userId: string, sessionId: string) {
+    await this.redisService.removeSession(userId, sessionId);
+  }
+
+  /**
+   * Revocar todas las demás sesiones
+   */
+  async revokeOtherSessions(userId: string, currentSessionId: string) {
+    const removedCount = await this.redisService.removeOtherSessions(userId, currentSessionId);
+    // Invalidar todas las sesiones para forzar re-login
+    await this.redisService.invalidateUserSessions(userId);
+    return { removedCount };
   }
 
   async forgotPassword(email: string) {

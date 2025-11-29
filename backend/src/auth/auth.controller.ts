@@ -7,6 +7,7 @@ import {
   Req,
   Res,
   Query,
+  Param,
   BadRequestException,
   Headers,
 } from '@nestjs/common';
@@ -31,9 +32,14 @@ interface RequestWithUserId {
   user: {
     userId: string;
     jti?: string;
+    sid?: string;
     iat?: number;
     exp?: number;
   };
+  headers: {
+    'user-agent'?: string;
+  };
+  ip?: string;
 }
 
 interface RequestWithRefreshToken {
@@ -82,8 +88,13 @@ export class AuthController {
   async login(
     @Body() loginAuthDto: LoginAuthDto,
     @Res({ passthrough: true }) res: Response,
+    @Req() req: RequestWithUserId,
   ) {
-    const result = await this.authService.login(loginAuthDto);
+    const metadata = {
+      userAgent: req.headers['user-agent'],
+      ip: req.ip,
+    };
+    const result = await this.authService.login(loginAuthDto, metadata);
     this.setRefreshTokenCookie(res, result.refresh_token);
     return {
       access_token: result.access_token,
@@ -215,5 +226,45 @@ export class AuthController {
   @Post('resend-verification')
   async resendVerification(@Body('email') email: string) {
     return this.authService.resendVerification(email);
+  }
+
+  // ==================== SESIONES ACTIVAS ====================
+
+  @UseGuards(JwtAuthGuard, EmailVerifiedGuard)
+  @Get('sessions')
+  @ApiBearerAuth('JWT-auth')
+  @ApiOperation({ summary: 'Get active sessions', description: 'Get all active sessions for the current user' })
+  @ApiResponse({ status: 200, description: 'List of active sessions' })
+  async getSessions(@Req() req: RequestWithUserId) {
+    return this.authService.getActiveSessions(req.user.userId, req.user.sid);
+  }
+
+  @UseGuards(JwtAuthGuard, EmailVerifiedGuard)
+  @Post('sessions/:sessionId/revoke')
+  @ApiBearerAuth('JWT-auth')
+  @ApiOperation({ summary: 'Revoke a session', description: 'Revoke a specific session by ID' })
+  @ApiResponse({ status: 200, description: 'Session revoked successfully' })
+  async revokeSession(
+    @Req() req: RequestWithUserId,
+    @Param('sessionId') sessionId: string,
+  ) {
+    await this.authService.revokeSession(req.user.userId, sessionId);
+    return { message: 'Session revoked successfully' };
+  }
+
+  @UseGuards(JwtAuthGuard, EmailVerifiedGuard)
+  @Post('sessions/revoke-others')
+  @ApiBearerAuth('JWT-auth')
+  @ApiOperation({ summary: 'Revoke other sessions', description: 'Revoke all sessions except the current one' })
+  @ApiResponse({ status: 200, description: 'Other sessions revoked successfully' })
+  async revokeOtherSessions(@Req() req: RequestWithUserId) {
+    if (!req.user.sid) {
+      return { message: 'No session ID found', removedCount: 0 };
+    }
+    const result = await this.authService.revokeOtherSessions(req.user.userId, req.user.sid);
+    return {
+      message: `${result.removedCount} sessions revoked successfully`,
+      removedCount: result.removedCount,
+    };
   }
 }
