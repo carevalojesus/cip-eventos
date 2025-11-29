@@ -113,6 +113,8 @@ export interface Event {
   // Certificado
   hasCertificate?: boolean;
   certificateHours?: number;
+  // Estadísticas
+  enrolledCount?: number;
   // Auditoría
   isActive?: boolean;
   createdBy?: EventCreatedBy;

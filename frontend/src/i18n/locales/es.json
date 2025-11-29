@@ -139,17 +139,45 @@
       "search_placeholder": "Buscar evento...",
       "filter_status": "Todos los estados",
       "select_range": "Seleccionar rango",
-      "clear_filters": "Limpiar filtros",
+      "clear_filters": "Limpiar",
       "export_excel": "Exportar",
+      "filters": {
+        "year": "Año",
+        "month": "Mes",
+        "date_range": "Rango de fechas",
+        "months": {
+          "january": "Enero",
+          "february": "Febrero",
+          "march": "Marzo",
+          "april": "Abril",
+          "may": "Mayo",
+          "june": "Junio",
+          "july": "Julio",
+          "august": "Agosto",
+          "september": "Septiembre",
+          "october": "Octubre",
+          "november": "Noviembre",
+          "december": "Diciembre"
+        }
+      },
+      "pagination": {
+        "showing": "Mostrando",
+        "to": "a",
+        "of": "de",
+        "events": "eventos"
+      },
       "table": {
         "event": "Evento",
         "date": "Fecha",
         "organizer": "Organizador",
         "location": "Ubicación",
         "modality": "Modalidad",
+        "enrolled": "Inscritos",
+        "enrolled_label": "inscritos",
         "status": "Estado",
         "actions": "Acciones",
-        "empty": "No se encontraron eventos"
+        "empty": "No se encontraron eventos",
+        "empty_title": "No hay eventos"
       },
       "status": {
         "PUBLISHED": "Publicado",
@@ -164,9 +192,12 @@
       },
       "actions": {
         "title": "Acciones",
-        "manage": "Gestionar (Completo)",
-        "edit": "Editar info básica",
-        "delete": "Eliminar"
+        "view_details": "Ver detalles",
+        "view_enrolled": "Ver inscritos",
+        "edit": "Editar evento",
+        "duplicate": "Duplicar",
+        "delete": "Eliminar",
+        "manage": "Gestionar (Completo)"
       }
     }
   },

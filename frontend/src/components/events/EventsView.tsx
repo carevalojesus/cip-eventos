@@ -1,8 +1,7 @@
 import React, { useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { Plus, AlertCircle, ChevronLeft, ChevronRight } from "lucide-react";
+import { Plus, AlertCircle } from "lucide-react";
 import type { DateRange } from "react-day-picker";
-import { Button } from "@/components/ui/button";
 import { EventFilters } from "./EventFilters";
 import { EventTable } from "./EventTable";
 import { EventTableSkeleton } from "./EventTableSkeleton";
@@ -111,21 +110,22 @@ export const EventsView: React.FC<EventsViewProps> = ({ onNavigate }) => {
   }, [searchTerm, statusFilter, yearFilter, monthFilter, dateFilter]);
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight text-foreground">
+    <div>
+      {/* Page Header - Refactoring UI */}
+      <header className="rui-page-header">
+        <div className="rui-page-header-content">
+          <h1 className="rui-page-title">
             {t("dashboard.events_view.title")}
           </h1>
-          <p className="text-sm text-muted-foreground">
+          <p className="rui-page-subtitle">
             {t("dashboard.events_view.subtitle")}
           </p>
         </div>
-        <Button className="gap-2" onClick={handleCreateEvent}>
-          <Plus className="h-4 w-4" />
+        <button className="rui-btn-primary" onClick={handleCreateEvent}>
+          <Plus className="rui-btn-primary-icon" />
           {t("dashboard.new_event")}
-        </Button>
-      </div>
+        </button>
+      </header>
 
       <EventFilters
         searchTerm={searchTerm}
@@ -143,100 +143,33 @@ export const EventsView: React.FC<EventsViewProps> = ({ onNavigate }) => {
       />
 
       {error && (
-        <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-4">
-          <div className="flex items-center gap-3">
-            <AlertCircle className="h-5 w-5 text-destructive" />
-            <div className="flex-1">
-              <p className="text-sm font-medium text-destructive">{error}</p>
-            </div>
-            <Button variant="outline" size="sm" onClick={() => refetch()}>
-              {t("common.retry", "Reintentar")}
-            </Button>
+        <div className="rui-alert rui-alert--error">
+          <AlertCircle className="rui-alert-icon" />
+          <div className="rui-alert-content">
+            <p className="rui-alert-message">{error}</p>
           </div>
+          <button className="rui-btn-alert" onClick={() => refetch()}>
+            {t("common.retry", "Reintentar")}
+          </button>
         </div>
       )}
 
-      {loading ? <EventTableSkeleton /> : <EventTable events={paginatedEvents} onNavigate={onNavigate} />}
-
-      {/* Paginación - solo mostrar si hay más de 10 eventos */}
-      {!loading && filteredEvents.length > ITEMS_PER_PAGE && (
-        <div className="flex items-center justify-between border border-border bg-card px-4 py-3 rounded-lg">
-          <div className="flex flex-1 justify-between sm:hidden">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-              disabled={currentPage === 1}
-            >
-              Anterior
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-              disabled={currentPage === totalPages}
-            >
-              Siguiente
-            </Button>
-          </div>
-          <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
-            <p className="text-sm text-muted-foreground">
-              Mostrando{" "}
-              <span className="font-medium text-foreground">
-                {(currentPage - 1) * ITEMS_PER_PAGE + 1}
-              </span>{" "}
-              a{" "}
-              <span className="font-medium text-foreground">
-                {Math.min(currentPage * ITEMS_PER_PAGE, filteredEvents.length)}
-              </span>{" "}
-              de <span className="font-medium text-foreground">{filteredEvents.length}</span> eventos
-            </p>
-            <div className="flex items-center gap-1">
-              <Button
-                variant="outline"
-                size="icon"
-                className="h-8 w-8"
-                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                disabled={currentPage === 1}
-              >
-                <ChevronLeft className="h-4 w-4" />
-              </Button>
-              {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
-                // Mostrar máximo 5 páginas centradas en la actual
-                let page: number;
-                if (totalPages <= 5) {
-                  page = i + 1;
-                } else if (currentPage <= 3) {
-                  page = i + 1;
-                } else if (currentPage >= totalPages - 2) {
-                  page = totalPages - 4 + i;
-                } else {
-                  page = currentPage - 2 + i;
-                }
-                return (
-                  <Button
-                    key={page}
-                    variant={currentPage === page ? "default" : "ghost"}
-                    size="icon"
-                    className="h-8 w-8"
-                    onClick={() => setCurrentPage(page)}
-                  >
-                    {page}
-                  </Button>
-                );
-              })}
-              <Button
-                variant="outline"
-                size="icon"
-                className="h-8 w-8"
-                onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-                disabled={currentPage === totalPages}
-              >
-                <ChevronRight className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
-        </div>
+      {loading ? (
+        <EventTableSkeleton />
+      ) : (
+        <EventTable
+          events={paginatedEvents}
+          onNavigate={onNavigate}
+          pagination={
+            filteredEvents.length > ITEMS_PER_PAGE ? {
+              currentPage,
+              totalPages,
+              totalItems: filteredEvents.length,
+              itemsPerPage: ITEMS_PER_PAGE,
+              onPageChange: setCurrentPage,
+            } : undefined
+          }
+        />
       )}
     </div>
   );
