@@ -17,18 +17,17 @@ import { I18nService, I18nContext } from 'nestjs-i18n';
 import { v4 as uuidv4 } from 'uuid';
 import { MailService } from 'src/mail/mail.service';
 import { User } from 'src/users/entities/user.entity';
+import { RedisService } from 'src/redis/redis.service';
 
 @Injectable()
 export class AuthService {
-  private readonly resendThrottle = new Map<string, number>();
-  private readonly forgotThrottle = new Map<string, number>();
-
   constructor(
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
     private readonly mailService: MailService,
     private readonly i18n: I18nService,
+    private readonly redisService: RedisService,
   ) {}
 
   async login(loginDto: LoginAuthDto) {
@@ -161,7 +160,7 @@ export class AuthService {
   }
 
   async resendVerification(email: string) {
-    this.ensureNotThrottled(email, this.resendThrottle, 60_000);
+    await this.ensureNotThrottled(`resend:${email}`, 60_000);
     const user = await this.usersService.findOneByEmail(email);
 
     // Por seguridad, no decimos si no existe o si ya está verificado explícitamente
@@ -192,7 +191,7 @@ export class AuthService {
     );
     await this.mailService.sendUserWelcome(user.email, user.email, newToken);
 
-    this.registerThrottleHit(email, this.resendThrottle);
+    await this.registerThrottleHit(`resend:${email}`, 60_000);
     return {
       message: this.i18n.t('auth.new_verification_email_sent', {
         lang: I18nContext.current()?.lang,
@@ -200,8 +199,25 @@ export class AuthService {
     };
   }
 
-  async logout(userId: string) {
+  async logout(userId: string, jti?: string, exp?: number) {
+    // Invalidar refresh token en la base de datos
     await this.updateRefreshToken(userId, null);
+
+    // Si tenemos el JTI del access token, añadirlo a la blacklist
+    if (jti && exp) {
+      const now = Math.floor(Date.now() / 1000);
+      const ttlSeconds = exp - now;
+      if (ttlSeconds > 0) {
+        await this.redisService.blacklistToken(jti, ttlSeconds * 1000);
+      }
+    }
+  }
+
+  async logoutAllSessions(userId: string) {
+    // Invalidar refresh token en la base de datos
+    await this.updateRefreshToken(userId, null);
+    // Invalidar todas las sesiones del usuario en Redis
+    await this.redisService.invalidateUserSessions(userId);
   }
 
   async refreshTokens(userId: string, refreshToken: string) {
@@ -276,7 +292,12 @@ export class AuthService {
     role: string,
     isVerified: boolean,
   ) {
-    const payload = { sub: userId, email, role, isVerified };
+    const accessJti = uuidv4();
+    const refreshJti = uuidv4();
+
+    const accessPayload = { sub: userId, email, role, isVerified, jti: accessJti };
+    const refreshPayload = { sub: userId, email, role, isVerified, jti: refreshJti };
+
     const accessSecret = this.configService.get<string>('JWT_SECRET');
     const accessExpires =
       this.configService.get<string>('JWT_EXPIRES_IN') ?? '15m';
@@ -286,11 +307,11 @@ export class AuthService {
       this.configService.get<string>('JWT_REFRESH_EXPIRES_IN') ?? '7d';
 
     const [at, rt] = await Promise.all([
-      this.jwtService.signAsync(payload, {
+      this.jwtService.signAsync(accessPayload, {
         secret: accessSecret,
         expiresIn: accessExpires as JwtSignOptions['expiresIn'],
       }),
-      this.jwtService.signAsync(payload, {
+      this.jwtService.signAsync(refreshPayload, {
         secret: refreshSecret,
         expiresIn: refreshExpires as JwtSignOptions['expiresIn'],
       }),
@@ -303,7 +324,7 @@ export class AuthService {
   }
 
   async forgotPassword(email: string) {
-    this.ensureNotThrottled(email, this.forgotThrottle, 60_000);
+    await this.ensureNotThrottled(`forgot:${email}`, 60_000);
     const user = await this.usersService.findOneByEmail(email);
 
     if (!user) {
@@ -322,7 +343,7 @@ export class AuthService {
 
     await this.mailService.sendPasswordReset(user.email, user.email, token);
 
-    this.registerThrottleHit(email, this.forgotThrottle);
+    await this.registerThrottleHit(`forgot:${email}`, 60_000);
     return {
       message: this.i18n.t('auth.if_email_exists_link_sent', {
         lang: I18nContext.current()?.lang,
@@ -364,25 +385,24 @@ export class AuthService {
     return crypto.createHash('sha256').update(token).digest('hex');
   }
 
-  private ensureNotThrottled(
-    email: string,
-    store: Map<string, number>,
-    ttlMs: number,
-  ) {
-    const lastHit = store.get(email);
-    if (!lastHit) return;
+  private async ensureNotThrottled(key: string, ttlMs: number): Promise<void> {
+    const throttleKey = `throttle:${key}`;
+    const lastHit = await this.redisService.get<number>(throttleKey);
 
-    const now = Date.now();
-    if (now - lastHit < ttlMs) {
-      throw new ForbiddenException(
-        this.i18n.t('auth.too_many_requests', {
-          lang: I18nContext.current()?.lang,
-        }),
-      );
+    if (lastHit) {
+      const now = Date.now();
+      if (now - lastHit < ttlMs) {
+        throw new ForbiddenException(
+          this.i18n.t('auth.too_many_requests', {
+            lang: I18nContext.current()?.lang,
+          }),
+        );
+      }
     }
   }
 
-  private registerThrottleHit(email: string, store: Map<string, number>) {
-    store.set(email, Date.now());
+  private async registerThrottleHit(key: string, ttlMs: number): Promise<void> {
+    const throttleKey = `throttle:${key}`;
+    await this.redisService.set(throttleKey, Date.now(), ttlMs);
   }
 }

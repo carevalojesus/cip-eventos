@@ -8,6 +8,14 @@ import { UsersService } from '../users/users.service';
 import { Event, EventStatus } from '../events/entities/event.entity';
 import { Registration, RegistrationStatus } from '../registrations/entities/registration.entity';
 import { Payment, PaymentStatus } from '../payments/entities/payment.entity';
+import { RedisService } from '../redis/redis.service';
+
+// Cache TTLs en milisegundos
+const CACHE_TTL = {
+  STATS: 5 * 60 * 1000, // 5 minutos
+  UPCOMING_EVENTS: 2 * 60 * 1000, // 2 minutos
+  RECENT_ACTIVITY: 1 * 60 * 1000, // 1 minuto
+};
 
 @Injectable()
 export class DashboardService {
@@ -16,6 +24,7 @@ export class DashboardService {
     private readonly registrationsService: RegistrationsService,
     private readonly paymentsService: PaymentsService,
     private readonly usersService: UsersService,
+    private readonly redisService: RedisService,
     @InjectRepository(Event)
     private readonly eventRepository: Repository<Event>,
     @InjectRepository(Registration)
@@ -25,6 +34,19 @@ export class DashboardService {
   ) {}
 
   async getStats() {
+    // Intentar obtener del cache
+    const cacheKey = 'dashboard:stats';
+    const cached = await this.redisService.get<ReturnType<typeof this.calculateStats>>(cacheKey);
+    if (cached) {
+      return cached;
+    }
+
+    const stats = await this.calculateStats();
+    await this.redisService.set(cacheKey, stats, CACHE_TTL.STATS);
+    return stats;
+  }
+
+  private async calculateStats() {
     const now = new Date();
     const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
     const lastDayOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
@@ -121,6 +143,19 @@ export class DashboardService {
   }
 
   async getUpcomingEvents(limit: number) {
+    // Intentar obtener del cache
+    const cacheKey = `dashboard:upcoming:${limit}`;
+    const cached = await this.redisService.get<Awaited<ReturnType<typeof this.fetchUpcomingEvents>>>(cacheKey);
+    if (cached) {
+      return cached;
+    }
+
+    const events = await this.fetchUpcomingEvents(limit);
+    await this.redisService.set(cacheKey, events, CACHE_TTL.UPCOMING_EVENTS);
+    return events;
+  }
+
+  private async fetchUpcomingEvents(limit: number) {
     const now = new Date();
 
     const upcomingEvents = await this.eventRepository.find({
@@ -159,6 +194,19 @@ export class DashboardService {
   }
 
   async getRecentActivity(limit: number) {
+    // Intentar obtener del cache
+    const cacheKey = `dashboard:activity:${limit}`;
+    const cached = await this.redisService.get<Awaited<ReturnType<typeof this.fetchRecentActivity>>>(cacheKey);
+    if (cached) {
+      return cached;
+    }
+
+    const activities = await this.fetchRecentActivity(limit);
+    await this.redisService.set(cacheKey, activities, CACHE_TTL.RECENT_ACTIVITY);
+    return activities;
+  }
+
+  private async fetchRecentActivity(limit: number) {
     // Fetch recent registrations as activity
     const recentRegistrations = await this.registrationRepository.find({
       order: {
@@ -190,5 +238,19 @@ export class DashboardService {
     });
 
     return activities;
+  }
+
+  /**
+   * Invalidar cache del dashboard
+   * Llamar cuando hay cambios en eventos, registros o pagos
+   */
+  async invalidateCache() {
+    await Promise.all([
+      this.redisService.del('dashboard:stats'),
+      this.redisService.del('dashboard:upcoming:5'),
+      this.redisService.del('dashboard:upcoming:10'),
+      this.redisService.del('dashboard:activity:5'),
+      this.redisService.del('dashboard:activity:10'),
+    ]);
   }
 }
