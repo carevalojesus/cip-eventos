@@ -17,7 +17,9 @@ import { SpeakersModule } from './speakers/speakers.module';
 import { OrganizersModule } from './organizers/organizers.module';
 import { AttendeesModule } from './attendees/attendees.module';
 import { RegistrationsModule } from './registrations/registrations.module';
-import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
+import { ThrottlerModule, ThrottlerGuard, seconds } from '@nestjs/throttler';
+import { ThrottlerStorageRedisService } from '@nest-lab/throttler-storage-redis';
+import Redis from 'ioredis';
 import { PaymentsModule } from './payments/payments.module';
 import { SignersModule } from './signers/signers.module';
 import { CertificatesModule } from './certificates/certificates.module';
@@ -31,6 +33,7 @@ import * as path from 'path';
 import { DashboardModule } from './dashboard/dashboard.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { RedisModule } from './redis/redis.module';
+import { QueueModule } from './queue/queue.module';
 
 @Module({
   imports: [
@@ -58,24 +61,45 @@ import { RedisModule } from './redis/redis.module';
         };
       },
     }),
-    // Rate Limiting con múltiples configuraciones
-    ThrottlerModule.forRoot([
-      {
-        name: 'short',
-        ttl: 1000, // 1 segundo
-        limit: 3, // 3 peticiones por segundo (protección burst)
+    // Rate Limiting distribuido con Redis
+    ThrottlerModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => {
+        const redisHost = configService.get<string>('REDIS_HOST', 'localhost');
+        const redisPort = configService.get<number>('REDIS_PORT', 6379);
+        const redisPassword = configService.get<string>('REDIS_PASSWORD', '');
+        const redisDb = configService.get<number>('REDIS_DB', 0);
+
+        const redisInstance = new Redis({
+          host: redisHost,
+          port: redisPort,
+          password: redisPassword || undefined,
+          db: redisDb,
+        });
+
+        return {
+          throttlers: [
+            {
+              name: 'short',
+              ttl: seconds(1), // 1 segundo
+              limit: 3, // 3 peticiones por segundo (protección burst)
+            },
+            {
+              name: 'medium',
+              ttl: seconds(10), // 10 segundos
+              limit: 20, // 20 peticiones cada 10 segundos
+            },
+            {
+              name: 'long',
+              ttl: seconds(60), // 60 segundos
+              limit: 100, // 100 peticiones por minuto
+            },
+          ],
+          storage: new ThrottlerStorageRedisService(redisInstance),
+        };
       },
-      {
-        name: 'medium',
-        ttl: 10000, // 10 segundos
-        limit: 20, // 20 peticiones cada 10 segundos
-      },
-      {
-        name: 'long',
-        ttl: 60000, // 60 segundos
-        limit: 100, // 100 peticiones por minuto (usuarios autenticados)
-      },
-    ]),
+    }),
     RolesModule,
     UsersModule,
     AuthModule,
@@ -98,6 +122,7 @@ import { RedisModule } from './redis/redis.module';
     DashboardModule,
     NotificationsModule,
     RedisModule,
+    QueueModule,
 
     I18nModule.forRoot({
       fallbackLanguage: 'es',
