@@ -17,11 +17,15 @@ import {
 import { AUTH_ASSETS } from "@/constants/auth";
 import { useAuthStore } from "@/store/auth.store";
 import { getCurrentLocale, routes } from "@/lib/routes";
+import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface SidebarProps {
   className?: string;
   currentPath?: string;
   onNavigate?: (href: string) => void;
+  isOpen?: boolean;
+  onClose?: () => void;
 }
 
 interface NavItem {
@@ -152,6 +156,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
   className = "",
   currentPath,
   onNavigate,
+  isOpen = false,
+  onClose,
 }) => {
   const { t } = useTranslation();
   const { logout } = useAuthStore();
@@ -167,7 +173,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   };
 
   const getHref = (item: NavItem) => {
-    return locale === 'en' ? item.hrefEn : item.hrefEs;
+    return locale === "en" ? item.hrefEn : item.hrefEs;
   };
 
   const isActive = (item: NavItem) => {
@@ -187,74 +193,76 @@ export const Sidebar: React.FC<SidebarProps> = ({
       event.preventDefault();
       onNavigate(href);
     }
+    // Cerrar sidebar en móvil después de navegar
+    if (onClose) {
+      onClose();
+    }
   };
 
   return (
-    <aside
-      className={`flex h-screen w-64 flex-col border-r bg-card ${className}`}
-    >
-      {/* Logo Header */}
-      <div className="flex h-16 items-center gap-3 px-6 border-b">
-        <img
-          src={AUTH_ASSETS.logo}
-          alt="Logo CIP"
-          className="h-10 w-auto"
-        />
-        <span className="text-lg font-bold tracking-tight text-primary">
-          CIP Connect
-        </span>
-      </div>
+    <>
+      {/* Overlay para móvil */}
+      <div
+        className={`rui-sidebar-overlay ${isOpen ? "visible" : ""}`}
+        onClick={onClose}
+        aria-hidden="true"
+      />
 
-      {/* Navigation */}
-      <div className="flex-1 overflow-y-auto py-4">
-        <nav className="space-y-6 px-3">
-          {navConfig.map((group, idx) => (
-            <div key={idx}>
-              <h3 className="mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                {t(group.titleKey, group.title)}
-              </h3>
-              <div className="space-y-1">
-                {group.items.map((item, itemIdx) => {
-                  const href = getHref(item);
-                  const active = isActive(item);
-                  return (
-                    <a
-                      key={itemIdx}
-                      href={href}
-                      onClick={(event) => handleNavigate(event, href)}
-                      className={`group flex items-center rounded-lg px-3 py-2.5 text-sm font-medium transition-all ${
-                        active
-                          ? "bg-primary/10 text-primary"
-                          : "text-foreground hover:bg-muted hover:text-foreground"
-                      }`}
-                    >
-                      <item.icon
-                        className={`mr-3 h-5 w-5 transition-colors ${
-                          active
-                            ? "text-primary"
-                            : "text-muted-foreground group-hover:text-foreground"
-                        }`}
-                      />
-                      {t(item.labelKey, item.label)}
-                    </a>
-                  );
-                })}
+      {/* Sidebar */}
+      <aside className={`rui-sidebar ${isOpen ? "open" : ""} ${className}`}>
+        {/* Header con Logo */}
+        <div className="rui-sidebar-header">
+          <img
+            src={AUTH_ASSETS.logo}
+            alt="Logo CIP"
+            className="rui-sidebar-logo"
+          />
+          <span className="rui-sidebar-brand">CIP Connect</span>
+        </div>
+
+        {/* Navegación */}
+        <ScrollArea className="rui-sidebar-nav">
+          <nav>
+            {navConfig.map((group, idx) => (
+              <div key={idx} className="rui-sidebar-section">
+                <span className="rui-sidebar-section-label">
+                  {t(group.titleKey, group.title)}
+                </span>
+                <div>
+                  {group.items.map((item, itemIdx) => {
+                    const href = getHref(item);
+                    const active = isActive(item);
+                    const Icon = item.icon;
+                    return (
+                      <a
+                        key={itemIdx}
+                        href={href}
+                        onClick={(event) => handleNavigate(event, href)}
+                        className={`rui-sidebar-nav-item ${active ? "active" : ""}`}
+                      >
+                        <Icon className="rui-sidebar-nav-item-icon" />
+                        {t(item.labelKey, item.label)}
+                      </a>
+                    );
+                  })}
+                </div>
               </div>
-            </div>
-          ))}
-        </nav>
-      </div>
+            ))}
+          </nav>
+        </ScrollArea>
 
-      {/* Logout Button */}
-      <div className="border-t p-3">
-        <button
-          onClick={handleLogout}
-          className="group flex w-full items-center rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground transition-all hover:bg-destructive/10 hover:text-destructive"
-        >
-          <LogOut className="mr-3 h-5 w-5 transition-colors group-hover:text-destructive" />
-          {t("dashboard.nav.logout", "Cerrar sesión")}
-        </button>
-      </div>
-    </aside>
+        {/* Footer - Cerrar Sesión */}
+        <div className="rui-sidebar-footer">
+          <Button
+            variant="ghost"
+            onClick={handleLogout}
+            className="rui-sidebar-logout"
+          >
+            <LogOut className="rui-sidebar-nav-item-icon" />
+            {t("dashboard.nav.logout", "Cerrar sesión")}
+          </Button>
+        </div>
+      </aside>
+    </>
   );
 };

@@ -195,3 +195,840 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* =====================================================
+   REFACTORING UI - Sistema de Diseño
+   Principios aplicados del libro "Refactoring UI"
+   ===================================================== */
+
+:root {
+  /* Sistema de colores - "You need more colors than you think" */
+
+  /* Grises - 10 tonos desde casi negro hasta casi blanco */
+  --rui-gray-900: #111827;
+  --rui-gray-800: #1F2937;
+  --rui-gray-700: #374151;
+  --rui-gray-600: #4B5563;
+  --rui-gray-500: #6B7280;
+  --rui-gray-400: #9CA3AF;
+  --rui-gray-300: #D1D5DB;
+  --rui-gray-200: #E5E7EB;
+  --rui-gray-100: #F3F4F6;
+  --rui-gray-50: #F9FAFB;
+
+  /* Color primario (rojo CIP) - 10 tonos */
+  --rui-primary-900: #7F1D1D;
+  --rui-primary-800: #991B1B;
+  --rui-primary-700: #B91C1C;
+  --rui-primary-600: #DC2626;
+  --rui-primary-500: #EF4444;
+  --rui-primary-400: #F87171;
+  --rui-primary-300: #FCA5A5;
+  --rui-primary-200: #FECACA;
+  --rui-primary-100: #FEE2E2;
+  --rui-primary-50: #FEF2F2;
+
+  /* Sistema de espaciado - "Establish a spacing and sizing system" */
+  --rui-space-1: 4px;
+  --rui-space-2: 8px;
+  --rui-space-3: 12px;
+  --rui-space-4: 16px;
+  --rui-space-5: 20px;
+  --rui-space-6: 24px;
+  --rui-space-7: 32px;
+  --rui-space-8: 48px;
+  --rui-space-9: 64px;
+  --rui-space-10: 96px;
+
+  /* Sistema tipográfico - "Establish a type scale" */
+  --rui-text-xs: 12px;
+  --rui-text-sm: 14px;
+  --rui-text-base: 15px;
+  --rui-text-lg: 18px;
+  --rui-text-xl: 20px;
+  --rui-text-2xl: 24px;
+  --rui-text-3xl: 32px;
+  --rui-text-4xl: 40px;
+
+  /* Line heights - "Line-height is proportional" */
+  --rui-leading-tight: 1.25;
+  --rui-leading-normal: 1.5;
+  --rui-leading-relaxed: 1.65;
+
+  /* Sombras - "Use shadows to convey elevation" */
+  --rui-shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+  --rui-shadow-md: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+  --rui-shadow-lg: 0 4px 6px rgba(0,0,0,0.12), 0 2px 4px rgba(0,0,0,0.24);
+  --rui-shadow-inset: inset 0 2px 4px rgba(0,0,0,0.06);
+
+  /* Border radius - "Choose a personality" */
+  --rui-radius-sm: 4px;
+  --rui-radius-md: 8px;
+  --rui-radius-lg: 12px;
+  --rui-radius-full: 9999px;
+
+  /* Focus ring - Para accesibilidad */
+  --rui-ring-primary: 0 0 0 3px rgba(220,38,38,0.15);
+}
+
+/* =====================================================
+   COMPONENTES REFACTORING UI
+   ===================================================== */
+
+@layer components {
+
+  /* ===== LOGIN PAGE LAYOUT ===== */
+  .rui-login-page {
+    display: flex;
+    min-height: 100vh;
+  }
+
+  /* ===== BRANDING PANEL (60%) ===== */
+  .rui-branding-panel {
+    position: relative;
+    width: 60%;
+    min-height: 100vh;
+    overflow: hidden;
+  }
+
+  .rui-branding-background {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+  }
+
+  /* "Text needs consistent contrast" - overlay con gradiente */
+  .rui-branding-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to bottom,
+      rgba(0,0,0,0.6) 0%,
+      rgba(0,0,0,0.4) 50%,
+      rgba(0,0,0,0.7) 100%
+    );
+  }
+
+  .rui-branding-content {
+    position: relative;
+    z-index: 10;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: var(--rui-space-8);
+  }
+
+  /* ===== BRAND HEADER ===== */
+  .rui-brand-header {
+    display: flex;
+    align-items: center;
+    gap: var(--rui-space-4);
+  }
+
+  .rui-brand-logo {
+    width: 56px;
+    height: 56px;
+    flex-shrink: 0;
+  }
+
+  .rui-brand-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .rui-brand-title {
+    font-size: var(--rui-text-sm);
+    font-weight: 600;
+    color: white;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  }
+
+  .rui-brand-subtitle {
+    font-size: var(--rui-text-xs);
+    font-weight: 400;
+    color: rgba(255,255,255,0.8);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+
+  /* ===== QUOTE SECTION ===== */
+  /* "Add color with accent borders" */
+  .rui-quote-container {
+    padding-bottom: var(--rui-space-8);
+  }
+
+  .rui-quote-wrapper {
+    display: flex;
+    gap: var(--rui-space-5);
+  }
+
+  .rui-quote-accent {
+    width: 4px;
+    background-color: var(--rui-primary-600);
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+
+  /* "Avoid ambiguous spacing" */
+  .rui-quote-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rui-space-4);
+  }
+
+  .rui-quote-text {
+    font-size: var(--rui-text-xl);
+    font-weight: 400;
+    font-style: italic;
+    color: white;
+    line-height: var(--rui-leading-relaxed);
+    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    max-width: 500px;
+  }
+
+  .rui-quote-attribution {
+    font-size: var(--rui-text-sm);
+    font-weight: 600;
+    font-style: normal;
+    color: rgba(255,255,255,0.9);
+    letter-spacing: 0.02em;
+  }
+
+  /* ===== CAROUSEL DOTS ===== */
+  /* "Don't rely on color alone" */
+  .rui-carousel-dots {
+    display: flex;
+    gap: var(--rui-space-2);
+    margin-top: var(--rui-space-6);
+  }
+
+  .rui-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: var(--rui-radius-full);
+    background-color: rgba(255,255,255,0.4);
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .rui-dot:hover {
+    background-color: rgba(255,255,255,0.6);
+  }
+
+  .rui-dot.active {
+    width: 32px;
+    border-radius: var(--rui-radius-sm);
+    background-color: var(--rui-primary-600);
+  }
+
+  /* ===== LOGIN PANEL (40%) ===== */
+  .rui-login-panel {
+    position: relative;
+    width: 40%;
+    min-height: 100vh;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--rui-space-8);
+  }
+
+  .rui-login-container {
+    width: 100%;
+    max-width: 380px;
+  }
+
+  /* ===== FORM HEADER ===== */
+  .rui-form-header {
+    margin-bottom: var(--rui-space-7);
+  }
+
+  /* "Size isn't everything" - usar peso y color también */
+  .rui-title-primary {
+    font-size: var(--rui-text-3xl);
+    font-weight: 700;
+    color: var(--rui-gray-900);
+    line-height: var(--rui-leading-tight);
+    margin: 0;
+  }
+
+  .rui-subtitle-secondary {
+    font-size: var(--rui-text-base);
+    font-weight: 400;
+    color: var(--rui-gray-500);
+    line-height: var(--rui-leading-normal);
+    margin-top: var(--rui-space-2);
+  }
+
+  /* ===== FORM GROUP ===== */
+  .rui-form-group {
+    margin-bottom: var(--rui-space-5);
+  }
+
+  /* ===== LABELS ===== */
+  /* "Labels are secondary" - de-enfatizadas */
+  .rui-label {
+    display: block;
+    font-size: var(--rui-text-xs);
+    font-weight: 600;
+    color: var(--rui-gray-500);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: var(--rui-space-2);
+  }
+
+  /* ===== INPUTS ===== */
+  /* "Emulate a light source" - inputs con efecto inset */
+  .rui-input {
+    width: 100%;
+    padding: var(--rui-space-3) var(--rui-space-4);
+    font-size: var(--rui-text-base);
+    color: var(--rui-gray-900);
+    background-color: #F9FAFB !important;
+    border: 1px solid var(--rui-gray-300);
+    border-radius: var(--rui-radius-md);
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.06);
+    transition: all 0.2s ease;
+    outline: none !important;
+    /* Reset Tailwind focus styles */
+    --tw-ring-shadow: none !important;
+  }
+
+  .rui-input::placeholder {
+    color: var(--rui-gray-400);
+  }
+
+  .rui-input:hover {
+    border-color: var(--rui-gray-400);
+  }
+
+  .rui-input:focus,
+  .rui-input:focus-visible {
+    outline: none !important;
+    border-color: var(--rui-primary-600) !important;
+    background-color: #FFFFFF !important;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.06), 0 0 0 3px rgba(220,38,38,0.15) !important;
+    --tw-ring-shadow: none !important;
+    --tw-ring-color: transparent !important;
+  }
+
+  /* Autofill styles - Sobrescribir el fondo celeste del navegador */
+  .rui-input:-webkit-autofill,
+  .rui-input:-webkit-autofill:hover,
+  .rui-input:-webkit-autofill:focus,
+  .rui-input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 30px var(--rui-gray-50) inset, inset 0 2px 4px rgba(0,0,0,0.06) !important;
+    -webkit-text-fill-color: var(--rui-gray-900) !important;
+    transition: background-color 5000s ease-in-out 0s !important;
+  }
+
+  .rui-input:-webkit-autofill:focus {
+    -webkit-box-shadow: 0 0 0 30px #FFFFFF inset, inset 0 2px 4px rgba(0,0,0,0.06), 0 0 0 3px rgba(220,38,38,0.15) !important;
+  }
+
+  /* ===== BOTÓN PRIMARIO ===== */
+  /* "Semantics are secondary" + "Shadows can have two parts" */
+  .rui-btn-primary {
+    width: 100%;
+    padding: var(--rui-space-3) var(--rui-space-6);
+    font-size: var(--rui-text-base);
+    font-weight: 600;
+    color: white;
+    background-color: var(--rui-primary-600);
+    border: none;
+    border-radius: var(--rui-radius-md);
+    cursor: pointer;
+    box-shadow:
+      var(--rui-shadow-md),
+      inset 0 1px 0 rgba(255,255,255,0.1);
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--rui-space-2);
+  }
+
+  .rui-btn-primary:hover {
+    background-color: var(--rui-primary-700);
+    box-shadow:
+      var(--rui-shadow-lg),
+      inset 0 1px 0 rgba(255,255,255,0.1);
+    transform: translateY(-1px);
+  }
+
+  .rui-btn-primary:active {
+    background-color: var(--rui-primary-800);
+    transform: translateY(0);
+    box-shadow:
+      var(--rui-shadow-sm),
+      inset 0 1px 0 rgba(255,255,255,0.1);
+  }
+
+  .rui-btn-primary:focus {
+    outline: none;
+    box-shadow:
+      var(--rui-shadow-md),
+      inset 0 1px 0 rgba(255,255,255,0.1),
+      var(--rui-ring-primary);
+  }
+
+  .rui-btn-primary:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  /* ===== FORM ACTIONS ===== */
+  .rui-form-actions {
+    margin-top: var(--rui-space-7);
+  }
+
+  /* ===== LINKS SECUNDARIOS ===== */
+  /* "Not every link needs a color" */
+  .rui-link-secondary {
+    display: block;
+    text-align: center;
+    margin-top: var(--rui-space-6);
+    font-size: var(--rui-text-sm);
+    font-weight: 500;
+    color: var(--rui-gray-500);
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  .rui-link-secondary:hover {
+    color: var(--rui-primary-600);
+  }
+
+  /* ===== FOOTER ===== */
+  /* Jerarquía: primario > secundario > terciario */
+  /* Posición fija al fondo del panel */
+  .rui-form-footer {
+    position: absolute;
+    bottom: var(--rui-space-6);
+    left: 0;
+    right: 0;
+    text-align: center;
+  }
+
+  .rui-text-tertiary {
+    font-size: var(--rui-text-xs);
+    color: var(--rui-gray-400);
+    line-height: var(--rui-leading-relaxed);
+  }
+
+  .rui-text-tertiary a {
+    color: var(--rui-primary-600);
+    font-weight: 500;
+    text-decoration: none;
+  }
+
+  .rui-text-tertiary a:hover {
+    text-decoration: underline;
+  }
+
+  /* ===== ERROR MESSAGE (Global) ===== */
+  .rui-error-message {
+    display: flex;
+    align-items: center;
+    gap: var(--rui-space-2);
+    padding: var(--rui-space-3) var(--rui-space-4);
+    margin-bottom: var(--rui-space-5);
+    background-color: var(--rui-primary-50);
+    border: 1px solid var(--rui-primary-200);
+    border-radius: var(--rui-radius-md);
+    font-size: var(--rui-text-sm);
+    color: var(--rui-primary-700);
+  }
+
+  .rui-error-message svg {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+  }
+
+  /* ===== FIELD ERROR MESSAGE ===== */
+  /* "Use color sparingly" - errores sutiles pero claros */
+  .rui-field-error {
+    font-size: var(--rui-text-xs);
+    font-weight: 500;
+    color: var(--rui-primary-600);
+    margin-top: var(--rui-space-1);
+  }
+
+  /* Input con error - borde rojo sutil */
+  .rui-input-error {
+    border-color: var(--rui-primary-400) !important;
+  }
+
+  .rui-input-error:focus,
+  .rui-input-error:focus-visible {
+    border-color: var(--rui-primary-600) !important;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.06), 0 0 0 3px rgba(220,38,38,0.15) !important;
+  }
+
+  /* =====================================================
+     SIDEBAR REFACTORING UI
+     Principios: "Separate visual hierarchy from document hierarchy"
+     "Emphasize by de-emphasizing" - items inactivos sutiles
+     ===================================================== */
+
+  .rui-sidebar {
+    width: 260px;
+    min-height: 100vh;
+    background-color: #FFFFFF;
+    border-right: 1px solid var(--rui-gray-200);
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 50;
+  }
+
+  .rui-sidebar-header {
+    display: flex;
+    align-items: center;
+    gap: var(--rui-space-3);
+    padding: var(--rui-space-5) var(--rui-space-6);
+    border-bottom: 1px solid var(--rui-gray-200);
+  }
+
+  .rui-sidebar-logo {
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+  }
+
+  .rui-sidebar-brand {
+    font-size: var(--rui-text-lg);
+    font-weight: 700;
+    color: var(--rui-primary-600);
+  }
+
+  .rui-sidebar-nav {
+    flex: 1;
+    padding: var(--rui-space-4) var(--rui-space-3);
+    overflow-y: auto;
+  }
+
+  .rui-sidebar-footer {
+    padding: var(--rui-space-4) var(--rui-space-3);
+    border-top: 1px solid var(--rui-gray-200);
+  }
+
+  /* ===== SIDEBAR SECTION LABELS ===== */
+  /* "Separate visual hierarchy from document hierarchy" */
+  .rui-sidebar-section {
+    margin-bottom: var(--rui-space-2);
+  }
+
+  .rui-sidebar-section:not(:first-child) {
+    margin-top: var(--rui-space-6);
+  }
+
+  .rui-sidebar-section-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--rui-gray-400);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0 var(--rui-space-3);
+    margin-bottom: var(--rui-space-2);
+  }
+
+  /* ===== SIDEBAR NAV ITEMS ===== */
+  /* "Emphasize by de-emphasizing" - inactivos sutiles, activo destaca */
+  .rui-sidebar-nav-item {
+    display: flex;
+    align-items: center;
+    gap: var(--rui-space-3);
+    padding: 10px var(--rui-space-3);
+    border-radius: var(--rui-radius-md);
+    font-size: var(--rui-text-sm);
+    font-weight: 500;
+    color: var(--rui-gray-600);
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    position: relative;
+  }
+
+  .rui-sidebar-nav-item:hover {
+    background-color: var(--rui-gray-100);
+    color: var(--rui-gray-900);
+  }
+
+  /* Estado Activo - con borde de acento */
+  /* "Add color with accent borders" */
+  .rui-sidebar-nav-item.active {
+    background-color: var(--rui-primary-50);
+    color: var(--rui-primary-600);
+    font-weight: 600;
+  }
+
+  /* Borde de acento izquierdo para item activo */
+  .rui-sidebar-nav-item.active::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3px;
+    height: 20px;
+    background-color: var(--rui-primary-600);
+    border-radius: 0 2px 2px 0;
+  }
+
+  /* Iconos - de-enfatizados respecto al texto */
+  /* "Balance weight and contrast" */
+  .rui-sidebar-nav-item-icon {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    opacity: 0.7;
+  }
+
+  .rui-sidebar-nav-item:hover .rui-sidebar-nav-item-icon,
+  .rui-sidebar-nav-item.active .rui-sidebar-nav-item-icon {
+    opacity: 1;
+  }
+
+  /* ===== SIDEBAR LOGOUT BUTTON ===== */
+  .rui-sidebar-logout {
+    display: flex;
+    align-items: center;
+    gap: var(--rui-space-3);
+    padding: 10px var(--rui-space-3);
+    border-radius: var(--rui-radius-md);
+    font-size: var(--rui-text-sm);
+    font-weight: 500;
+    color: var(--rui-gray-500);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    text-align: left;
+    transition: all 0.15s ease;
+  }
+
+  .rui-sidebar-logout:hover {
+    background-color: var(--rui-primary-50);
+    color: var(--rui-primary-600);
+  }
+
+  /* =====================================================
+     NAVBAR REFACTORING UI
+     Principios: "Not all elements are equal"
+     Jerarquía clara entre nombre de usuario y rol
+     ===================================================== */
+
+  .rui-navbar {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    height: 64px;
+    padding: 0 var(--rui-space-7);
+    background-color: #FFFFFF;
+    border-bottom: 1px solid var(--rui-gray-200);
+    position: sticky;
+    top: 0;
+    z-index: 40;
+  }
+
+  .rui-navbar.has-menu-toggle {
+    justify-content: space-between;
+  }
+
+  .rui-navbar-content {
+    display: flex;
+    align-items: center;
+    gap: var(--rui-space-6);
+  }
+
+  /* ===== NOTIFICATION BUTTON ===== */
+  .rui-notification-button {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: var(--rui-radius-md);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--rui-gray-500);
+    transition: all 0.2s ease;
+  }
+
+  .rui-notification-button:hover {
+    background-color: var(--rui-gray-100);
+    color: var(--rui-gray-900);
+  }
+
+  /* Badge de notificación */
+  .rui-notification-badge {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 8px;
+    height: 8px;
+    background-color: var(--rui-primary-600);
+    border-radius: 50%;
+    border: 2px solid #FFFFFF;
+  }
+
+  /* ===== USER PROFILE ===== */
+  /* "Not all elements are equal" - jerarquía nombre > rol */
+  .rui-user-profile {
+    display: flex;
+    align-items: center;
+    gap: var(--rui-space-3);
+    padding: var(--rui-space-2) var(--rui-space-3);
+    border-radius: var(--rui-radius-md);
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+
+  .rui-user-profile:hover {
+    background-color: var(--rui-gray-100);
+  }
+
+  .rui-user-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
+  }
+
+  /* Nombre: prominente */
+  .rui-user-name {
+    font-size: var(--rui-text-sm);
+    font-weight: 600;
+    color: var(--rui-gray-900);
+    line-height: 1.2;
+  }
+
+  /* Rol: secundario, de-enfatizado */
+  .rui-user-role {
+    font-size: var(--rui-text-xs);
+    font-weight: 400;
+    color: var(--rui-gray-500);
+    line-height: 1.2;
+  }
+
+  .rui-user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: var(--rui-primary-600);
+    color: #FFFFFF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--rui-text-sm);
+    font-weight: 600;
+    flex-shrink: 0;
+    overflow: hidden;
+  }
+
+  .rui-user-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* ===== MENU TOGGLE (Mobile) ===== */
+  .rui-menu-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: var(--rui-radius-md);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--rui-gray-500);
+  }
+
+  .rui-menu-toggle:hover {
+    background-color: var(--rui-gray-100);
+    color: var(--rui-gray-900);
+  }
+
+  /* ===== DASHBOARD LAYOUT ===== */
+  .rui-dashboard-layout {
+    display: flex;
+    min-height: 100vh;
+    background-color: var(--rui-gray-50);
+  }
+
+  .rui-main-wrapper {
+    flex: 1;
+    margin-left: 260px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .rui-main-content {
+    flex: 1;
+    padding: var(--rui-space-7);
+  }
+
+  /* ===== SIDEBAR OVERLAY (Mobile) ===== */
+  .rui-sidebar-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0,0,0,0.5);
+    z-index: 45;
+  }
+
+  .rui-sidebar-overlay.visible {
+    display: block;
+  }
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 1024px) {
+  .rui-branding-panel {
+    display: none;
+  }
+
+  .rui-login-panel {
+    width: 100%;
+  }
+
+  /* Sidebar responsive */
+  .rui-sidebar {
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+  }
+
+  .rui-sidebar.open {
+    transform: translateX(0);
+  }
+
+  .rui-main-wrapper {
+    margin-left: 0;
+  }
+
+  /* Menu toggle visible en móvil */
+  .rui-menu-toggle {
+    display: flex;
+  }
+}
+
+@media (min-width: 1025px) {
+  .rui-menu-toggle {
+    display: none;
+  }
+}

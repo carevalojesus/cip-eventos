@@ -7,18 +7,13 @@ interface Quote {
 }
 
 interface QuoteCarouselProps {
-  interval?: number; // milliseconds between slides
+  interval?: number;
 }
 
 /**
  * QuoteCarousel Component
- * Auto-rotating carousel of institutional quotes with fade animation
- *
- * Features:
- * - Automatic rotation every 5 seconds (configurable)
- * - Smooth fade in/out transitions
- * - i18n support
- * - Responsive design
+ * Carrusel de citas con borde de acento
+ * Refactored following Refactoring UI principles
  */
 export const QuoteCarousel: React.FC<QuoteCarouselProps> = ({
   interval = 8000
@@ -27,23 +22,17 @@ export const QuoteCarousel: React.FC<QuoteCarouselProps> = ({
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isVisible, setIsVisible] = useState(true);
 
-  // Get quotes from translations
   const quotes: Quote[] = t("login.brand.quotes", { returnObjects: true }) as Quote[];
 
   useEffect(() => {
-    // No iniciar el intervalo si no hay citas disponibles
     if (!quotes || quotes.length === 0) return;
 
     const timer = setInterval(() => {
-      // Fade out
       setIsVisible(false);
-
-      // Wait for fade out, then change quote
       setTimeout(() => {
         setCurrentIndex((prevIndex) => (prevIndex + 1) % quotes.length);
-        // Fade in
         setIsVisible(true);
-      }, 700); // 700ms for fade out
+      }, 700);
     }, interval);
 
     return () => clearInterval(timer);
@@ -55,42 +44,44 @@ export const QuoteCarousel: React.FC<QuoteCarouselProps> = ({
 
   const currentQuote = quotes[currentIndex];
 
-  return (
-    <div className="relative z-20 mt-auto">
-      <blockquote className="space-y-2 border-l-4 border-primary pl-4">
-        <p
-          className={`text-lg italic text-gray-200 transition-opacity duration-700 ${
-            isVisible ? "opacity-100" : "opacity-0"
-          }`}
-        >
-          &ldquo;{currentQuote.text}&rdquo;
-        </p>
-        <footer
-          className={`text-sm font-bold text-white transition-opacity duration-700 ${
-            isVisible ? "opacity-100" : "opacity-0"
-          }`}
-        >
-          {currentQuote.author}
-        </footer>
-      </blockquote>
+  const handleDotClick = (index: number) => {
+    setIsVisible(false);
+    setTimeout(() => {
+      setCurrentIndex(index);
+      setIsVisible(true);
+    }, 700);
+  };
 
-      {/* Indicators */}
-      <div className="flex gap-2 mt-4">
+  return (
+    <div className="rui-quote-container">
+      {/* Quote con borde de acento - "Add color with accent borders" */}
+      <div className="rui-quote-wrapper">
+        <div className="rui-quote-accent" />
+        <div className="rui-quote-content">
+          <p
+            className={`rui-quote-text transition-opacity duration-700 ${
+              isVisible ? "opacity-100" : "opacity-0"
+            }`}
+          >
+            &ldquo;{currentQuote.text}&rdquo;
+          </p>
+          <span
+            className={`rui-quote-attribution transition-opacity duration-700 ${
+              isVisible ? "opacity-100" : "opacity-0"
+            }`}
+          >
+            {currentQuote.author}
+          </span>
+        </div>
+      </div>
+
+      {/* Carousel Dots - "Don't rely on color alone" */}
+      <div className="rui-carousel-dots">
         {quotes.map((_, index) => (
           <button
             key={index}
-            onClick={() => {
-              setIsVisible(false);
-              setTimeout(() => {
-                setCurrentIndex(index);
-                setIsVisible(true);
-              }, 700);
-            }}
-            className={`h-1.5 rounded-full transition-all duration-300 ${
-              index === currentIndex
-                ? "w-8 bg-primary"
-                : "w-1.5 bg-white/30 hover:bg-white/50"
-            }`}
+            onClick={() => handleDotClick(index)}
+            className={`rui-dot ${index === currentIndex ? "active" : ""}`}
             aria-label={`Go to quote ${index + 1}`}
           />
         ))}
