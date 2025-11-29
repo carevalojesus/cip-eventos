@@ -191,6 +191,12 @@
     @apply border-border;
   }
 
+  html, body {
+    @apply m-0 p-0;
+    height: 100%;
+    overflow: hidden;
+  }
+
   body {
     @apply bg-background text-foreground;
   }
@@ -484,20 +490,19 @@
   }
 
   /* ===== INPUTS ===== */
-  /* "Emulate a light source" - inputs con efecto inset */
+  /* "Emulate a light source" - inputs con efecto inset
+     Refactoring UI: Fondo gris cuando vacío, blanco cuando tiene contenido */
   .rui-input {
     width: 100%;
     padding: var(--rui-space-3) var(--rui-space-4);
     font-size: var(--rui-text-base);
     color: var(--rui-gray-900);
-    background-color: #F9FAFB !important;
+    background-color: var(--rui-gray-50);
     border: 1px solid var(--rui-gray-300);
     border-radius: var(--rui-radius-md);
     box-shadow: inset 0 2px 4px rgba(0,0,0,0.06);
     transition: all 0.2s ease;
-    outline: none !important;
-    /* Reset Tailwind focus styles */
-    --tw-ring-shadow: none !important;
+    outline: none;
   }
 
   .rui-input::placeholder {
@@ -508,14 +513,18 @@
     border-color: var(--rui-gray-400);
   }
 
+  /* Cuando el input tiene contenido - fondo blanco */
+  .rui-input:not(:placeholder-shown) {
+    background-color: #FFFFFF;
+    box-shadow: none;
+  }
+
   .rui-input:focus,
   .rui-input:focus-visible {
-    outline: none !important;
-    border-color: var(--rui-primary-600) !important;
-    background-color: #FFFFFF !important;
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.06), 0 0 0 3px rgba(220,38,38,0.15) !important;
-    --tw-ring-shadow: none !important;
-    --tw-ring-color: transparent !important;
+    outline: none;
+    border-color: var(--rui-primary-600);
+    background-color: #FFFFFF;
+    box-shadow: 0 0 0 3px rgba(220,38,38,0.15);
   }
 
   /* Autofill styles - Sobrescribir el fondo celeste del navegador */
@@ -523,13 +532,11 @@
   .rui-input:-webkit-autofill:hover,
   .rui-input:-webkit-autofill:focus,
   .rui-input:-webkit-autofill:active {
-    -webkit-box-shadow: 0 0 0 30px var(--rui-gray-50) inset, inset 0 2px 4px rgba(0,0,0,0.06) !important;
+    -webkit-box-shadow: 0 0 0 1000px #FFFFFF inset !important;
     -webkit-text-fill-color: var(--rui-gray-900) !important;
-    transition: background-color 5000s ease-in-out 0s !important;
-  }
-
-  .rui-input:-webkit-autofill:focus {
-    -webkit-box-shadow: 0 0 0 30px #FFFFFF inset, inset 0 2px 4px rgba(0,0,0,0.06), 0 0 0 3px rgba(220,38,38,0.15) !important;
+    background-color: #FFFFFF !important;
+    transition: background-color 5000s ease-in-out 0s;
+    caret-color: var(--rui-gray-900);
   }
 
   /* ===== BOTÓN PRIMARIO ===== */
@@ -582,11 +589,6 @@
     opacity: 0.7;
     cursor: not-allowed;
     transform: none;
-  }
-
-  /* ===== FORM ACTIONS ===== */
-  .rui-form-actions {
-    margin-top: var(--rui-space-7);
   }
 
   /* ===== LINKS SECUNDARIOS ===== */
@@ -1255,10 +1257,26 @@
     border-color: var(--rui-gray-400);
   }
 
+  /* Cuando tiene contenido - fondo blanco */
+  .rui-search-input:not(:placeholder-shown) {
+    background-color: #FFFFFF;
+    box-shadow: none;
+  }
+
   .rui-search-input:focus {
     border-color: var(--rui-primary-600);
     background-color: white;
-    box-shadow: var(--rui-shadow-inset), var(--rui-ring-primary);
+    box-shadow: var(--rui-ring-primary);
+  }
+
+  /* Autofill styles */
+  .rui-search-input:-webkit-autofill,
+  .rui-search-input:-webkit-autofill:hover,
+  .rui-search-input:-webkit-autofill:focus,
+  .rui-search-input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 1000px #FFFFFF inset !important;
+    -webkit-text-fill-color: var(--rui-gray-900) !important;
+    background-color: #FFFFFF !important;
   }
 
   /* ===== FILTER SELECT ===== */
@@ -1903,5 +1921,760 @@
     flex-direction: column;
     gap: var(--rui-space-3);
     text-align: center;
+  }
+}
+
+/* =====================================================
+   CREATE EVENT FORM - REFACTORING UI
+   Principios: "Emulate a light source", "Use shadows to convey elevation"
+   "Labels are secondary", "Start with too much white space"
+   ===================================================== */
+
+@layer components {
+  /* ===== PAGE HEADER FOR FORMS ===== */
+  .rui-form-page-header {
+    margin-bottom: var(--rui-space-6);
+  }
+
+  /* Breadcrumb - Solo "← Volver" */
+  .rui-breadcrumb-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: var(--rui-text-sm);
+    font-weight: 500;
+    color: var(--rui-gray-500);
+    margin-bottom: var(--rui-space-3);
+    cursor: pointer;
+    transition: color 0.15s ease;
+    background: none;
+    border: none;
+    padding: 0;
+  }
+
+  .rui-breadcrumb-back:hover {
+    color: var(--rui-gray-900);
+  }
+
+  .rui-breadcrumb-back-icon {
+    width: 16px;
+    height: 16px;
+  }
+
+  /* Título de página - Prominente */
+  .rui-form-page-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--rui-gray-900);
+    line-height: 1.2;
+    letter-spacing: -0.025em;
+    margin-bottom: var(--rui-space-2);
+  }
+
+  .rui-form-page-subtitle {
+    font-size: 15px;
+    font-weight: 400;
+    color: var(--rui-gray-500);
+    line-height: 1.5;
+  }
+
+  /* ===== FORM LAYOUT ===== */
+  .rui-form-layout {
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: var(--rui-space-6);
+    align-items: start;
+  }
+
+  .rui-form-main {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rui-space-6);
+  }
+
+  .rui-form-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rui-space-6);
+    position: sticky;
+    top: 24px;
+  }
+
+  /* ===== FORM CARD ===== */
+  /* "Use shadows to convey elevation" - Sin borde, con sombra */
+  .rui-form-card {
+    background: white;
+    border-radius: var(--rui-radius-lg);
+    padding: var(--rui-space-6);
+    box-shadow: var(--rui-shadow-md);
+  }
+
+  /* Título de sección - Sin icono */
+  .rui-form-section-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--rui-gray-900);
+    margin-bottom: var(--rui-space-5);
+    padding-bottom: var(--rui-space-3);
+    border-bottom: 1px solid var(--rui-gray-100);
+  }
+
+  /* ===== FORM ELEMENTS ===== */
+  .rui-form-group {
+    margin-bottom: var(--rui-space-5);
+  }
+
+  .rui-form-group:last-child {
+    margin-bottom: 0;
+  }
+
+  /* Labels - "Labels are secondary" */
+  .rui-form-label {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--rui-gray-700);
+    margin-bottom: 6px;
+  }
+
+  .rui-form-label-required {
+    color: var(--rui-primary-600);
+    margin-left: 2px;
+  }
+
+  /* Inputs - "Emulate a light source" con sombra inset
+     Refactoring UI: Fondo gris cuando vacío, blanco cuando tiene contenido */
+  .rui-form-input {
+    width: 100%;
+    padding: 12px 14px;
+    font-size: var(--rui-text-sm);
+    color: var(--rui-gray-900);
+    background-color: var(--rui-gray-50);
+    border: 1px solid var(--rui-gray-300);
+    border-radius: var(--rui-radius-md);
+    box-shadow: var(--rui-shadow-inset);
+    transition: all 0.2s ease;
+    outline: none;
+  }
+
+  .rui-form-input::placeholder {
+    color: var(--rui-gray-400);
+  }
+
+  .rui-form-input:hover {
+    border-color: var(--rui-gray-400);
+  }
+
+  /* Cuando el input tiene contenido - fondo blanco */
+  .rui-form-input:not(:placeholder-shown) {
+    background-color: #FFFFFF;
+    box-shadow: none;
+  }
+
+  .rui-form-input:focus {
+    border-color: var(--rui-primary-600);
+    background-color: white;
+    box-shadow: var(--rui-ring-primary);
+  }
+
+  /* Autofill styles - Sobrescribir el fondo celeste del navegador */
+  .rui-form-input:-webkit-autofill,
+  .rui-form-input:-webkit-autofill:hover,
+  .rui-form-input:-webkit-autofill:focus,
+  .rui-form-input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 1000px #FFFFFF inset !important;
+    -webkit-text-fill-color: var(--rui-gray-900) !important;
+    background-color: #FFFFFF !important;
+    transition: background-color 5000s ease-in-out 0s;
+    caret-color: var(--rui-gray-900);
+  }
+
+  /* Estado de error */
+  .rui-form-input--error {
+    border-color: var(--rui-primary-600);
+    background-color: var(--rui-primary-50);
+  }
+
+  /* Estado de éxito */
+  .rui-form-input--success {
+    border-color: #16A34A;
+    background-color: #FFFFFF;
+  }
+
+  /* Textarea */
+  .rui-form-textarea {
+    min-height: 120px;
+    resize: vertical;
+  }
+
+  /* Select nativo - Refactoring UI: gris vacío, blanco con valor */
+  .rui-form-select {
+    width: 100%;
+    padding: 12px 36px 12px 14px;
+    font-size: var(--rui-text-sm);
+    color: var(--rui-gray-900);
+    background-color: var(--rui-gray-50);
+    border: 1px solid var(--rui-gray-300);
+    border-radius: var(--rui-radius-md);
+    box-shadow: var(--rui-shadow-inset);
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    transition: all 0.2s ease;
+    outline: none;
+  }
+
+  .rui-form-select:hover {
+    border-color: var(--rui-gray-400);
+  }
+
+  /* Cuando tiene un valor seleccionado (no es la opción por defecto) */
+  .rui-form-select:not(:invalid),
+  .rui-form-select.has-value {
+    background-color: #FFFFFF;
+    box-shadow: none;
+  }
+
+  .rui-form-select:focus {
+    border-color: var(--rui-primary-600);
+    background-color: white;
+    box-shadow: var(--rui-ring-primary);
+  }
+
+  /* Select de shadcn/radix - Override completo
+     Refactoring UI: gris cuando vacío (placeholder), blanco cuando tiene valor */
+  .rui-select-trigger {
+    display: flex !important;
+    height: auto !important;
+    width: 100% !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    padding: 12px 14px !important;
+    font-size: var(--rui-text-sm) !important;
+    font-weight: 400 !important;
+    color: var(--rui-gray-900) !important;
+    background-color: var(--rui-gray-50) !important;
+    border: 1px solid var(--rui-gray-300) !important;
+    border-radius: var(--rui-radius-md) !important;
+    box-shadow: var(--rui-shadow-inset) !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    outline: none !important;
+  }
+
+  .rui-select-trigger:hover {
+    border-color: var(--rui-gray-400) !important;
+  }
+
+  /* Cuando tiene valor seleccionado - fondo blanco */
+  .rui-select-trigger:not(:has([data-placeholder])) {
+    background-color: #FFFFFF !important;
+    box-shadow: none !important;
+  }
+
+  .rui-select-trigger:focus,
+  .rui-select-trigger[data-state="open"] {
+    border-color: var(--rui-primary-600) !important;
+    background-color: white !important;
+    box-shadow: var(--rui-ring-primary) !important;
+    outline: none !important;
+  }
+
+  .rui-select-trigger [data-placeholder] {
+    color: var(--rui-gray-400) !important;
+  }
+
+  .rui-select-trigger svg {
+    color: var(--rui-gray-400) !important;
+    opacity: 1 !important;
+  }
+
+  /* Cuando tiene valor, el icono se oscurece un poco */
+  .rui-select-trigger:not(:has([data-placeholder])) svg {
+    color: var(--rui-gray-500) !important;
+  }
+
+  /* ===== LOCATION AUTOCOMPLETE TRIGGER ===== */
+  /* Refactoring UI: gris cuando vacío, blanco cuando tiene valor */
+  .rui-location-trigger {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 12px 14px;
+    font-size: var(--rui-text-sm);
+    font-weight: 400;
+    color: var(--rui-gray-900);
+    background-color: var(--rui-gray-50);
+    border: 1px solid var(--rui-gray-300);
+    border-radius: var(--rui-radius-md);
+    box-shadow: var(--rui-shadow-inset);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: left;
+  }
+
+  .rui-location-trigger:hover {
+    border-color: var(--rui-gray-400);
+  }
+
+  .rui-location-trigger:focus,
+  .rui-location-trigger[aria-expanded="true"] {
+    outline: none;
+    border-color: var(--rui-primary-600);
+    background-color: white;
+    box-shadow: var(--rui-ring-primary);
+  }
+
+  /* Cuando tiene valor - fondo blanco */
+  .rui-location-trigger--has-value {
+    background-color: #FFFFFF;
+    box-shadow: none;
+  }
+
+  .rui-location-trigger-placeholder {
+    color: var(--rui-gray-400);
+    flex: 1;
+  }
+
+  .rui-location-trigger-icon {
+    width: 16px;
+    height: 16px;
+    color: var(--rui-gray-400);
+    flex-shrink: 0;
+  }
+
+  .rui-location-trigger--has-value .rui-location-trigger-icon {
+    color: var(--rui-gray-500);
+  }
+
+  .rui-location-trigger-chevron {
+    width: 16px;
+    height: 16px;
+    color: var(--rui-gray-400);
+    flex-shrink: 0;
+    margin-left: auto;
+  }
+
+  .rui-location-trigger:hover .rui-location-trigger-icon,
+  .rui-location-trigger:hover .rui-location-trigger-chevron,
+  .rui-location-trigger:focus .rui-location-trigger-icon,
+  .rui-location-trigger:focus .rui-location-trigger-chevron {
+    color: var(--rui-gray-600);
+  }
+
+  /* Form Hints */
+  .rui-form-hint {
+    font-size: 12px;
+    color: var(--rui-gray-500);
+    margin-top: 6px;
+  }
+
+  .rui-form-error {
+    font-size: 12px;
+    color: var(--rui-primary-600);
+    margin-top: 6px;
+  }
+
+  /* Contador de caracteres */
+  .rui-form-counter {
+    font-size: 12px;
+    color: var(--rui-gray-400);
+    text-align: right;
+    margin-top: 6px;
+  }
+
+  .rui-form-counter--warning {
+    color: #F59E0B;
+  }
+
+  .rui-form-counter--error {
+    color: var(--rui-primary-600);
+  }
+
+  /* Form Row (2 columnas) */
+  .rui-form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--rui-space-4);
+  }
+
+  /* ===== UPLOAD ZONE ===== */
+  .rui-upload-zone {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 200px;
+    border: 2px dashed var(--rui-gray-300);
+    border-radius: var(--rui-radius-lg);
+    padding: var(--rui-space-6);
+    text-align: center;
+    background-color: var(--rui-gray-50);
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .rui-upload-zone:hover {
+    border-color: var(--rui-primary-600);
+    background-color: var(--rui-primary-50);
+  }
+
+  .rui-upload-zone:hover .rui-upload-zone-icon {
+    color: var(--rui-primary-600);
+  }
+
+  .rui-upload-zone--dragging {
+    border-color: var(--rui-primary-600);
+    background-color: var(--rui-primary-50);
+    border-style: solid;
+  }
+
+  .rui-upload-zone-icon {
+    width: 40px;
+    height: 40px;
+    color: var(--rui-gray-400);
+    margin-bottom: var(--rui-space-3);
+    transition: color 0.2s ease;
+  }
+
+  .rui-upload-zone-text {
+    font-size: var(--rui-text-sm);
+    color: var(--rui-gray-600);
+    margin-bottom: var(--rui-space-1);
+    line-height: 1.5;
+  }
+
+  .rui-upload-zone-text strong {
+    color: var(--rui-primary-600);
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .rui-upload-zone-hint {
+    font-size: 12px;
+    color: var(--rui-gray-400);
+    margin-top: var(--rui-space-1);
+  }
+
+  /* Preview de imagen subida */
+  .rui-upload-preview {
+    position: relative;
+    border-radius: var(--rui-radius-lg);
+    overflow: hidden;
+    background-color: var(--rui-gray-100);
+  }
+
+  .rui-upload-preview img {
+    display: block;
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+  }
+
+  .rui-upload-preview-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.5) 0%, transparent 40%);
+    pointer-events: none;
+  }
+
+  .rui-upload-preview-info {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: var(--rui-space-3) var(--rui-space-4);
+    color: white;
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  .rui-upload-preview-remove {
+    position: absolute;
+    top: var(--rui-space-2);
+    right: var(--rui-space-2);
+    width: 28px;
+    height: 28px;
+    background: rgba(0,0,0,0.5);
+    border-radius: 50%;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s ease;
+    backdrop-filter: blur(4px);
+  }
+
+  .rui-upload-preview-remove:hover {
+    background: rgba(220,38,38,0.9);
+    transform: scale(1.1);
+  }
+
+  /* ===== FORM ACTIONS ===== */
+  .rui-form-actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: var(--rui-space-3);
+    margin-top: var(--rui-space-6);
+    padding-top: var(--rui-space-5);
+    border-top: 1px solid var(--rui-gray-200);
+    /* Sin margin-bottom extra - el contenedor padre ya tiene padding */
+  }
+
+  /* Botón Terciario - Cancelar */
+  .rui-btn-form-tertiary {
+    padding: 12px 20px;
+    font-size: var(--rui-text-sm);
+    font-weight: 500;
+    color: var(--rui-gray-600);
+    background: transparent;
+    border: none;
+    border-radius: var(--rui-radius-md);
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .rui-btn-form-tertiary:hover {
+    background-color: var(--rui-gray-100);
+    color: var(--rui-gray-900);
+  }
+
+  /* Botón Secundario - Guardar Borrador */
+  .rui-btn-form-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 20px;
+    font-size: var(--rui-text-sm);
+    font-weight: 500;
+    color: var(--rui-gray-700);
+    background: white;
+    border: 1px solid var(--rui-gray-300);
+    border-radius: var(--rui-radius-md);
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .rui-btn-form-secondary:hover {
+    background-color: var(--rui-gray-50);
+    border-color: var(--rui-gray-400);
+  }
+
+  .rui-btn-form-secondary-icon {
+    width: 16px;
+    height: 16px;
+  }
+
+  /* Botón Primario - Publicar Evento */
+  .rui-btn-form-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    font-size: var(--rui-text-sm);
+    font-weight: 600;
+    color: white;
+    background-color: var(--rui-primary-600);
+    border: none;
+    border-radius: var(--rui-radius-md);
+    cursor: pointer;
+    box-shadow: var(--rui-shadow-md), inset 0 1px 0 rgba(255,255,255,0.1);
+    transition: all 0.2s ease;
+  }
+
+  .rui-btn-form-primary:hover {
+    background-color: var(--rui-primary-700);
+    transform: translateY(-1px);
+    box-shadow: var(--rui-shadow-lg), inset 0 1px 0 rgba(255,255,255,0.1);
+  }
+
+  .rui-btn-form-primary:active {
+    transform: translateY(0);
+  }
+
+  .rui-btn-form-primary:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .rui-btn-form-primary-icon {
+    width: 16px;
+    height: 16px;
+  }
+
+  /* ===== SECCIÓN CONDICIONAL ===== */
+  .rui-conditional-section {
+    animation: ruiFadeIn 0.3s ease;
+  }
+
+  @keyframes ruiFadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(-8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* ===== DATE/TIME PICKER BUTTON ===== */
+  /* Refactoring UI: gris cuando vacío (placeholder), blanco cuando tiene valor */
+  .rui-datetime-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 11px 14px;
+    font-size: var(--rui-text-sm);
+    font-weight: 500;
+    color: var(--rui-gray-900);
+    background-color: var(--rui-gray-50);
+    border: 1px solid var(--rui-gray-300);
+    border-radius: var(--rui-radius-md);
+    box-shadow: var(--rui-shadow-inset);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: left;
+  }
+
+  .rui-datetime-btn:hover {
+    border-color: var(--rui-gray-400);
+  }
+
+  .rui-datetime-btn:focus,
+  .rui-datetime-btn[data-state="open"] {
+    outline: none;
+    border-color: var(--rui-primary-600);
+    background-color: white;
+    box-shadow: var(--rui-ring-primary);
+  }
+
+  /* Estado placeholder - gris con texto tenue */
+  .rui-datetime-btn--placeholder {
+    color: var(--rui-gray-400);
+    font-weight: 400;
+  }
+
+  /* Cuando tiene valor (NO tiene --placeholder) - fondo blanco */
+  .rui-datetime-btn:not(.rui-datetime-btn--placeholder) {
+    background-color: #FFFFFF;
+    box-shadow: none;
+  }
+
+  .rui-datetime-btn-icon {
+    width: 16px;
+    height: 16px;
+    color: var(--rui-gray-400);
+    flex-shrink: 0;
+  }
+
+  /* Icono más oscuro cuando tiene valor */
+  .rui-datetime-btn:not(.rui-datetime-btn--placeholder) .rui-datetime-btn-icon {
+    color: var(--rui-gray-500);
+  }
+
+  .rui-datetime-btn:hover .rui-datetime-btn-icon,
+  .rui-datetime-btn:focus .rui-datetime-btn-icon {
+    color: var(--rui-gray-600);
+  }
+
+  /* ===== TIME PICKER LIST ===== */
+  .rui-time-list {
+    padding: var(--rui-space-1);
+  }
+
+  .rui-time-option {
+    display: block;
+    width: 100%;
+    padding: 10px 14px;
+    font-size: var(--rui-text-sm);
+    font-weight: 400;
+    color: var(--rui-gray-700);
+    text-align: left;
+    background: transparent;
+    border: none;
+    border-radius: var(--rui-radius-sm);
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .rui-time-option:hover {
+    background-color: var(--rui-gray-100);
+    color: var(--rui-gray-900);
+  }
+
+  .rui-time-option--selected {
+    background-color: var(--rui-primary-50);
+    color: var(--rui-primary-700);
+    font-weight: 600;
+  }
+
+  .rui-time-option--selected:hover {
+    background-color: var(--rui-primary-100);
+  }
+
+  /* ===== LOADING STATE ===== */
+  .rui-form-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--rui-space-9);
+    text-align: center;
+  }
+
+  .rui-form-loading-spinner {
+    width: 32px;
+    height: 32px;
+    color: var(--rui-primary-600);
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  .rui-form-loading-text {
+    margin-top: var(--rui-space-4);
+    font-size: var(--rui-text-sm);
+    color: var(--rui-gray-500);
+  }
+}
+
+/* ===== RESPONSIVE FORM ===== */
+@media (max-width: 1024px) {
+  .rui-form-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .rui-form-sidebar {
+    position: static;
+  }
+}
+
+@media (max-width: 640px) {
+  .rui-form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .rui-form-actions {
+    flex-direction: column;
+  }
+
+  .rui-form-actions button {
+    width: 100%;
+  }
+
+  .rui-form-page-title {
+    font-size: 24px;
   }
 }

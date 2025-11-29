@@ -127,7 +127,7 @@ export const DashboardApp: React.FC<DashboardAppProps> = ({ initialPath }) => {
     }
     // Crear evento
     if (matchesRoute(["/eventos/nuevo", "/en/events/new"])) {
-      return <CreateEventView onNavigate={handleNavigate} onBreadcrumbsChange={setBreadcrumbs} />;
+      return <CreateEventView onNavigate={handleNavigate} />;
     }
     // Editar evento (debe ir antes de gestión)
     const editEventId = getEventIdFromEditPath(activePath);

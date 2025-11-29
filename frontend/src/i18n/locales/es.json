@@ -227,12 +227,15 @@
     "save": "Guardar",
     "save_event": "Guardar Evento",
     "save_changes": "Guardar Cambios",
+    "save_draft": "Guardar Borrador",
+    "publish_event": "Publicar Evento",
     "cancel": "Cancelar",
     "back": "Volver",
     "submit": "Enviar",
     "loading": "Guardando...",
     "select": "Seleccionar...",
     "date": "Fecha",
+    "time": "Hora",
     "success": "Operación exitosa",
     "error": "Ocurrió un error",
     "date_future": "La fecha de inicio debe ser futura",
@@ -267,16 +270,64 @@
     "unknown": "Error desconocido"
   },
   "create_event": {
-    "type": "Tipo",
-    "type_placeholder": "Selecciona un tipo",
-    "category": "Categoría",
-    "category_placeholder": "Selecciona una categoría",
-    "configuration": "Configuración",
-    "modality": "Modalidad",
-    "start": "Inicio",
-    "end": "Fin",
+    "back": "Volver",
     "breadcrumb": {
       "title": "Nuevo Evento"
+    },
+    "basic": {
+      "title": "Información Básica",
+      "event_title": "Título del Evento",
+      "event_title_placeholder": "Nombre del evento",
+      "event_title_hint": "Ej: Congreso de Ingeniería Civil 2024",
+      "summary": "Resumen Corto",
+      "summary_placeholder": "Descripción breve",
+      "summary_hint": "Se muestra en las tarjetas del listado",
+      "description": "Descripción Detallada",
+      "description_placeholder": "Información completa del evento...",
+      "type": "Tipo de Evento",
+      "category": "Categoría / Capítulo"
+    },
+    "image": {
+      "title": "Imagen del Evento",
+      "current": "Imagen actual del evento",
+      "drag_text": "Arrastra una imagen o",
+      "click_text": "haz clic para subir",
+      "hint": "PNG, JPG o WebP • Máximo 5MB • Recomendado: 1200x630px",
+      "banner_hint": "Esta imagen se mostrará como banner del evento en el listado y la página de detalles."
+    },
+    "config": {
+      "title": "Configuración",
+      "modality": "Modalidad",
+      "start": "Inicio",
+      "end": "Fin"
+    },
+    "location": {
+      "title": "Ubicación Presencial",
+      "name": "Nombre del Lugar",
+      "name_placeholder": "Buscar o escribir nombre del lugar...",
+      "address": "Dirección",
+      "address_placeholder": "Ej: Av. Pevas Cuadra 4",
+      "city": "Ciudad",
+      "city_placeholder": "Lima",
+      "reference": "Referencia",
+      "reference_placeholder": "Frente al Parque...",
+      "map_link": "Link de Mapa (Google Maps)",
+      "map_hint": "Copia el enlace desde Google Maps para facilitar la ubicación"
+    },
+    "virtual": {
+      "title": "Accesos Virtuales",
+      "platform": "Plataforma",
+      "password": "Contraseña",
+      "password_placeholder": "Ej: CIP2024",
+      "meeting_url": "Link de Reunión",
+      "meeting_url_hint": "El enlace se enviará a los inscritos antes del evento",
+      "instructions": "Instrucciones Adicionales",
+      "instructions_placeholder": "Instrucciones para unirse a la reunión...",
+      "other": "Otro"
+    },
+    "confirm": {
+      "title": "¿Guardar evento?",
+      "description": "Estás a punto de crear un nuevo evento. Una vez guardado, podrás editarlo o publicarlo desde la vista de gestión."
     }
   },
   "edit_event": {

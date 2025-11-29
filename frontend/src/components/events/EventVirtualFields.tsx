@@ -1,7 +1,6 @@
 import React from "react";
 import type { UseFormReturn } from "react-hook-form";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import { useTranslation } from "react-i18next";
 import {
   Select,
   SelectContent,
@@ -12,11 +11,9 @@ import {
 import {
   FormField,
   FormItem,
-  FormLabel,
   FormControl,
   FormMessage,
 } from "@/components/ui/form";
-import { Video } from "lucide-react";
 import type { CreateEventFormValues } from "@/hooks/useCreateEvent";
 
 interface EventVirtualFieldsProps {
@@ -24,85 +21,118 @@ interface EventVirtualFieldsProps {
 }
 
 export const EventVirtualFields: React.FC<EventVirtualFieldsProps> = ({ form }) => {
+  const { t } = useTranslation();
   const { control } = form;
 
   return (
-    <div className="rounded-lg border bg-card p-6 shadow-sm">
-      <div className="flex items-center gap-2 mb-4">
-        <Video className="h-5 w-5 text-muted-foreground" />
-        <h2 className="text-lg font-medium text-foreground">Accesos Virtuales</h2>
-      </div>
-      <div className="space-y-4">
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+    <div className="rui-form-card">
+      <h2 className="rui-form-section-title">
+        {t("create_event.virtual.title", "Accesos Virtuales")}
+      </h2>
+
+      {/* Plataforma y Contraseña */}
+      <div className="rui-form-row">
+        <div className="rui-form-group">
           <FormField
             control={control}
             name="virtualPlatform"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>
-                  Plataforma <span className="text-red-500">*</span>
-                </FormLabel>
+                <label className="rui-form-label">
+                  {t("create_event.virtual.platform", "Plataforma")}
+                  <span className="rui-form-label-required">*</span>
+                </label>
                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                   <FormControl>
-                    <SelectTrigger className="bg-white">
-                      <SelectValue placeholder="Seleccionar..." />
+                    <SelectTrigger className="rui-select-trigger">
+                      <SelectValue placeholder={t("form.select", "Seleccionar...")} />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
                     <SelectItem value="Zoom">Zoom</SelectItem>
                     <SelectItem value="Google Meet">Google Meet</SelectItem>
                     <SelectItem value="Microsoft Teams">Microsoft Teams</SelectItem>
-                    <SelectItem value="Other">Otro</SelectItem>
+                    <SelectItem value="Other">{t("create_event.virtual.other", "Otro")}</SelectItem>
                   </SelectContent>
                 </Select>
-                <FormMessage />
+                <FormMessage className="rui-form-error" />
               </FormItem>
             )}
           />
+        </div>
+
+        <div className="rui-form-group">
           <FormField
             control={control}
             name="virtualMeetingPassword"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Contraseña (Opcional)</FormLabel>
+                <label className="rui-form-label">
+                  {t("create_event.virtual.password", "Contraseña")}
+                </label>
                 <FormControl>
-                  <Input {...field} placeholder="Ej: CIP2024" className="bg-white" />
+                  <input
+                    {...field}
+                    type="text"
+                    className="rui-form-input"
+                    placeholder={t("create_event.virtual.password_placeholder", "Ej: CIP2024")}
+                  />
                 </FormControl>
-                <FormMessage />
+                <FormMessage className="rui-form-error" />
               </FormItem>
             )}
           />
         </div>
+      </div>
+
+      {/* Link de Reunión */}
+      <div className="rui-form-group">
         <FormField
           control={control}
           name="virtualMeetingUrl"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>
-                Link de Reunión <span className="text-red-500">*</span>
-              </FormLabel>
+              <label className="rui-form-label">
+                {t("create_event.virtual.meeting_url", "Link de Reunión")}
+                <span className="rui-form-label-required">*</span>
+              </label>
               <FormControl>
-                <Input {...field} placeholder="https://zoom.us/j/..." className="bg-white" />
+                <input
+                  {...field}
+                  type="text"
+                  className="rui-form-input"
+                  placeholder="https://zoom.us/j/..."
+                />
               </FormControl>
-              <FormMessage />
+              <span className="rui-form-hint">
+                {t("create_event.virtual.meeting_url_hint", "El enlace se enviará a los inscritos antes del evento")}
+              </span>
+              <FormMessage className="rui-form-error" />
             </FormItem>
           )}
         />
+      </div>
+
+      {/* Instrucciones Adicionales */}
+      <div className="rui-form-group">
         <FormField
           control={control}
           name="virtualInstructions"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Instrucciones Adicionales</FormLabel>
+              <label className="rui-form-label">
+                {t("create_event.virtual.instructions", "Instrucciones Adicionales")}
+              </label>
               <FormControl>
-                <Textarea
+                <textarea
                   {...field}
+                  className="rui-form-input rui-form-textarea"
                   rows={3}
-                  placeholder="Instrucciones para unirse..."
-                  className="bg-white"
+                  placeholder={t("create_event.virtual.instructions_placeholder", "Instrucciones para unirse a la reunión...")}
+                  style={{ minHeight: "80px" }}
                 />
               </FormControl>
-              <FormMessage />
+              <FormMessage className="rui-form-error" />
             </FormItem>
           )}
         />

@@ -1,8 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import { type UseFormReturn } from "react-hook-form";
-import { FileText } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import { useTranslation } from "react-i18next";
 import {
   Select,
   SelectContent,
@@ -13,7 +11,6 @@ import {
 import {
   FormField,
   FormItem,
-  FormLabel,
   FormControl,
   FormMessage,
 } from "@/components/ui/form";
@@ -26,90 +23,135 @@ interface EventBasicInfoFieldsProps {
   categories: EventCategory[];
 }
 
+const MAX_SUMMARY_LENGTH = 150;
+
 export const EventBasicInfoFields: React.FC<EventBasicInfoFieldsProps> = ({
   form,
   types,
   categories,
 }) => {
-  const { control } = form;
+  const { t } = useTranslation();
+  const { control, watch } = form;
+  const summaryValue = watch("summary") || "";
+  const [summaryLength, setSummaryLength] = useState(summaryValue.length);
+
+  const getCounterClass = () => {
+    if (summaryLength > MAX_SUMMARY_LENGTH) return "rui-form-counter--error";
+    if (summaryLength > MAX_SUMMARY_LENGTH - 10) return "rui-form-counter--warning";
+    return "";
+  };
 
   return (
-    <div className="rounded-lg border bg-card p-6 shadow-sm">
-      <div className="flex items-center gap-2 mb-4">
-        <FileText className="h-5 w-5 text-muted-foreground" />
-        <h2 className="text-lg font-medium text-foreground">Información Básica</h2>
-      </div>
-      <div className="space-y-4">
+    <div className="rui-form-card">
+      <h2 className="rui-form-section-title">
+        {t("create_event.basic.title", "Información Básica")}
+      </h2>
+
+      {/* Título del Evento */}
+      <div className="rui-form-group">
         <FormField
           control={control}
           name="title"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>
-                Título del Evento <span className="text-red-500">*</span>
-              </FormLabel>
+              <label className="rui-form-label">
+                {t("create_event.basic.event_title", "Título del Evento")}
+                <span className="rui-form-label-required">*</span>
+              </label>
               <FormControl>
-                <Input
+                <input
                   {...field}
-                  placeholder="Ej: Semana de la Ingeniería Civil 2024"
-                  className="bg-white"
+                  type="text"
+                  className="rui-form-input"
+                  placeholder={t("create_event.basic.event_title_placeholder", "Nombre del evento")}
                 />
               </FormControl>
-              <FormMessage />
+              <span className="rui-form-hint">
+                {t("create_event.basic.event_title_hint", "Ej: Congreso de Ingeniería Civil 2024")}
+              </span>
+              <FormMessage className="rui-form-error" />
             </FormItem>
           )}
         />
+      </div>
 
+      {/* Resumen Corto con contador */}
+      <div className="rui-form-group">
         <FormField
           control={control}
           name="summary"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Resumen Corto</FormLabel>
+              <label className="rui-form-label">
+                {t("create_event.basic.summary", "Resumen Corto")}
+              </label>
               <FormControl>
-                <Input
+                <input
                   {...field}
-                  placeholder="Breve descripción para tarjetas (max 150 caracteres)"
-                  className="bg-white"
+                  type="text"
+                  className="rui-form-input"
+                  placeholder={t("create_event.basic.summary_placeholder", "Descripción breve")}
+                  maxLength={MAX_SUMMARY_LENGTH + 10}
+                  onChange={(e) => {
+                    field.onChange(e);
+                    setSummaryLength(e.target.value.length);
+                  }}
                 />
               </FormControl>
-              <FormMessage />
+              <div className="flex justify-between items-center">
+                <span className="rui-form-hint">
+                  {t("create_event.basic.summary_hint", "Se muestra en las tarjetas del listado")}
+                </span>
+                <span className={`rui-form-counter ${getCounterClass()}`}>
+                  {summaryLength}/{MAX_SUMMARY_LENGTH}
+                </span>
+              </div>
+              <FormMessage className="rui-form-error" />
             </FormItem>
           )}
         />
+      </div>
 
+      {/* Descripción Detallada */}
+      <div className="rui-form-group">
         <FormField
           control={control}
           name="description"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>
-                Descripción Detallada <span className="text-red-500">*</span>
-              </FormLabel>
+              <label className="rui-form-label">
+                {t("create_event.basic.description", "Descripción Detallada")}
+                <span className="rui-form-label-required">*</span>
+              </label>
               <FormControl>
-                <Textarea
+                <textarea
                   {...field}
+                  className="rui-form-input rui-form-textarea"
                   rows={6}
-                  placeholder="Información completa del evento..."
-                  className="bg-white"
+                  placeholder={t("create_event.basic.description_placeholder", "Información completa del evento...")}
                 />
               </FormControl>
-              <FormMessage />
+              <FormMessage className="rui-form-error" />
             </FormItem>
           )}
         />
+      </div>
 
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      {/* Tipo y Categoría en 2 columnas */}
+      <div className="rui-form-row">
+        <div className="rui-form-group">
           <FormField
             control={control}
             name="typeId"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Tipo de Evento</FormLabel>
+                <label className="rui-form-label">
+                  {t("create_event.basic.type", "Tipo de Evento")}
+                </label>
                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                   <FormControl>
-                    <SelectTrigger className="bg-white">
-                      <SelectValue placeholder="Seleccionar..." />
+                    <SelectTrigger className="rui-select-trigger">
+                      <SelectValue placeholder={t("form.select", "Seleccionar...")} />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
@@ -120,21 +162,25 @@ export const EventBasicInfoFields: React.FC<EventBasicInfoFieldsProps> = ({
                     ))}
                   </SelectContent>
                 </Select>
-                <FormMessage />
+                <FormMessage className="rui-form-error" />
               </FormItem>
             )}
           />
+        </div>
 
+        <div className="rui-form-group">
           <FormField
             control={control}
             name="categoryId"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Categoría / Capítulo</FormLabel>
+                <label className="rui-form-label">
+                  {t("create_event.basic.category", "Categoría / Capítulo")}
+                </label>
                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                   <FormControl>
-                    <SelectTrigger className="bg-white">
-                      <SelectValue placeholder="Seleccionar..." />
+                    <SelectTrigger className="rui-select-trigger">
+                      <SelectValue placeholder={t("form.select", "Seleccionar...")} />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
@@ -145,7 +191,7 @@ export const EventBasicInfoFields: React.FC<EventBasicInfoFieldsProps> = ({
                     ))}
                   </SelectContent>
                 </Select>
-                <FormMessage />
+                <FormMessage className="rui-form-error" />
               </FormItem>
             )}
           />

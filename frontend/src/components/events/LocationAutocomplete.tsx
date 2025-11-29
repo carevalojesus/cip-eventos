@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { Check, MapPin, ChevronsUpDown } from "lucide-react";
+import { Check, MapPin, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
 import {
   Command,
   CommandEmpty,
@@ -61,18 +60,24 @@ export const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({
     setOpen(false);
   };
 
+  const hasValue = Boolean(value);
+
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button
-          variant="outline"
+        <button
+          type="button"
           role="combobox"
           aria-expanded={open}
-          className="w-full justify-between font-normal"
+          className={cn(
+            "rui-location-trigger",
+            hasValue && "rui-location-trigger--has-value"
+          )}
         >
-          {value || <span className="text-muted-foreground">{placeholder}</span>}
-          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-        </Button>
+          <MapPin className="rui-location-trigger-icon" />
+          {value || <span className="rui-location-trigger-placeholder">{placeholder}</span>}
+          <ChevronDown className="rui-location-trigger-chevron" />
+        </button>
       </PopoverTrigger>
       <PopoverContent className="w-[400px] p-0" align="start">
         <Command shouldFilter={false}>
