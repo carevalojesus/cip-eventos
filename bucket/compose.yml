@@ -26,10 +26,11 @@ services:
     entrypoint: >
       /bin/sh -c "
         echo 'Waiting for MinIO...';
-        until mc alias set local http://minio:9000 ${MINIO_ROOT_USER} ${MINIO_ROOT_PASSWORD}; do
+        until mc alias set local http://minio:9000 \${MINIO_ROOT_USER} \${MINIO_ROOT_PASSWORD}; do
           sleep 2;
         done;
-        mc mb -p local/${MINIO_BUCKET} || true;
-        mc anonymous set public local/${MINIO_BUCKET} || true;
+        mc mb -p local/\${MINIO_BUCKET} || true;
+        # Removed anonymous public access for security
+        # mc anonymous set public local/\${MINIO_BUCKET} || true;
         echo 'Bucket ready';
       "
