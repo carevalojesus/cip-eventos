@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryGeneratedColumn, OneToOne } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 import { Event } from './event.entity';
 
 @Entity('event_locations')
@@ -21,7 +21,7 @@ export class EventLocation {
   @Column({ type: 'text', nullable: true })
   mapLink: string; // Enlace a Google Maps
 
-  // Relación 1:1 de vuelta al evento
-  @OneToOne(() => Event, (event) => event.location)
-  event: Event;
+  // Relación 1:N de vuelta al evento (Una ubicación puede tener muchos eventos)
+  @OneToMany(() => Event, (event) => event.location)
+  events: Event[];
 }

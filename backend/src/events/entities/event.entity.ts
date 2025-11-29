@@ -94,8 +94,8 @@ export class Event {
   @JoinColumn({ name: 'modalityId' })
   modality: EventModality;
 
-  @OneToOne(() => EventLocation, (loc) => loc.event, {
-    cascade: true,
+  @ManyToOne(() => EventLocation, (loc) => loc.events, {
+    cascade: ['insert', 'update'],
     eager: true,
     nullable: true,
   })

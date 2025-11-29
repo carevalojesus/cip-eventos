@@ -18,6 +18,7 @@ import { EventSession } from './entities/event-session.entity';
 import { CreateSessionDto } from './dto/create-session.dto';
 import { UpdateSessionDto } from './dto/update-session.dto';
 import { EventTicket } from './entities/event-ticket.entity';
+import { EventLocation } from './entities/event-location.entity';
 import { CreateTicketDto } from './dto/create-ticket.dto';
 import { PaginationDto, paginate, PaginatedResult } from '../common/dto/pagination.dto';
 
@@ -42,6 +43,8 @@ export class EventsService {
     private readonly sessionRepository: Repository<EventSession>,
     @InjectRepository(EventTicket)
     private readonly ticketRepository: Repository<EventTicket>,
+    @InjectRepository(EventLocation)
+    private readonly locationRepository: Repository<EventLocation>,
   ) {}
 
   async create(createEventDto: CreateEventDto, userId: string) {
@@ -90,6 +93,24 @@ export class EventsService {
 
     const slug = this.generateSlug(eventData.title);
 
+    // Deduplicar ubicación
+    let eventLocation: EventLocation | undefined;
+    if (location) {
+      const existingLocation = await this.locationRepository.findOne({
+        where: {
+          name: location.name,
+          address: location.address,
+          city: location.city,
+        },
+      });
+
+      if (existingLocation) {
+        eventLocation = existingLocation;
+      } else {
+        eventLocation = this.locationRepository.create(location);
+      }
+    }
+
     const event = this.eventRepository.create({
       ...eventData,
       slug,
@@ -97,7 +118,7 @@ export class EventsService {
       category: { id: categoryId },
       modality: { id: modalityId },
       createdBy: user,
-      location,
+      location: eventLocation,
       virtualAccess,
       speakers,
       organizers,
@@ -204,10 +225,28 @@ export class EventsService {
     if (!existingEvent)
       throw new NotFoundException(`Event with ID ${id} not found`);
 
+    // Deduplicar ubicación
+    let eventLocation: EventLocation | undefined;
+    if (location) {
+      const existingLocation = await this.locationRepository.findOne({
+        where: {
+          name: location.name,
+          address: location.address,
+          city: location.city,
+        },
+      });
+
+      if (existingLocation) {
+        eventLocation = existingLocation;
+      } else {
+        eventLocation = this.locationRepository.create(location);
+      }
+    }
+
     const event = await this.eventRepository.preload({
       id,
       ...eventData,
-      location,
+      location: eventLocation,
       virtualAccess,
     });
 
