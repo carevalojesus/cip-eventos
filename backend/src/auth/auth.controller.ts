@@ -8,10 +8,11 @@ import {
   Res,
   Query,
   BadRequestException,
+  Headers,
 } from '@nestjs/common';
 import type { Response } from 'express';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiBody, ApiQuery } from '@nestjs/swagger';
-import { Throttle, SkipThrottle } from '@nestjs/throttler';
+import { Throttle } from '@nestjs/throttler';
 import { AuthService } from './auth.service';
 import { I18nService, I18nContext } from 'nestjs-i18n';
 import { LoginAuthDto } from './dto/login-auth.dto';
@@ -22,12 +23,16 @@ import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { EmailVerifiedGuard } from './guards/email-verified.guard';
 import { ConfigService } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
 
 // 1. Interfaz para cuando usas JwtAuthGuard (Logout)
 // La estrategia JWT mapeaba 'sub' a 'userId', recuerda?
 interface RequestWithUserId {
   user: {
     userId: string;
+    jti?: string;
+    iat?: number;
+    exp?: number;
   };
 }
 
@@ -46,6 +51,7 @@ export class AuthController {
     private readonly authService: AuthService,
     private readonly i18n: I18nService,
     private readonly configService: ConfigService,
+    private readonly jwtService: JwtService,
   ) {}
 
   private setRefreshTokenCookie(res: Response, refreshToken: string) {
@@ -111,10 +117,37 @@ export class AuthController {
   async logout(
     @Req() req: RequestWithUserId,
     @Res({ passthrough: true }) res: Response,
+    @Headers('authorization') authHeader: string,
   ) {
-    await this.authService.logout(req.user.userId);
+    // Extraer jti y exp del token para blacklist
+    let jti: string | undefined;
+    let exp: number | undefined;
+
+    if (authHeader) {
+      const token = authHeader.replace('Bearer ', '');
+      const decoded = this.jwtService.decode(token) as { jti?: string; exp?: number } | null;
+      jti = decoded?.jti;
+      exp = decoded?.exp;
+    }
+
+    await this.authService.logout(req.user.userId, jti, exp);
     this.clearRefreshTokenCookie(res);
     return { message: 'Logged out successfully' };
+  }
+
+  @UseGuards(JwtAuthGuard, EmailVerifiedGuard)
+  @Post('logout-all')
+  @ApiBearerAuth('JWT-auth')
+  @ApiOperation({ summary: 'Logout all sessions', description: 'Invalidate all tokens for the user' })
+  @ApiResponse({ status: 200, description: 'All sessions logged out successfully' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  async logoutAll(
+    @Req() req: RequestWithUserId,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    await this.authService.logoutAllSessions(req.user.userId);
+    this.clearRefreshTokenCookie(res);
+    return { message: 'All sessions logged out successfully' };
   }
 
   @Public()

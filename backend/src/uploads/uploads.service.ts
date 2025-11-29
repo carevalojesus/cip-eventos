@@ -10,6 +10,7 @@ import {
   PutObjectCommand,
   CreateBucketCommand,
   HeadBucketCommand,
+  GetObjectCommand,
 } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { v4 as uuidv4 } from 'uuid';
@@ -47,10 +48,21 @@ export class UploadsService {
     });
 
     const uploadUrl = await getSignedUrl(s3, command, { expiresIn: 300 }); // 5 min
-    const normalizedEndpoint = this.endpoint.replace(/\/$/, '');
-    const publicUrl = `${normalizedEndpoint}/${this.bucket}/${key}`;
+    const normalizedEndpoint = this.configService.get<string>('API_URL') ?? 'http://localhost:3000';
+    
+    // Return proxy URL instead of direct MinIO URL
+    const publicUrl = `${normalizedEndpoint}/uploads/public/${key}`;
 
     return { uploadUrl, publicUrl, key };
+  }
+
+  async getSignedUrl(key: string): Promise<string> {
+    const s3 = this.getOrCreateClient();
+    const command = new GetObjectCommand({
+      Bucket: this.bucket,
+      Key: key,
+    });
+    return getSignedUrl(s3, command, { expiresIn: 3600 }); // 1 hour
   }
 
   async uploadFile(
@@ -72,8 +84,20 @@ export class UploadsService {
 
     await s3.send(command);
 
-    const normalizedEndpoint = this.endpoint.replace(/\/$/, '');
-    return `${normalizedEndpoint}/${this.bucket}/${key}`;
+    await s3.send(command);
+
+    const normalizedEndpoint = this.configService.get<string>('API_URL') ?? 'http://localhost:3000';
+    
+    // Determine if folder is public or private
+    // Currently only 'events' is considered public for this example, or we can make everything private by default
+    // and expose specific endpoints.
+    // Based on requirements: "Profile photos, payment evidence, and CSV padrón backups are therefore accessible without auth."
+    // We want to secure these.
+    
+    const isPublic = folder === 'events'; // Only event images are public
+    const accessType = isPublic ? 'public' : 'private';
+
+    return `${normalizedEndpoint}/uploads/${accessType}/${key}`;
   }
 
   async uploadEventImage(

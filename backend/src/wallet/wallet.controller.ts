@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Res, Logger, NotFoundException, BadRequestException } from '@nestjs/common';
+import { Controller, Get, Param, Res, Logger, NotFoundException, BadRequestException, Query } from '@nestjs/common';
 import type { Response } from 'express';
 import { WalletService } from './wallet.service';
 import { RegistrationsService } from '../registrations/registrations.service';
@@ -16,11 +16,15 @@ export class WalletController {
 
   /**
    * Genera y redirige al link de Google Wallet para una inscripción
-   * Endpoint público para permitir acceso desde correos y QR
+   * Endpoint público pero protegido por token firmado
    */
   @Public()
   @Get(':registrationId')
-  async getGoogleWalletLink(@Param('registrationId') id: string, @Res() res: Response) {
+  async getGoogleWalletLink(
+    @Param('registrationId') id: string,
+    @Query('token') token: string,
+    @Res() res: Response
+  ) {
     this.logger.log(`Wallet link requested for registration: ${id}`);
 
     try {
@@ -29,6 +33,12 @@ export class WalletController {
         this.logger.warn(`Invalid UUID format for registration: ${id}`);
         throw new BadRequestException('Invalid registration ID format');
       }
+
+      // Validar token firmado
+      if (!token) {
+        throw new BadRequestException('Missing security token');
+      }
+      this.walletService.verifySignedToken(token, id);
 
       // 1. Buscar la inscripción completa con relaciones
       const registration = await this.registrationsService.findOne(id);

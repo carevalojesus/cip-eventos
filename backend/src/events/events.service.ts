@@ -18,8 +18,13 @@ import { EventSession } from './entities/event-session.entity';
 import { CreateSessionDto } from './dto/create-session.dto';
 import { UpdateSessionDto } from './dto/update-session.dto';
 import { EventTicket } from './entities/event-ticket.entity';
+import { EventLocation } from './entities/event-location.entity';
 import { CreateTicketDto } from './dto/create-ticket.dto';
 import { PaginationDto, paginate, PaginatedResult } from '../common/dto/pagination.dto';
+import { RedisService } from '../redis/redis.service';
+
+// Cache TTL: 1 hora para catálogos (raramente cambian)
+const CATALOG_CACHE_TTL = 60 * 60 * 1000;
 
 @Injectable()
 export class EventsService {
@@ -42,6 +47,9 @@ export class EventsService {
     private readonly sessionRepository: Repository<EventSession>,
     @InjectRepository(EventTicket)
     private readonly ticketRepository: Repository<EventTicket>,
+    @InjectRepository(EventLocation)
+    private readonly locationRepository: Repository<EventLocation>,
+    private readonly redisService: RedisService,
   ) {}
 
   async create(createEventDto: CreateEventDto, userId: string) {
@@ -90,6 +98,24 @@ export class EventsService {
 
     const slug = this.generateSlug(eventData.title);
 
+    // Deduplicar ubicación
+    let eventLocation: EventLocation | undefined;
+    if (location) {
+      const existingLocation = await this.locationRepository.findOne({
+        where: {
+          name: location.name,
+          address: location.address,
+          city: location.city,
+        },
+      });
+
+      if (existingLocation) {
+        eventLocation = existingLocation;
+      } else {
+        eventLocation = this.locationRepository.create(location);
+      }
+    }
+
     const event = this.eventRepository.create({
       ...eventData,
       slug,
@@ -97,7 +123,7 @@ export class EventsService {
       category: { id: categoryId },
       modality: { id: modalityId },
       createdBy: user,
-      location,
+      location: eventLocation,
       virtualAccess,
       speakers,
       organizers,
@@ -108,16 +134,48 @@ export class EventsService {
 
 
 
-  getTypes() {
-    return this.eventTypeRepository.find();
+  async getTypes() {
+    const cacheKey = 'catalog:event-types';
+    const cached = await this.redisService.get<EventType[]>(cacheKey);
+    if (cached) {
+      return cached;
+    }
+
+    const types = await this.eventTypeRepository.find();
+    await this.redisService.set(cacheKey, types, CATALOG_CACHE_TTL);
+    return types;
   }
 
-  getCategories() {
-    return this.eventCategoryRepository.find();
+  async getCategories() {
+    const cacheKey = 'catalog:event-categories';
+    const cached = await this.redisService.get<EventCategory[]>(cacheKey);
+    if (cached) {
+      return cached;
+    }
+
+    const categories = await this.eventCategoryRepository.find();
+    await this.redisService.set(cacheKey, categories, CATALOG_CACHE_TTL);
+    return categories;
   }
 
-  getModalities() {
-    return this.eventModalityRepository.find();
+  async getModalities() {
+    const cacheKey = 'catalog:event-modalities';
+    const cached = await this.redisService.get<EventModality[]>(cacheKey);
+    if (cached) {
+      return cached;
+    }
+
+    const modalities = await this.eventModalityRepository.find();
+    await this.redisService.set(cacheKey, modalities, CATALOG_CACHE_TTL);
+    return modalities;
+  }
+
+  async invalidateCatalogCache() {
+    await Promise.all([
+      this.redisService.del('catalog:event-types'),
+      this.redisService.del('catalog:event-categories'),
+      this.redisService.del('catalog:event-modalities'),
+    ]);
   }
 
   async findAll(paginationDto?: PaginationDto): Promise<PaginatedResult<Event>> {
@@ -204,10 +262,28 @@ export class EventsService {
     if (!existingEvent)
       throw new NotFoundException(`Event with ID ${id} not found`);
 
+    // Deduplicar ubicación
+    let eventLocation: EventLocation | undefined;
+    if (location) {
+      const existingLocation = await this.locationRepository.findOne({
+        where: {
+          name: location.name,
+          address: location.address,
+          city: location.city,
+        },
+      });
+
+      if (existingLocation) {
+        eventLocation = existingLocation;
+      } else {
+        eventLocation = this.locationRepository.create(location);
+      }
+    }
+
     const event = await this.eventRepository.preload({
       id,
       ...eventData,
-      location,
+      location: eventLocation,
       virtualAccess,
     });
 

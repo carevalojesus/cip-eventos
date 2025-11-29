@@ -26,10 +26,29 @@ services:
     entrypoint: >
       /bin/sh -c "
         echo 'Waiting for MinIO...';
-        until mc alias set local http://minio:9000 ${MINIO_ROOT_USER} ${MINIO_ROOT_PASSWORD}; do
+        until mc alias set local http://minio:9000 \${MINIO_ROOT_USER} \${MINIO_ROOT_PASSWORD}; do
           sleep 2;
         done;
-        mc mb -p local/${MINIO_BUCKET} || true;
-        mc anonymous set public local/${MINIO_BUCKET} || true;
+        mc mb -p local/\${MINIO_BUCKET} || true;
+        # Removed anonymous public access for security
+        # mc anonymous set public local/\${MINIO_BUCKET} || true;
         echo 'Bucket ready';
       "
+
+  redis:
+    image: redis:7-alpine
+    container_name: cip-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  redis_data:

@@ -30,6 +30,7 @@ import { AcceptLanguageResolver, I18nModule, QueryResolver } from 'nestjs-i18n';
 import * as path from 'path';
 import { DashboardModule } from './dashboard/dashboard.module';
 import { NotificationsModule } from './notifications/notifications.module';
+import { RedisModule } from './redis/redis.module';
 
 @Module({
   imports: [
@@ -96,6 +97,7 @@ import { NotificationsModule } from './notifications/notifications.module';
     CipIntegrationModule,
     DashboardModule,
     NotificationsModule,
+    RedisModule,
 
     I18nModule.forRoot({
       fallbackLanguage: 'es',

@@ -6,6 +6,8 @@ import { I18nValidationPipe, I18nValidationExceptionFilter } from 'nestjs-i18n';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import cookieParser from 'cookie-parser';
 
+import helmet from 'helmet';
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const configService = app.get(ConfigService);
@@ -16,6 +18,22 @@ async function bootstrap() {
   const isProduction = configService.get<string>('NODE_ENV') === 'production';
 
   app.setGlobalPrefix(prefix);
+
+  // Security Headers (Helmet)
+  app.use(
+    helmet({
+      contentSecurityPolicy: {
+        directives: {
+          defaultSrc: ["'self'"],
+          scriptSrc: ["'self'"],
+          styleSrc: ["'self'", "'unsafe-inline'"], // unsafe-inline often needed for UI libs
+          imgSrc: ["'self'", 'data:', 'blob:', 'https:'], // Allow images from https (MinIO/S3)
+          connectSrc: ["'self'", 'https:'], // Allow API calls to https
+        },
+      },
+      crossOriginResourcePolicy: { policy: 'cross-origin' }, // Allow cross-origin for images if needed
+    }),
+  );
 
   // Cookie parser para httpOnly cookies
   app.use(cookieParser());
