@@ -1,7 +1,8 @@
 import { Injectable, Logger, BadRequestException, InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { GoogleAuth } from 'google-auth-library';
-import * as jwt from 'jsonwebtoken';
+import * as jwt from 'jsonwebtoken'; // Para Google Wallet
+import { JwtService } from '@nestjs/jwt'; // Para nuestro token firmado
 import { I18nService, I18nContext } from 'nestjs-i18n';
 import { Registration } from '../registrations/entities/registration.entity';
 import { Event } from '../events/entities/event.entity';
@@ -25,6 +26,7 @@ export class WalletService {
   constructor(
     private configService: ConfigService,
     private readonly i18n: I18nService,
+    private readonly jwtService: JwtService,
   ) {
     // Validar configuración requerida
     const issuerId = this.configService.get<string>('GOOGLE_WALLET_ISSUER_ID');
@@ -227,5 +229,28 @@ export class WalletService {
         }
       }
     };
+  }
+
+  // --- Seguridad: Tokens firmados para endpoints públicos ---
+
+  generateSignedUrl(registrationId: string): string {
+    const payload = { sub: registrationId };
+    const token = this.jwtService.sign(payload, { expiresIn: '24h' }); // Link válido por 24h
+
+    // Construir URL completa
+    const apiUrl = this.configService.get<string>('API_URL') || 'http://localhost:3000';
+    return `${apiUrl}/wallet/${registrationId}?token=${token}`;
+  }
+
+  verifySignedToken(token: string, registrationId: string): void {
+    try {
+      const payload = this.jwtService.verify(token);
+      if (payload.sub !== registrationId) {
+        throw new BadRequestException('Invalid token for this registration');
+      }
+    } catch (error) {
+      this.logger.warn(`Invalid signed token for registration ${registrationId}: ${error.message}`);
+      throw new BadRequestException('Invalid or expired token');
+    }
   }
 }
