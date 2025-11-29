@@ -1,0 +1,13 @@
+---
+import { DashboardApp } from "@/components/dashboard/DashboardApp";
+import Layout from "@/layouts/Layout.astro";
+
+export const prerender = false;
+
+const { id } = Astro.params;
+const initialPath = `/en/events/${id}`;
+---
+
+<Layout title="Event Management - CIP Events" lang="en">
+  <DashboardApp client:only="react" initialPath={initialPath} />
+</Layout>

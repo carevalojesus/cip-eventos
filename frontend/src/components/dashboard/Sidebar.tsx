@@ -191,10 +191,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
   return (
     <aside
-      className={`flex h-screen w-64 flex-col border-r border-gray-200 bg-white ${className}`}
+      className={`flex h-screen w-64 flex-col border-r bg-card ${className}`}
     >
       {/* Logo Header */}
-      <div className="flex h-16 items-center gap-3 px-6 border-b border-gray-200">
+      <div className="flex h-16 items-center gap-3 px-6 border-b">
         <img
           src={AUTH_ASSETS.logo}
           alt="Logo CIP"
@@ -210,7 +210,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         <nav className="space-y-6 px-3">
           {navConfig.map((group, idx) => (
             <div key={idx}>
-              <h3 className="mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-gray-500">
+              <h3 className="mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                 {t(group.titleKey, group.title)}
               </h3>
               <div className="space-y-1">
@@ -225,14 +225,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
                       className={`group flex items-center rounded-lg px-3 py-2.5 text-sm font-medium transition-all ${
                         active
                           ? "bg-primary/10 text-primary"
-                          : "text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                          : "text-foreground hover:bg-muted hover:text-foreground"
                       }`}
                     >
                       <item.icon
                         className={`mr-3 h-5 w-5 transition-colors ${
                           active
                             ? "text-primary"
-                            : "text-gray-500 group-hover:text-gray-700"
+                            : "text-muted-foreground group-hover:text-foreground"
                         }`}
                       />
                       {t(item.labelKey, item.label)}
@@ -243,6 +243,17 @@ export const Sidebar: React.FC<SidebarProps> = ({
             </div>
           ))}
         </nav>
+      </div>
+
+      {/* Logout Button */}
+      <div className="border-t p-3">
+        <button
+          onClick={handleLogout}
+          className="group flex w-full items-center rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground transition-all hover:bg-destructive/10 hover:text-destructive"
+        >
+          <LogOut className="mr-3 h-5 w-5 transition-colors group-hover:text-destructive" />
+          {t("dashboard.nav.logout", "Cerrar sesión")}
+        </button>
       </div>
     </aside>
   );

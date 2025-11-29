@@ -21,6 +21,36 @@ export const eventsService = {
     return response.data.data;
   },
 
+  async findById(id: string): Promise<Event> {
+    const response = await api.get<Event>(`/events/${id}`);
+    return response.data;
+  },
+
+  // Para gestión de eventos (incluye virtualAccess y todos los estados)
+  async findByIdFull(id: string): Promise<Event> {
+    const response = await api.get<Event>(`/events/${id}/full`);
+    return response.data;
+  },
+
+  async update(id: string, data: Partial<CreateEventDto>): Promise<Event> {
+    const response = await api.patch<Event>(`/events/${id}`, data);
+    return response.data;
+  },
+
+  async updateWithImage(id: string, formData: FormData): Promise<Event> {
+    const response = await api.patch<Event>(`/events/${id}/with-image`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return response.data;
+  },
+
+  async publish(id: string): Promise<Event> {
+    const response = await api.patch<Event>(`/events/${id}/publish`);
+    return response.data;
+  },
+
   async findAllPaginated(page = 1, limit = 10): Promise<PaginatedResponse<Event>> {
     const response = await api.get<PaginatedResponse<Event>>("/events", {
       params: { page, limit },

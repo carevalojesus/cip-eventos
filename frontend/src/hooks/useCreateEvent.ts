@@ -3,6 +3,7 @@ import axios from "axios";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { toast } from "sonner";
 import { eventsService } from "@/services/events.service";
 import { logger } from "@/utils/logger";
 import { MODALITY_IDS, requiresLocation, requiresVirtualAccess } from "@/constants/modalities";
@@ -190,13 +191,27 @@ export const useCreateEvent = () => {
         await eventsService.createEvent(payload);
       }
 
+      toast.success("Evento creado exitosamente", {
+        description: "Ahora puedes editarlo o publicarlo desde la vista de gestión.",
+      });
+
       const locale = getCurrentLocale();
-      window.location.href = routes[locale].events;
+      // Pequeño delay para que el usuario vea el toast
+      setTimeout(() => {
+        window.location.href = routes[locale].events;
+      }, 1500);
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
         logger.error("Backend validation error:", JSON.stringify(error.response.data, null, 2));
+        toast.error("Error al crear el evento", {
+          description: error.response.data.message || "Por favor, revisa los datos e intenta nuevamente.",
+        });
+      } else {
+        logger.error("Error creating event:", error);
+        toast.error("Error al crear el evento", {
+          description: "Ocurrió un error inesperado. Intenta nuevamente.",
+        });
       }
-      logger.error("Error creating event:", error);
     } finally {
       setSubmitting(false);
     }

@@ -4,6 +4,7 @@ import Layout from "@/layouts/Layout.astro";
 
 // Esta página sirve como home para usuarios logueados
 // Si no está logueado, el DashboardApp redirigirá a /iniciar-sesion
+export const prerender = true;
 ---
 
 <Layout title="CIP Eventos - Panel de Administración">

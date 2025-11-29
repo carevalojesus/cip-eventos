@@ -10,6 +10,7 @@ export const routes = {
     login: '/iniciar-sesion',
     events: '/eventos',
     eventsNew: '/eventos/nuevo',
+    eventsManage: (id: string) => `/eventos/${id}`,
     eventsEdit: (id: string) => `/eventos/${id}/editar`,
   },
   en: {
@@ -17,6 +18,7 @@ export const routes = {
     login: '/en/login',
     events: '/en/events',
     eventsNew: '/en/events/new',
+    eventsManage: (id: string) => `/en/events/${id}`,
     eventsEdit: (id: string) => `/en/events/${id}/edit`,
   },
 } as const;

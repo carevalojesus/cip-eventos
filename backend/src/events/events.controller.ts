@@ -11,10 +11,16 @@ import {
   forwardRef,
   Res,
   Query,
+  UseInterceptors,
+  UploadedFile,
+  BadRequestException,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { memoryStorage } from 'multer';
 import type { Response } from 'express';
 import { RegistrationsService } from '../registrations/registrations.service';
 import { EventsService } from './events.service';
+import { UploadsService } from '../uploads/uploads.service';
 import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
 import { Public } from '../auth/decorators/public.decorator';
@@ -33,6 +39,7 @@ export class EventsController {
     private readonly eventsService: EventsService,
     @Inject(forwardRef(() => RegistrationsService))
     private readonly registrationsService: RegistrationsService,
+    private readonly uploadsService: UploadsService,
   ) {}
 
   @UseGuards(EmailVerifiedGuard)
@@ -41,6 +48,51 @@ export class EventsController {
     @Body(new EventModalityValidatorPipe()) createEventDto: CreateEventDto,
     @CurrentUser() user: { userId: string; email: string; role: string },
   ) {
+    return this.eventsService.create(createEventDto, user.userId);
+  }
+
+  @UseGuards(EmailVerifiedGuard)
+  @Post('with-image')
+  @UseInterceptors(FileInterceptor('coverImage', { storage: memoryStorage() }))
+  async createWithImage(
+    @UploadedFile() file: Express.Multer.File,
+    @Body('data') dataString: string,
+    @CurrentUser() user: { userId: string; email: string; role: string },
+  ) {
+    if (!dataString) {
+      throw new BadRequestException('Event data is required');
+    }
+
+    let createEventDto: CreateEventDto;
+    try {
+      createEventDto = JSON.parse(dataString);
+    } catch {
+      throw new BadRequestException('Invalid JSON data');
+    }
+
+    // Validar modalidad manualmente
+    const pipe = new EventModalityValidatorPipe();
+    createEventDto = pipe.transform(createEventDto);
+
+    // Si hay archivo, subirlo a S3/MinIO
+    if (file) {
+      const allowedMimeTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/webp'];
+      if (!allowedMimeTypes.includes(file.mimetype)) {
+        throw new BadRequestException('Invalid image type. Allowed: PNG, JPG, WebP');
+      }
+
+      if (file.size > 5 * 1024 * 1024) {
+        throw new BadRequestException('Image size exceeds 5MB limit');
+      }
+
+      const imageUrl = await this.uploadsService.uploadEventImage(
+        file.buffer,
+        file.originalname,
+        file.mimetype,
+      );
+      createEventDto.imageUrl = imageUrl;
+    }
+
     return this.eventsService.create(createEventDto, user.userId);
   }
 
@@ -86,6 +138,53 @@ export class EventsController {
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateEventDto: UpdateEventDto) {
     return this.eventsService.update(id, updateEventDto);
+  }
+
+  @UseGuards(EmailVerifiedGuard, EventOwnershipGuard)
+  @Patch(':id/with-image')
+  @UseInterceptors(FileInterceptor('coverImage', { storage: memoryStorage() }))
+  async updateWithImage(
+    @Param('id') id: string,
+    @UploadedFile() file: Express.Multer.File,
+    @Body('data') dataString: string,
+  ) {
+    if (!dataString) {
+      throw new BadRequestException('Event data is required');
+    }
+
+    let updateEventDto: UpdateEventDto;
+    try {
+      updateEventDto = JSON.parse(dataString);
+    } catch {
+      throw new BadRequestException('Invalid JSON data');
+    }
+
+    // Si hay archivo, subirlo a S3/MinIO
+    if (file) {
+      const allowedMimeTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/webp'];
+      if (!allowedMimeTypes.includes(file.mimetype)) {
+        throw new BadRequestException('Invalid image type. Allowed: PNG, JPG, WebP');
+      }
+
+      if (file.size > 5 * 1024 * 1024) {
+        throw new BadRequestException('Image size exceeds 5MB limit');
+      }
+
+      const imageUrl = await this.uploadsService.uploadEventImage(
+        file.buffer,
+        file.originalname,
+        file.mimetype,
+      );
+      updateEventDto.imageUrl = imageUrl;
+    }
+
+    return this.eventsService.update(id, updateEventDto);
+  }
+
+  @UseGuards(EmailVerifiedGuard, EventOwnershipGuard)
+  @Patch(':id/publish')
+  publish(@Param('id') id: string) {
+    return this.eventsService.publish(id);
   }
 
   @UseGuards(EmailVerifiedGuard, EventOwnershipGuard)

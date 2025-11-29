@@ -1,8 +1,21 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { useCreateEvent } from "@/hooks/useCreateEvent";
 import { CreateEventForm } from "./CreateEventForm";
+import { getCurrentLocale, routes } from "@/lib/routes";
+import type { Breadcrumb } from "@/components/dashboard/DashboardApp";
 
-export const CreateEventView: React.FC = () => {
+interface CreateEventViewProps {
+  onNavigate?: (path: string) => void;
+  onBreadcrumbsChange?: (breadcrumbs: Breadcrumb[]) => void;
+}
+
+export const CreateEventView: React.FC<CreateEventViewProps> = ({
+  onNavigate,
+  onBreadcrumbsChange,
+}) => {
+  const { t } = useTranslation();
+  const locale = getCurrentLocale();
   const {
     form,
     types,
@@ -12,6 +25,29 @@ export const CreateEventView: React.FC = () => {
     submitting,
     onSubmit,
   } = useCreateEvent();
+
+  // Report breadcrumbs to parent
+  useEffect(() => {
+    if (onBreadcrumbsChange) {
+      const eventsPath = routes[locale].events;
+      onBreadcrumbsChange([
+        { label: t("event_management.breadcrumb.back"), href: eventsPath },
+        { label: t("create_event.breadcrumb.title", "Nuevo Evento") },
+      ]);
+    }
+    return () => {
+      onBreadcrumbsChange?.([]);
+    };
+  }, [onBreadcrumbsChange, locale, t]);
+
+  const handleCancel = () => {
+    const eventsPath = routes[locale].events;
+    if (onNavigate) {
+      onNavigate(eventsPath);
+    } else {
+      window.history.back();
+    }
+  };
 
   if (loading) {
     return <div>Cargando...</div>;
@@ -25,7 +61,7 @@ export const CreateEventView: React.FC = () => {
       modalities={modalities}
       onSubmit={onSubmit}
       submitting={submitting}
-      onCancel={() => window.history.back()}
+      onCancel={handleCancel}
     />
   );
 };

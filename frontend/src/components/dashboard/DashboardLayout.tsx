@@ -1,7 +1,15 @@
 import React, { useState } from "react";
+import { X } from "lucide-react";
 import { Sidebar } from "./Sidebar";
 import { DashboardHeader } from "./DashboardHeader";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -52,7 +60,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   const { isHelpOpen, closeHelp } = useKeyboardShortcuts(shortcuts);
 
   return (
-    <div className="flex h-screen overflow-hidden bg-gray-50/50">
+    <div className="flex h-screen overflow-hidden bg-muted/30">
       {/* Skip to content link */}
       <a
         href="#main-content"
@@ -85,65 +93,41 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
           onMenuClick={() => setIsSidebarOpen(true)}
           title={title}
           breadcrumbs={breadcrumbs}
+          onNavigate={onNavigate}
         />
         <main id="main-content" className="flex-1 overflow-y-auto" tabIndex={-1}>
-          <div className="w-full px-6 py-6 lg:px-10">{children}</div>
+          <div className="mx-auto w-full max-w-7xl px-6 py-6 lg:px-10">{children}</div>
         </main>
       </div>
 
       {/* Keyboard Shortcuts Help Modal */}
-      {isHelpOpen && (
-        <div className="fixed inset-0 z-[70] flex items-center justify-center bg-black/50 backdrop-blur-sm">
-          <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-2xl">
-            <div className="mb-4 flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-gray-900">
-                Atajos de Teclado
-              </h3>
-              <button
-                onClick={closeHelp}
-                className="rounded-full p-1 hover:bg-gray-100"
-              >
-                <span className="sr-only">Cerrar</span>
-                <svg
-                  className="h-5 w-5 text-gray-500"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              </button>
+      <Dialog open={isHelpOpen} onOpenChange={closeHelp}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Atajos de Teclado</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3">
+            <div className="flex items-center justify-between border-b pb-2">
+              <span className="text-muted-foreground">Mostrar ayuda</span>
+              <kbd className="rounded bg-muted px-2 py-1 text-xs font-mono">?</kbd>
             </div>
-            <div className="space-y-3">
-              <div className="flex justify-between border-b border-gray-100 pb-2">
-                <span className="text-gray-600">Mostrar ayuda</span>
-                <kbd className="rounded bg-gray-100 px-2 py-1 text-xs font-mono text-gray-800">
-                  ?
+            {shortcuts.map((shortcut) => (
+              <div
+                key={shortcut.key}
+                className="flex items-center justify-between border-b pb-2 last:border-0"
+              >
+                <span className="text-muted-foreground">{shortcut.description}</span>
+                <kbd className="rounded bg-muted px-2 py-1 text-xs font-mono">
+                  {shortcut.key.toUpperCase()}
                 </kbd>
               </div>
-              {shortcuts.map((shortcut) => (
-                <div
-                  key={shortcut.key}
-                  className="flex justify-between border-b border-gray-100 pb-2 last:border-0"
-                >
-                  <span className="text-gray-600">{shortcut.description}</span>
-                  <kbd className="rounded bg-gray-100 px-2 py-1 text-xs font-mono text-gray-800">
-                    {shortcut.key.toUpperCase()}
-                  </kbd>
-                </div>
-              ))}
-            </div>
-            <div className="mt-6 text-center text-xs text-gray-400">
-              Presiona <kbd className="font-mono">Esc</kbd> para cerrar
-            </div>
+            ))}
           </div>
-        </div>
-      )}
+          <p className="text-center text-xs text-muted-foreground">
+            Presiona <kbd className="font-mono">Esc</kbd> para cerrar
+          </p>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

@@ -1,12 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
 import { eventsService } from "@/services/events.service";
-import type { Event } from "@/types/event";
 
 export const useEvents = () => {
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: ["events"],
     queryFn: () => eventsService.findAll(),
-    staleTime: 1000 * 60 * 5, // 5 minutos
+    staleTime: 1000 * 30, // 30 segundos - para que refresque más rápido
+    refetchOnMount: "always", // Siempre refrescar al montar el componente
   });
 
   return {

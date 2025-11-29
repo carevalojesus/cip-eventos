@@ -57,11 +57,12 @@ export class UploadsService {
     buffer: Buffer,
     filename: string,
     contentType: string,
+    folder = 'certificates',
   ): Promise<string> {
     const s3 = this.getOrCreateClient();
     await this.ensureBucketExists(s3);
 
-    const key = `certificates/${uuidv4()}-${filename}`;
+    const key = `${folder}/${uuidv4()}-${filename}`;
     const command = new PutObjectCommand({
       Bucket: this.bucket,
       Key: key,
@@ -73,6 +74,14 @@ export class UploadsService {
 
     const normalizedEndpoint = this.endpoint.replace(/\/$/, '');
     return `${normalizedEndpoint}/${this.bucket}/${key}`;
+  }
+
+  async uploadEventImage(
+    buffer: Buffer,
+    filename: string,
+    contentType: string,
+  ): Promise<string> {
+    return this.uploadFile(buffer, filename, contentType, 'events');
   }
 
   private getOrCreateClient(): S3Client {

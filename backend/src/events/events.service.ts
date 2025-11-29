@@ -642,4 +642,22 @@ export class EventsService {
 
     return this.ticketRepository.save(ticket);
   }
+
+  async publish(id: string) {
+    const event = await this.eventRepository.findOne({
+      where: { id, isActive: true },
+      relations: ['type', 'category', 'modality', 'location', 'virtualAccess'],
+    });
+
+    if (!event) {
+      throw new NotFoundException('Event not found');
+    }
+
+    if (event.status !== EventStatus.DRAFT) {
+      throw new BadRequestException('Only draft events can be published');
+    }
+
+    event.status = EventStatus.PUBLISHED;
+    return this.eventRepository.save(event);
+  }
 }

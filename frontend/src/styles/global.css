@@ -78,11 +78,10 @@
   --muted-foreground: 20 2% 40%;
   /* #686564 para texto deshabilitado */
 
-  /* ACCENT: El Dorado CIP (#d7b560) */
+  /* ACCENT: Gris neutro para hovers */
   /* Usado para hovers en listas o elementos destacados */
-  --accent: 43 60% 61%;
+  --accent: 240 4% 96%;
   --accent-foreground: 240 1% 16%;
-  /* Texto negro sobre dorado */
 
   /* DESTRUCTIVE: El Rojo Oscuro (#6c0e10) */
   --destructive: 359 77% 24%;
@@ -150,9 +149,9 @@
   --muted: 240 2% 26%;
   --muted-foreground: 240 2% 60%;
 
-  /* Accent: Dorado para destacar en modo oscuro se ve increíble */
-  --accent: 43 60% 61%;
-  --accent-foreground: 240 1% 16%;
+  /* Accent: Gris oscuro para hovers en dark mode */
+  --accent: 240 2% 22%;
+  --accent-foreground: 0 0% 98%;
 
   --destructive: 0 62.8% 30.6%;
   --destructive-foreground: 0 0% 98%;

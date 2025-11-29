@@ -14,16 +14,17 @@ import { EventRow } from "./EventRow";
 
 interface EventTableProps {
   events: Event[];
+  onNavigate?: (path: string) => void;
 }
 
-const statusVariantMap: Record<EventStatus, "success" | "gray" | "default" | "destructive"> = {
+const statusVariantMap: Record<EventStatus, "success" | "gray" | "info" | "destructive"> = {
   PUBLISHED: "success",
   DRAFT: "gray",
-  COMPLETED: "default",
+  COMPLETED: "info",
   CANCELLED: "destructive",
 };
 
-export const EventTable: React.FC<EventTableProps> = ({ events }) => {
+export const EventTable: React.FC<EventTableProps> = ({ events, onNavigate }) => {
   const { t } = useTranslation();
 
   const getModalityIcon = useCallback((modalityName: string) => {
@@ -34,31 +35,30 @@ export const EventTable: React.FC<EventTableProps> = ({ events }) => {
   }, []);
 
   return (
-    <div className="w-full overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">
-      <div className="overflow-x-auto">
-        <Table className="w-full table-fixed">
-          <TableHeader className="bg-muted/50">
-            <TableRow className="hover:bg-transparent">
-              <TableHead className="w-[320px] px-4 py-3 text-xs font-medium uppercase text-gray-700">
-                {t("dashboard.events_view.table.event")}
-              </TableHead>
-              <TableHead className="w-[180px] px-4 py-3 text-xs font-medium uppercase text-gray-700">
-                {t("dashboard.events_view.table.date")}
-              </TableHead>
-              <TableHead className="w-[120px] px-4 py-3 text-xs font-medium uppercase text-gray-700">
-                {t("dashboard.events_view.table.modality")}
-              </TableHead>
-              <TableHead className="w-[200px] px-4 py-3 text-xs font-medium uppercase text-gray-700">
-                {t("dashboard.events_view.table.location", "Ubicación")}
-              </TableHead>
-              <TableHead className="w-[100px] px-4 py-3 text-xs font-medium uppercase text-gray-700">
-                {t("dashboard.events_view.table.status")}
-              </TableHead>
-              <TableHead className="w-[60px] px-4 py-3 text-right text-xs font-medium uppercase text-gray-700">
-                {t("dashboard.events_view.table.actions")}
-              </TableHead>
-            </TableRow>
-          </TableHeader>
+    <div className="w-full overflow-hidden rounded-lg border bg-card shadow-sm">
+      <Table className="table-fixed w-full">
+        <TableHeader className="bg-muted/50">
+          <TableRow className="hover:bg-transparent">
+            <TableHead className="w-[30%] px-4 py-3 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+              {t("dashboard.events_view.table.event")}
+            </TableHead>
+            <TableHead className="hidden sm:table-cell w-[12%] px-4 py-3 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+              {t("dashboard.events_view.table.date")}
+            </TableHead>
+            <TableHead className="hidden md:table-cell w-[12%] px-4 py-3 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+              {t("dashboard.events_view.table.modality")}
+            </TableHead>
+            <TableHead className="hidden lg:table-cell w-[22%] px-4 py-3 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+              {t("dashboard.events_view.table.location", "Ubicación")}
+            </TableHead>
+            <TableHead className="w-[12%] px-4 py-3 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+              {t("dashboard.events_view.table.status")}
+            </TableHead>
+            <TableHead className="w-[12%] px-4 py-3 text-right text-xs font-medium uppercase tracking-wide text-muted-foreground">
+              {t("dashboard.events_view.table.actions")}
+            </TableHead>
+          </TableRow>
+        </TableHeader>
           <TableBody>
             {events.map((event) => (
               <EventRow
@@ -66,6 +66,7 @@ export const EventTable: React.FC<EventTableProps> = ({ events }) => {
                 event={event}
                 statusVariantMap={statusVariantMap}
                 getModalityIcon={getModalityIcon}
+                onNavigate={onNavigate}
               />
             ))}
             {events.length === 0 && (
@@ -77,7 +78,6 @@ export const EventTable: React.FC<EventTableProps> = ({ events }) => {
             )}
           </TableBody>
         </Table>
-      </div>
     </div>
   );
 };

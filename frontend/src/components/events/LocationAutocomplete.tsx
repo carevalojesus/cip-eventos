@@ -20,7 +20,7 @@ import type { EventLocation } from "@/types/event";
 import { eventsService } from "@/services/events.service";
 
 interface LocationAutocompleteProps {
-  value: string;
+  value: string | undefined;
   onSelect: (location: EventLocation | null) => void;
   onInputChange: (value: string) => void;
   placeholder?: string;
@@ -102,7 +102,7 @@ export const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({
                   {locations
                     .filter(loc => {
                       const searchName = loc.name || loc.address;
-                      return searchName.toLowerCase().includes(value.toLowerCase());
+                      return searchName.toLowerCase().includes((value || "").toLowerCase());
                     })
                     .map((location) => {
                       const displayName = location.name || location.address;
@@ -122,7 +122,7 @@ export const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({
                           <Check
                             className={cn(
                               "ml-auto h-4 w-4",
-                              value === displayName ? "opacity-100" : "opacity-0"
+                              (value || "") === displayName ? "opacity-100" : "opacity-0"
                             )}
                           />
                         </CommandItem>

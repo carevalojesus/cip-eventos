@@ -31,10 +31,10 @@ export const EventLocationFields: React.FC<EventLocationFieldsProps> = ({ form }
   };
 
   return (
-    <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm border-l-4 border-l-blue-500">
+    <div className="rounded-lg border bg-card p-6 shadow-sm">
       <div className="flex items-center gap-2 mb-4">
-        <MapPin className="h-5 w-5 text-blue-500" />
-        <h2 className="text-lg font-medium text-gray-900">Ubicación Presencial</h2>
+        <MapPin className="h-5 w-5 text-muted-foreground" />
+        <h2 className="text-lg font-medium text-foreground">Ubicación Presencial</h2>
       </div>
       <div className="space-y-4">
         <FormField
@@ -69,6 +69,7 @@ export const EventLocationFields: React.FC<EventLocationFieldsProps> = ({ form }
                 <Input
                   {...field}
                   placeholder="Ej: Av. Pevas Cuadra 4"
+                  className="bg-white"
                 />
               </FormControl>
               <FormMessage />
@@ -85,7 +86,7 @@ export const EventLocationFields: React.FC<EventLocationFieldsProps> = ({ form }
                   Ciudad <span className="text-red-500">*</span>
                 </FormLabel>
                 <FormControl>
-                  <Input {...field} placeholder="Lima" />
+                  <Input {...field} placeholder="Lima" className="bg-white" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -98,7 +99,7 @@ export const EventLocationFields: React.FC<EventLocationFieldsProps> = ({ form }
               <FormItem>
                 <FormLabel>Referencia</FormLabel>
                 <FormControl>
-                  <Input {...field} placeholder="Frente al Parque..." />
+                  <Input {...field} placeholder="Frente al Parque..." className="bg-white" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -112,7 +113,7 @@ export const EventLocationFields: React.FC<EventLocationFieldsProps> = ({ form }
             <FormItem>
               <FormLabel>Link de Mapa (Google Maps)</FormLabel>
               <FormControl>
-                <Input {...field} placeholder="https://maps.google.com/..." />
+                <Input {...field} placeholder="https://maps.google.com/..." className="bg-white" />
               </FormControl>
               <FormMessage />
             </FormItem>

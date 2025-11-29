@@ -12,12 +12,13 @@ const badgeVariants = cva(
         secondary:
           "border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80",
         destructive:
-          "border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80",
+          "border-transparent bg-red-50 text-red-600 hover:bg-red-100 dark:bg-red-950 dark:text-red-400",
         outline: "text-foreground",
-        success: "border-transparent bg-success text-success-foreground hover:bg-success/80",
-        warning: "border-transparent bg-warning text-warning-foreground hover:bg-warning/80",
-        info: "border-transparent bg-info text-info-foreground hover:bg-info/80",
-        gray: "border-transparent bg-muted text-muted-foreground hover:bg-muted/80",
+        // Estados con estilo soft (fondo claro + texto de color)
+        success: "border-transparent bg-emerald-50 text-emerald-600 hover:bg-emerald-100 dark:bg-emerald-950 dark:text-emerald-400",
+        warning: "border-transparent bg-amber-50 text-amber-600 hover:bg-amber-100 dark:bg-amber-950 dark:text-amber-400",
+        info: "border-transparent bg-blue-50 text-blue-600 hover:bg-blue-100 dark:bg-blue-950 dark:text-blue-400",
+        gray: "border-transparent bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400",
       },
     },
     defaultVariants: {
