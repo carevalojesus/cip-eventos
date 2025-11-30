@@ -25,6 +25,7 @@
     "btn": "Ingresar al Sistema",
     "btn_loading": "Ingresando...",
     "forgot_password": "¿Olvidaste tu contraseña?",
+    "remember_me": "Recordar cuenta",
     "access_problems": "¿Problemas de acceso?",
     "contact_support": "Contacta a",
     "support_it": "Soporte TI",
@@ -65,8 +66,12 @@
       "email_required": "El correo electrónico es requerido",
       "email_invalid": "Ingresa un correo institucional válido",
       "password_required": "La contraseña es requerida",
-      "password_min": "La contraseña debe tener al menos 6 caracteres"
-    }
+      "password_min": "La contraseña debe tener al menos 6 caracteres",
+      "password_min_length": "La contraseña debe tener al menos 8 caracteres",
+      "password_uppercase": "La contraseña debe contener al menos una mayúscula",
+      "password_number": "La contraseña debe contener al menos un número"
+    },
+    "loading": "Cargando..."
   },
   "logout": {
     "btn": "Cerrar Sesión",

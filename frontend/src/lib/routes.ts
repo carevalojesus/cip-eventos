@@ -8,6 +8,7 @@ export const routes = {
   es: {
     home: '/',
     login: '/iniciar-sesion',
+    forgotPassword: '/recuperar-contrasena',
     events: '/eventos',
     eventsNew: '/eventos/nuevo',
     eventsManage: (id: string) => `/eventos/${id}`,
@@ -16,6 +17,7 @@ export const routes = {
   en: {
     home: '/en',
     login: '/en/login',
+    forgotPassword: '/en/forgot-password',
     events: '/en/events',
     eventsNew: '/en/events/new',
     eventsManage: (id: string) => `/en/events/${id}`,
