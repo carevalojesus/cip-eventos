@@ -19,6 +19,7 @@ export function Checkbox({
     cursor: 'pointer',
     fontSize: '14px',
     color: 'var(--color-grey-600)',
+    lineHeight: 1.5,
     ...style,
   }
 

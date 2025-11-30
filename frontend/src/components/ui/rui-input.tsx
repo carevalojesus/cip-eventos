@@ -29,9 +29,10 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(({
   }
 
   const labelStyles: React.CSSProperties = {
-    fontSize: '0.875rem',
+    fontSize: '14px',
     fontWeight: 500,
     color: 'var(--color-grey-700)',
+    lineHeight: 1.5,
   }
 
   const inputWrapperStyles: React.CSSProperties = {
