@@ -4,11 +4,21 @@ import axios from 'axios';
 
 import api from '@/lib/api';
 import { Button } from '@/components/ui/rui-button';
+import { I18nProvider } from '@/components/providers/I18nProvider';
 import { getCurrentLocale, routes } from '@/lib/routes';
 
 type Status = 'idle' | 'loading' | 'success' | 'error';
 
+// Wrapper con I18nProvider para asegurar que i18n está listo
 export default function ConfirmEmail() {
+  return (
+    <I18nProvider>
+      <ConfirmEmailContent />
+    </I18nProvider>
+  );
+}
+
+function ConfirmEmailContent() {
   const { t } = useTranslation();
   const [status, setStatus] = useState<Status>('idle');
   const [message, setMessage] = useState('');

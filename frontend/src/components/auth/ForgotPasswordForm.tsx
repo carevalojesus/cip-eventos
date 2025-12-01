@@ -5,10 +5,20 @@ import { Mail } from 'lucide-react';
 import { Input } from '@/components/ui/rui-input';
 import { Button } from '@/components/ui/rui-button';
 import { Link } from '@/components/ui/rui-link';
+import { I18nProvider } from '@/components/providers/I18nProvider';
 import { getCurrentLocale, routes } from '@/lib/routes';
 import { useForgotPasswordForm } from '@/hooks/useForgotPasswordForm';
 
+// Wrapper con I18nProvider para asegurar que i18n está listo
 export default function ForgotPasswordForm() {
+  return (
+    <I18nProvider>
+      <ForgotPasswordFormContent />
+    </I18nProvider>
+  );
+}
+
+function ForgotPasswordFormContent() {
   const { t } = useTranslation();
   const { email, setEmail, isLoading, successMessage, errorMessage, handleSubmit } =
     useForgotPasswordForm({ t });

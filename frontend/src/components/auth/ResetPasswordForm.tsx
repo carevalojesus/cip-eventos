@@ -5,10 +5,20 @@ import { Lock } from 'lucide-react';
 import { Input } from '@/components/ui/rui-input';
 import { Button } from '@/components/ui/rui-button';
 import { Link } from '@/components/ui/rui-link';
+import { I18nProvider } from '@/components/providers/I18nProvider';
 import { getCurrentLocale, routes } from '@/lib/routes';
 import { useResetPasswordForm } from '@/hooks/useResetPasswordForm';
 
+// Wrapper con I18nProvider para asegurar que i18n está listo
 export default function ResetPasswordForm() {
+  return (
+    <I18nProvider>
+      <ResetPasswordFormContent />
+    </I18nProvider>
+  );
+}
+
+function ResetPasswordFormContent() {
   const { t } = useTranslation();
   const locale = getCurrentLocale();
   const {

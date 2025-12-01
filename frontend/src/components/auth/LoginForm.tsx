@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/rui-button'
 import { Input } from '@/components/ui/rui-input'
 import { Checkbox } from '@/components/ui/rui-checkbox'
 import { Link } from '@/components/ui/rui-link'
+import { I18nProvider } from '@/components/providers/I18nProvider'
 
 import { useAuthStore } from '@/store/auth.store'
 import { getCurrentLocale, routes } from '@/lib/routes'
@@ -14,7 +15,16 @@ interface LoginFormProps {
   onSuccess?: () => void
 }
 
-export function LoginForm({ onSuccess }: LoginFormProps) {
+// Wrapper con I18nProvider para asegurar que i18n está listo
+export function LoginForm(props: LoginFormProps) {
+  return (
+    <I18nProvider>
+      <LoginFormContent {...props} />
+    </I18nProvider>
+  )
+}
+
+function LoginFormContent({ onSuccess }: LoginFormProps) {
   const { t } = useTranslation()
   const login = useAuthStore((state) => state.login)
 
