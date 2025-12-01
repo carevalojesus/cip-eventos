@@ -1,4 +1,7 @@
-import { forwardRef, type InputHTMLAttributes, type ReactNode } from 'react'
+import { forwardRef, useState, type InputHTMLAttributes, type ReactNode } from 'react'
+import { Eye, EyeOff } from 'lucide-react'
+
+type InputSize = 'sm' | 'md' | 'lg'
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string
@@ -6,6 +9,16 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   hint?: string
   leftIcon?: ReactNode
   rightIcon?: ReactNode
+  inputSize?: InputSize
+  showPasswordToggle?: boolean
+  showPasswordLabel?: string
+  hidePasswordLabel?: string
+}
+
+const sizeConfig: Record<InputSize, { height: string; fontSize: string }> = {
+  sm: { height: '32px', fontSize: '13px' },
+  md: { height: '36px', fontSize: '14px' },
+  lg: { height: '40px', fontSize: '14px' },
 }
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(({
@@ -14,12 +27,24 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(({
   hint,
   leftIcon,
   rightIcon,
+  inputSize = 'md',
+  showPasswordToggle = false,
+  showPasswordLabel = 'Show password',
+  hidePasswordLabel = 'Hide password',
   id,
   className = '',
   style,
+  type,
   ...props
 }, ref) => {
+  const [showPassword, setShowPassword] = useState(false)
+
   const inputId = id || props.name
+  const errorId = error ? `${inputId}-error` : undefined
+  const { height, fontSize } = sizeConfig[inputSize]
+
+  const shouldShowToggle = showPasswordToggle && type === 'password'
+  const actualType = shouldShowToggle && showPassword ? 'text' : type
 
   const containerStyles: React.CSSProperties = {
     display: 'flex',
@@ -43,19 +68,17 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(({
 
   const inputStyles: React.CSSProperties = {
     width: '100%',
-    padding: 'var(--space-3) var(--space-4)',
+    height,
+    padding: '0 var(--space-4)',
     paddingLeft: leftIcon ? 'var(--space-10)' : 'var(--space-4)',
-    paddingRight: rightIcon ? 'var(--space-10)' : 'var(--space-4)',
-    fontSize: '16px',
+    paddingRight: (rightIcon || shouldShowToggle) ? 'var(--space-10)' : 'var(--space-4)',
+    fontSize,
     color: 'var(--color-grey-900)',
     backgroundColor: '#FFFFFF',
-    borderTop: `1px solid ${error ? 'var(--color-danger)' : 'var(--color-grey-300)'}`,
-    borderLeft: `1px solid ${error ? 'var(--color-danger)' : 'var(--color-grey-200)'}`,
-    borderRight: `1px solid ${error ? 'var(--color-danger)' : 'var(--color-grey-200)'}`,
-    borderBottom: `1px solid ${error ? 'var(--color-danger)' : 'var(--color-grey-100)'}`,
+    border: `1px solid ${error ? 'var(--color-danger)' : 'var(--color-grey-200)'}`,
     borderRadius: '6px',
     outline: 'none',
-    transition: 'border-color 150ms ease',
+    transition: 'border-color 150ms ease, box-shadow 150ms ease',
     boxShadow: 'inset 0 2px 4px rgba(39, 36, 29, 0.06)',
   }
 
@@ -66,6 +89,20 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(({
     justifyContent: 'center',
     color: 'var(--color-grey-400)',
     pointerEvents: 'none',
+  }
+
+  const toggleButtonStyles: React.CSSProperties = {
+    position: 'absolute',
+    right: 'var(--space-3)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    background: 'none',
+    border: 'none',
+    cursor: 'pointer',
+    padding: 0,
+    color: 'var(--color-grey-400)',
+    transition: 'color 150ms ease',
   }
 
   const hintStyles: React.CSSProperties = {
@@ -91,37 +128,52 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(({
         <input
           ref={ref}
           id={inputId}
+          type={actualType}
           style={inputStyles}
+          aria-invalid={!!error}
+          aria-describedby={errorId}
           onFocus={(e) => {
             if (!error) {
-              e.currentTarget.style.borderTopColor = 'var(--color-grey-500)'
-              e.currentTarget.style.borderLeftColor = 'var(--color-grey-400)'
-              e.currentTarget.style.borderRightColor = 'var(--color-grey-400)'
-              e.currentTarget.style.borderBottomColor = 'var(--color-grey-300)'
+              e.currentTarget.style.borderColor = 'var(--color-grey-300)'
+              e.currentTarget.style.boxShadow = '0 0 0 3px rgba(184, 178, 167, 0.25)'
             }
             props.onFocus?.(e)
           }}
           onBlur={(e) => {
             if (!error) {
-              e.currentTarget.style.borderTopColor = 'var(--color-grey-300)'
-              e.currentTarget.style.borderLeftColor = 'var(--color-grey-200)'
-              e.currentTarget.style.borderRightColor = 'var(--color-grey-200)'
-              e.currentTarget.style.borderBottomColor = 'var(--color-grey-100)'
+              e.currentTarget.style.borderColor = 'var(--color-grey-200)'
+              e.currentTarget.style.boxShadow = 'inset 0 2px 4px rgba(39, 36, 29, 0.06)'
             }
             props.onBlur?.(e)
           }}
           {...props}
         />
 
-        {rightIcon && (
+        {shouldShowToggle ? (
+          <button
+            type="button"
+            style={toggleButtonStyles}
+            onClick={() => setShowPassword(!showPassword)}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.color = 'var(--color-grey-600)'
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.color = 'var(--color-grey-400)'
+            }}
+            aria-label={showPassword ? hidePasswordLabel : showPasswordLabel}
+            tabIndex={-1}
+          >
+            {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+          </button>
+        ) : rightIcon ? (
           <span style={{ ...iconStyles, right: 'var(--space-3)' }}>
             {rightIcon}
           </span>
-        )}
+        ) : null}
       </div>
 
       {(error || hint) && (
-        <span style={hintStyles}>
+        <span id={errorId} style={hintStyles}>
           {error || hint}
         </span>
       )}

@@ -16,17 +16,18 @@ export function Link({
 }: LinkProps) {
   const variantStyles: Record<LinkVariant, React.CSSProperties> = {
     default: {
-      color: '#BA2525',
+      color: '#BA2525', // red-500
       fontWeight: 500,
+      fontSize: '14px',
     },
     muted: {
-      color: '#857F72',
-      fontWeight: 400,
+      color: '#BA2525', // red-500
+      fontWeight: 500,
+      fontSize: '0.813rem', // 13px
     },
   }
 
   const baseStyles: React.CSSProperties = {
-    fontSize: '14px',
     textDecoration: 'none',
     transition: 'color 150ms ease',
     cursor: 'pointer',
@@ -35,19 +36,11 @@ export function Link({
   }
 
   const handleMouseEnter = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    if (variant === 'default') {
-      e.currentTarget.style.color = '#911111'
-    } else {
-      e.currentTarget.style.color = '#625D52'
-    }
+    e.currentTarget.style.color = '#911111' // red-700
   }
 
   const handleMouseLeave = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    if (variant === 'default') {
-      e.currentTarget.style.color = '#BA2525'
-    } else {
-      e.currentTarget.style.color = '#857F72'
-    }
+    e.currentTarget.style.color = '#BA2525' // red-500
   }
 
   return (

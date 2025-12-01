@@ -1,4 +1,4 @@
-import type { ButtonHTMLAttributes, ReactNode } from 'react'
+import { useState, type ButtonHTMLAttributes, type ReactNode } from 'react'
 
 type ButtonVariant = 'primary' | 'secondary' | 'ghost'
 type ButtonSize = 'sm' | 'md' | 'lg'
@@ -10,6 +10,26 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   fullWidth?: boolean
   isLoading?: boolean
   loadingText?: string
+  loadingAriaLabel?: string
+  icon?: ReactNode
+}
+
+// Colores de la paleta Refactoring UI
+const colors = {
+  red: {
+    400: '#D64545',
+    500: '#BA2525',
+    600: '#A61B1B',
+    700: '#911111',
+  },
+  grey: {
+    50: '#FAF9F7',
+    100: '#E8E6E1',
+    200: '#D3CEC4',
+    300: '#B8B2A7',
+    700: '#504A40',
+  },
+  white: '#FFFFFF',
 }
 
 export function Button({
@@ -19,104 +39,118 @@ export function Button({
   fullWidth = false,
   isLoading = false,
   loadingText = 'Cargando...',
+  loadingAriaLabel = 'Loading',
+  icon,
   disabled,
   className = '',
   style,
   ...props
 }: ButtonProps) {
+  const [isHovered, setIsHovered] = useState(false)
+  const [isPressed, setIsPressed] = useState(false)
+  const [isFocused, setIsFocused] = useState(false)
+
+  const isDisabled = disabled || isLoading
+
+  const sizeStyles: Record<ButtonSize, React.CSSProperties> = {
+    sm: { height: '32px', padding: '0 12px', fontSize: '13px' },
+    md: { height: '36px', padding: '0 16px', fontSize: '14px' },
+    lg: { height: '44px', padding: '0 24px', fontSize: '15px' },
+  }
+
+  const getVariantStyles = (): React.CSSProperties => {
+    if (variant === 'primary') {
+      return {
+        backgroundColor: isPressed ? colors.red[700] : isHovered ? colors.red[600] : colors.red[500],
+        color: colors.white,
+        border: 'none',
+        boxShadow: isPressed
+          ? 'inset 0 2px 4px rgba(0,0,0,0.2)'
+          : isFocused
+            ? `inset 0 1px 0 ${colors.red[400]}, 0 2px 6px rgba(145, 17, 17, 0.35)`
+            : `inset 0 1px 0 ${colors.red[400]}, 0 1px 3px rgba(0,0,0,0.12)`,
+      }
+    }
+
+    if (variant === 'secondary') {
+      return {
+        backgroundColor: isPressed ? colors.grey[100] : isHovered ? colors.grey[50] : colors.white,
+        color: colors.grey[700],
+        border: `1px solid ${isFocused ? colors.grey[300] : colors.grey[200]}`,
+        boxShadow: isPressed
+          ? 'inset 0 1px 2px rgba(0,0,0,0.06)'
+          : isFocused
+            ? '0 2px 4px rgba(0,0,0,0.1)'
+            : '0 1px 2px rgba(0,0,0,0.05)',
+      }
+    }
+
+    // ghost
+    return {
+      backgroundColor: isHovered || isFocused ? colors.grey[100] : 'transparent',
+      color: colors.grey[700],
+      border: 'none',
+      boxShadow: 'none',
+    }
+  }
+
+  const variantStyles = getVariantStyles()
+
   const baseStyles: React.CSSProperties = {
     display: 'inline-flex',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 'var(--space-2)',
+    gap: '0.5rem',
     fontWeight: 600,
     borderRadius: '6px',
-    border: 'none',
-    cursor: disabled || isLoading ? 'not-allowed' : 'pointer',
-    transition: 'all 150ms ease',
-    opacity: disabled || isLoading ? 0.6 : 1,
+    cursor: isDisabled ? 'not-allowed' : 'pointer',
+    transition: 'all 0.15s ease',
+    opacity: isDisabled ? 0.6 : 1,
     width: fullWidth ? '100%' : 'auto',
-    position: 'relative',
-  }
-
-  const sizeStyles: Record<ButtonSize, React.CSSProperties> = {
-    sm: { padding: 'var(--space-2) var(--space-3)', fontSize: '14px' },
-    md: { padding: 'var(--space-3) var(--space-4)', fontSize: '16px' },
-    lg: { padding: 'var(--space-4) var(--space-6)', fontSize: '1.125rem' },
-  }
-
-  const variantStyles: Record<ButtonVariant, React.CSSProperties> = {
-    primary: {
-      backgroundColor: '#F0B429',
-      color: 'var(--color-grey-900)',
-      boxShadow: 'inset 0 1px 0 0 rgba(255, 255, 255, 0.2), 0 1px 3px rgba(39, 36, 29, 0.12), 0 1px 2px rgba(39, 36, 29, 0.1)',
-    },
-    secondary: {
-      backgroundColor: 'var(--color-grey-100)',
-      color: 'var(--color-grey-700)',
-      boxShadow: 'inset 0 1px 0 0 rgba(255, 255, 255, 0.2), 0 1px 3px rgba(39, 36, 29, 0.12), 0 1px 2px rgba(39, 36, 29, 0.1)',
-    },
-    ghost: {
-      backgroundColor: 'transparent',
-      color: 'var(--color-grey-600)',
-    },
-  }
-
-  const handleMouseEnter = (e: React.MouseEvent<HTMLButtonElement>) => {
-    if (!disabled && !isLoading && variant === 'primary') {
-      e.currentTarget.style.backgroundColor = '#F7C948'
-    }
-  }
-
-  const handleMouseLeave = (e: React.MouseEvent<HTMLButtonElement>) => {
-    if (!disabled && !isLoading && variant === 'primary') {
-      e.currentTarget.style.backgroundColor = '#F0B429'
-      e.currentTarget.style.transform = ''
-      e.currentTarget.style.boxShadow = 'inset 0 1px 0 0 rgba(255, 255, 255, 0.2), 0 1px 3px rgba(39, 36, 29, 0.12), 0 1px 2px rgba(39, 36, 29, 0.1)'
-    }
-  }
-
-  const handleMouseDown = (e: React.MouseEvent<HTMLButtonElement>) => {
-    if (!disabled && !isLoading && variant === 'primary') {
-      e.currentTarget.style.backgroundColor = '#DE911D'
-      e.currentTarget.style.transform = 'translateY(1px)'
-      e.currentTarget.style.boxShadow = 'inset 0 2px 4px rgba(39, 36, 29, 0.2)'
-    }
-  }
-
-  const handleMouseUp = (e: React.MouseEvent<HTMLButtonElement>) => {
-    if (!disabled && !isLoading && variant === 'primary') {
-      e.currentTarget.style.backgroundColor = '#F7C948'
-      e.currentTarget.style.transform = ''
-      e.currentTarget.style.boxShadow = 'inset 0 1px 0 0 rgba(255, 255, 255, 0.2), 0 1px 3px rgba(39, 36, 29, 0.12), 0 1px 2px rgba(39, 36, 29, 0.1)'
-    }
+    transform: isPressed && !isDisabled ? 'translateY(1px)' : 'none',
+    outline: 'none',
+    ...sizeStyles[size],
+    ...variantStyles,
+    ...style,
   }
 
   return (
     <button
-      style={{ ...baseStyles, ...sizeStyles[size], ...variantStyles[variant], ...style }}
-      disabled={disabled || isLoading}
+      style={baseStyles}
+      disabled={isDisabled}
       className={className}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-      onMouseDown={handleMouseDown}
-      onMouseUp={handleMouseUp}
+      aria-busy={isLoading}
+      onMouseEnter={() => !isDisabled && setIsHovered(true)}
+      onMouseLeave={() => {
+        setIsHovered(false)
+        setIsPressed(false)
+      }}
+      onMouseDown={() => !isDisabled && setIsPressed(true)}
+      onMouseUp={() => setIsPressed(false)}
+      onFocus={() => !isDisabled && setIsFocused(true)}
+      onBlur={() => setIsFocused(false)}
       {...props}
     >
       {isLoading ? (
         <>
-          <span style={{
-            width: '1em',
-            height: '1em',
-            border: '2px solid currentColor',
-            borderTopColor: 'transparent',
-            borderRadius: '50%',
-            animation: 'spin 0.6s linear infinite'
-          }} />
+          <span
+            style={{
+              width: '1em',
+              height: '1em',
+              border: '2px solid currentColor',
+              borderTopColor: 'transparent',
+              borderRadius: '50%',
+              animation: 'spin 0.6s linear infinite',
+            }}
+            aria-label={loadingAriaLabel}
+          />
           {loadingText}
         </>
       ) : (
-        children
+        <>
+          {icon}
+          {children}
+        </>
       )}
     </button>
   )

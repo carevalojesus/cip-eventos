@@ -1,15 +1,14 @@
-import { useState, type FormEvent } from 'react'
 import { useTranslation } from 'react-i18next'
-import axios from 'axios'
+import { Mail, Lock } from 'lucide-react'
 
 import { Button } from '@/components/ui/rui-button'
 import { Input } from '@/components/ui/rui-input'
 import { Checkbox } from '@/components/ui/rui-checkbox'
 import { Link } from '@/components/ui/rui-link'
 
-import api from '@/lib/api'
 import { useAuthStore } from '@/store/auth.store'
 import { getCurrentLocale, routes } from '@/lib/routes'
+import { useLoginForm } from '@/hooks/useLoginForm'
 
 interface LoginFormProps {
   onSuccess?: () => void
@@ -19,66 +18,18 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
   const { t } = useTranslation()
   const login = useAuthStore((state) => state.login)
 
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [rememberMe, setRememberMe] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
-  const [errors, setErrors] = useState<{ email?: string; password?: string; global?: string }>({})
-
-  const validate = () => {
-    const newErrors: { email?: string; password?: string } = {}
-
-    if (!email) {
-      newErrors.email = t('login.validation.email_required')
-    } else if (!/\S+@\S+\.\S+/.test(email)) {
-      newErrors.email = t('login.validation.email_invalid')
-    }
-
-    if (!password) {
-      newErrors.password = t('login.validation.password_required')
-    } else if (password.length < 8) {
-      newErrors.password = t('login.validation.password_min_length')
-    } else if (!/[A-Z]/.test(password)) {
-      newErrors.password = t('login.validation.password_uppercase')
-    } else if (!/[0-9]/.test(password)) {
-      newErrors.password = t('login.validation.password_number')
-    }
-
-    setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
-  }
-
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault()
-
-    if (!validate()) return
-
-    setIsLoading(true)
-    setErrors({})
-
-    try {
-      const response = await api.post('/auth/login', { email, password })
-      login(response.data.access_token, response.data.user, rememberMe)
-
-      if (onSuccess) {
-        onSuccess()
-      } else {
-        const locale = getCurrentLocale()
-        window.location.href = routes[locale].home
-      }
-    } catch (err) {
-      if (axios.isAxiosError(err)) {
-        const msg = err.response?.data?.message || t('errors.network')
-        setErrors({ global: Array.isArray(msg) ? msg[0] : msg })
-      } else if (err instanceof Error) {
-        setErrors({ global: err.message })
-      } else {
-        setErrors({ global: t('errors.unknown') })
-      }
-    } finally {
-      setIsLoading(false)
-    }
-  }
+  const {
+    email,
+    setEmail,
+    password,
+    setPassword,
+    rememberMe,
+    setRememberMe,
+    isLoading,
+    errors,
+    validationMessage,
+    handleSubmit,
+  } = useLoginForm({ t, login, onSuccess })
 
   const containerStyles: React.CSSProperties = {
     display: 'flex',
@@ -138,8 +89,35 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
     color: 'var(--color-grey-500)',
   }
 
+  const visuallyHiddenStyles: React.CSSProperties = {
+    position: 'absolute',
+    width: '1px',
+    height: '1px',
+    padding: 0,
+    margin: '-1px',
+    overflow: 'hidden',
+    clip: 'rect(0, 0, 0, 0)',
+    whiteSpace: 'nowrap',
+    border: 0,
+  }
+
+  const fieldErrorStyles: React.CSSProperties = {
+    fontSize: '0.75rem',
+    color: 'var(--color-danger)',
+    marginTop: 'calc(var(--space-2) * -0.5)',
+  }
+
   return (
     <div style={containerStyles}>
+      {/* Visually hidden live region for screen reader announcements */}
+      <div
+        aria-live="polite"
+        aria-atomic="true"
+        style={visuallyHiddenStyles}
+      >
+        {validationMessage}
+      </div>
+
       {/* Header */}
       <div style={headerStyles}>
         <h1 style={titleStyles}>{t('login.title')}</h1>
@@ -148,27 +126,60 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
 
       {/* Form */}
       <form onSubmit={handleSubmit} style={formStyles}>
-        <Input
-          label={t('login.email')}
-          type="email"
-          name="email"
-          placeholder={t('login.email_placeholder')}
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          error={errors.email}
-          autoComplete="email"
-        />
+        {/* Email Input with error announcement wrapper */}
+        <div>
+          <Input
+            label={t('login.email')}
+            type="email"
+            name="email"
+            placeholder={t('login.email_placeholder')}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            error={errors.email}
+            autoComplete="email"
+            inputSize="lg"
+            leftIcon={<Mail size={16} />}
+          />
+          {errors.email && (
+            <div
+              role="alert"
+              aria-live="polite"
+              style={fieldErrorStyles}
+            >
+              <span style={visuallyHiddenStyles}>{t('login.email')}: </span>
+              {errors.email}
+            </div>
+          )}
+        </div>
 
-        <Input
-          label={t('login.password')}
-          type="password"
-          name="password"
-          placeholder={t('login.password_placeholder')}
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          error={errors.password}
-          autoComplete="current-password"
-        />
+        {/* Password Input with error announcement wrapper */}
+        <div>
+          <Input
+            label={t('login.password')}
+            type="password"
+            name="password"
+            placeholder={t('login.password_placeholder')}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            error={errors.password}
+            autoComplete="current-password"
+            inputSize="lg"
+            leftIcon={<Lock size={16} />}
+            showPasswordToggle
+            showPasswordLabel={t('login.show_password')}
+            hidePasswordLabel={t('login.hide_password')}
+          />
+          {errors.password && (
+            <div
+              role="alert"
+              aria-live="polite"
+              style={fieldErrorStyles}
+            >
+              <span style={visuallyHiddenStyles}>{t('login.password')}: </span>
+              {errors.password}
+            </div>
+          )}
+        </div>
 
         {/* Checkbox + Forgot password */}
         <div style={rowStyles}>
@@ -184,8 +195,16 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
 
         {/* Global Error */}
         {errors.global && (
-          <div style={errorStyles}>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <div style={errorStyles} role="alert">
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              aria-label="Error"
+            >
               <circle cx="12" cy="12" r="10" />
               <line x1="12" y1="8" x2="12" y2="12" />
               <line x1="12" y1="16" x2="12.01" y2="16" />
@@ -199,8 +218,10 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
           <Button
             type="submit"
             fullWidth
+            size="lg"
             isLoading={isLoading}
             loadingText={t('login.loading')}
+            loadingAriaLabel={t('login.loading_aria')}
           >
             {t('login.btn')}
           </Button>
@@ -210,7 +231,7 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
       {/* Footer */}
       <div style={footerStyles}>
         <p style={{ margin: 0 }}>
-          © {new Date().getFullYear()} <Link href="https://devcloud.pe" target="_blank" rel="noopener noreferrer">Devcloud</Link>
+          © {new Date().getFullYear()} <Link href="https://devcloud.pe" target="_blank" rel="noopener noreferrer">{t('login.footer.company')}</Link>
         </p>
       </div>
     </div>

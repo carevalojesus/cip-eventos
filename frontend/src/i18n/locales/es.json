@@ -26,6 +26,9 @@
     "btn_loading": "Ingresando...",
     "forgot_password": "¿Olvidaste tu contraseña?",
     "remember_me": "Recordar cuenta",
+    "show_password": "Mostrar contraseña",
+    "hide_password": "Ocultar contraseña",
+    "loading_aria": "Cargando",
     "access_problems": "¿Problemas de acceso?",
     "contact_support": "Contacta a",
     "support_it": "Soporte TI",
@@ -52,6 +55,14 @@
         },
         {
           "text": "La excelencia en la ingeniería requiere pasión, dedicación y compromiso con el desarrollo sostenible.",
+          "author": "Colegio de Ingenieros del Perú"
+        },
+        {
+          "text": "Un buen ingeniero no solo resuelve problemas, anticipa soluciones para las generaciones futuras.",
+          "author": "Colegio de Ingenieros del Perú"
+        },
+        {
+          "text": "La ingeniería es la profesión que hace posible lo imposible, transformando ideas en infraestructura.",
           "author": "Colegio de Ingenieros del Perú"
         }
       ]
@@ -129,6 +140,9 @@
       "access_control": "Control de Puerta",
       "certificates": "Certificados",
       "finance": "FINANZAS",
+      "income": "Ingresos",
+      "payments": "Pagos",
+      "reports": "Reportes",
       "payments_reports": "Pagos y Reportes",
       "administration": "ADMINISTRACIÓN",
       "users": "Usuarios",
@@ -264,6 +278,11 @@
     "retry": "Reintentar",
     "about": "Acerca de",
     "language": "Idioma"
+  },
+  "roles": {
+    "ADMIN": "Administrador",
+    "USER": "Usuario",
+    "SUPER_ADMIN": "Superadministrador"
   },
   "errors": {
     "404": "Página no encontrada",

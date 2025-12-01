@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 
 /* ============================================
@@ -6,7 +7,7 @@
    ============================================ */
 
 @theme {
-   /* --------------------------------------------
+  /* --------------------------------------------
      PRIMARY - Red
 
      These are the splashes of color that should
@@ -17,50 +18,50 @@
      or text you want to emphasize.
      -------------------------------------------- */
 
-   --color-red-050: #FFEEEE;
-   /* hsl(360, 100%, 97%) */
-   --color-red-100: #FACDCD;
-   /* hsl(360, 82%, 89%) */
-   --color-red-200: #F29B9B;
-   /* hsl(360, 77%, 78%) */
-   --color-red-300: #E66A6A;
-   /* hsl(360, 71%, 66%) */
-   --color-red-400: #D64545;
-   /* hsl(360, 64%, 55%) */
-   --color-red-500: #BA2525;
-   /* hsl(360, 67%, 44%) */
-   --color-red-600: #A61B1B;
-   /* hsl(360, 72%, 38%) */
-   --color-red-700: #911111;
-   /* hsl(360, 79%, 32%) */
-   --color-red-800: #780A0A;
-   /* hsl(360, 85%, 25%) */
-   --color-red-900: #610404;
-   /* hsl(360, 92%, 20%) */
+  --color-red-050: #FFEEEE;
+  /* hsl(360, 100%, 97%) */
+  --color-red-100: #FACDCD;
+  /* hsl(360, 82%, 89%) */
+  --color-red-200: #F29B9B;
+  /* hsl(360, 77%, 78%) */
+  --color-red-300: #E66A6A;
+  /* hsl(360, 71%, 66%) */
+  --color-red-400: #D64545;
+  /* hsl(360, 64%, 55%) */
+  --color-red-500: #BA2525;
+  /* hsl(360, 67%, 44%) */
+  --color-red-600: #A61B1B;
+  /* hsl(360, 72%, 38%) */
+  --color-red-700: #911111;
+  /* hsl(360, 79%, 32%) */
+  --color-red-800: #780A0A;
+  /* hsl(360, 85%, 25%) */
+  --color-red-900: #610404;
+  /* hsl(360, 92%, 20%) */
 
-   /* Yellow (Vivid) */
-   --color-yellow-050: #FFFBEA;
-   /* hsl(49, 100%, 96%) */
-   --color-yellow-100: #FFF3C4;
-   /* hsl(48, 100%, 88%) */
-   --color-yellow-200: #FCE588;
-   /* hsl(48, 95%, 76%) */
-   --color-yellow-300: #FADB5F;
-   /* hsl(48, 94%, 68%) */
-   --color-yellow-400: #F7C948;
-   /* hsl(44, 92%, 63%) */
-   --color-yellow-500: #F0B429;
-   /* hsl(42, 87%, 55%) */
-   --color-yellow-600: #DE911D;
-   /* hsl(36, 77%, 49%) */
-   --color-yellow-700: #CB6E17;
-   /* hsl(29, 80%, 44%) */
-   --color-yellow-800: #B44D12;
-   /* hsl(22, 82%, 39%) */
-   --color-yellow-900: #8D2B0B;
-   /* hsl(15, 86%, 30%) */
+  /* Yellow (Vivid) */
+  --color-yellow-050: #FFFBEA;
+  /* hsl(49, 100%, 96%) */
+  --color-yellow-100: #FFF3C4;
+  /* hsl(48, 100%, 88%) */
+  --color-yellow-200: #FCE588;
+  /* hsl(48, 95%, 76%) */
+  --color-yellow-300: #FADB5F;
+  /* hsl(48, 94%, 68%) */
+  --color-yellow-400: #F7C948;
+  /* hsl(44, 92%, 63%) */
+  --color-yellow-500: #F0B429;
+  /* hsl(42, 87%, 55%) */
+  --color-yellow-600: #DE911D;
+  /* hsl(36, 77%, 49%) */
+  --color-yellow-700: #CB6E17;
+  /* hsl(29, 80%, 44%) */
+  --color-yellow-800: #B44D12;
+  /* hsl(22, 82%, 39%) */
+  --color-yellow-900: #8D2B0B;
+  /* hsl(15, 86%, 30%) */
 
-   /* --------------------------------------------
+  /* --------------------------------------------
      NEUTRALS - Warm Grey
 
      These are the colors you will use the most
@@ -70,28 +71,28 @@
      secondary buttons and links.
      -------------------------------------------- */
 
-   --color-grey-050: #FAF9F7;
-   /* hsl(40, 23%, 97%) */
-   --color-grey-100: #E8E6E1;
-   /* hsl(43, 13%, 90%) */
-   --color-grey-200: #D3CEC4;
-   /* hsl(40, 15%, 80%) */
-   --color-grey-300: #B8B2A7;
-   /* hsl(39, 11%, 69%) */
-   --color-grey-400: #A39E93;
-   /* hsl(41, 8%, 61%) */
-   --color-grey-500: #857F72;
-   /* hsl(41, 8%, 48%) */
-   --color-grey-600: #625D52;
-   /* hsl(41, 9%, 35%) */
-   --color-grey-700: #504A40;
-   /* hsl(37, 11%, 28%) */
-   --color-grey-800: #423D33;
-   /* hsl(40, 13%, 23%) */
-   --color-grey-900: #27241D;
-   /* hsl(42, 15%, 13%) */
+  --color-grey-050: #FAF9F7;
+  /* hsl(40, 23%, 97%) */
+  --color-grey-100: #E8E6E1;
+  /* hsl(43, 13%, 90%) */
+  --color-grey-200: #D3CEC4;
+  /* hsl(40, 15%, 80%) */
+  --color-grey-300: #B8B2A7;
+  /* hsl(39, 11%, 69%) */
+  --color-grey-400: #A39E93;
+  /* hsl(41, 8%, 61%) */
+  --color-grey-500: #857F72;
+  /* hsl(41, 8%, 48%) */
+  --color-grey-600: #625D52;
+  /* hsl(41, 9%, 35%) */
+  --color-grey-700: #504A40;
+  /* hsl(37, 11%, 28%) */
+  --color-grey-800: #423D33;
+  /* hsl(40, 13%, 23%) */
+  --color-grey-900: #27241D;
+  /* hsl(42, 15%, 13%) */
 
-   /* --------------------------------------------
+  /* --------------------------------------------
      SUPPORTING
 
      These colors should be used fairly
@@ -102,141 +103,142 @@
      trends with the appropriate semantic color.
      -------------------------------------------- */
 
-   /* Cyan */
-   --color-cyan-050: #E0FCFF;
-   /* hsl(186, 100%, 94%) */
-   --color-cyan-100: #BEF8FD;
-   /* hsl(185, 94%, 87%) */
-   --color-cyan-200: #87EAF2;
-   /* hsl(184, 80%, 74%) */
-   --color-cyan-300: #54D1DB;
-   /* hsl(184, 65%, 59%) */
-   --color-cyan-400: #38BEC9;
-   /* hsl(185, 57%, 50%) */
-   --color-cyan-500: #2CB1BC;
-   /* hsl(185, 62%, 45%) */
-   --color-cyan-600: #14919B;
-   /* hsl(184, 77%, 34%) */
-   --color-cyan-700: #0E7C86;
-   /* hsl(185, 81%, 29%) */
-   --color-cyan-800: #0A6C74;
-   /* hsl(185, 84%, 25%) */
-   --color-cyan-900: #044E54;
-   /* hsl(184, 91%, 17%) */
+  /* Cyan */
+  --color-cyan-050: #E0FCFF;
+  /* hsl(186, 100%, 94%) */
+  --color-cyan-100: #BEF8FD;
+  /* hsl(185, 94%, 87%) */
+  --color-cyan-200: #87EAF2;
+  /* hsl(184, 80%, 74%) */
+  --color-cyan-300: #54D1DB;
+  /* hsl(184, 65%, 59%) */
+  --color-cyan-400: #38BEC9;
+  /* hsl(185, 57%, 50%) */
+  --color-cyan-500: #2CB1BC;
+  /* hsl(185, 62%, 45%) */
+  --color-cyan-600: #14919B;
+  /* hsl(184, 77%, 34%) */
+  --color-cyan-700: #0E7C86;
+  /* hsl(185, 81%, 29%) */
+  --color-cyan-800: #0A6C74;
+  /* hsl(185, 84%, 25%) */
+  --color-cyan-900: #044E54;
+  /* hsl(184, 91%, 17%) */
 
-   /* Lime Green */
-   --color-green-050: #F2FDE0;
-   /* hsl(83, 88%, 94%) */
-   --color-green-100: #E2F7C2;
-   /* hsl(84, 77%, 86%) */
-   --color-green-200: #C7EA8F;
-   /* hsl(83, 68%, 74%) */
-   --color-green-300: #ABDB5E;
-   /* hsl(83, 63%, 61%) */
-   --color-green-400: #94C843;
-   /* hsl(83, 55%, 52%) */
-   --color-green-500: #7BB026;
-   /* hsl(83, 64%, 42%) */
-   --color-green-600: #63921A;
-   /* hsl(83, 70%, 34%) */
-   --color-green-700: #507712;
-   /* hsl(83, 74%, 27%) */
-   --color-green-800: #42600C;
-   /* hsl(81, 78%, 21%) */
-   --color-green-900: #2B4005;
-   /* hsl(81, 86%, 14%) */
+  /* Lime Green */
+  --color-green-050: #F2FDE0;
+  /* hsl(83, 88%, 94%) */
+  --color-green-100: #E2F7C2;
+  /* hsl(84, 77%, 86%) */
+  --color-green-200: #C7EA8F;
+  /* hsl(83, 68%, 74%) */
+  --color-green-300: #ABDB5E;
+  /* hsl(83, 63%, 61%) */
+  --color-green-400: #94C843;
+  /* hsl(83, 55%, 52%) */
+  --color-green-500: #7BB026;
+  /* hsl(83, 64%, 42%) */
+  --color-green-600: #63921A;
+  /* hsl(83, 70%, 34%) */
+  --color-green-700: #507712;
+  /* hsl(83, 74%, 27%) */
+  --color-green-800: #42600C;
+  /* hsl(81, 78%, 21%) */
+  --color-green-900: #2B4005;
+  /* hsl(81, 86%, 14%) */
 
-   /* ============================================
+  /* ============================================
      SEMANTIC ALIASES
      Para uso rápido en componentes
      ============================================ */
 
-   /* Colores de marca */
-   --color-primary: #BA2525;
-   --color-primary-light: #D64545;
-   --color-primary-dark: #911111;
+  /* Colores de marca */
+  --color-primary: #BA2525;
+  --color-primary-light: #D64545;
+  --color-primary-dark: #911111;
 
-   /* Colores de acción */
-   --color-accent: #F0B429;
-   --color-accent-light: #F7C948;
-   --color-accent-dark: #CB6E17;
+  /* Colores de acción */
+  --color-accent: #F0B429;
+  --color-accent-light: #F7C948;
+  --color-accent-dark: #CB6E17;
 
-   /* Estados */
-   --color-success: #7BB026;
-   --color-success-light: #E2F7C2;
-   --color-success-dark: #507712;
+  /* Estados */
+  --color-success: #7BB026;
+  --color-success-light: #E2F7C2;
+  --color-success-dark: #507712;
 
-   --color-info: #2CB1BC;
-   --color-info-light: #BEF8FD;
-   --color-info-dark: #0E7C86;
+  --color-info: #2CB1BC;
+  --color-info-light: #BEF8FD;
+  --color-info-dark: #0E7C86;
 
-   --color-warning: #F0B429;
-   --color-warning-light: #FFF3C4;
-   --color-warning-dark: #CB6E17;
+  --color-warning: #F0B429;
+  --color-warning-light: #FFF3C4;
+  --color-warning-dark: #CB6E17;
 
-   --color-danger: #BA2525;
-   --color-danger-light: #FACDCD;
-   --color-danger-dark: #911111;
+  --color-danger: #BA2525;
+  --color-danger-light: #FACDCD;
+  --color-danger-dark: #911111;
 
-   /* ============================================
+  /* ============================================
      SPACING
      ============================================ */
-   --space-1: 0.25rem;
-   --space-2: 8px;
-   --space-3: 12px;
-   --space-4: 16px;
-   --space-5: 20px;
-   --space-6: 1.5rem;
-   --space-8: 32px;
-   --space-10: 40px;
-   --space-12: 3rem;
-   --space-16: 64px;
+  --space-1: 0.25rem;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 1.5rem;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 3rem;
+  --space-16: 64px;
 
-   /* ============================================
+  /* ============================================
      BORDER RADIUS
      ============================================ */
-   --radius-sm: 0.25rem;
-   --radius-md: 0.375rem;
-   --radius-lg: 0.5rem;
-   --radius-xl: 0.75rem;
-   --radius-full: 9999px;
+  --radius-sm: 0.25rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+  --radius-full: 9999px;
 
-   /* ============================================
+  /* ============================================
      SHADOWS
      ============================================ */
-   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-   --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
 
-   /* ============================================
+  /* ============================================
      TRANSITIONS
      ============================================ */
-   --transition-fast: 150ms ease;
-   --transition-normal: 200ms ease;
-   --transition-slow: 300ms ease;
+  --transition-fast: 150ms ease;
+  --transition-normal: 200ms ease;
+  --transition-slow: 300ms ease;
 
-   /* ============================================
+  /* ============================================
      TEXT COLORS (aliases)
      ============================================ */
-   --color-text-primary: var(--color-grey-900);
-   --color-text-secondary: var(--color-grey-700);
-   --color-text-muted: var(--color-grey-500);
-   --color-text-placeholder: var(--color-grey-400);
-   --color-text-inverse: var(--color-grey-050);
+  --color-text-primary: var(--color-grey-900);
+  --color-text-secondary: var(--color-grey-700);
+  --color-text-muted: var(--color-grey-500);
+  --color-text-placeholder: var(--color-grey-400);
+  --color-text-inverse: var(--color-grey-050);
 
-   /* ============================================
+  /* ============================================
      BACKGROUND COLORS (aliases)
      ============================================ */
-   --color-bg-primary: #FFFFFF;
-   --color-bg-secondary: var(--color-grey-050);
-   --color-bg-tertiary: var(--color-grey-100);
+  --color-bg-primary: #FFFFFF;
+  --color-bg-secondary: var(--color-grey-050);
+  --color-bg-tertiary: var(--color-grey-100);
+  --color-bg-form: #FAFAF9;
 
-   /* ============================================
+  /* ============================================
      BORDER COLORS (aliases)
      ============================================ */
-   --color-border-light: var(--color-grey-200);
-   --color-border-default: var(--color-grey-300);
-   --color-border-focus: var(--color-grey-400);
+  --color-border-light: var(--color-grey-200);
+  --color-border-default: var(--color-grey-300);
+  --color-border-focus: var(--color-grey-400);
 }
 
 /* ============================================
@@ -266,4 +268,35 @@ input:-moz-autofill:hover,
 input:-moz-autofill:focus {
   box-shadow: 0 0 0 30px var(--color-bg-primary) inset !important;
   -moz-text-fill-color: var(--color-grey-900) !important;
+}
+
+/* ============================================
+   BASE STYLES
+   ============================================ */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background-color: var(--color-grey-050);
+  color: var(--color-grey-900);
+  line-height: 1.5;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+input, textarea, select {
+  font-family: inherit;
 }

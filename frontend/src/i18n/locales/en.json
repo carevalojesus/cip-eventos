@@ -26,6 +26,9 @@
     "btn_loading": "Logging in...",
     "forgot_password": "Forgot your password?",
     "remember_me": "Remember me",
+    "show_password": "Show password",
+    "hide_password": "Hide password",
+    "loading_aria": "Loading",
     "access_problems": "Access problems?",
     "contact_support": "Contact",
     "support_it": "IT Support",
@@ -52,6 +55,14 @@
         },
         {
           "text": "Excellence in engineering requires passion, dedication and commitment to sustainable development.",
+          "author": "Engineers Association of Peru"
+        },
+        {
+          "text": "A good engineer not only solves problems, but anticipates solutions for future generations.",
+          "author": "Engineers Association of Peru"
+        },
+        {
+          "text": "Engineering is the profession that makes the impossible possible, transforming ideas into infrastructure.",
           "author": "Engineers Association of Peru"
         }
       ]
@@ -129,6 +140,9 @@
       "access_control": "Access Control",
       "certificates": "Certificates",
       "finance": "FINANCE",
+      "income": "Income",
+      "payments": "Payments",
+      "reports": "Reports",
       "payments_reports": "Payments & Reports",
       "administration": "ADMINISTRATION",
       "users": "Users",
@@ -230,6 +244,11 @@
     "retry": "Retry",
     "about": "About",
     "language": "Language"
+  },
+  "roles": {
+    "ADMIN": "Administrator",
+    "USER": "User",
+    "SUPER_ADMIN": "Super Administrator"
   },
   "errors": {
     "404": "Page not found",

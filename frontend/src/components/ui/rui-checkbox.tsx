@@ -1,7 +1,14 @@
-import type { InputHTMLAttributes } from 'react'
+import { useState, type InputHTMLAttributes } from 'react'
+import { Check } from 'lucide-react'
 
 interface CheckboxProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'type'> {
   label?: string
+}
+
+const colors = {
+  red: { 500: '#BA2525' },
+  grey: { 300: '#B8B2A7', 600: '#625D52' },
+  white: '#FFFFFF',
 }
 
 export function Checkbox({
@@ -12,46 +19,64 @@ export function Checkbox({
   style,
   ...props
 }: CheckboxProps) {
+  const [isFocused, setIsFocused] = useState(false)
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    // Toggle checkbox on Space or Enter key
+    if (e.key === ' ' || e.key === 'Enter') {
+      e.preventDefault()
+      if (onChange) {
+        onChange(e as any)
+      }
+    }
+  }
+
   const containerStyles: React.CSSProperties = {
     display: 'flex',
     alignItems: 'center',
-    gap: 'var(--space-2)',
+    gap: '0.5rem',
     cursor: 'pointer',
-    fontSize: '14px',
-    color: 'var(--color-grey-600)',
-    lineHeight: 1.5,
     ...style,
   }
 
   const checkboxStyles: React.CSSProperties = {
     width: '18px',
     height: '18px',
-    borderRadius: '4px',
-    border: `1px solid ${checked ? 'var(--color-grey-600)' : 'var(--color-grey-300)'}`,
-    backgroundColor: checked ? 'var(--color-grey-600)' : '#FFFFFF',
+    borderRadius: '0.25rem',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    transition: 'all 150ms ease',
-    boxShadow: checked
-      ? 'inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 1px 2px rgba(39, 36, 29, 0.1)'
-      : 'inset 0 2px 4px rgba(39, 36, 29, 0.06)',
+    transition: 'all 0.15s ease',
+    backgroundColor: checked ? colors.red[500] : colors.white,
+    border: isFocused
+      ? `1.5px solid ${checked ? colors.red[500] : colors.grey[600]}`
+      : checked
+        ? 'none'
+        : `1.5px solid ${colors.grey[300]}`,
+    boxShadow: isFocused
+      ? '0 1px 3px rgba(39, 36, 29, 0.15)'
+      : checked
+        ? '0 1px 2px rgba(185,28,28,0.2)'
+        : 'inset 0 1px 2px rgba(0,0,0,0.05)',
+  }
+
+  const labelStyles: React.CSSProperties = {
+    fontSize: '0.813rem',
+    color: colors.grey[600],
   }
 
   return (
     <label style={containerStyles} className={className}>
-      <div style={checkboxStyles}>
-        {checked && (
-          <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
-            <path
-              d="M2 5L4 7L8 3"
-              stroke="#FAF9F7"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        )}
+      <div
+        role="checkbox"
+        aria-checked={checked}
+        tabIndex={0}
+        style={checkboxStyles}
+        onKeyDown={handleKeyDown}
+        onFocus={() => setIsFocused(true)}
+        onBlur={() => setIsFocused(false)}
+      >
+        {checked && <Check size={12} color={colors.white} strokeWidth={3} aria-hidden="true" />}
       </div>
       <input
         type="checkbox"
@@ -60,7 +85,7 @@ export function Checkbox({
         style={{ display: 'none' }}
         {...props}
       />
-      {label}
+      {label && <span style={labelStyles}>{label}</span>}
     </label>
   )
 }

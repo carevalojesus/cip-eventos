@@ -7,6 +7,11 @@ interface Props {
 }
 
 const { title, lang = 'es' } = Astro.props
+
+const skipLinkText = {
+  es: 'Saltar al contenido principal',
+  en: 'Skip to main content'
+}
 ---
 
 <!doctype html>
@@ -20,19 +25,42 @@ const { title, lang = 'es' } = Astro.props
     <script define:vars={{ lang }}>
       localStorage.setItem('i18nextLng', lang);
     </script>
-  </head>
-  <body>
-    <main>
-      <slot />
-    </main>
     <script>
       import '../i18n';
     </script>
+  </head>
+  <body>
+    <a href="#main-content" class="skip-link">
+      {skipLinkText[lang]}
+    </a>
+    <main id="main-content">
+      <slot />
+    </main>
   </body>
 </html>
 
 <style>
   main {
     min-height: 100vh;
+  }
+
+  .skip-link {
+    position: absolute;
+    top: -40px;
+    left: 0;
+    background: #000;
+    color: #fff;
+    padding: 0.75rem 1.5rem;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.875rem;
+    z-index: 9999;
+    transition: top 0.2s ease-in-out;
+  }
+
+  .skip-link:focus {
+    top: 0;
+    outline: 3px solid #4f46e5;
+    outline-offset: 2px;
   }
 </style>
