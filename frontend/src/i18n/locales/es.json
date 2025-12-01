@@ -19,7 +19,7 @@
     "title": "Bienvenido",
     "subtitle": "Ingresa tus credenciales para acceder al panel.",
     "email": "Correo Electrónico",
-    "email_placeholder": "admin@cip.org.pe",
+    "email_placeholder": "admin@ciploreto.org.pe",
     "password": "Contraseña",
     "password_placeholder": "••••••••",
     "btn": "Ingresar al Sistema",
