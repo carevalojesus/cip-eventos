@@ -137,7 +137,7 @@ api.interceptors.response.use(
         // (significa que el refresh token es inválido/expirado)
         const refreshStatus = (refreshError as { response?: { status?: number } })?.response?.status;
         if (refreshStatus === 401 || refreshStatus === 403) {
-          useAuthStore.getState().logout();
+          await useAuthStore.getState().logout();
           if (typeof window !== 'undefined') {
             const locale = getCurrentLocale();
             const loginPath = routes[locale].login;

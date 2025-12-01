@@ -84,6 +84,17 @@
     },
     "loading": "Cargando..."
   },
+  "forgot": {
+    "title": "Recupera tu contraseña",
+    "subtitle": "Ingresa tu correo y te enviaremos un enlace para restablecerla.",
+    "email": "Correo Electrónico",
+    "email_placeholder": "admin@ciploreto.org.pe",
+    "btn": "Enviar enlace",
+    "success": "Si el correo existe, hemos enviado un enlace de recuperación.",
+    "error": "No se pudo procesar la solicitud. Inténtalo de nuevo.",
+    "back_to_login": "Volver al inicio de sesión",
+    "loading": "Enviando..."
+  },
   "logout": {
     "btn": "Cerrar Sesión",
     "confirm": "¿Estás seguro de que deseas cerrar sesión?",

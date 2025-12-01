@@ -84,6 +84,17 @@
     },
     "loading": "Loading..."
   },
+  "forgot": {
+    "title": "Recover your password",
+    "subtitle": "Enter your email and we'll send you a reset link.",
+    "email": "Email Address",
+    "email_placeholder": "admin@ciploreto.org.pe",
+    "btn": "Send link",
+    "success": "If the email exists, we've sent a recovery link.",
+    "error": "We couldn't process the request. Please try again.",
+    "back_to_login": "Back to login",
+    "loading": "Sending..."
+  },
   "logout": {
     "btn": "Logout",
     "confirm": "Are you sure you want to logout?",

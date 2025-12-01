@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
+import { persist } from 'zustand/middleware';
 
 interface User {
   email: string;
@@ -14,17 +14,23 @@ interface AuthState {
   user: User | null;
   isAuthenticated: boolean;
   login: (token: string, user: User, rememberMe?: boolean) => void;
-  logout: () => void;
+  logout: () => Promise<void>;
   updateToken: (token: string) => void;
   updateUser: (user: Partial<User>) => void;
 }
 
-// Storage personalizado que funciona tanto en SSR como en el cliente
-// Por defecto usa sessionStorage, pero puede cambiar a localStorage
-let currentStorageType: 'session' | 'local' = 'session';
+type StorageType = 'session' | 'local';
+const STORAGE_KEY = 'cip-auth-storage';
 
-const createBrowserStorage = () => {
-  // En SSR, retornar un storage vacío
+// Determinar con qué storage hidratar según los datos existentes
+const detectStorageType = (): StorageType => {
+  if (typeof window === 'undefined') return 'session';
+  return localStorage.getItem(STORAGE_KEY) ? 'local' : 'session';
+};
+
+let currentStorageType: StorageType = detectStorageType();
+
+const getBrowserStorage = () => {
   if (typeof window === 'undefined') {
     return {
       getItem: () => null,
@@ -32,28 +38,57 @@ const createBrowserStorage = () => {
       removeItem: () => {},
     };
   }
-  // En el cliente, usar el storage según la preferencia actual
   return currentStorageType === 'local' ? localStorage : sessionStorage;
 };
 
-// Función para cambiar el tipo de storage y migrar los datos
-const switchStorageType = (useLocalStorage: boolean) => {
+const clearAllStorages = () => {
+  if (typeof window === 'undefined') return;
+  localStorage.removeItem(STORAGE_KEY);
+  sessionStorage.removeItem(STORAGE_KEY);
+};
+
+const setStoragePreference = (useLocalStorage: boolean) => {
   if (typeof window === 'undefined') return;
 
-  const newStorageType = useLocalStorage ? 'local' : 'session';
-  if (currentStorageType === newStorageType) return;
+  const newType: StorageType = useLocalStorage ? 'local' : 'session';
+  if (currentStorageType !== newType) {
+    const prevStorage = getBrowserStorage();
+    const data = prevStorage.getItem(STORAGE_KEY);
 
-  const oldStorage = currentStorageType === 'local' ? localStorage : sessionStorage;
-  const newStorage = newStorageType === 'local' ? localStorage : sessionStorage;
-
-  // Migrar datos del storage antiguo al nuevo
-  const data = oldStorage.getItem('cip-auth-storage');
-  if (data) {
-    newStorage.setItem('cip-auth-storage', data);
-    oldStorage.removeItem('cip-auth-storage');
+    currentStorageType = newType;
+    const nextStorage = getBrowserStorage();
+    if (data) {
+      nextStorage.setItem(STORAGE_KEY, data);
+      prevStorage.removeItem(STORAGE_KEY);
+    }
+  } else {
+    currentStorageType = newType;
   }
 
-  currentStorageType = newStorageType;
+  // Evitar que queden datos huérfanos en el otro storage
+  const otherStorage = newType === 'local' ? sessionStorage : localStorage;
+  otherStorage.removeItem(STORAGE_KEY);
+};
+
+const dynamicJSONStorage = {
+  getItem: (name: string) => {
+    const storage = getBrowserStorage();
+    const raw = storage.getItem(name);
+    if (!raw) return null;
+    try {
+      return JSON.parse(raw);
+    } catch {
+      return null;
+    }
+  },
+  setItem: (name: string, value: unknown) => {
+    const storage = getBrowserStorage();
+    storage.setItem(name, JSON.stringify(value));
+  },
+  removeItem: (name: string) => {
+    const storage = getBrowserStorage();
+    storage.removeItem(name);
+  },
 };
 
 export const useAuthStore = create<AuthState>()(
@@ -64,17 +99,26 @@ export const useAuthStore = create<AuthState>()(
       isAuthenticated: false,
       // El refresh token ahora se maneja via cookies httpOnly (más seguro)
       login: (token, user, rememberMe = false) => {
-        // Cambiar el tipo de storage según la preferencia del usuario
-        switchStorageType(rememberMe);
+        setStoragePreference(rememberMe);
         set({ token, user, isAuthenticated: true });
       },
-      logout: () => {
-        // Al hacer logout, limpiar ambos storages y volver a sessionStorage
+      logout: async () => {
+        // Solicitar al backend que invalide la sesión y limpie la cookie httpOnly
         if (typeof window !== 'undefined') {
-          localStorage.removeItem('cip-auth-storage');
-          sessionStorage.removeItem('cip-auth-storage');
-          currentStorageType = 'session';
+          const baseUrl = import.meta.env.PUBLIC_API_URL || '';
+          try {
+            await fetch(`${baseUrl}/auth/logout`, {
+              method: 'POST',
+              credentials: 'include',
+              headers: { 'Content-Type': 'application/json' },
+            });
+          } catch (error) {
+            console.error('Logout request failed', error);
+          }
         }
+
+        clearAllStorages();
+        currentStorageType = 'session';
         set({ token: null, user: null, isAuthenticated: false });
       },
       updateToken: (token) => set({ token }),
@@ -84,16 +128,13 @@ export const useAuthStore = create<AuthState>()(
         })),
     }),
     {
-      name: 'cip-auth-storage',
-      // Usamos sessionStorage para el access token por defecto
-      // El refresh token se maneja via cookies httpOnly del servidor
-      storage: createJSONStorage(() => createBrowserStorage()),
+      name: STORAGE_KEY,
+      storage: dynamicJSONStorage,
       partialize: (state) => ({
         token: state.token,
         user: state.user,
         isAuthenticated: state.isAuthenticated,
       }),
-      // Configuración de hidratación
       skipHydration: false,
     }
   )
