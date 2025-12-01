@@ -27,7 +27,6 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
     setRememberMe,
     isLoading,
     errors,
-    validationMessage,
     handleSubmit,
   } = useLoginForm({ t, login, onSuccess })
 
@@ -89,35 +88,8 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
     color: 'var(--color-grey-500)',
   }
 
-  const visuallyHiddenStyles: React.CSSProperties = {
-    position: 'absolute',
-    width: '1px',
-    height: '1px',
-    padding: 0,
-    margin: '-1px',
-    overflow: 'hidden',
-    clip: 'rect(0, 0, 0, 0)',
-    whiteSpace: 'nowrap',
-    border: 0,
-  }
-
-  const fieldErrorStyles: React.CSSProperties = {
-    fontSize: '0.75rem',
-    color: 'var(--color-danger)',
-    marginTop: 'calc(var(--space-2) * -0.5)',
-  }
-
   return (
     <div style={containerStyles}>
-      {/* Visually hidden live region for screen reader announcements */}
-      <div
-        aria-live="polite"
-        aria-atomic="true"
-        style={visuallyHiddenStyles}
-      >
-        {validationMessage}
-      </div>
-
       {/* Header */}
       <div style={headerStyles}>
         <h1 style={titleStyles}>{t('login.title')}</h1>
@@ -126,60 +98,34 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
 
       {/* Form */}
       <form onSubmit={handleSubmit} style={formStyles}>
-        {/* Email Input with error announcement wrapper */}
-        <div>
-          <Input
-            label={t('login.email')}
-            type="email"
-            name="email"
-            placeholder={t('login.email_placeholder')}
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            error={errors.email}
-            autoComplete="email"
-            inputSize="lg"
-            leftIcon={<Mail size={16} />}
-          />
-          {errors.email && (
-            <div
-              role="alert"
-              aria-live="polite"
-              style={fieldErrorStyles}
-            >
-              <span style={visuallyHiddenStyles}>{t('login.email')}: </span>
-              {errors.email}
-            </div>
-          )}
-        </div>
+        <Input
+          label={t('login.email')}
+          type="email"
+          name="email"
+          placeholder={t('login.email_placeholder')}
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          error={errors.email}
+          autoComplete="email"
+          inputSize="lg"
+          leftIcon={<Mail size={16} />}
+        />
 
-        {/* Password Input with error announcement wrapper */}
-        <div>
-          <Input
-            label={t('login.password')}
-            type="password"
-            name="password"
-            placeholder={t('login.password_placeholder')}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            error={errors.password}
-            autoComplete="current-password"
-            inputSize="lg"
-            leftIcon={<Lock size={16} />}
-            showPasswordToggle
-            showPasswordLabel={t('login.show_password')}
-            hidePasswordLabel={t('login.hide_password')}
-          />
-          {errors.password && (
-            <div
-              role="alert"
-              aria-live="polite"
-              style={fieldErrorStyles}
-            >
-              <span style={visuallyHiddenStyles}>{t('login.password')}: </span>
-              {errors.password}
-            </div>
-          )}
-        </div>
+        <Input
+          label={t('login.password')}
+          type="password"
+          name="password"
+          placeholder={t('login.password_placeholder')}
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          error={errors.password}
+          autoComplete="current-password"
+          inputSize="lg"
+          leftIcon={<Lock size={16} />}
+          showPasswordToggle
+          showPasswordLabel={t('login.show_password')}
+          hidePasswordLabel={t('login.hide_password')}
+        />
 
         {/* Checkbox + Forgot password */}
         <div style={rowStyles}>
