@@ -77,7 +77,6 @@
       "email_required": "El correo electrónico es requerido",
       "email_invalid": "Ingresa un correo institucional válido",
       "password_required": "La contraseña es requerida",
-      "password_min": "La contraseña debe tener al menos 6 caracteres",
       "password_min_length": "La contraseña debe tener al menos 8 caracteres",
       "password_uppercase": "La contraseña debe contener al menos una mayúscula",
       "password_number": "La contraseña debe contener al menos un número"
@@ -94,6 +93,36 @@
     "error": "No se pudo procesar la solicitud. Inténtalo de nuevo.",
     "back_to_login": "Volver al inicio de sesión",
     "loading": "Enviando..."
+  },
+  "confirm": {
+    "title": "Confirma tu correo",
+    "subtitle": "Verificaremos tu cuenta para que puedas iniciar sesión.",
+    "success": "Tu correo fue verificado correctamente. Ya puedes iniciar sesión.",
+    "already_verified": "Esta cuenta ya estaba verificada. Puedes iniciar sesión.",
+    "invalid": "El enlace no es válido o ha expirado.",
+    "missing_token": "Falta el token de verificación.",
+    "cta": "Ir a iniciar sesión",
+    "loading": "Verificando..."
+  },
+  "reset": {
+    "title": "Crea una nueva contraseña",
+    "subtitle": "Ingresa tu nueva contraseña para recuperar el acceso.",
+    "password": "Nueva contraseña",
+    "password_placeholder": "••••••••",
+    "confirm_password": "Confirmar contraseña",
+    "btn": "Actualizar contraseña",
+    "success": "Tu contraseña fue actualizada. Ya puedes iniciar sesión.",
+    "error": "No se pudo actualizar la contraseña. Inténtalo de nuevo.",
+    "missing_token": "El enlace no es válido o ha expirado.",
+    "loading": "Guardando...",
+    "validation": {
+      "password_required": "La contraseña es requerida",
+      "password_min_length": "Debe tener al menos 8 caracteres",
+      "password_uppercase": "Debe contener al menos una mayúscula",
+      "password_number": "Debe contener al menos un número",
+      "password_match": "Las contraseñas no coinciden"
+    },
+    "cta_login": "Ir a iniciar sesión"
   },
   "logout": {
     "btn": "Cerrar Sesión",

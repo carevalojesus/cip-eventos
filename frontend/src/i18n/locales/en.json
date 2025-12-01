@@ -77,7 +77,6 @@
       "email_required": "Email address is required",
       "email_invalid": "Please enter a valid institutional email",
       "password_required": "Password is required",
-      "password_min": "Password must be at least 6 characters",
       "password_min_length": "Password must be at least 8 characters",
       "password_uppercase": "Password must contain at least one uppercase letter",
       "password_number": "Password must contain at least one number"
@@ -94,6 +93,36 @@
     "error": "We couldn't process the request. Please try again.",
     "back_to_login": "Back to login",
     "loading": "Sending..."
+  },
+  "confirm": {
+    "title": "Confirm your email",
+    "subtitle": "We will verify your account so you can sign in.",
+    "success": "Your email was verified successfully. You can now sign in.",
+    "already_verified": "This account was already verified. You can sign in.",
+    "invalid": "The link is invalid or has expired.",
+    "missing_token": "Verification token is missing.",
+    "cta": "Go to login",
+    "loading": "Verifying..."
+  },
+  "reset": {
+    "title": "Create a new password",
+    "subtitle": "Enter your new password to regain access.",
+    "password": "New password",
+    "password_placeholder": "••••••••",
+    "confirm_password": "Confirm password",
+    "btn": "Update password",
+    "success": "Your password was updated. You can now sign in.",
+    "error": "We couldn't update the password. Please try again.",
+    "missing_token": "The link is invalid or has expired.",
+    "loading": "Saving...",
+    "validation": {
+      "password_required": "Password is required",
+      "password_min_length": "Must be at least 8 characters",
+      "password_uppercase": "Must contain at least one uppercase letter",
+      "password_number": "Must contain at least one number",
+      "password_match": "Passwords do not match"
+    },
+    "cta_login": "Go to login"
   },
   "logout": {
     "btn": "Logout",

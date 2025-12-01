@@ -92,8 +92,8 @@ export default function ForgotPasswordForm() {
             role="status"
             style={{
               ...alertStyles,
-              backgroundColor: 'var(--color-success-light, #E0F7EC)',
-              color: 'var(--color-success, #0F9D58)',
+              backgroundColor: 'var(--color-success-light, #E2F7C2)',
+              color: 'var(--color-success-dark, var(--color-success, #507712))',
             }}
           >
             {successMessage}
@@ -101,7 +101,14 @@ export default function ForgotPasswordForm() {
         )}
 
         <div style={{ marginTop: 'var(--space-2)' }}>
-          <Button type="submit" fullWidth size="lg" isLoading={isLoading} loadingText={t('forgot.loading')}>
+          <Button
+            type="submit"
+            fullWidth
+            size="lg"
+            isLoading={isLoading}
+            disabled={isLoading || !!successMessage}
+            loadingText={t('forgot.loading')}
+          >
             {t('forgot.btn')}
           </Button>
         </div>

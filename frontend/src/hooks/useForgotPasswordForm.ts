@@ -28,6 +28,8 @@ export function useForgotPasswordForm({ t }: UseForgotPasswordParams): UseForgot
     setErrorMessage('');
     setSuccessMessage('');
 
+    if (isLoading) return;
+
     if (!email) {
       setErrorMessage(t('login.validation.email_required'));
       return;

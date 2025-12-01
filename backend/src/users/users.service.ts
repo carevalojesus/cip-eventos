@@ -191,4 +191,11 @@ export class UsersService {
       resetPasswordExpires: expires,
     });
   }
+
+  async consumeResetPasswordToken(id: string): Promise<void> {
+    await this.userRepository.update(id, {
+      resetPasswordToken: null,
+      resetPasswordExpires: null,
+    });
+  }
 }

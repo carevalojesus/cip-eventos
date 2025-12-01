@@ -1,0 +1,10 @@
+---
+import AuthLayout from '@/layouts/AuthLayout.astro'
+import ConfirmEmail from '@/components/auth/ConfirmEmail'
+
+export const prerender = true;
+---
+
+<AuthLayout title="Confirma tu correo - CIP Eventos">
+  <ConfirmEmail client:only="react" />
+</AuthLayout>

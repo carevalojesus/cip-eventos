@@ -6,6 +6,7 @@ import { join } from 'path';
 import { MailService } from './mail.service';
 import { CommonModule } from '../common/common.module';
 import { WalletModule } from '../wallet/wallet.module';
+import { ResendProvider } from './resend.provider';
 
 @Global()
 @Module({
@@ -39,7 +40,7 @@ import { WalletModule } from '../wallet/wallet.module';
       }),
     }),
   ],
-  providers: [MailService],
+  providers: [MailService, ResendProvider],
   exports: [MailService],
 })
 export class MailModule {}

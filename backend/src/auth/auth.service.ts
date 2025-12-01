@@ -427,8 +427,11 @@ export class AuthService {
       );
     }
 
+    // Consumir el token inmediatamente para evitar reuso concurrente
     const hashedPassword = await bcrypt.hash(newPassword, 10);
     await this.usersService.updatePassword(user.id, hashedPassword);
+    // Garantizar que el token quede invalidado (en caso de que updatePassword se modifique a futuro)
+    await this.usersService.consumeResetPasswordToken(user.id);
 
     return {
       message: this.i18n.t('auth.password_updated_success', {

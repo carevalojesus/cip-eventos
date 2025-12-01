@@ -209,6 +209,7 @@ export class AuthController {
   }
 
   @Public()
+  @Throttle({ short: { limit: 5, ttl: 60000 } }) // 5 intentos por minuto
   @Post('reset-password')
   @ApiOperation({ summary: 'Reset password', description: 'Set new password using reset token' })
   @ApiQuery({ name: 'token', type: String, description: 'Password reset token' })
@@ -218,6 +219,13 @@ export class AuthController {
     @Query('token') token: string,
     @Body() resetDto: ResetPasswordDto,
   ) {
+    if (!token) {
+      throw new BadRequestException(
+        this.i18n.t('auth.token_required', {
+          lang: I18nContext.current()?.lang,
+        }),
+      );
+    }
     return this.authService.resetPassword(token, resetDto.newPassword);
   }
 

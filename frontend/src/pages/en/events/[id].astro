@@ -1,5 +1,5 @@
 ---
-import { DashboardApp } from "@/components/dashboard/DashboardApp";
+import { RuiDashboardApp } from "@/components/dashboard/RuiDashboardApp";
 import Layout from "@/layouts/Layout.astro";
 
 export const prerender = false;
@@ -9,5 +9,5 @@ const initialPath = `/en/events/${id}`;
 ---
 
 <Layout title="Event Management - CIP Events" lang="en">
-  <DashboardApp client:only="react" initialPath={initialPath} />
+  <RuiDashboardApp client:only="react" initialPath={initialPath} />
 </Layout>
