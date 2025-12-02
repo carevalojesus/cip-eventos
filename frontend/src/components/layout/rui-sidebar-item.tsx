@@ -28,7 +28,9 @@ export function SidebarItem({
     borderRadius: '0.5rem',
     cursor: 'pointer',
     transition: 'all 0.15s ease',
-    backgroundColor: isActive ? '#423D33' : (isHovered ? '#423D33' : 'transparent'),
+    backgroundColor: isActive
+      ? 'var(--color-red-050)'
+      : (isHovered ? 'var(--color-grey-050)' : 'transparent'),
     position: 'relative',
     textDecoration: 'none',
   }
@@ -40,38 +42,43 @@ export function SidebarItem({
     transform: 'translateY(-50%)',
     width: '3px',
     height: '60%',
-    backgroundColor: '#F0B429',
+    backgroundColor: 'var(--color-primary)',
     borderRadius: '0 2px 2px 0',
     opacity: isActive ? 1 : 0,
     transition: 'opacity 0.15s ease',
   }
 
-  const labelStyle: React.CSSProperties = {
-    flex: 1,
-    fontSize: '0.875rem',
-    fontWeight: isActive ? 500 : 400,
-    color: isActive ? '#FAF9F7' : (isHovered ? '#E8E6E1' : '#B8B2A7'),
-  }
-
-  const badgeStyle: React.CSSProperties = {
-    padding: '0.125rem 0.5rem',
-    fontSize: '0.688rem',
-    fontWeight: 600,
-    borderRadius: '9999px',
-    backgroundColor: '#BA2525',
-    color: '#FAF9F7',
-  }
-
   // Colores duotono para iconos basados en el estado
-  const iconPrimary = isActive ? '#F7C948' : (isHovered ? '#E8E6E1' : '#B8B2A7')
-  const iconSecondary = isActive ? '#D3CEC4' : (isHovered ? '#A39E93' : '#857F72')
+  // Primary = trazo principal, Secondary = relleno/detalle (siempre más claro que primary)
+  // Regla Refactoring UI: iconos deben ser más sutiles que el texto para no competir
+  // Hover sutil: solo ligero cambio de tono, sin cambios drásticos
+  const iconPrimary = isActive
+    ? 'var(--color-primary)'
+    : (isHovered ? 'var(--color-grey-500)' : 'var(--color-grey-400)')
+  const iconSecondary = isActive
+    ? 'var(--color-red-200)'
+    : (isHovered ? 'var(--color-grey-300)' : 'var(--color-grey-300)')
 
   const content = (
     <>
       <span style={activeIndicatorStyle} />
-      <Icon primary={iconPrimary} secondary={iconSecondary} />
-      <span style={labelStyle}>{label}</span>
-      {badge && <span style={badgeStyle}>{badge}</span>}
+      <Icon size={20} primary={iconPrimary} secondary={iconSecondary} />
+      <span style={{
+        flex: 1,
+        fontSize: '0.875rem',
+        fontWeight: isActive ? 600 : 400,
+        color: isActive ? 'var(--color-primary)' : (isHovered ? 'var(--color-grey-700)' : 'var(--color-text-muted)'),
+      }}>{label}</span>
+      {badge && (
+        <span style={{
+          padding: '0.125rem 0.5rem',
+          fontSize: '0.688rem',
+          fontWeight: 600,
+          borderRadius: '9999px',
+          backgroundColor: 'var(--color-primary)',
+          color: 'var(--color-text-inverse)',
+        }}>{badge}</span>
+      )}
     </>
   )
 

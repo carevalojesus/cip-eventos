@@ -57,14 +57,14 @@ function LoginFormContent({ onSuccess }: LoginFormProps) {
   const titleStyles: React.CSSProperties = {
     fontSize: '24px',
     fontWeight: 600,
-    color: 'var(--color-grey-900)',
+    color: 'var(--color-text-primary)',
     margin: 0,
     lineHeight: 1.3,
   }
 
   const subtitleStyles: React.CSSProperties = {
     fontSize: '16px',
-    color: 'var(--color-grey-500)',
+    color: 'var(--color-text-muted)',
     margin: 0,
     lineHeight: 1.6,
   }
@@ -95,7 +95,7 @@ function LoginFormContent({ onSuccess }: LoginFormProps) {
   const footerStyles: React.CSSProperties = {
     textAlign: 'center',
     fontSize: '0.875rem',
-    color: 'var(--color-grey-500)',
+    color: 'var(--color-text-muted)',
   }
 
   return (

@@ -39,16 +39,13 @@ export function IconCalendar({
 }: DuotoneIconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className}>
-      <rect x="3" y="4" width="18" height="17" rx="2" fill={secondary} opacity="0.3"/>
-      <rect x="3" y="4" width="18" height="5" rx="2" fill={primary}/>
-      <rect x="7" y="2" width="2" height="4" rx="1" fill={primary}/>
-      <rect x="15" y="2" width="2" height="4" rx="1" fill={primary}/>
-      <rect x="7" y="12" width="3" height="3" rx="0.5" fill={primary}/>
+      <path d="M5 4h14a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6c0-1.1.9-2 2-2zm0 5v10h14V9H5z" fill={primary}/>
+      <path d="M13 13h3v3h-3v-3zM7 2a1 1 0 0 1 1 1v3a1 1 0 1 1-2 0V3a1 1 0 0 1 1-1zm10 0a1 1 0 0 1 1 1v3a1 1 0 0 1-2 0V3a1 1 0 0 1 1-1z" fill={secondary}/>
     </svg>
   )
 }
 
-// 3. User Group Icon - 3 people
+// 3. User Group Icon - 2 people
 export function IconUserGroup({
   primary = 'currentColor',
   secondary = 'currentColor',
@@ -57,10 +54,23 @@ export function IconUserGroup({
 }: DuotoneIconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className}>
-      <circle cx="9" cy="7" r="3" fill={primary}/>
-      <path d="M2 18C2 15.2386 5.13401 13 9 13C12.866 13 16 15.2386 16 18V19H2V18Z" fill={secondary} opacity="0.3"/>
-      <circle cx="17" cy="8" r="2.5" fill={secondary} opacity="0.5"/>
-      <path d="M17 13C19.7614 13 22 14.7909 22 17V19H18V18C18 16.1115 16.8628 14.4109 15 13.4722C15.6047 13.1659 16.2782 13 17 13Z" fill={secondary} opacity="0.3"/>
+      <path d="M15 11a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm7 8a2 2 0 0 1-2 2H10a2 2 0 0 1-2-2v-1a5 5 0 0 1 5-5h4a5 5 0 0 1 5 5v1z" fill={primary}/>
+      <path d="M9 11a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm7 8a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-1a5 5 0 0 1 5-5h4a5 5 0 0 1 5 5v1z" fill={secondary}/>
+    </svg>
+  )
+}
+
+// 3b. Microphone Icon - Speaker/Ponente
+export function IconMicrophone({
+  primary = 'currentColor',
+  secondary = 'currentColor',
+  size = 24,
+  className = ''
+}: DuotoneIconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className}>
+      <path d="M12 1a4 4 0 0 1 4 4v6a4 4 0 1 1-8 0V5a4 4 0 0 1 4-4z" fill={secondary}/>
+      <path d="M13 18.94V21h3a1 1 0 0 1 0 2H8a1 1 0 0 1 0-2h3v-2.06A8 8 0 0 1 4 11a1 1 0 0 1 2 0 6 6 0 1 0 12 0 1 1 0 0 1 2 0 8 8 0 0 1-7 7.94z" fill={primary}/>
     </svg>
   )
 }
@@ -84,7 +94,7 @@ export function IconOffice({
   )
 }
 
-// 5. Ticket Icon - Ticket with cut line
+// 5. Ticket Icon - Ticket with notch
 export function IconTicket({
   primary = 'currentColor',
   secondary = 'currentColor',
@@ -93,10 +103,23 @@ export function IconTicket({
 }: DuotoneIconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className}>
-      <rect x="2" y="6" width="20" height="12" rx="2" fill={secondary} opacity="0.3"/>
-      <line x1="9" y1="6" x2="9" y2="18" stroke={primary} strokeWidth="2" strokeDasharray="2 2"/>
-      <rect x="12" y="10" width="6" height="1.5" rx="0.5" fill={primary}/>
-      <rect x="12" y="13" width="4" height="1.5" rx="0.5" fill={primary}/>
+      <path d="M22 15v4a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1v-4a3 3 0 0 0 0-6V5a1 1 0 0 1 1-1h18a1 1 0 0 1 1 1v4a3 3 0 0 0 0 6z" fill={primary}/>
+      <path d="M9 20H3a1 1 0 0 1-1-1v-4a3 3 0 0 0 0-6V5a1 1 0 0 1 1-1h6v16z" fill={secondary}/>
+    </svg>
+  )
+}
+
+// 5b. Survey Icon - Clipboard for registrations
+export function IconSurvey({
+  primary = 'currentColor',
+  secondary = 'currentColor',
+  size = 24,
+  className = ''
+}: DuotoneIconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className}>
+      <path d="M5 5h14a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7c0-1.1.9-2 2-2zm3 7a1 1 0 0 0 0 2h8a1 1 0 0 0 0-2H8zm0 4a1 1 0 0 0 0 2h4a1 1 0 0 0 0-2H8z" fill={primary}/>
+      <path d="M15 4a2 2 0 0 1 2 2v1a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1V6c0-1.1.9-2 2-2 0-1.1.9-2 2-2h2a2 2 0 0 1 2 2z" fill={secondary}/>
     </svg>
   )
 }
@@ -110,12 +133,8 @@ export function IconIdentification({
 }: DuotoneIconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className}>
-      <rect x="2" y="5" width="20" height="14" rx="2" fill={secondary} opacity="0.3"/>
-      <circle cx="7.5" cy="11" r="2.5" fill={primary}/>
-      <path d="M4 17c0-1.4 1.1-2.5 2.5-2.5h2c1.4 0 2.5 1.1 2.5 2.5" fill={primary}/>
-      <rect x="13" y="9" width="6" height="1.5" rx="0.5" fill={primary}/>
-      <rect x="13" y="12" width="5" height="1.5" rx="0.5" fill={primary}/>
-      <rect x="13" y="15" width="4" height="1.5" rx="0.5" fill={primary}/>
+      <path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6c0-1.1.9-2 2-2zm13 3a1 1 0 0 0 0 2h2a1 1 0 0 0 0-2h-2zm-2 4a1 1 0 0 0 0 2h4a1 1 0 0 0 0-2h-4zm1 4a1 1 0 0 0 0 2h3a1 1 0 0 0 0-2h-3z" fill={primary}/>
+      <path d="M8 12a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm-2 2h4a2 2 0 0 1 2 2v1a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-1c0-1.1.9-2 2-2z" fill={secondary}/>
     </svg>
   )
 }
@@ -129,11 +148,8 @@ export function IconCertificate({
 }: DuotoneIconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className}>
-      <rect x="3" y="4" width="18" height="13" rx="2" fill={secondary} opacity="0.3"/>
-      <rect x="7" y="8" width="10" height="1.5" rx="0.5" fill={primary}/>
-      <rect x="7" y="11" width="7" height="1.5" rx="0.5" fill={primary}/>
-      <circle cx="17" cy="14" r="3" fill={primary}/>
-      <path d="M15 17v5l2-1.5 2 1.5v-5" stroke={primary} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M4 3h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5c0-1.1.9-2 2-2zm16 12V7a2 2 0 0 1-2-2H6a2 2 0 0 1-2 2v8a2 2 0 0 1 2 2h12c0-1.1.9-2 2-2zM8 7h8a1 1 0 0 1 0 2H8a1 1 0 1 1 0-2z" fill={primary}/>
+      <path d="M11.65 18.23a4 4 0 1 1 4.7 0l2.5 3.44-2.23-.18-1.48 1.68-.59-4.2a4.04 4.04 0 0 1-1.1 0l-.6 4.2-1.47-1.68-2.23.18 2.5-3.44zM14 17a2 2 0 1 0 0-4 2 2 0 0 0 0 4z" fill={secondary}/>
     </svg>
   )
 }
@@ -171,6 +187,21 @@ export function IconCreditCard({
   )
 }
 
+// 9b. Money Icon - Cash/Bills for payments
+export function IconMoney({
+  primary = 'currentColor',
+  secondary = 'currentColor',
+  size = 24,
+  className = ''
+}: DuotoneIconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className}>
+      <path d="M18 14.74a4 4 0 0 0-8 .26H3a2 2 0 0 1-2-2V5c0-1.1.9-2 2-2h14a2 2 0 0 1 2 2v8a2 2 0 0 1-1 1.74zM10 12a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" fill={secondary}/>
+      <path d="M7 9h14a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-8c0-1.1.9-2 2-2zm7 9a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" fill={primary}/>
+    </svg>
+  )
+}
+
 // 10. Chart Icon - Bar chart
 export function IconChart({
   primary = 'currentColor',
@@ -196,10 +227,8 @@ export function IconWallet({
 }: DuotoneIconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className}>
-      <rect x="3" y="6" width="18" height="13" rx="2" fill={secondary} opacity="0.3"/>
-      <rect x="3" y="3" width="15" height="5" rx="1" fill={primary}/>
-      <rect x="15" y="11" width="5" height="4" rx="1" fill={primary}/>
-      <circle cx="16.5" cy="13" r="1" fill={secondary}/>
+      <path d="M2 5c0 1.1.9 2 2 2h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5zm16 11a2 2 0 1 0 0-4 2 2 0 0 0 0 4z" fill={primary}/>
+      <path d="M4 3h11a2 2 0 0 1 2 2v2H4a2 2 0 1 1 0-4z" fill={secondary}/>
     </svg>
   )
 }
@@ -229,8 +258,8 @@ export function IconCog({
 }: DuotoneIconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className}>
-      <circle cx="12" cy="12" r="3" fill={primary}/>
-      <path d="M12 1L13.5 3.5L16.5 3L17 6L20 7.5L19 10L21 12L19 14L20 16.5L17 18L16.5 21L13.5 20.5L12 23L10.5 20.5L7.5 21L7 18L4 16.5L5 14L3 12L5 10L4 7.5L7 6L7.5 3L10.5 3.5L12 1Z" fill={secondary} opacity="0.3"/>
+      <path d="M6.8 3.45c.87-.52 1.82-.92 2.83-1.17a2.5 2.5 0 0 0 4.74 0c1.01.25 1.96.65 2.82 1.17a2.5 2.5 0 0 0 3.36 3.36c.52.86.92 1.8 1.17 2.82a2.5 2.5 0 0 0 0 4.74c-.25 1.01-.65 1.96-1.17 2.82a2.5 2.5 0 0 0-3.36 3.36c-.86.52-1.8.92-2.82 1.17a2.5 2.5 0 0 0-4.74 0c-1.01-.25-1.96-.65-2.82-1.17a2.5 2.5 0 0 0-3.36-3.36 9.94 9.94 0 0 1-1.17-2.82 2.5 2.5 0 0 0 0-4.74c.25-1.01.65-1.96 1.17-2.82a2.5 2.5 0 0 0 3.36-3.36zM12 16a4 4 0 1 0 0-8 4 4 0 0 0 0 8z" fill={primary}/>
+      <circle cx="12" cy="12" r="2" fill={secondary}/>
     </svg>
   )
 }
@@ -244,8 +273,8 @@ export function IconUser({
 }: DuotoneIconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className}>
-      <circle cx="12" cy="8" r="4" fill={primary}/>
-      <path d="M4 20c0-3.3 2.7-6 6-6h4c3.3 0 6 2.7 6 6v1H4v-1z" fill={secondary} opacity="0.3"/>
+      <path d="M12 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10z" fill={primary}/>
+      <path d="M21 20v-1a5 5 0 0 0-5-5H8a5 5 0 0 0-5 5v1c0 1.1.9 2 2 2h14a2 2 0 0 0 2-2z" fill={secondary}/>
     </svg>
   )
 }
@@ -292,9 +321,8 @@ export function IconDoorExit({
 }: DuotoneIconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className}>
-      <rect x="3" y="3" width="10" height="18" rx="2" fill={secondary} opacity="0.3"/>
-      <circle cx="9" cy="12" r="1" fill={primary}/>
-      <path d="M14 12h7m0 0l-3-3m3 3l-3 3" stroke={primary} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M11 4h3a1 1 0 0 1 1 1v3a1 1 0 0 1-2 0V6h-2v12h2v-2a1 1 0 0 1 2 0v3a1 1 0 0 1-1 1h-3v1a1 1 0 0 1-1.27.96l-6.98-2A1 1 0 0 1 2 19V5a1 1 0 0 1 .75-.97l6.98-2A1 1 0 0 1 11 3v1z" fill={primary}/>
+      <path d="M18.59 11l-1.3-1.3c-.94-.94.47-2.35 1.42-1.4l3 3a1 1 0 0 1 0 1.4l-3 3c-.95.95-2.36-.46-1.42-1.4l1.3-1.3H14a1 1 0 0 1 0-2h4.59z" fill={secondary}/>
     </svg>
   )
 }
@@ -399,8 +427,8 @@ export function IconFolder({
 }: DuotoneIconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className}>
-      <path d="M3 6c0-1.1.9-2 2-2h4l2 2h8c1.1 0 2 .9 2 2" fill={secondary} opacity="0.3"/>
-      <rect x="3" y="8" width="18" height="11" rx="2" fill={primary}/>
+      <path d="M4 4h7l2 2h7a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6c0-1.1.9-2 2-2z" fill={secondary}/>
+      <rect x="2" y="8" width="20" height="12" rx="2" fill={primary}/>
     </svg>
   )
 }
@@ -426,12 +454,15 @@ export const DuotoneIcons = {
   Dashboard: IconDashboard,
   Calendar: IconCalendar,
   UserGroup: IconUserGroup,
+  Microphone: IconMicrophone,
   Office: IconOffice,
   Ticket: IconTicket,
+  Survey: IconSurvey,
   Identification: IconIdentification,
   Certificate: IconCertificate,
   TrendingUp: IconTrendingUp,
   CreditCard: IconCreditCard,
+  Money: IconMoney,
   Chart: IconChart,
   Wallet: IconWallet,
   UserAdd: IconUserAdd,

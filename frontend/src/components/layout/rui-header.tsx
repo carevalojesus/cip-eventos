@@ -1,8 +1,5 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Plus, Search } from 'lucide-react'
-import { Button } from '@/components/ui/rui-button'
-import { Input } from '@/components/ui/rui-input'
 import {
   IconBell,
   IconChevronDown,
@@ -11,20 +8,15 @@ import {
 
 interface HeaderProps {
   user: { name: string; avatar?: string }
-  searchQuery: string
-  onSearchChange: (query: string) => void
   onMenuToggle?: () => void
   notificationCount?: number
 }
 
 export function Header({
   user,
-  searchQuery,
-  onSearchChange,
   onMenuToggle,
   notificationCount = 0,
 }: HeaderProps) {
-  const { t } = useTranslation()
   const [isMobile] = useState(() => typeof window !== 'undefined' && window.innerWidth < 768)
 
   const headerStyle: React.CSSProperties = {
@@ -33,23 +25,13 @@ export function Header({
     left: isMobile ? 0 : '260px',
     right: 0,
     height: '64px',
-    backgroundColor: '#FFFFFF',
-    borderBottom: '1px solid #E8E6E1',
+    backgroundColor: 'var(--color-bg-primary)',
+    borderBottom: '1px solid var(--color-border-light)',
     display: 'flex',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-end',
     padding: '0 1.5rem',
     zIndex: 90,
-  }
-
-  const leftSectionStyle: React.CSSProperties = {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '1rem',
-  }
-
-  const searchContainerStyle: React.CSSProperties = {
-    width: isMobile ? '200px' : '320px',
   }
 
   const actionsStyle: React.CSSProperties = {
@@ -61,7 +43,7 @@ export function Header({
   const dividerStyle: React.CSSProperties = {
     width: '1px',
     height: '24px',
-    backgroundColor: '#D3CEC4',
+    backgroundColor: 'var(--color-border-light)',
     margin: '0 0.5rem',
   }
 
@@ -83,9 +65,9 @@ export function Header({
     right: '6px',
     width: '8px',
     height: '8px',
-    backgroundColor: '#BA2525',
+    backgroundColor: 'var(--color-primary)',
     borderRadius: '50%',
-    border: '2px solid #FFFFFF',
+    border: '2px solid var(--color-bg-primary)',
   }
 
   const notificationBadgeStyle: React.CSSProperties = {
@@ -95,12 +77,12 @@ export function Header({
     minWidth: '18px',
     height: '18px',
     padding: '0 4px',
-    backgroundColor: '#BA2525',
-    color: '#FFFFFF',
+    backgroundColor: 'var(--color-primary)',
+    color: 'var(--color-text-inverse)',
     fontSize: '0.688rem',
     fontWeight: 600,
     borderRadius: '9999px',
-    border: '2px solid #FFFFFF',
+    border: '2px solid var(--color-bg-primary)',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -118,24 +100,13 @@ export function Header({
     width: '32px',
     height: '32px',
     borderRadius: '50%',
-    backgroundColor: '#2CB1BC',
+    backgroundColor: 'var(--color-info)',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
     fontSize: '0.75rem',
     fontWeight: 600,
-    color: '#F5F4F2',
-  }
-
-  const menuButtonStyle: React.CSSProperties = {
-    display: isMobile ? 'flex' : 'none',
-    padding: '0.5rem',
-    background: 'none',
-    border: 'none',
-    cursor: 'pointer',
-    borderRadius: '0.375rem',
-    alignItems: 'center',
-    justifyContent: 'center',
+    color: 'var(--color-text-inverse)',
   }
 
   const getInitials = (name: string) => {
@@ -148,53 +119,18 @@ export function Header({
 
   return (
     <header style={headerStyle}>
-      <div style={leftSectionStyle}>
-        {/* Mobile menu button */}
-        <button style={menuButtonStyle} onClick={onMenuToggle}>
-          <IconMenu primary="#6B675D" secondary="#857F72" />
-        </button>
-
-        {/* Search */}
-        <div style={searchContainerStyle}>
-          <Input
-            placeholder={t('common.search') + '...'}
-            leftIcon={<Search size={18} color="#A39E93" />}
-            value={searchQuery}
-            onChange={(e) => onSearchChange(e.target.value)}
-            style={{ backgroundColor: '#F5F4F2' }}
-          />
-        </div>
-      </div>
-
       {/* Actions */}
       <div style={actionsStyle}>
-        {!isMobile && (
-          <>
-            <Button
-              variant="primary"
-              size="md"
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.5rem',
-              }}
-            >
-              <Plus size={16} />
-              {t('dashboard.new_event')}
-            </Button>
-
-            <div style={dividerStyle} />
-          </>
-        )}
-
         <button style={notificationButtonStyle}>
-          <IconBell primary="#6B675D" secondary="#A39E93" />
+          <IconBell primary="var(--color-text-secondary)" secondary="var(--color-text-muted)" />
           {notificationCount > 0 && (
             <span style={notificationBadgeStyle}>
               {notificationCount > 9 ? '9+' : notificationCount}
             </span>
           )}
         </button>
+
+        <div style={dividerStyle} />
 
         <div style={userMenuStyle}>
           {user.avatar ? (
@@ -207,7 +143,7 @@ export function Header({
             <div style={avatarStyle}>{getInitials(user.name)}</div>
           )}
           {!isMobile && (
-            <IconChevronDown primary="#6B675D" size={20} />
+            <IconChevronDown primary="var(--color-text-secondary)" size={20} />
           )}
         </div>
       </div>

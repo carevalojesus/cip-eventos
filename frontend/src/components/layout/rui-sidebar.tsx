@@ -1,21 +1,21 @@
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { SidebarItem } from './rui-sidebar-item'
 import { SidebarSection } from './rui-sidebar-section'
 import {
   IconDashboard,
   IconCalendar,
+  IconMicrophone,
   IconUserGroup,
-  IconOffice,
-  IconTicket,
+  IconSurvey,
   IconIdentification,
   IconCertificate,
-  IconTrendingUp,
-  IconCreditCard,
+  IconWallet,
+  IconMoney,
   IconChart,
   IconUser,
   IconFolder,
   IconCog,
-  IconStore,
   IconDoorExit,
 } from '@/components/icons/DuotoneIcons'
 
@@ -44,7 +44,8 @@ export function Sidebar({
     top: 0,
     bottom: 0,
     width: '260px',
-    backgroundColor: '#27241D',
+    backgroundColor: 'var(--color-bg-primary)',
+    borderRight: '1px solid var(--color-border-light)',
     display: 'flex',
     flexDirection: 'column',
     zIndex: 100,
@@ -58,14 +59,14 @@ export function Sidebar({
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: 'var(--color-overlay)',
     zIndex: 99,
     display: isOpen ? 'block' : 'none',
   }
 
   const logoContainerStyle: React.CSSProperties = {
     padding: '1.25rem 1.5rem',
-    borderBottom: '1px solid #3A3730',
+    borderBottom: '1px solid var(--color-border-light)',
   }
 
   const logoInnerStyle: React.CSSProperties = {
@@ -74,14 +75,13 @@ export function Sidebar({
     gap: '0.75rem',
   }
 
-  const logoIconStyle: React.CSSProperties = {
+  const logoStyle: React.CSSProperties = {
     width: '36px',
     height: '36px',
-    backgroundColor: '#F0B429',
-    borderRadius: '0.5rem',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
+    objectFit: 'contain',
+  }
+  const brandTextStyle: React.CSSProperties = {
+    color: 'var(--color-text-primary)',
   }
 
   const navStyle: React.CSSProperties = {
@@ -92,7 +92,7 @@ export function Sidebar({
 
   const userContainerStyle: React.CSSProperties = {
     padding: '1rem 1.25rem',
-    borderTop: '1px solid #3A3730',
+    borderTop: '1px solid var(--color-border-light)',
   }
 
   const userInnerStyle: React.CSSProperties = {
@@ -105,13 +105,13 @@ export function Sidebar({
     width: '36px',
     height: '36px',
     borderRadius: '50%',
-    backgroundColor: '#2CB1BC',
+    backgroundColor: 'var(--color-info)',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
     fontSize: '0.875rem',
     fontWeight: 600,
-    color: '#F5F4F2',
+    color: 'var(--color-text-inverse)',
   }
 
   const userInfoStyle: React.CSSProperties = {
@@ -121,7 +121,7 @@ export function Sidebar({
 
   const userNameStyle: React.CSSProperties = {
     fontWeight: 500,
-    color: '#FAF9F7',
+    color: 'var(--color-text-primary)',
     fontSize: '0.875rem',
     whiteSpace: 'nowrap',
     overflow: 'hidden',
@@ -130,7 +130,7 @@ export function Sidebar({
 
   const userRoleStyle: React.CSSProperties = {
     fontSize: '0.75rem',
-    color: '#A39E93',
+    color: 'var(--color-text-muted)',
   }
 
   const logoutButtonStyle: React.CSSProperties = {
@@ -142,6 +142,7 @@ export function Sidebar({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
+    transition: 'background-color 0.15s ease',
   }
 
   const getInitials = (name: string) => {
@@ -163,6 +164,9 @@ export function Sidebar({
   // Detectar si es móvil
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 768
 
+  // Estado hover para botón logout
+  const [isLogoutHovered, setIsLogoutHovered] = useState(false)
+
   return (
     <>
       {/* Overlay para móvil */}
@@ -174,14 +178,12 @@ export function Sidebar({
         {/* Logo */}
         <div style={logoContainerStyle}>
           <div style={logoInnerStyle}>
-            <div style={logoIconStyle}>
-              <IconStore primary="#27241D" secondary="#857F72" />
-            </div>
+            <img src="/images/auth/logo-cip.svg" alt="Logo CIP" style={logoStyle} />
             <div>
-              <div style={{ fontWeight: 600, color: '#FAF9F7', fontSize: '0.938rem' }}>
+              <div style={{ fontWeight: 600, fontSize: '0.938rem', ...brandTextStyle }}>
                 CIP Eventos
               </div>
-              <div style={{ fontSize: '0.75rem', color: '#A39E93' }}>
+              <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>
                 CD Loreto
               </div>
             </div>
@@ -209,13 +211,13 @@ export function Sidebar({
               onClick={() => onNavChange('eventos')}
             />
             <SidebarItem
-              icon={IconUserGroup}
+              icon={IconMicrophone}
               label={t('dashboard.nav.speakers')}
               isActive={activeNav === 'ponentes'}
               onClick={() => onNavChange('ponentes')}
             />
             <SidebarItem
-              icon={IconOffice}
+              icon={IconUserGroup}
               label={t('dashboard.nav.organizers')}
               isActive={activeNav === 'organizadores'}
               onClick={() => onNavChange('organizadores')}
@@ -225,7 +227,7 @@ export function Sidebar({
           {/* OPERACIONES */}
           <SidebarSection title={t('dashboard.nav.operations')}>
             <SidebarItem
-              icon={IconTicket}
+              icon={IconSurvey}
               label={t('dashboard.nav.registrations')}
               isActive={activeNav === 'inscripciones'}
               onClick={() => onNavChange('inscripciones')}
@@ -247,13 +249,13 @@ export function Sidebar({
           {/* FINANZAS */}
           <SidebarSection title={t('dashboard.nav.finance')}>
             <SidebarItem
-              icon={IconTrendingUp}
+              icon={IconWallet}
               label={t('dashboard.nav.income')}
               isActive={activeNav === 'ingresos'}
               onClick={() => onNavChange('ingresos')}
             />
             <SidebarItem
-              icon={IconCreditCard}
+              icon={IconMoney}
               label={t('dashboard.nav.payments')}
               isActive={activeNav === 'pagos'}
               onClick={() => onNavChange('pagos')}
@@ -305,8 +307,21 @@ export function Sidebar({
               <div style={userNameStyle}>{getDisplayName(user.name)}</div>
               <div style={userRoleStyle}>{user.role}</div>
             </div>
-            <button style={logoutButtonStyle} onClick={onLogout} title={t('dashboard.nav.logout')}>
-              <IconDoorExit primary="#A39E93" secondary="#6B675D" />
+            <button
+              style={{
+                ...logoutButtonStyle,
+                backgroundColor: isLogoutHovered ? 'var(--color-red-050)' : 'transparent',
+              }}
+              onClick={onLogout}
+              onMouseEnter={() => setIsLogoutHovered(true)}
+              onMouseLeave={() => setIsLogoutHovered(false)}
+              title={t('dashboard.nav.logout')}
+            >
+              <IconDoorExit
+                size={18}
+                primary={isLogoutHovered ? 'var(--color-danger)' : 'var(--color-grey-400)'}
+                secondary={isLogoutHovered ? 'var(--color-red-200)' : 'var(--color-grey-300)'}
+              />
             </button>
           </div>
         </div>

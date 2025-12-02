@@ -40,7 +40,6 @@ export const RuiDashboardApp: React.FC<RuiDashboardAppProps> = ({ initialPath })
   const [activePath, setActivePath] = useState(initialPath || "/");
   const [hydrated, setHydrated] = useState(false);
   const [breadcrumbs, setBreadcrumbs] = useState<Breadcrumb[]>([]);
-  const [searchQuery, setSearchQuery] = useState("");
   const locale = getCurrentLocale();
 
   // Espera a que el store persistente rehidrate antes de evaluar el token
@@ -326,8 +325,6 @@ export const RuiDashboardApp: React.FC<RuiDashboardAppProps> = ({ initialPath })
         user={layoutUser}
         activeNav={getNavIdFromPath(activePath)}
         onNavChange={handleNavChange}
-        searchQuery={searchQuery}
-        onSearchChange={setSearchQuery}
         onLogout={handleLogout}
       >
         {renderContent()}

@@ -7,8 +7,6 @@ interface AppLayoutProps {
   user: { name: string; role: string; avatar?: string }
   activeNav: string
   onNavChange: (navId: string) => void
-  searchQuery?: string
-  onSearchChange?: (query: string) => void
   onLogout?: () => void | Promise<void>
 }
 
@@ -17,8 +15,6 @@ export function AppLayout({
   user,
   activeNav,
   onNavChange,
-  searchQuery = '',
-  onSearchChange = () => {},
   onLogout,
 }: AppLayoutProps) {
   const [isMobile, setIsMobile] = useState(false)
@@ -39,7 +35,8 @@ export function AppLayout({
     marginLeft: isMobile ? 0 : '260px',
     marginTop: '64px',
     minHeight: 'calc(100vh - 64px)',
-    backgroundColor: '#FAF9F7',
+    background: 'linear-gradient(180deg, var(--color-primary) 0px, var(--color-primary-dark) 160px, var(--color-bg-secondary) 160px)',
+    color: 'var(--color-text-primary)',
     padding: '1.5rem',
   }
 
@@ -52,7 +49,7 @@ export function AppLayout({
   }
 
   return (
-    <div style={{ fontFamily: "'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif", minHeight: '100vh' }}>
+    <div style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif", minHeight: '100vh' }}>
       <Sidebar
         user={user}
         activeNav={activeNav}
@@ -68,8 +65,6 @@ export function AppLayout({
       />
       <Header
         user={user}
-        searchQuery={searchQuery}
-        onSearchChange={onSearchChange}
         onMenuToggle={handleMenuToggle}
         notificationCount={3}
       />
