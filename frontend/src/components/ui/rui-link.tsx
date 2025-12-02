@@ -14,14 +14,15 @@ export function Link({
   style,
   ...props
 }: LinkProps) {
+  // Links usan --color-action (cyan) para diferenciarse de danger (rojo)
   const variantStyles: Record<LinkVariant, React.CSSProperties> = {
     default: {
-      color: '#BA2525', // red-500
+      color: 'var(--color-action)',
       fontWeight: 500,
       fontSize: '14px',
     },
     muted: {
-      color: '#BA2525', // red-500
+      color: 'var(--color-action)',
       fontWeight: 500,
       fontSize: '0.813rem', // 13px
     },
@@ -36,11 +37,11 @@ export function Link({
   }
 
   const handleMouseEnter = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.currentTarget.style.color = '#911111' // red-700
+    e.currentTarget.style.color = 'var(--color-action-dark)'
   }
 
   const handleMouseLeave = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.currentTarget.style.color = '#BA2525' // red-500
+    e.currentTarget.style.color = 'var(--color-action)'
   }
 
   return (

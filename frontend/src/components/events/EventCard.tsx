@@ -198,13 +198,14 @@ export const EventCard: React.FC<EventCardProps> = ({ event, onManage }) => {
   };
 
   // Tertiary action: styled as link (Refactoring UI)
+  // Usa --color-action (cyan) para acciones, no rojo (que es para danger)
   const linkStyle: React.CSSProperties = {
     display: 'inline-flex',
     alignItems: 'center',
     gap: '4px',
     fontSize: 'var(--font-size-sm)',
     fontWeight: 500,
-    color: '#BA2525',
+    color: 'var(--color-action)',
     background: 'none',
     border: 'none',
     padding: 0,
@@ -279,10 +280,10 @@ export const EventCard: React.FC<EventCardProps> = ({ event, onManage }) => {
               onManage();
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.color = '#911111';
+              e.currentTarget.style.color = 'var(--color-action-dark)';
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.color = '#BA2525';
+              e.currentTarget.style.color = 'var(--color-action)';
             }}
           >
             {t("dashboard.events_view.actions.view", "Ver detalles")}

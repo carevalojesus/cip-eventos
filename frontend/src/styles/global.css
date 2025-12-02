@@ -152,15 +152,20 @@
      Para uso rápido en componentes
      ============================================ */
 
-  /* Colores de marca */
+  /* Colores de marca (Branding CIP) */
   --color-primary: #BA2525;
   --color-primary-light: #D64545;
   --color-primary-dark: #911111;
 
-  /* Colores de acción */
-  --color-accent: #F0B429;
-  --color-accent-light: #F7C948;
-  --color-accent-dark: #CB6E17;
+  /* Colores de acción (Botones principales, links, CTAs) */
+  --color-action: #2CB1BC;
+  --color-action-light: #54D1DB;
+  --color-action-dark: #14919B;
+
+  /* Colores de acento (Highlights, badges decorativos) */
+  --color-accent: #2CB1BC;
+  --color-accent-light: #87EAF2;
+  --color-accent-dark: #0E7C86;
 
   /* Estados */
   --color-success: #7BB026;
@@ -175,6 +180,7 @@
   --color-warning-light: #FFF3C4;
   --color-warning-dark: #CB6E17;
 
+  /* Danger - Solo para acciones destructivas (eliminar, cancelar) */
   --color-danger: #BA2525;
   --color-danger-light: #FACDCD;
   --color-danger-dark: #911111;
