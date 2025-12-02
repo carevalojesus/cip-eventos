@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import type { Event, EventStatus } from "@/types/event";
-import { IconCalendar } from "@/components/icons/DuotoneIcons";
+import { IconCalendar, IconLocation, IconClock } from "@/components/icons/DuotoneIcons";
+import { getCurrentLocale } from "@/lib/routes";
 
 interface EventCardProps {
   event: Event;
@@ -42,10 +43,12 @@ export const EventCard: React.FC<EventCardProps> = ({ event, onManage }) => {
 
   const status = statusConfig[event.status] || statusConfig.DRAFT;
 
+  const locale = getCurrentLocale() === "es" ? "es-PE" : "en-US";
+
   const formatDate = (dateString: string) => {
     if (!dateString) return "";
     const date = new Date(dateString);
-    return date.toLocaleDateString("es-PE", {
+    return date.toLocaleDateString(locale, {
       day: "2-digit",
       month: "short",
       year: "numeric",
@@ -55,7 +58,7 @@ export const EventCard: React.FC<EventCardProps> = ({ event, onManage }) => {
   const formatTime = (dateString: string) => {
     if (!dateString) return "";
     const date = new Date(dateString);
-    return date.toLocaleTimeString("es-PE", {
+    return date.toLocaleTimeString(locale, {
       hour: "2-digit",
       minute: "2-digit",
       hour12: true,
@@ -194,16 +197,19 @@ export const EventCard: React.FC<EventCardProps> = ({ event, onManage }) => {
     color: 'var(--color-grey-700)',
   };
 
-  const manageButtonStyle: React.CSSProperties = {
-    padding: '0.5rem 0.875rem',
+  // Tertiary action: styled as link (Refactoring UI)
+  const linkStyle: React.CSSProperties = {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: '4px',
     fontSize: '0.813rem',
     fontWeight: 500,
-    color: 'var(--color-primary)',
-    backgroundColor: 'transparent',
-    border: '1px solid var(--color-primary)',
-    borderRadius: 'var(--radius-md)',
+    color: '#BA2525',
+    background: 'none',
+    border: 'none',
+    padding: 0,
     cursor: 'pointer',
-    transition: 'all 0.15s ease',
+    transition: 'color 150ms ease',
   };
 
   const enrolledCount = event.enrolledCount ?? 0;
@@ -248,11 +254,15 @@ export const EventCard: React.FC<EventCardProps> = ({ event, onManage }) => {
         {/* Meta info */}
         <div style={metaContainerStyle}>
           <div style={metaRowStyle}>
-            <span style={metaIconStyle}>📅</span>
+            <span style={metaIconStyle}>
+              <IconClock size={16} primary="var(--color-grey-500)" secondary="var(--color-grey-300)" />
+            </span>
             <span>{formatDate(event.startAt)} · {formatTime(event.startAt)}</span>
           </div>
           <div style={metaRowStyle}>
-            <span style={metaIconStyle}>📍</span>
+            <span style={metaIconStyle}>
+              <IconLocation size={16} primary="var(--color-grey-500)" secondary="var(--color-grey-300)" />
+            </span>
             <span>{getLocationText()}</span>
           </div>
         </div>
@@ -263,19 +273,22 @@ export const EventCard: React.FC<EventCardProps> = ({ event, onManage }) => {
             <span style={enrolledCountStyle}>{enrolledCount}</span> {t("dashboard.events_view.table.enrolled_label", "inscritos")}
           </span>
           <button
-            style={manageButtonStyle}
+            style={linkStyle}
             onClick={(e) => {
               e.stopPropagation();
               onManage();
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = 'var(--color-red-050)';
+              e.currentTarget.style.color = '#911111';
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = 'transparent';
+              e.currentTarget.style.color = '#BA2525';
             }}
           >
-            {t("dashboard.events_view.actions.manage", "Gestionar")}
+            {t("dashboard.events_view.actions.view", "Ver detalles")}
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="m9 18 6-6-6-6"/>
+            </svg>
           </button>
         </div>
       </div>

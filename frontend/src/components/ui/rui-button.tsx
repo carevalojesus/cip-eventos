@@ -1,6 +1,6 @@
 import { useState, type ButtonHTMLAttributes, type ReactNode } from 'react'
 
-type ButtonVariant = 'primary' | 'secondary' | 'ghost'
+type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'outline'
 type ButtonSize = 'sm' | 'md' | 'lg'
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -85,12 +85,21 @@ export function Button({
       }
     }
 
-    // ghost
+    if (variant === 'ghost') {
+      return {
+        backgroundColor: isHovered || isFocused ? colors.grey[100] : 'transparent',
+        color: colors.grey[700],
+        border: `1px solid ${colors.grey[200]}`,
+        boxShadow: 'none',
+      }
+    }
+
+    // outline
     return {
-      backgroundColor: isHovered || isFocused ? colors.grey[100] : 'transparent',
-      color: colors.grey[700],
-      border: 'none',
-      boxShadow: 'none',
+      backgroundColor: isPressed ? 'rgba(186, 37, 37, 0.08)' : isHovered ? 'rgba(186, 37, 37, 0.04)' : 'transparent',
+      color: colors.red[500],
+      border: `1px solid ${colors.red[500]}`,
+      boxShadow: isFocused ? `0 0 0 2px rgba(186, 37, 37, 0.2)` : 'none',
     }
   }
 

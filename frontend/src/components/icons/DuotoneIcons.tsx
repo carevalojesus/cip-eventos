@@ -449,6 +449,51 @@ export function IconHelp({
   )
 }
 
+// 26. Location Pin Icon - Map marker
+export function IconLocation({
+  primary = 'currentColor',
+  secondary = 'currentColor',
+  size = 24,
+  className = ''
+}: DuotoneIconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className}>
+      <path d="M12 22s-8-4.5-8-11.8A8 8 0 0 1 12 2a8 8 0 0 1 8 8.2c0 7.3-8 11.8-8 11.8z" fill={secondary} opacity="0.3"/>
+      <circle cx="12" cy="10" r="3" fill={primary}/>
+    </svg>
+  )
+}
+
+// 27. Clock Icon - Time
+export function IconClock({
+  primary = 'currentColor',
+  secondary = 'currentColor',
+  size = 24,
+  className = ''
+}: DuotoneIconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className}>
+      <circle cx="12" cy="12" r="9" fill={secondary} opacity="0.3"/>
+      <path d="M12 6v6l4 2" stroke={primary} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  )
+}
+
+// 28. Arrow Right Icon (para botones de acción)
+export function IconArrowRight({
+  primary = 'currentColor',
+  secondary = 'currentColor',
+  size = 24,
+  className = ''
+}: DuotoneIconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className}>
+      <path d="M5 12h14" stroke={primary} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M12 5l7 7-7 7" stroke={primary} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  )
+}
+
 // Export all icons as a collection for easy access
 export const DuotoneIcons = {
   Dashboard: IconDashboard,

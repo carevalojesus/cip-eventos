@@ -16,7 +16,7 @@ export function SidebarSection({ title, children }: SidebarSectionProps) {
     fontWeight: 600,
     textTransform: 'uppercase',
     letterSpacing: '0.05em',
-    color: 'var(--color-text-muted)',
+    color: 'var(--color-grey-700)',
   }
 
   const itemsStyle: React.CSSProperties = {

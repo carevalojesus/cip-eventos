@@ -217,6 +217,21 @@
   --transition-slow: 300ms ease;
 
   /* ============================================
+     BUTTON HEIGHTS (Refactoring UI Scale)
+     Consistent heights for all interactive elements
+     ============================================ */
+  --button-height-sm: 32px;
+  --button-height-md: 36px;
+  --button-height-lg: 40px;
+  --button-height-xl: 44px;
+
+  /* Padding vertical correspondiente */
+  --button-padding-sm: 0.375rem;
+  --button-padding-md: 0.5rem;
+  --button-padding-lg: 0.625rem;
+  --button-padding-xl: 0.75rem;
+
+  /* ============================================
      TEXT COLORS (aliases)
      ============================================ */
   --color-text-primary: var(--color-grey-900);
