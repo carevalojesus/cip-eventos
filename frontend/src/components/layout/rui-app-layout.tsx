@@ -35,9 +35,8 @@ export function AppLayout({
     marginLeft: isMobile ? 0 : '260px',
     marginTop: '64px',
     minHeight: 'calc(100vh - 64px)',
-    background: 'linear-gradient(180deg, var(--color-primary) 0px, var(--color-primary-dark) 160px, var(--color-bg-secondary) 160px)',
+    backgroundColor: 'var(--color-bg-secondary)',
     color: 'var(--color-text-primary)',
-    padding: '1.5rem',
   }
 
   const handleMenuToggle = () => {
