@@ -41,6 +41,7 @@ import { EventBasicInfoFields } from "./EventBasicInfoFields";
 import { EventLocationFields } from "./EventLocationFields";
 import { EventVirtualFields } from "./EventVirtualFields";
 import { EventImageUpload } from "./EventImageUpload";
+import { ModalitySelector } from "@/components/ui/rui/ModalitySelector";
 
 import { requiresLocation, requiresVirtualAccess } from "@/constants/modalities";
 import type { EventType, EventCategory, EventModality } from "@/types/event";
@@ -160,32 +161,20 @@ export const CreateEventForm: React.FC<CreateEventFormProps> = ({
                   {t("create_event.config.title", "Configuración")}
                 </h2>
 
-                {/* Modalidad */}
+                {/* Modalidad - Card Selector */}
                 <div className="rui-form-group">
                   <FormField
                     control={control}
                     name="modalityId"
-                    render={({ field }) => (
+                    render={({ field, fieldState }) => (
                       <FormItem>
-                        <label className="rui-form-label">
-                          {t("create_event.config.modality", "Modalidad")}
-                          <span className="rui-form-label-required">*</span>
-                        </label>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
-                          <FormControl>
-                            <SelectTrigger className="rui-select-trigger">
-                              <SelectValue placeholder={t("form.select", "Seleccionar...")} />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {modalities.map((mod) => (
-                              <SelectItem key={mod.id} value={mod.id.toString()}>
-                                {mod.name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <FormMessage className="rui-form-error" />
+                        <ModalitySelector
+                          modalities={modalities}
+                          value={field.value || ""}
+                          onChange={field.onChange}
+                          error={fieldState.error?.message}
+                          required
+                        />
                       </FormItem>
                     )}
                   />

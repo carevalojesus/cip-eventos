@@ -22,6 +22,9 @@ export class Organizer {
   @Column({ type: 'text', nullable: true })
   website: string;
 
+  @Column({ type: 'text', nullable: true })
+  email: string; // Email de contacto del organizador (para Reply-To en correos)
+
   // 🔄 Relación N:M
   @ManyToMany(() => Event, (event) => event.organizers)
   events: Event[];

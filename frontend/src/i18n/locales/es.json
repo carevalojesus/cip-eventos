@@ -249,14 +249,25 @@
         "virtual": "Virtual",
         "hybrid": "Híbrido"
       },
+      "modality_description": {
+        "in_person": "Los participantes asisten físicamente al evento",
+        "virtual": "El evento se realiza completamente en línea",
+        "hybrid": "Combina asistencia presencial y virtual"
+      },
       "actions": {
         "title": "Acciones",
+        "view": "Ver detalles",
         "view_details": "Ver detalles",
         "view_enrolled": "Ver inscritos",
         "edit": "Editar evento",
         "duplicate": "Duplicar",
         "delete": "Eliminar",
         "manage": "Gestionar (Completo)"
+      },
+      "empty": {
+        "title": "No hay eventos",
+        "description": "Crea tu primer evento para comenzar.",
+        "no_results": "No se encontraron eventos con los filtros aplicados"
       }
     }
   },
@@ -288,6 +299,7 @@
     "save_changes": "Guardar Cambios",
     "save_draft": "Guardar Borrador",
     "publish_event": "Publicar Evento",
+    "create_event": "Crear Evento",
     "cancel": "Cancelar",
     "back": "Volver",
     "submit": "Enviar",
@@ -298,7 +310,14 @@
     "success": "Operación exitosa",
     "error": "Ocurrió un error",
     "date_future": "La fecha de inicio debe ser futura",
-    "date_end_after_start": "La fecha de fin debe ser posterior a la fecha de inicio"
+    "date_end_after_start": "La fecha de fin debe ser posterior a la fecha de inicio",
+    "image": {
+      "drag": "Arrastra una imagen o",
+      "click": "haz clic para subir",
+      "hint": "PNG, JPG o WebP • Máximo 5MB",
+      "remove": "Eliminar imagen",
+      "change": "Cambiar imagen"
+    }
   },
   "common": {
     "yes": "Sí",
@@ -317,7 +336,8 @@
     "help": "Ayuda",
     "retry": "Reintentar",
     "about": "Acerca de",
-    "language": "Idioma"
+    "language": "Idioma",
+    "loading": "Cargando..."
   },
   "roles": {
     "ADMIN": "Administrador",
@@ -338,21 +358,52 @@
     "breadcrumb": {
       "title": "Nuevo Evento"
     },
+    "drawer": {
+      "subtitle": "Completa la información del evento",
+      "info": "Después de crear el evento podrás agregar imagen, ubicación, acceso virtual, tickets y más detalles.",
+      "name": "Nombre del evento",
+      "name_placeholder": "Ej: Conferencia de Tecnología 2025",
+      "description_placeholder": "Describe brevemente el evento...",
+      "type": "Tipo",
+      "category": "Categoría",
+      "start_date": "Fecha de inicio",
+      "start_time": "Hora",
+      "end_date": "Fecha de término",
+      "end_time": "Hora",
+      "create_btn": "Crear evento"
+    },
+    "dates": {
+      "title": "Fechas"
+    },
+    "toast": {
+      "created": "Evento creado",
+      "created_description": "Ahora puedes completar los detalles del evento.",
+      "draft_success": "Borrador guardado",
+      "draft_description": "El evento se guardó como borrador.",
+      "publish_success": "Evento publicado",
+      "publish_description": "El evento ya está visible.",
+      "error": "Error al crear el evento",
+      "error_description": "Revisa los datos e intenta nuevamente.",
+      "error_unexpected": "Ocurrió un error inesperado.",
+      "metadata_error": "Error al cargar los datos del formulario"
+    },
     "basic": {
       "title": "Información Básica",
+      "description": "Datos principales del evento.",
       "event_title": "Título del Evento",
       "event_title_placeholder": "Nombre del evento",
       "event_title_hint": "Ej: Congreso de Ingeniería Civil 2024",
       "summary": "Resumen Corto",
-      "summary_placeholder": "Descripción breve",
+      "summary_placeholder": "Descripción breve que se muestra en las tarjetas",
       "summary_hint": "Se muestra en las tarjetas del listado",
-      "description": "Descripción Detallada",
-      "description_placeholder": "Información completa del evento...",
-      "type": "Tipo de Evento",
-      "category": "Categoría / Capítulo"
+      "detailed_description": "Descripción",
+      "detailed_description_placeholder": "Información completa del evento...",
+      "type": "Tipo",
+      "category": "Categoría"
     },
     "image": {
-      "title": "Imagen del Evento",
+      "title": "Imagen",
+      "description": "Banner del evento.",
       "current": "Imagen actual del evento",
       "drag_text": "Arrastra una imagen o",
       "click_text": "haz clic para subir",
@@ -360,38 +411,43 @@
       "banner_hint": "Esta imagen se mostrará como banner del evento en el listado y la página de detalles."
     },
     "config": {
-      "title": "Configuración",
+      "title": "Fecha y Modalidad",
+      "description": "Cuándo y cómo se realizará.",
       "modality": "Modalidad",
       "start": "Inicio",
       "end": "Fin"
     },
     "location": {
-      "title": "Ubicación Presencial",
+      "title": "Ubicación",
+      "description": "Lugar físico del evento.",
       "name": "Nombre del Lugar",
-      "name_placeholder": "Buscar o escribir nombre del lugar...",
+      "name_placeholder": "Ej: Auditorio CIP",
       "address": "Dirección",
       "address_placeholder": "Ej: Av. Pevas Cuadra 4",
       "city": "Ciudad",
       "city_placeholder": "Lima",
       "reference": "Referencia",
       "reference_placeholder": "Frente al Parque...",
-      "map_link": "Link de Mapa (Google Maps)",
+      "map_link": "Link de Mapa",
       "map_hint": "Copia el enlace desde Google Maps para facilitar la ubicación"
     },
     "virtual": {
-      "title": "Accesos Virtuales",
+      "title": "Acceso Virtual",
+      "description": "Datos de la reunión virtual.",
       "platform": "Plataforma",
       "password": "Contraseña",
-      "password_placeholder": "Ej: CIP2024",
+      "password_placeholder": "CIP2024",
       "meeting_url": "Link de Reunión",
       "meeting_url_hint": "El enlace se enviará a los inscritos antes del evento",
-      "instructions": "Instrucciones Adicionales",
-      "instructions_placeholder": "Instrucciones para unirse a la reunión...",
+      "instructions": "Instrucciones",
+      "instructions_placeholder": "Instrucciones para unirse...",
       "other": "Otro"
     },
     "confirm": {
       "title": "¿Guardar evento?",
-      "description": "Estás a punto de crear un nuevo evento. Una vez guardado, podrás editarlo o publicarlo desde la vista de gestión."
+      "description": "Estás a punto de crear un nuevo evento. Una vez guardado, podrás editarlo o publicarlo desde la vista de gestión.",
+      "create_title": "¿Crear evento?",
+      "create_description": "El evento se guardará como borrador. Podrás editarlo y publicarlo cuando esté listo."
     }
   },
   "edit_event": {

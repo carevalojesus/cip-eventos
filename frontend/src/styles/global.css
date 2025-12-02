@@ -232,6 +232,30 @@
   --button-padding-xl: 0.75rem;
 
   /* ============================================
+     FONT SIZES (Typographic Scale)
+     Based on 16px base, 1.25 ratio (Major Third)
+     ============================================ */
+  --font-size-xs: 0.75rem;     /* 12px - badges, captions */
+  --font-size-sm: 0.875rem;    /* 14px - small text, labels */
+  --font-size-base: 1rem;      /* 16px - body text */
+  --font-size-lg: 1.125rem;    /* 18px - lead text */
+  --font-size-xl: 1.25rem;     /* 20px - h4, card titles */
+  --font-size-2xl: 1.5rem;     /* 24px - h3, page titles */
+  --font-size-3xl: 1.875rem;   /* 30px - h2 */
+  --font-size-4xl: 2.25rem;    /* 36px - h1 */
+
+  /* Line Heights */
+  --line-height-tight: 1.25;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.75;
+
+  /* Font Weights */
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* ============================================
      TEXT COLORS (aliases)
      ============================================ */
   --color-text-primary: var(--color-grey-900);
@@ -263,6 +287,24 @@
 @keyframes spin {
   to {
     transform: rotate(360deg);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
   }
 }
 

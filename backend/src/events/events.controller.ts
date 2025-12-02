@@ -116,6 +116,12 @@ export class EventsController {
   }
 
   @Public()
+  @Get('locations')
+  getLocations() {
+    return this.eventsService.getLocations();
+  }
+
+  @Public()
   @Get()
   findAll(@Query() paginationDto: PaginationDto) {
     return this.eventsService.findAll(paginationDto);

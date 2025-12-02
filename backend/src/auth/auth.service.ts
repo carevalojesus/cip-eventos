@@ -246,7 +246,11 @@ export class AuthService {
     await this.redisService.invalidateUserSessions(userId);
   }
 
-  async refreshTokens(userId: string, refreshToken: string) {
+  async refreshTokens(
+    userId: string,
+    refreshToken: string,
+    metadata?: { userAgent?: string; ip?: string },
+  ) {
     let user: User | null = null;
     try {
       user = await this.usersService.findOne(userId);
@@ -299,6 +303,16 @@ export class AuthService {
       user.isVerified,
     );
     await this.updateRefreshToken(user.id, tokens.refresh_token);
+
+    // Registrar nueva sesión (refresh también emite sid nuevo)
+    const refreshExpires = this.configService.get<string>('JWT_REFRESH_EXPIRES_IN') ?? '7d';
+    const expiresMs = this.parseExpiresIn(refreshExpires);
+    await this.redisService.registerActiveSession(user.id, tokens.sessionId, {
+      userAgent: metadata?.userAgent,
+      ip: metadata?.ip,
+      createdAt: Date.now(),
+      expiresAt: Date.now() + expiresMs,
+    });
 
     return tokens;
   }
@@ -374,8 +388,6 @@ export class AuthService {
    */
   async revokeOtherSessions(userId: string, currentSessionId: string) {
     const removedCount = await this.redisService.removeOtherSessions(userId, currentSessionId);
-    // Invalidar todas las sesiones para forzar re-login
-    await this.redisService.invalidateUserSessions(userId);
     return { removedCount };
   }
 

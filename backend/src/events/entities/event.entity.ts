@@ -62,6 +62,9 @@ export class Event {
   @Column({ type: 'text', default: 'America/Lima' })
   timezone: string;
 
+  @Column({ type: 'timestamptz', nullable: true })
+  checkInStartAt: Date; // Hora de inicio del check-in/admisión
+
   @Column({ nullable: true })
   imageUrl: string;
 
@@ -84,6 +87,7 @@ export class Event {
 
   @ManyToOne(() => EventCategory, (category) => category.events, {
     eager: true,
+    nullable: true,
   })
   @JoinColumn({ name: 'categoryId' })
   category: EventCategory;

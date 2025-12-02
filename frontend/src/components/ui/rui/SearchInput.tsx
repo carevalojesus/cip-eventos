@@ -26,8 +26,8 @@ export const SearchInput: React.FC<SearchInputProps> = ({
   const inputStyle: React.CSSProperties = {
     width: "100%",
     height: "var(--button-height-lg)",
-    padding: "0 0.875rem 0 2.5rem",
-    fontSize: "0.875rem",
+    padding: "0 var(--space-3) 0 var(--space-10)",
+    fontSize: "var(--font-size-sm)",
     border: "1px solid",
     borderColor: isFocused ? "var(--color-border-focus)" : "var(--color-border-light)",
     borderRadius: "var(--radius-lg)",
@@ -40,7 +40,7 @@ export const SearchInput: React.FC<SearchInputProps> = ({
 
   const iconStyle: React.CSSProperties = {
     position: "absolute",
-    left: "0.75rem",
+    left: "var(--space-3)",
     top: "50%",
     transform: "translateY(-50%)",
     pointerEvents: "none",

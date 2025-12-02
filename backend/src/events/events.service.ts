@@ -73,7 +73,9 @@ export class EventsService {
         where: { id: userId, isActive: true },
       }),
       this.eventTypeRepository.findOneBy({ id: typeId }),
-      this.eventCategoryRepository.findOneBy({ id: categoryId }),
+      categoryId
+        ? this.eventCategoryRepository.findOneBy({ id: categoryId })
+        : Promise.resolve(null),
       this.eventModalityRepository.findOneBy({ id: modalityId }),
       speakersIds && speakersIds.length > 0
         ? this.speakerRepository.findBy({ id: In(speakersIds), isActive: true })
@@ -86,7 +88,7 @@ export class EventsService {
     // Validaciones
     if (!user) throw new NotFoundException('User not found');
     if (!type) throw new NotFoundException('Event Type not found');
-    if (!category) throw new NotFoundException('Event Category not found');
+    if (categoryId && !category) throw new NotFoundException('Event Category not found');
     if (!modality) throw new NotFoundException('Event Modality not found');
 
     // Validar speakers si se proporcionaron
@@ -123,7 +125,7 @@ export class EventsService {
       ...eventData,
       slug,
       type: { id: typeId },
-      category: { id: categoryId },
+      ...(categoryId && { category: { id: categoryId } }),
       modality: { id: modalityId },
       createdBy: user,
       location: eventLocation,
@@ -132,7 +134,9 @@ export class EventsService {
       organizers,
     });
 
-    return this.eventRepository.save(event);
+    const savedEvent = await this.eventRepository.save(event);
+    await this.invalidateEventCache(savedEvent.id);
+    return savedEvent;
   }
 
 
@@ -189,6 +193,23 @@ export class EventsService {
       this.redisService.del('events:list:1:20'),
       this.redisService.del('events:list:2:10'),
     ]);
+  }
+
+  async getLocations() {
+    const locations = await this.locationRepository.find({
+      select: ['id', 'name', 'address', 'reference', 'city', 'mapLink'],
+      order: { city: 'ASC', name: 'ASC', address: 'ASC' },
+    });
+
+    const uniqueMap = new Map<string, EventLocation>();
+    for (const loc of locations) {
+      const key = `${(loc.address || '').toLowerCase()}|${(loc.city || '').toLowerCase()}`;
+      if (!uniqueMap.has(key)) {
+        uniqueMap.set(key, loc);
+      }
+    }
+
+    return Array.from(uniqueMap.values());
   }
 
   async findAll(paginationDto?: PaginationDto): Promise<PaginatedResult<Event>> {
@@ -830,6 +851,8 @@ export class EventsService {
     }
 
     event.status = EventStatus.PUBLISHED;
-    return this.eventRepository.save(event);
+    const saved = await this.eventRepository.save(event);
+    await this.invalidateEventCache(id);
+    return saved;
   }
 }

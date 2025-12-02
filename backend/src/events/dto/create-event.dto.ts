@@ -46,6 +46,10 @@ export class CreateEventDto {
   @IsOptional()
   timezone?: string;
 
+  @IsDateString()
+  @IsOptional()
+  checkInStartAt?: Date;
+
   @IsUrl({}, { message: 'Image URL must be a valid URL' })
   @IsOptional()
   imageUrl?: string;
@@ -60,7 +64,8 @@ export class CreateEventDto {
 
   @IsInt()
   @IsPositive()
-  categoryId: number;
+  @IsOptional()
+  categoryId?: number;
 
   @IsInt()
   @IsPositive()

@@ -48,6 +48,10 @@ interface RequestWithRefreshToken {
     refreshToken: string;
     isVerified: boolean;
   };
+  headers: {
+    'user-agent'?: string;
+  };
+  ip?: string;
 }
 
 @ApiTags('auth')
@@ -62,18 +66,49 @@ export class AuthController {
 
   private setRefreshTokenCookie(res: Response, refreshToken: string) {
     const isProduction = this.configService.get('NODE_ENV') === 'production';
+    const cookieDomain = this.configService.get<string>('COOKIE_DOMAIN') || undefined;
+    const cookieSameSiteRaw = this.configService.get<string>('COOKIE_SAMESITE');
+    const normalizedSameSite = cookieSameSiteRaw
+      ? cookieSameSiteRaw.toLowerCase()
+      : cookieDomain
+        ? 'none' // para dominios cruzados, permite third-party
+        : isProduction
+          ? 'strict'
+          : 'lax';
+    const sameSite: 'lax' | 'strict' | 'none' = ['lax', 'strict', 'none'].includes(normalizedSameSite as any)
+      ? (normalizedSameSite as any)
+      : 'lax';
+
+    const secure = sameSite === 'none' ? true : isProduction;
+
     res.cookie('refresh_token', refreshToken, {
       httpOnly: true,
-      secure: isProduction,
-      sameSite: isProduction ? 'strict' : 'lax',
+      secure,
+      domain: cookieDomain,
+      sameSite,
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 días
       path: '/', // Disponible en todas las rutas para que el refresh funcione
     });
   }
 
   private clearRefreshTokenCookie(res: Response) {
+    const cookieDomain = this.configService.get<string>('COOKIE_DOMAIN') || undefined;
+    const cookieSameSiteRaw = this.configService.get<string>('COOKIE_SAMESITE');
+    const normalizedSameSite = cookieSameSiteRaw
+      ? cookieSameSiteRaw.toLowerCase()
+      : cookieDomain
+        ? 'none'
+        : 'lax';
+    const sameSite: 'lax' | 'strict' | 'none' = ['lax', 'strict', 'none'].includes(normalizedSameSite as any)
+      ? (normalizedSameSite as any)
+      : 'lax';
+    const secure = sameSite === 'none' ? true : this.configService.get('NODE_ENV') === 'production';
+
     res.clearCookie('refresh_token', {
       httpOnly: true,
+      domain: cookieDomain,
+      sameSite,
+      secure,
       path: '/',
     });
   }
@@ -174,7 +209,11 @@ export class AuthController {
   ) {
     const userId = req.user.sub;
     const refreshToken = req.user.refreshToken;
-    const result = await this.authService.refreshTokens(userId, refreshToken);
+    const metadata = {
+      userAgent: req.headers['user-agent'],
+      ip: req.ip,
+    };
+    const result = await this.authService.refreshTokens(userId, refreshToken, metadata);
     this.setRefreshTokenCookie(res, result.refresh_token);
     return {
       access_token: result.access_token,

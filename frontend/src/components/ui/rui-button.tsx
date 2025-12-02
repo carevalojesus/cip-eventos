@@ -55,7 +55,7 @@ export function Button({
   const sizeStyles: Record<ButtonSize, React.CSSProperties> = {
     sm: { height: '32px', padding: '0 12px', fontSize: '13px' },
     md: { height: '36px', padding: '0 16px', fontSize: '14px' },
-    lg: { height: '44px', padding: '0 24px', fontSize: '15px' },
+    lg: { height: '40px', padding: '0 20px', fontSize: '14px' },
   }
 
   const getVariantStyles = (): React.CSSProperties => {

@@ -35,11 +35,11 @@ export const EventsView: React.FC<EventsViewProps> = ({ onNavigate }) => {
 
   const handleCreateEvent = () => {
     const locale = getCurrentLocale();
-    const newEventPath = routes[locale].eventsNew;
+    const createPath = routes[locale].eventsNew;
     if (onNavigate) {
-      onNavigate(newEventPath);
+      onNavigate(createPath);
     } else {
-      window.location.href = newEventPath;
+      window.location.href = createPath;
     }
   };
 

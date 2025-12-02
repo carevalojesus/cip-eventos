@@ -71,6 +71,21 @@ export class Payment {
   @Column({ type: 'text', nullable: true })
   rejectionReason: string | null; // Si se rechaza, ¿por qué?
 
+  // Datos de facturación (snapshot al momento del pago)
+  @Column({ type: 'jsonb', nullable: true })
+  billingData: {
+    documentType: 'DNI' | 'RUC';
+    documentNumber: string;
+    businessName?: string;
+    address?: string;
+  };
+
+  @Column({ type: 'text', nullable: true })
+  invoiceUrl: string; // URL al PDF de factura/boleta
+
+  @Column({ type: 'text', default: 'ONLINE' })
+  source: 'ONLINE' | 'BOX_OFFICE' | 'ADMIN'; // Origen de la compra
+
   // 👇 Auditoría: ¿Qué admin aprobó esto?
   @ManyToOne(() => User, { nullable: true })
   reviewedBy: User;

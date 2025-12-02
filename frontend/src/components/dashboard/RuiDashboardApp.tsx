@@ -3,7 +3,7 @@ import { useAuthStore } from "@/store/auth.store";
 import { LoadingState } from "./LoadingState";
 import { DashboardContent } from "./DashboardContent";
 import { EventsView } from "@/components/events/EventsView";
-import { CreateEventView } from "@/components/events/CreateEventView";
+import { CreateEventViewRui } from "@/components/events/rui";
 import { EventManagementView } from "@/components/events/EventManagementView";
 import { EditEventView } from "@/components/events/EditEventView";
 import { QueryClientProvider } from "@tanstack/react-query";
@@ -57,12 +57,17 @@ export const RuiDashboardApp: React.FC<RuiDashboardAppProps> = ({ initialPath })
 
   useEffect(() => {
     if (!hydrated) return;
-    if (!token) {
+
+    // Obtener el token directamente del store hidratado
+    // (evita race condition con el estado reactivo)
+    const currentToken = useAuthStore.getState().token;
+
+    if (!currentToken) {
       window.location.href = routes[locale].login;
       return;
     }
     setIsReady(true);
-  }, [token, hydrated, locale]);
+  }, [hydrated, locale]);
 
   // Sincroniza el path inicial y reacciona a navegación del navegador
   useEffect(() => {
@@ -231,7 +236,7 @@ export const RuiDashboardApp: React.FC<RuiDashboardAppProps> = ({ initialPath })
     }
     // Crear evento
     if (matchesRoute(["/eventos/nuevo", "/en/events/new"])) {
-      return <CreateEventView onNavigate={handleNavigate} />;
+      return <CreateEventViewRui onNavigate={handleNavigate} />;
     }
     // Editar evento (debe ir antes de gestión)
     const editEventId = getEventIdFromEditPath(activePath);

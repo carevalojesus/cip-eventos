@@ -22,24 +22,9 @@ interface AuthState {
 type StorageType = 'session' | 'local';
 const STORAGE_KEY = 'cip-auth-storage';
 
-// Determinar con qué storage hidratar según los datos existentes
-const detectStorageType = (): StorageType => {
-  if (typeof window === 'undefined') return 'session';
-  return localStorage.getItem(STORAGE_KEY) ? 'local' : 'session';
-};
-
-let currentStorageType: StorageType = detectStorageType();
-
-const getBrowserStorage = () => {
-  if (typeof window === 'undefined') {
-    return {
-      getItem: () => null,
-      setItem: () => {},
-      removeItem: () => {},
-    };
-  }
-  return currentStorageType === 'local' ? localStorage : sessionStorage;
-};
+// Storage preferido para ESCRIBIR (basado en rememberMe)
+// Se usa solo para setItem - getItem siempre busca en ambos
+let writeStorageType: StorageType = 'session';
 
 const clearAllStorages = () => {
   if (typeof window === 'undefined') return;
@@ -49,45 +34,50 @@ const clearAllStorages = () => {
 
 const setStoragePreference = (useLocalStorage: boolean) => {
   if (typeof window === 'undefined') return;
-
-  const newType: StorageType = useLocalStorage ? 'local' : 'session';
-  if (currentStorageType !== newType) {
-    const prevStorage = getBrowserStorage();
-    const data = prevStorage.getItem(STORAGE_KEY);
-
-    currentStorageType = newType;
-    const nextStorage = getBrowserStorage();
-    if (data) {
-      nextStorage.setItem(STORAGE_KEY, data);
-      prevStorage.removeItem(STORAGE_KEY);
-    }
-  } else {
-    currentStorageType = newType;
-  }
-
-  // Evitar que queden datos huérfanos en el otro storage
-  const otherStorage = newType === 'local' ? sessionStorage : localStorage;
+  writeStorageType = useLocalStorage ? 'local' : 'session';
+  // Limpiar el storage que NO se va a usar
+  const otherStorage = useLocalStorage ? sessionStorage : localStorage;
   otherStorage.removeItem(STORAGE_KEY);
 };
 
 const dynamicJSONStorage = {
   getItem: (name: string) => {
-    const storage = getBrowserStorage();
-    const raw = storage.getItem(name);
-    if (!raw) return null;
-    try {
-      return JSON.parse(raw);
-    } catch {
-      return null;
+    if (typeof window === 'undefined') return null;
+
+    // SIEMPRE buscar en ambos storages para leer
+    // Prioridad: localStorage primero (rememberMe=true), luego sessionStorage
+    let raw = localStorage.getItem(name);
+    if (raw) {
+      writeStorageType = 'local';
+      try {
+        return JSON.parse(raw);
+      } catch {
+        return null;
+      }
     }
+
+    raw = sessionStorage.getItem(name);
+    if (raw) {
+      writeStorageType = 'session';
+      try {
+        return JSON.parse(raw);
+      } catch {
+        return null;
+      }
+    }
+
+    return null;
   },
   setItem: (name: string, value: unknown) => {
-    const storage = getBrowserStorage();
+    if (typeof window === 'undefined') return;
+    const storage = writeStorageType === 'local' ? localStorage : sessionStorage;
     storage.setItem(name, JSON.stringify(value));
   },
   removeItem: (name: string) => {
-    const storage = getBrowserStorage();
-    storage.removeItem(name);
+    if (typeof window === 'undefined') return;
+    // Remover de ambos por seguridad
+    localStorage.removeItem(name);
+    sessionStorage.removeItem(name);
   },
 };
 
@@ -105,7 +95,7 @@ export const useAuthStore = create<AuthState>()(
       logout: async () => {
         // Solicitar al backend que invalide la sesión y limpie la cookie httpOnly
         if (typeof window !== 'undefined') {
-          const baseUrl = import.meta.env.PUBLIC_API_URL || '';
+          const baseUrl = import.meta.env.PUBLIC_API_URL || 'http://localhost:3000/api';
           try {
             await fetch(`${baseUrl}/auth/logout`, {
               method: 'POST',
@@ -118,7 +108,7 @@ export const useAuthStore = create<AuthState>()(
         }
 
         clearAllStorages();
-        currentStorageType = 'session';
+        writeStorageType = 'session';
         set({ token: null, user: null, isAuthenticated: false });
       },
       updateToken: (token) => set({ token }),

@@ -198,7 +198,7 @@
       "search_placeholder": "Search event...",
       "filter_status": "All statuses",
       "select_range": "Select range",
-      "clear_filters": "Clear filters",
+      "clear_filters": "Clear",
       "export_excel": "Export",
       "table": {
         "event": "Event",
@@ -206,9 +206,12 @@
         "organizer": "Organizer",
         "location": "Location",
         "modality": "Modality",
+        "enrolled": "Attendees",
+        "enrolled_label": "attendees",
         "status": "Status",
         "actions": "Actions",
-        "empty": "No events found"
+        "empty": "No events found",
+        "empty_title": "No events"
       },
       "status": {
         "PUBLISHED": "Published",
@@ -221,11 +224,25 @@
         "virtual": "Virtual",
         "hybrid": "Hybrid"
       },
+      "modality_description": {
+        "in_person": "Participants attend the event physically",
+        "virtual": "The event takes place entirely online",
+        "hybrid": "Combines in-person and virtual attendance"
+      },
       "actions": {
         "title": "Actions",
         "manage": "Manage (Full)",
-        "edit": "Edit basic info",
+        "view": "View details",
+        "view_details": "View details",
+        "view_enrolled": "View attendees",
+        "edit": "Edit event",
+        "duplicate": "Duplicate",
         "delete": "Delete"
+      },
+      "empty": {
+        "title": "No events",
+        "description": "Create your first event to get started.",
+        "no_results": "No events found matching your search criteria."
       }
     }
   },
@@ -255,16 +272,27 @@
     "save": "Save",
     "save_event": "Save Event",
     "save_changes": "Save Changes",
+    "save_draft": "Save Draft",
+    "publish_event": "Publish Event",
+    "create_event": "Create Event",
     "cancel": "Cancel",
     "back": "Back",
     "submit": "Submit",
     "loading": "Saving...",
     "select": "Select...",
     "date": "Date",
+    "time": "Time",
     "success": "Operation successful",
     "error": "An error occurred",
     "date_future": "Start date must be in the future",
-    "date_end_after_start": "End date must be after start date"
+    "date_end_after_start": "End date must be after start date",
+    "image": {
+      "drag": "Drag an image here or",
+      "click": "click to upload",
+      "hint": "PNG, JPG or WebP • Maximum 5MB",
+      "remove": "Remove image",
+      "change": "Change image"
+    }
   },
   "common": {
     "yes": "Yes",
@@ -283,7 +311,8 @@
     "help": "Help",
     "retry": "Retry",
     "about": "About",
-    "language": "Language"
+    "language": "Language",
+    "loading": "Loading..."
   },
   "roles": {
     "ADMIN": "Administrator",
@@ -300,6 +329,7 @@
     "unknown": "Unknown error"
   },
   "create_event": {
+    "back": "Back",
     "type": "Type",
     "type_placeholder": "Select a type",
     "category": "Category",
@@ -310,6 +340,97 @@
     "end": "End",
     "breadcrumb": {
       "title": "New Event"
+    },
+    "drawer": {
+      "subtitle": "Complete the event information",
+      "info": "After creating the event you can add image, location, virtual access, tickets and more details.",
+      "name": "Event name",
+      "name_placeholder": "E.g: Technology Conference 2025",
+      "description_placeholder": "Briefly describe the event...",
+      "type": "Type",
+      "category": "Category",
+      "start_date": "Start date",
+      "start_time": "Time",
+      "end_date": "End date",
+      "end_time": "Time",
+      "create_btn": "Create event"
+    },
+    "dates": {
+      "title": "Dates"
+    },
+    "basic": {
+      "title": "Basic Information",
+      "description": "Main event data.",
+      "event_title": "Event Title",
+      "event_title_placeholder": "Event name",
+      "event_title_hint": "E.g: Civil Engineering Congress 2024",
+      "summary": "Short Summary",
+      "summary_placeholder": "Brief description shown on cards",
+      "summary_hint": "Shown on listing cards",
+      "detailed_description": "Description",
+      "detailed_description_placeholder": "Complete event information...",
+      "type": "Type",
+      "category": "Category"
+    },
+    "image": {
+      "title": "Image",
+      "description": "Event banner.",
+      "current": "Current event image",
+      "drag_text": "Drag an image or",
+      "click_text": "click to upload",
+      "hint": "PNG, JPG or WebP • Maximum 5MB • Recommended: 1200x630px",
+      "banner_hint": "This image will be shown as the event banner in the listing and details page."
+    },
+    "config": {
+      "title": "Date and Modality",
+      "description": "When and how it will take place.",
+      "modality": "Modality",
+      "start": "Start",
+      "end": "End"
+    },
+    "location": {
+      "title": "Location",
+      "description": "Physical event venue.",
+      "name": "Venue Name",
+      "name_placeholder": "E.g: CIP Auditorium",
+      "address": "Address",
+      "address_placeholder": "E.g: 4 Pevas Ave",
+      "city": "City",
+      "city_placeholder": "Lima",
+      "reference": "Reference",
+      "reference_placeholder": "In front of the Park...",
+      "map_link": "Map Link",
+      "map_hint": "Copy the link from Google Maps for easy navigation"
+    },
+    "virtual": {
+      "title": "Virtual Access",
+      "description": "Virtual meeting details.",
+      "platform": "Platform",
+      "password": "Password",
+      "password_placeholder": "CIP2024",
+      "meeting_url": "Meeting Link",
+      "meeting_url_hint": "The link will be sent to attendees before the event",
+      "instructions": "Instructions",
+      "instructions_placeholder": "Instructions to join...",
+      "other": "Other"
+    },
+    "confirm": {
+      "title": "Save event?",
+      "description": "You are about to create a new event. Once saved, you can edit or publish it from the management view.",
+      "create_title": "Create event?",
+      "create_description": "The event will be saved as a draft. You can edit and publish it when ready."
+    },
+    "toast": {
+      "created": "Event created",
+      "created_description": "Now you can complete the event details.",
+      "draft_success": "Draft saved",
+      "draft_description": "The event has been saved as a draft.",
+      "publish_success": "Event published",
+      "publish_description": "The event is now visible.",
+      "error": "Error creating event",
+      "error_description": "Check the data and try again.",
+      "error_unexpected": "An unexpected error occurred.",
+      "metadata_error": "Error loading form data"
     }
   },
   "edit_event": {

@@ -120,20 +120,20 @@ export const EventCard: React.FC<EventCardProps> = ({ event, onManage }) => {
   };
 
   const contentStyle: React.CSSProperties = {
-    padding: '1rem 1.25rem 1.25rem',
+    padding: 'var(--space-4) var(--space-5) var(--space-5)',
   };
 
   const badgeStyle: React.CSSProperties = {
     display: 'inline-flex',
     alignItems: 'center',
-    gap: '0.375rem',
-    padding: '0.25rem 0.625rem',
+    gap: '6px',
+    padding: 'var(--space-1) 10px',
     borderRadius: 'var(--radius-full)',
-    fontSize: '0.75rem',
+    fontSize: 'var(--font-size-xs)',
     fontWeight: 500,
     backgroundColor: status.bg,
     color: status.text,
-    marginBottom: '0.75rem',
+    marginBottom: 'var(--space-3)',
   };
 
   const dotStyle: React.CSSProperties = {
@@ -144,10 +144,10 @@ export const EventCard: React.FC<EventCardProps> = ({ event, onManage }) => {
   };
 
   const titleStyle: React.CSSProperties = {
-    fontSize: '1rem',
+    fontSize: 'var(--font-size-base)',
     fontWeight: 600,
     color: 'var(--color-grey-900)',
-    margin: '0 0 0.75rem 0',
+    margin: '0 0 var(--space-3) 0',
     lineHeight: 1.4,
     display: '-webkit-box',
     WebkitLineClamp: 2,
@@ -158,15 +158,15 @@ export const EventCard: React.FC<EventCardProps> = ({ event, onManage }) => {
   const metaContainerStyle: React.CSSProperties = {
     display: 'flex',
     flexDirection: 'column',
-    gap: '0.375rem',
-    marginBottom: '1rem',
+    gap: '6px',
+    marginBottom: 'var(--space-4)',
   };
 
   const metaRowStyle: React.CSSProperties = {
     display: 'flex',
     alignItems: 'center',
-    gap: '0.5rem',
-    fontSize: '0.813rem',
+    gap: 'var(--space-2)',
+    fontSize: 'var(--font-size-sm)',
     color: 'var(--color-grey-500)',
   };
 
@@ -183,12 +183,12 @@ export const EventCard: React.FC<EventCardProps> = ({ event, onManage }) => {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingTop: '0.75rem',
+    paddingTop: 'var(--space-3)',
     borderTop: '1px solid var(--color-grey-100)',
   };
 
   const enrolledStyle: React.CSSProperties = {
-    fontSize: '0.813rem',
+    fontSize: 'var(--font-size-sm)',
     color: 'var(--color-grey-500)',
   };
 
@@ -202,7 +202,7 @@ export const EventCard: React.FC<EventCardProps> = ({ event, onManage }) => {
     display: 'inline-flex',
     alignItems: 'center',
     gap: '4px',
-    fontSize: '0.813rem',
+    fontSize: 'var(--font-size-sm)',
     fontWeight: 500,
     color: '#BA2525',
     background: 'none',

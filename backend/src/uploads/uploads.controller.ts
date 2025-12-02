@@ -53,6 +53,11 @@ export class UploadsController {
     @Param('file') file: string,
     @Res() res: Response,
   ) {
+    const allowedPrivateFolders = ['certificates', 'events', 'uploads'];
+    if (!allowedPrivateFolders.includes(folder)) {
+      throw new NotFoundException('File not found or not allowed');
+    }
+
     const key = `${folder}/${file}`;
     const url = await this.uploadsService.getSignedUrl(key);
     return res.redirect(url);

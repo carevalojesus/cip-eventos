@@ -13,13 +13,31 @@ interface StatCardProps {
   };
 }
 
-const iconColorClasses = {
-  blue: "bg-blue-100 text-blue-600",
-  green: "bg-green-100 text-green-600",
-  red: "bg-red-100 text-red-600",
-  purple: "bg-purple-100 text-purple-600",
-  yellow: "bg-yellow-100 text-yellow-600",
-  orange: "bg-orange-100 text-orange-600",
+const iconColorStyles = {
+  blue: {
+    backgroundColor: "var(--color-cyan-050)",
+    color: "var(--color-cyan-600)",
+  },
+  green: {
+    backgroundColor: "var(--color-green-050)",
+    color: "var(--color-green-600)",
+  },
+  red: {
+    backgroundColor: "var(--color-red-100)",
+    color: "var(--color-red-600)",
+  },
+  purple: {
+    backgroundColor: "var(--color-cyan-100)",
+    color: "var(--color-cyan-700)",
+  },
+  yellow: {
+    backgroundColor: "var(--color-yellow-100)",
+    color: "var(--color-yellow-600)",
+  },
+  orange: {
+    backgroundColor: "var(--color-yellow-100)",
+    color: "var(--color-yellow-600)",
+  },
 };
 
 /**
@@ -35,26 +53,43 @@ export const StatCard = React.memo<StatCardProps>(({
   trend,
 }) => {
   return (
-    <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm hover:shadow-md transition-shadow">
-      <div className="flex flex-row items-center justify-between space-y-0 pb-2">
+    <div
+      className="rounded-xl border border-gray-200 bg-white shadow-sm hover:shadow-md transition-shadow"
+      style={{ padding: "var(--space-6)" }}
+    >
+      <div
+        className="flex flex-row items-center justify-between space-y-0"
+        style={{ paddingBottom: "var(--space-2)" }}
+      >
         <h3 className="text-sm font-medium text-gray-600">{title}</h3>
         <div
-          className={`h-10 w-10 rounded-full flex items-center justify-center ${iconColorClasses[iconColor]}`}
+          className="h-10 w-10 rounded-full flex items-center justify-center"
+          style={iconColorStyles[iconColor]}
         >
           <Icon className="h-5 w-5" />
         </div>
       </div>
-      <div className="mt-2">
+      <div style={{ marginTop: "var(--space-2)" }}>
         <div className="text-2xl font-bold text-gray-900">{value}</div>
         {description && (
-          <p className="mt-1 text-xs text-gray-500">{description}</p>
+          <p
+            className="text-xs text-gray-500"
+            style={{ marginTop: "var(--space-1)" }}
+          >
+            {description}
+          </p>
         )}
         {trend && (
-          <div className="mt-1 flex items-center gap-1 text-xs">
+          <div
+            className="flex items-center text-xs"
+            style={{ marginTop: "var(--space-1)", gap: "var(--space-1)" }}
+          >
             <span
-              className={
-                trend.isPositive ? "text-green-600" : "text-red-600"
-              }
+              style={{
+                color: trend.isPositive
+                  ? "var(--color-green-600)"
+                  : "var(--color-red-600)"
+              }}
             >
               {trend.isPositive ? "↑" : "↓"} {trend.value}
             </span>
