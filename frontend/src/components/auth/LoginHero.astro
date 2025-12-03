@@ -1,7 +1,8 @@
 ---
-import { AUTH_ASSETS } from "@/constants/auth";
+import { Image } from 'astro:assets';
 import esTranslations from "@/i18n/locales/es.json";
 import enTranslations from "@/i18n/locales/en.json";
+import heroImage from "@/assets/images/hero.webp";
 
 // Detect current locale from Astro.currentLocale or URL path
 const currentLocale = Astro.currentLocale ||
@@ -13,10 +14,13 @@ const quotes = translations.login.brand.quotes;
 ---
 
 <div class="login-hero">
-  <img
-    src={AUTH_ASSETS.background}
+  <Image
+    src={heroImage}
     alt="Vista panorámica de la ciudad de Iquitos, Loreto - Región amazónica del Perú con arquitectura urbana y vegetación tropical"
     class="hero-image"
+    loading="eager"
+    decoding="async"
+    fetchpriority="high"
   />
   <div class="hero-overlay"></div>
 
@@ -190,7 +194,7 @@ const quotes = translations.login.brand.quotes;
     }
   }
 
-  @media (max-width: 480px) {
+  @media (max-width: 640px) {
     .cip-logo {
       width: 40px;
     }

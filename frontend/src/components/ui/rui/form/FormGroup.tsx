@@ -7,7 +7,7 @@ interface FormGroupProps {
 
 export const FormGroup: React.FC<FormGroupProps> = ({
   children,
-  marginBottom = "20px"
+  marginBottom = "var(--form-field-gap)"
 }) => {
   const groupStyle: React.CSSProperties = {
     marginBottom,

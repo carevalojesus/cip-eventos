@@ -178,7 +178,7 @@ export function Sidebar({
         {/* Logo */}
         <div style={logoContainerStyle}>
           <div style={logoInnerStyle}>
-            <img src="/images/auth/logo-cip.svg" alt="Logo CIP" style={logoStyle} />
+            <img src="/images/auth/logo-cip.svg" alt="Logo CIP" style={logoStyle} loading="eager" decoding="async" />
             <div>
               <div style={{ fontWeight: 600, fontSize: '0.938rem', ...brandTextStyle }}>
                 CIP Eventos

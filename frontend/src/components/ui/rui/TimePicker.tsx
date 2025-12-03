@@ -143,7 +143,7 @@ export const TimePicker: React.FC<TimePickerProps> = ({
             backgroundColor: "var(--color-bg-primary)",
             border: "1px solid var(--color-grey-200)",
             borderRadius: "var(--radius-lg)",
-            boxShadow: "0 10px 25px rgba(0, 0, 0, 0.1)",
+            boxShadow: "var(--shadow-dropdown)",
             maxHeight: "220px",
             overflowY: "auto",
           }}

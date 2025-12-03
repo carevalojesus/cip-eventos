@@ -1,9 +1,11 @@
 ---
+import { Image } from 'astro:assets'
 import { LoginForm } from './LoginForm'
 import LoginHero from './LoginHero.astro'
 import { AUTH_ASSETS } from "@/constants/auth"
 import esTranslations from '@/i18n/locales/es.json'
 import enTranslations from '@/i18n/locales/en.json'
+import logoCip from '@/assets/images/logo-cip.svg'
 
 interface Props {
   lang?: 'es' | 'en'
@@ -23,7 +25,7 @@ const brandRegion = translations.login.brand.region
   <div class="login-panel">
     <div class="login-content">
       <div class="login-brand">
-        <img src={AUTH_ASSETS.logo} alt="Logo CIP" class="brand-logo" />
+        <Image src={logoCip} alt="Logo CIP" class="brand-logo" width={48} height={48} loading="eager" />
         <span class="brand-text">{brandCouncil}<br/>{brandRegion}</span>
       </div>
       <LoginForm client:only="react" />
@@ -87,8 +89,8 @@ const brandRegion = translations.login.brand.region
     border-left: 1px solid var(--color-grey-200);
   }
 
-  /* Responsive - Tablets verticales */
-  @media (min-width: 769px) and (max-width: 1024px) {
+  /* Responsive - Tablets */
+  @media (min-width: 768px) and (max-width: 1024px) {
     .login-panel {
       width: 60%;
       padding: var(--space-12);
@@ -99,7 +101,7 @@ const brandRegion = translations.login.brand.region
     }
   }
 
-  /* Responsive - Móviles */
+  /* Responsive - Mobile */
   @media (max-width: 768px) {
     .login-container {
       flex-direction: column;
@@ -116,14 +118,14 @@ const brandRegion = translations.login.brand.region
     }
   }
 
-  /* Estilos globales para hacer responsive el formulario */
+  /* Form responsive styles */
   :global(.login-content form > div:has(label:has(input[type="checkbox"]))) {
     flex-direction: column;
     align-items: flex-start !important;
     gap: var(--space-3);
   }
 
-  @media (min-width: 769px) {
+  @media (min-width: 768px) {
     :global(.login-content form > div:has(label:has(input[type="checkbox"]))) {
       flex-direction: row;
       justify-content: space-between;

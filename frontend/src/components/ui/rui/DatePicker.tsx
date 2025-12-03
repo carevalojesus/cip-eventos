@@ -126,7 +126,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
             backgroundColor: "var(--color-bg-primary)",
             border: "1px solid var(--color-grey-200)",
             borderRadius: "var(--radius-lg)",
-            boxShadow: "0 10px 25px rgba(0, 0, 0, 0.1)",
+            boxShadow: "var(--shadow-dropdown)",
             padding: "var(--space-3)",
             width: "280px",
           }}
@@ -207,7 +207,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
               <div
                 key={day}
                 style={{
-                  fontSize: "11px",
+                  fontSize: "var(--font-size-xs)",
                   fontWeight: 500,
                   color: "var(--color-grey-400)",
                   textAlign: "center",

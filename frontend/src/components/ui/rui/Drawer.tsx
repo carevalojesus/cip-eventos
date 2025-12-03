@@ -72,7 +72,7 @@ export const DrawerContent: React.FC<DrawerContentProps> = ({
     width: "100%",
     maxWidth: widthMap[width],
     backgroundColor: "var(--color-bg-primary)",
-    boxShadow: "-8px 0 30px rgba(0, 0, 0, 0.15)",
+    boxShadow: "var(--shadow-modal)",
     zIndex: 9999,
     display: "flex",
     flexDirection: "column",

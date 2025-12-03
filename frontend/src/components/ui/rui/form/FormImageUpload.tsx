@@ -125,12 +125,12 @@ export const FormImageUpload: React.FC<FormImageUploadProps> = ({
   const containerStyle: React.CSSProperties = {
     display: "flex",
     flexDirection: "column",
-    gap: "8px",
+    gap: "var(--form-label-gap)",
     width: "100%",
   };
 
   const labelStyle: React.CSSProperties = {
-    fontSize: "14px",
+    fontSize: "var(--font-size-sm)",
     fontWeight: 500,
     color: "#504A40",
     lineHeight: 1.5,
@@ -162,14 +162,14 @@ export const FormImageUpload: React.FC<FormImageUploadProps> = ({
   };
 
   const textStyle: React.CSSProperties = {
-    fontSize: "14px",
+    fontSize: "var(--font-size-sm)",
     color: "#504A40",
     textAlign: "center",
     marginBottom: "4px",
   };
 
   const hintTextStyle: React.CSSProperties = {
-    fontSize: "13px",
+    fontSize: "var(--font-size-sm)",
     color: "#857F72",
     textAlign: "center",
   };
@@ -202,7 +202,7 @@ export const FormImageUpload: React.FC<FormImageUploadProps> = ({
   };
 
   const previewInfoStyle: React.CSSProperties = {
-    fontSize: "13px",
+    fontSize: "var(--font-size-sm)",
     color: "#FFFFFF",
     fontWeight: 500,
   };
@@ -222,12 +222,12 @@ export const FormImageUpload: React.FC<FormImageUploadProps> = ({
   };
 
   const errorStyle: React.CSSProperties = {
-    fontSize: "13px",
+    fontSize: "var(--font-size-sm)",
     color: "#BA2525",
   };
 
   const hintStyle: React.CSSProperties = {
-    fontSize: "13px",
+    fontSize: "var(--font-size-sm)",
     color: "#857F72",
   };
 
@@ -280,7 +280,7 @@ export const FormImageUpload: React.FC<FormImageUploadProps> = ({
         </div>
       ) : preview && value ? (
         <div style={previewContainerStyle}>
-          <img src={preview} alt="Preview" style={previewImageStyle} />
+          <img src={preview} alt="Preview" style={previewImageStyle} loading="lazy" decoding="async" />
           <div style={previewOverlayStyle}>
             <span style={previewInfoStyle}>
               {value.name} • {formatFileSize(value.size)}

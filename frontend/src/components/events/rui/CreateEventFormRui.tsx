@@ -190,7 +190,7 @@ export const CreateEventFormRui: React.FC<CreateEventFormRuiProps> = ({
     padding: "var(--space-6)",
     maxWidth: "400px",
     width: "90%",
-    boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1)",
+    boxShadow: "var(--shadow-modal)",
   };
 
   const dialogTitleStyle: React.CSSProperties = {

@@ -1,7 +1,7 @@
 import { forwardRef, useState, type InputHTMLAttributes, type ReactNode } from 'react'
 import { Eye, EyeOff } from 'lucide-react'
 
-type InputSize = 'sm' | 'md' | 'lg'
+type InputSize = 'sm' | 'md' | 'lg' | 'xl'
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string
@@ -16,9 +16,10 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
 }
 
 const sizeConfig: Record<InputSize, { height: string; fontSize: string }> = {
-  sm: { height: '32px', fontSize: '13px' },
-  md: { height: '36px', fontSize: '14px' },
-  lg: { height: '40px', fontSize: '14px' },
+  sm: { height: 'var(--button-height-sm)', fontSize: '13px' },
+  md: { height: 'var(--button-height-md)', fontSize: '14px' },
+  lg: { height: 'var(--button-height-lg)', fontSize: '14px' },
+  xl: { height: 'var(--button-height-xl)', fontSize: '15px' },
 }
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(({

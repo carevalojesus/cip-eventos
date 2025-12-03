@@ -11,7 +11,7 @@ export const FormCard: React.FC<FormCardProps> = ({ title, children }) => {
     borderRadius: "var(--radius-lg)",
     border: "1px solid var(--color-grey-100)",
     padding: "var(--space-6)",
-    marginBottom: "var(--space-6)",
+    marginBottom: "var(--form-section-gap)",
   };
 
   const titleStyle: React.CSSProperties = {

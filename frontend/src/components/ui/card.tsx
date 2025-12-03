@@ -2,25 +2,50 @@ import * as React from "react"
 
 import { cn } from "@/lib/utils"
 
-function Card({ className, ...props }: React.ComponentProps<"div">) {
+type CardPaddingVariant = 'compact' | 'standard' | 'spacious'
+
+interface CardProps extends React.ComponentProps<"div"> {
+  padding?: CardPaddingVariant
+}
+
+const paddingVariantsY: Record<CardPaddingVariant, string> = {
+  compact: 'py-4',    // 16px
+  standard: 'py-5',   // 20px
+  spacious: 'py-6',   // 24px
+}
+
+const paddingVariantsX: Record<CardPaddingVariant, string> = {
+  compact: 'px-4',    // 16px
+  standard: 'px-5',   // 20px
+  spacious: 'px-6',   // 24px
+}
+
+const CardPaddingContext = React.createContext<CardPaddingVariant>('standard')
+
+function Card({ className, padding = 'standard', ...props }: CardProps) {
   return (
-    <div
-      data-slot="card"
-      className={cn(
-        "bg-card text-card-foreground flex flex-col gap-6 rounded-xl border py-6 shadow-sm",
-        className
-      )}
-      {...props}
-    />
+    <CardPaddingContext.Provider value={padding}>
+      <div
+        data-slot="card"
+        className={cn(
+          "bg-card text-card-foreground flex flex-col gap-6 rounded-xl border shadow-sm",
+          paddingVariantsY[padding],
+          className
+        )}
+        {...props}
+      />
+    </CardPaddingContext.Provider>
   )
 }
 
 function CardHeader({ className, ...props }: React.ComponentProps<"div">) {
+  const padding = React.useContext(CardPaddingContext)
   return (
     <div
       data-slot="card-header"
       className={cn(
-        "@container/card-header grid auto-rows-min grid-rows-[auto_auto] items-start gap-2 px-6 has-data-[slot=card-action]:grid-cols-[1fr_auto] [.border-b]:pb-6",
+        "@container/card-header grid auto-rows-min grid-rows-[auto_auto] items-start gap-2 has-data-[slot=card-action]:grid-cols-[1fr_auto] [.border-b]:pb-6",
+        paddingVariantsX[padding],
         className
       )}
       {...props}
@@ -62,20 +87,22 @@ function CardAction({ className, ...props }: React.ComponentProps<"div">) {
 }
 
 function CardContent({ className, ...props }: React.ComponentProps<"div">) {
+  const padding = React.useContext(CardPaddingContext)
   return (
     <div
       data-slot="card-content"
-      className={cn("px-6", className)}
+      className={cn(paddingVariantsX[padding], className)}
       {...props}
     />
   )
 }
 
 function CardFooter({ className, ...props }: React.ComponentProps<"div">) {
+  const padding = React.useContext(CardPaddingContext)
   return (
     <div
       data-slot="card-footer"
-      className={cn("flex items-center px-6 [.border-t]:pt-6", className)}
+      className={cn("flex items-center [.border-t]:pt-6", paddingVariantsX[padding], className)}
       {...props}
     />
   )

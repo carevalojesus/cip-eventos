@@ -45,7 +45,7 @@ export const FormSelect: React.FC<FormSelectProps> = ({
   const containerStyle: React.CSSProperties = {
     display: "flex",
     flexDirection: "column",
-    gap: "var(--space-2)",
+    gap: "var(--form-label-gap)",
     width: "100%",
   };
 

@@ -71,7 +71,7 @@ function ConfirmEmailContent() {
     padding: 'var(--space-6)',
     backgroundColor: 'white',
     borderRadius: 'var(--radius-lg)',
-    boxShadow: '0 10px 40px rgba(0,0,0,0.08)',
+    boxShadow: 'var(--shadow-ml)',
     border: '1px solid var(--color-grey-200)',
   };
 

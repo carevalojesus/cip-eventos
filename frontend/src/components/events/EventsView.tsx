@@ -72,15 +72,17 @@ export const EventsView: React.FC<EventsViewProps> = ({ onNavigate }) => {
       DRAFT: 1,
       COMPLETED: 2,
       CANCELLED: 3,
+      ARCHIVED: 4,
     };
 
     return filtered.sort((a, b) => {
-      const statusDiff = (statusOrder[a.status] ?? 4) - (statusOrder[b.status] ?? 4);
+      const statusDiff = (statusOrder[a.status] ?? 5) - (statusOrder[b.status] ?? 5);
       if (statusDiff !== 0) return statusDiff;
 
+      // Ordenar por fecha de inicio ascendente (próximos primero)
       const dateA = new Date(a.startAt).getTime();
       const dateB = new Date(b.startAt).getTime();
-      return dateB - dateA;
+      return dateA - dateB;
     });
   }, [events, loading, searchTerm, statusFilter]);
 

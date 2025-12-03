@@ -363,7 +363,7 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({
           {/* Hero Card */}
           <div style={heroCardStyle}>
             {event.imageUrl ? (
-              <img src={event.imageUrl} alt={event.title} style={heroImageStyle} />
+              <img src={event.imageUrl} alt={event.title} style={heroImageStyle} loading="lazy" decoding="async" />
             ) : (
               <div style={heroPlaceholderStyle}>
                 <IconCalendar size={48} primary="var(--color-grey-300)" secondary="var(--color-grey-200)" />

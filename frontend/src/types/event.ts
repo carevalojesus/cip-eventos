@@ -1,5 +1,8 @@
-export type EventStatus = 'PUBLISHED' | 'DRAFT' | 'COMPLETED' | 'CANCELLED';
-export type EventStatusLower = 'published' | 'draft' | 'completed' | 'cancelled';
+// Re-export from centralized enums
+export { EventStatus } from '@/lib/enums';
+
+// Legacy type for backwards compatibility (lowercase version)
+export type EventStatusLower = 'published' | 'draft' | 'completed' | 'cancelled' | 'archived';
 
 export interface EventModality {
   id: number;

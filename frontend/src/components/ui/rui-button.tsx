@@ -10,15 +10,17 @@ import { useState, type ButtonHTMLAttributes, type ReactNode } from 'react'
  * - outline: Borde primario sin relleno
  * - soft: Fondo suave con texto de color - para acciones de agregar/crear
  * - danger: Acciones destructivas (eliminar)
+ * - icon: Botones cuadrados solo para iconos - aspecto ghost
  *
  * Tamaños consistentes (altura fija):
- * - sm: 32px - botones compactos, acciones inline
- * - md: 36px - tamaño por defecto
- * - lg: 40px - botones prominentes, CTAs
+ * - sm: 32px - botones compactos, acciones inline (icon: 32x32px)
+ * - md: 36px - tamaño por defecto (icon: 36x36px)
+ * - lg: 40px - botones prominentes, CTAs (icon: 40x40px)
+ * - xl: 44px - botones extra grandes (icon: 44x44px - touch target)
  */
 
-type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'outline' | 'soft' | 'danger'
-type ButtonSize = 'sm' | 'md' | 'lg'
+type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'outline' | 'soft' | 'danger' | 'icon'
+type ButtonSize = 'sm' | 'md' | 'lg' | 'xl'
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: ReactNode
@@ -88,22 +90,56 @@ export function Button({
   // Altura fija para alineación visual
   const sizeStyles: Record<ButtonSize, React.CSSProperties> = {
     sm: {
-      height: '32px',
+      height: 'var(--button-height-sm)',
       padding: '0 12px',
       fontSize: '13px',
       gap: '6px',
     },
     md: {
-      height: '36px',
+      height: 'var(--button-height-md)',
       padding: '0 14px',
       fontSize: '14px',
       gap: '6px',
     },
     lg: {
-      height: '40px',
+      height: 'var(--button-height-lg)',
       padding: '0 16px',
       fontSize: '14px',
       gap: '8px',
+    },
+    xl: {
+      height: 'var(--button-height-xl)',
+      padding: '0 18px',
+      fontSize: '15px',
+      gap: '8px',
+    },
+  }
+
+  // Icon-only button sizing (square buttons)
+  const iconSizeStyles: Record<ButtonSize, React.CSSProperties> = {
+    sm: {
+      width: 'var(--button-height-sm)',
+      height: 'var(--button-height-sm)',
+      padding: 0,
+      fontSize: '16px',
+    },
+    md: {
+      width: 'var(--button-height-md)',
+      height: 'var(--button-height-md)',
+      padding: 0,
+      fontSize: '18px',
+    },
+    lg: {
+      width: 'var(--button-height-lg)',
+      height: 'var(--button-height-lg)',
+      padding: 0,
+      fontSize: '20px',
+    },
+    xl: {
+      width: 'var(--button-height-xl)',
+      height: 'var(--button-height-xl)',
+      padding: 0,
+      fontSize: '22px',
     },
   }
 
@@ -207,6 +243,21 @@ export function Button({
       }
     }
 
+    // ICON - Icon-only buttons (ghost style)
+    // Square buttons with icon centered, ghost-like appearance
+    if (variant === 'icon') {
+      return {
+        backgroundColor: isPressed
+          ? colors.grey[200]
+          : isHovered || isFocused
+            ? colors.grey[100]
+            : 'transparent',
+        color: colors.grey[700],
+        border: 'none',
+        boxShadow: isFocused ? '0 0 0 3px rgba(184, 178, 167, 0.3)' : 'none',
+      }
+    }
+
     return {}
   }
 
@@ -225,7 +276,8 @@ export function Button({
     transform: isPressed && !isDisabled ? 'translateY(1px)' : 'none',
     outline: 'none',
     whiteSpace: 'nowrap',
-    ...sizeStyles[size],
+    // Use icon-specific sizing for icon variant, otherwise use standard sizing
+    ...(variant === 'icon' ? iconSizeStyles[size] : sizeStyles[size]),
     ...variantStyles,
     ...style,
   }

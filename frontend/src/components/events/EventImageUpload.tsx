@@ -137,7 +137,7 @@ export const EventImageUpload: React.FC<EventImageUploadProps> = ({ form, existi
         </div>
       ) : preview && file ? (
         <div className="rui-upload-preview">
-          <img src={preview} alt="Preview" />
+          <img src={preview} alt="Preview" loading="lazy" decoding="async" />
           <div className="rui-upload-preview-overlay" />
           <div className="rui-upload-preview-info">
             {file.name} • {formatFileSize(file.size)}

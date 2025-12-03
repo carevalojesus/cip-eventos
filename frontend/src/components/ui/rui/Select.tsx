@@ -39,7 +39,7 @@ export const Select: React.FC<SelectProps> = ({
     alignItems: "center",
     height: "40px",
     padding: "0 36px 0 16px",
-    fontSize: "14px",
+    fontSize: "var(--font-size-sm)",
     fontWeight: 400,
     textAlign: "left",
     borderRadius: "6px",
@@ -81,14 +81,14 @@ export const Select: React.FC<SelectProps> = ({
     backgroundColor: "#FFFFFF",
     border: "1px solid #D3CEC4",
     borderRadius: "6px",
-    boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
+    boxShadow: "var(--shadow-dropdown)",
     padding: "4px",
     outline: "none",
   };
 
   const getOptionStyle = (isSelected: boolean, isFocused: boolean): React.CSSProperties => ({
     padding: "10px 12px",
-    fontSize: "14px",
+    fontSize: "var(--font-size-sm)",
     color: isSelected ? "#27241D" : "#504A40",
     fontWeight: isSelected ? 500 : 400,
     borderRadius: "4px",

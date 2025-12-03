@@ -205,12 +205,12 @@ export const FormDateTimePicker: React.FC<FormDateTimePickerProps> = ({
   const containerStyle: React.CSSProperties = {
     display: "flex",
     flexDirection: "column",
-    gap: "6px",
+    gap: "var(--form-label-gap)",
     width: "100%",
   };
 
   const labelStyle: React.CSSProperties = {
-    fontSize: "14px",
+    fontSize: "var(--font-size-sm)",
     fontWeight: 500,
     color: "var(--color-grey-700)",
     lineHeight: 1.5,
@@ -237,7 +237,7 @@ export const FormDateTimePicker: React.FC<FormDateTimePickerProps> = ({
     flex: 1,
     height: "40px",
     padding: "0 12px",
-    fontSize: "14px",
+    fontSize: "var(--font-size-sm)",
     color: hasValue ? "var(--color-grey-900)" : "var(--color-grey-500)",
     backgroundColor: "transparent",
     border: "none",
@@ -259,7 +259,7 @@ export const FormDateTimePicker: React.FC<FormDateTimePickerProps> = ({
     gap: "6px",
     height: "40px",
     padding: "0 12px",
-    fontSize: "14px",
+    fontSize: "var(--font-size-sm)",
     color: currentTime ? "var(--color-grey-900)" : "var(--color-grey-500)",
     backgroundColor: "transparent",
     border: "none",
@@ -278,7 +278,7 @@ export const FormDateTimePicker: React.FC<FormDateTimePickerProps> = ({
     backgroundColor: "var(--color-bg-primary)",
     border: "1px solid var(--color-grey-300)",
     borderRadius: "var(--radius-lg)",
-    boxShadow: "var(--shadow-lg)",
+    boxShadow: "var(--shadow-dropdown)",
     padding: "12px",
   };
 
@@ -303,7 +303,7 @@ export const FormDateTimePicker: React.FC<FormDateTimePickerProps> = ({
   };
 
   const monthLabelStyle: React.CSSProperties = {
-    fontSize: "14px",
+    fontSize: "var(--font-size-sm)",
     fontWeight: 600,
     color: "var(--color-grey-900)",
     textTransform: "capitalize",
@@ -317,7 +317,7 @@ export const FormDateTimePicker: React.FC<FormDateTimePickerProps> = ({
   };
 
   const weekdayStyle: React.CSSProperties = {
-    fontSize: "12px",
+    fontSize: "var(--font-size-xs)",
     fontWeight: 500,
     color: "var(--color-grey-500)",
     textAlign: "center",
@@ -341,7 +341,7 @@ export const FormDateTimePicker: React.FC<FormDateTimePickerProps> = ({
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    fontSize: "13px",
+    fontSize: "var(--font-size-sm)",
     fontWeight: isSelected ? 600 : 400,
     color: day
       ? isDisabled
@@ -370,7 +370,7 @@ export const FormDateTimePicker: React.FC<FormDateTimePickerProps> = ({
 
   const getTimeOptionStyle = (isSelected: boolean, isDisabled: boolean): React.CSSProperties => ({
     padding: "8px 12px",
-    fontSize: "13px",
+    fontSize: "var(--font-size-sm)",
     fontWeight: isSelected ? 500 : 400,
     color: isDisabled
       ? "var(--color-grey-300)"
@@ -387,7 +387,7 @@ export const FormDateTimePicker: React.FC<FormDateTimePickerProps> = ({
   });
 
   const hintStyle: React.CSSProperties = {
-    fontSize: "13px",
+    fontSize: "var(--font-size-sm)",
     color: error ? "var(--color-red-600)" : "var(--color-grey-500)",
   };
 

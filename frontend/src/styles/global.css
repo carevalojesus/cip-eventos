@@ -181,9 +181,18 @@
   --color-warning-dark: #CB6E17;
 
   /* Danger - Solo para acciones destructivas (eliminar, cancelar) */
-  --color-danger: #BA2525;
+  --color-danger: #911111;
   --color-danger-light: #FACDCD;
-  --color-danger-dark: #911111;
+  --color-danger-dark: #780A0A;
+
+  /* ============================================
+     RESPONSIVE BREAKPOINTS (Tailwind Standard)
+     ============================================ */
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+  --breakpoint-2xl: 1536px;
 
   /* ============================================
      SPACING
@@ -198,6 +207,17 @@
   --space-10: 40px;
   --space-12: 3rem;
   --space-16: 64px;
+
+  /* Card padding variants */
+  --card-padding-compact: var(--space-4);   /* 16px - for summaries, sidebar */
+  --card-padding-standard: var(--space-5);  /* 20px - default cards */
+  --card-padding-spacious: var(--space-6);  /* 24px - forms, dialogs */
+
+  /* Form spacing tokens */
+  --form-field-gap: var(--space-4);     /* 16px between form fields */
+  --form-row-gap: var(--space-4);       /* 16px between columns in a row */
+  --form-section-gap: var(--space-6);   /* 24px between form sections */
+  --form-label-gap: var(--space-2);     /* 8px between label and input */
 
   /* ============================================
      BORDER RADIUS
@@ -214,6 +234,16 @@
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
   --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+
+  /* Additional shadows */
+  --shadow-ml: 0 6px 12px -2px rgb(0 0 0 / 0.08), 0 2px 4px -2px rgb(0 0 0 / 0.04);
+  --shadow-modal: 0 20px 25px -5px rgb(0 0 0 / 0.15), 0 10px 10px -5px rgb(0 0 0 / 0.04);
+  --shadow-dropdown: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.06);
+
+  /* Colored shadows (warm) */
+  --shadow-sm-warm: 0 1px 2px 0 rgb(39 36 29 / 0.08);
+  --shadow-success: 0 4px 6px -1px rgb(123 176 38 / 0.15);
+  --shadow-warning: 0 4px 6px -1px rgb(240 180 41 / 0.15);
 
   /* ============================================
      TRANSITIONS
@@ -261,12 +291,27 @@
   --font-weight-semibold: 600;
   --font-weight-bold: 700;
 
+  /* Letter Spacing */
+  --letter-spacing-tighter: -0.05em;
+  --letter-spacing-tight: -0.025em;
+  --letter-spacing-normal: 0;
+  --letter-spacing-wide: 0.025em;
+  --letter-spacing-wider: 0.05em;
+  --letter-spacing-widest: 0.1em;
+
+  /* Text Transform helpers (for reference in JS) */
+  --text-transform-none: none;
+  --text-transform-uppercase: uppercase;
+  --text-transform-lowercase: lowercase;
+  --text-transform-capitalize: capitalize;
+
   /* ============================================
      TEXT COLORS (aliases)
      ============================================ */
   --color-text-primary: var(--color-grey-900);
   --color-text-secondary: var(--color-grey-700);
-  --color-text-muted: var(--color-grey-500);
+  --color-text-muted: var(--color-grey-600);
+  --color-text-tertiary: var(--color-grey-500);
   --color-text-placeholder: var(--color-grey-400);
   --color-text-inverse: var(--color-grey-050);
 
@@ -766,7 +811,7 @@ input, textarea, select {
   gap: var(--space-6);
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1024px) {
   .rui-event-content {
     grid-template-columns: 1fr;
   }
@@ -1341,7 +1386,7 @@ input, textarea, select {
   background: var(--color-bg-primary);
   border: 1px solid var(--color-border-light);
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-lg);
+  box-shadow: var(--shadow-dropdown);
 }
 
 .rui-dropdown-item {
@@ -1401,6 +1446,7 @@ input, textarea, select {
   padding: var(--space-6);
   background: var(--color-bg-primary);
   border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-modal);
 }
 
 .rui-dialog-title {
@@ -1469,3 +1515,13 @@ input, textarea, select {
   height: 16px;
   animation: spin 1s linear infinite;
 }
+
+/* ============================================
+   UTILITY CLASSES - Letter Spacing
+   ============================================ */
+.tracking-tighter { letter-spacing: var(--letter-spacing-tighter); }
+.tracking-tight { letter-spacing: var(--letter-spacing-tight); }
+.tracking-normal { letter-spacing: var(--letter-spacing-normal); }
+.tracking-wide { letter-spacing: var(--letter-spacing-wide); }
+.tracking-wider { letter-spacing: var(--letter-spacing-wider); }
+.tracking-widest { letter-spacing: var(--letter-spacing-widest); }

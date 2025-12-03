@@ -123,6 +123,7 @@ export const semanticColors = {
   textPrimary: 'var(--color-text-primary)',
   textSecondary: 'var(--color-text-secondary)',
   textMuted: 'var(--color-text-muted)',
+  textTertiary: 'var(--color-text-tertiary)',
   textPlaceholder: 'var(--color-text-placeholder)',
   textInverse: 'var(--color-text-inverse)',
 
@@ -179,6 +180,34 @@ export const spacing = {
 } as const;
 
 // ============================================
+// CARD PADDING TOKENS
+// ============================================
+
+export const cardPadding = {
+  /** 16px - Compact cards for summaries, sidebar */
+  compact: 'var(--card-padding-compact)',
+  /** 20px - Standard default cards */
+  standard: 'var(--card-padding-standard)',
+  /** 24px - Spacious cards for forms, dialogs */
+  spacious: 'var(--card-padding-spacious)',
+} as const;
+
+// ============================================
+// FORM SPACING TOKENS
+// ============================================
+
+export const formSpacing = {
+  /** 16px - Gap between form fields */
+  fieldGap: 'var(--form-field-gap)',
+  /** 16px - Gap between columns in a row */
+  rowGap: 'var(--form-row-gap)',
+  /** 24px - Gap between form sections */
+  sectionGap: 'var(--form-section-gap)',
+  /** 8px - Gap between label and input */
+  labelGap: 'var(--form-label-gap)',
+} as const;
+
+// ============================================
 // BORDER RADIUS TOKENS
 // ============================================
 
@@ -206,6 +235,18 @@ export const shadows = {
   md: 'var(--shadow-md)',
   /** High elevation */
   lg: 'var(--shadow-lg)',
+  /** Medium-large elevation */
+  ml: 'var(--shadow-ml)',
+  /** Modal/dialog elevation */
+  modal: 'var(--shadow-modal)',
+  /** Dropdown elevation */
+  dropdown: 'var(--shadow-dropdown)',
+  /** Warm subtle shadow */
+  smWarm: 'var(--shadow-sm-warm)',
+  /** Success colored shadow */
+  success: 'var(--shadow-success)',
+  /** Warning colored shadow */
+  warning: 'var(--shadow-warning)',
   /** No shadow */
   none: 'none',
 } as const;
@@ -244,6 +285,32 @@ export const lineHeight = {
   tight: 'var(--line-height-tight)',
   normal: 'var(--line-height-normal)',
   relaxed: 'var(--line-height-relaxed)',
+} as const;
+
+export const letterSpacing = {
+  /** -0.05em - Extra tight (large headings) */
+  tighter: 'var(--letter-spacing-tighter)',
+  /** -0.025em - Tight (headings) */
+  tight: 'var(--letter-spacing-tight)',
+  /** 0 - Normal */
+  normal: 'var(--letter-spacing-normal)',
+  /** 0.025em - Wide (uppercase text) */
+  wide: 'var(--letter-spacing-wide)',
+  /** 0.05em - Wider (small uppercase) */
+  wider: 'var(--letter-spacing-wider)',
+  /** 0.1em - Widest (emphasis) */
+  widest: 'var(--letter-spacing-widest)',
+} as const;
+
+export const textTransform = {
+  /** No transformation */
+  none: 'var(--text-transform-none)',
+  /** Uppercase */
+  uppercase: 'var(--text-transform-uppercase)',
+  /** Lowercase */
+  lowercase: 'var(--text-transform-lowercase)',
+  /** Capitalize */
+  capitalize: 'var(--text-transform-capitalize)',
 } as const;
 
 // ============================================
@@ -332,11 +399,15 @@ export const tokens = {
   colors,
   semanticColors,
   spacing,
+  cardPadding,
+  formSpacing,
   radius,
   shadows,
   fontSize,
   fontWeight,
   lineHeight,
+  letterSpacing,
+  textTransform,
   buttonHeight,
   transition,
   zIndex,

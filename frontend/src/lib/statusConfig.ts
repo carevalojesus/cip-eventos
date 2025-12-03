@@ -5,7 +5,7 @@
  * Use this instead of duplicating status config in multiple components.
  */
 
-import type { EventStatus } from "@/types/event";
+import { EventStatus } from "@/lib/enums";
 
 export interface StatusStyle {
   /** Background color */
@@ -23,29 +23,35 @@ export interface StatusStyle {
  * Uses CSS variables for consistency with design system
  */
 export const eventStatusConfig: Record<EventStatus, StatusStyle> = {
-  PUBLISHED: {
+  [EventStatus.PUBLISHED]: {
     bg: "var(--color-green-100)",
     bgLight: "var(--color-green-050)",
     text: "var(--color-green-700)",
     dot: "var(--color-green-500)",
   },
-  DRAFT: {
+  [EventStatus.DRAFT]: {
     bg: "var(--color-yellow-100)",
     bgLight: "var(--color-yellow-050)",
     text: "var(--color-yellow-700)",
     dot: "var(--color-yellow-500)",
   },
-  COMPLETED: {
+  [EventStatus.COMPLETED]: {
     bg: "var(--color-grey-100)",
     bgLight: "var(--color-grey-050)",
     text: "var(--color-grey-600)",
     dot: "var(--color-grey-400)",
   },
-  CANCELLED: {
+  [EventStatus.CANCELLED]: {
     bg: "var(--color-red-100)",
     bgLight: "var(--color-red-050)",
     text: "var(--color-red-700)",
     dot: "var(--color-red-500)",
+  },
+  [EventStatus.ARCHIVED]: {
+    bg: "var(--color-grey-200)",
+    bgLight: "var(--color-grey-100)",
+    text: "var(--color-grey-500)",
+    dot: "var(--color-grey-300)",
   },
 };
 
@@ -54,7 +60,7 @@ export const eventStatusConfig: Record<EventStatus, StatusStyle> = {
  * Returns DRAFT style as fallback for unknown statuses
  */
 export const getEventStatusStyle = (status: EventStatus): StatusStyle => {
-  return eventStatusConfig[status] || eventStatusConfig.DRAFT;
+  return eventStatusConfig[status] || eventStatusConfig[EventStatus.DRAFT];
 };
 
 /**
