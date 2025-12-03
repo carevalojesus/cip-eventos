@@ -2,6 +2,7 @@ import { Module, forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { EventsService } from './events.service';
 import { EventsController } from './events.controller';
+import { EventsCronService } from './events-cron.service';
 import { Event } from './entities/event.entity';
 import { EventCategory } from './entities/event-category.entity';
 import { EventModality } from './entities/event-modality.entity';
@@ -40,7 +41,7 @@ import { UploadsModule } from '../uploads/uploads.module';
     UploadsModule,
   ],
   controllers: [EventsController],
-  providers: [EventsService, EventOwnershipGuard],
+  providers: [EventsService, EventsCronService, EventOwnershipGuard],
   exports: [EventsService, TypeOrmModule],
 })
 export class EventsModule {}

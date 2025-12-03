@@ -58,6 +58,11 @@ export interface EventTicket {
   price: number;
   stock: number;
   requiresCipValidation: boolean;
+  description?: string;
+  salesStartAt?: string;
+  salesEndAt?: string;
+  maxPerOrder: number;
+  isVisible: boolean;
   isActive: boolean;
 }
 
@@ -127,11 +132,28 @@ export interface CreateTicketDto {
   price: number;
   stock: number;
   requiresCipValidation?: boolean;
+  description?: string;
+  salesStartAt?: string;
+  salesEndAt?: string;
+  maxPerOrder?: number;
+  isVisible?: boolean;
 }
 
 export interface UpdateTicketDto extends Partial<CreateTicketDto> {
   isActive?: boolean;
 }
+
+export interface CreateSessionDto {
+  title: string;
+  description?: string;
+  startAt: string;
+  endAt: string;
+  room?: string;
+  meetingUrl?: string;
+  speakersIds?: string[];
+}
+
+export interface UpdateSessionDto extends Partial<CreateSessionDto> {}
 
 export interface CreateEventDto {
   title: string;

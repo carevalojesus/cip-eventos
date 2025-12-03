@@ -1,11 +1,18 @@
-import React, { useState } from "react";
+import React, { useState, useId } from "react";
 import { IconSearch } from "@/components/icons/DuotoneIcons";
+import { spacing, radius, fontSize, buttonHeight, transition, semanticColors, colors } from "@/lib/styleTokens";
 
 interface SearchInputProps {
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;
   maxWidth?: string;
+  /** Accessible label for screen readers */
+  ariaLabel?: string;
+  /** Called when user presses Enter */
+  onSubmit?: () => void;
+  /** Called when user presses Escape */
+  onClear?: () => void;
 }
 
 export const SearchInput: React.FC<SearchInputProps> = ({
@@ -13,8 +20,22 @@ export const SearchInput: React.FC<SearchInputProps> = ({
   onChange,
   placeholder = "Buscar...",
   maxWidth = "320px",
+  ariaLabel = "Search",
+  onSubmit,
+  onClear,
 }) => {
   const [isFocused, setIsFocused] = useState(false);
+  const inputId = useId();
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Escape") {
+      onChange("");
+      onClear?.();
+      e.currentTarget.blur();
+    } else if (e.key === "Enter") {
+      onSubmit?.();
+    }
+  };
 
   const wrapperStyle: React.CSSProperties = {
     position: "relative",
@@ -25,22 +46,22 @@ export const SearchInput: React.FC<SearchInputProps> = ({
 
   const inputStyle: React.CSSProperties = {
     width: "100%",
-    height: "var(--button-height-lg)",
-    padding: "0 var(--space-3) 0 var(--space-10)",
-    fontSize: "var(--font-size-sm)",
+    height: buttonHeight.lg,
+    padding: `0 ${spacing.md} 0 ${spacing["4xl"]}`,
+    fontSize: fontSize.sm,
     border: "1px solid",
-    borderColor: isFocused ? "var(--color-border-focus)" : "var(--color-border-light)",
-    borderRadius: "var(--radius-lg)",
-    backgroundColor: "var(--color-bg-primary)",
-    color: "var(--color-grey-900)",
+    borderColor: isFocused ? semanticColors.borderFocus : semanticColors.borderLight,
+    borderRadius: radius.lg,
+    backgroundColor: semanticColors.bgPrimary,
+    color: semanticColors.textPrimary,
     outline: "none",
-    transition: "border-color var(--transition-fast), box-shadow var(--transition-fast)",
-    boxShadow: isFocused ? "0 0 0 3px var(--color-grey-100)" : "none",
+    transition: `border-color ${transition.fast}, box-shadow ${transition.fast}`,
+    boxShadow: isFocused ? `0 0 0 3px ${colors.grey[100]}` : "none",
   };
 
   const iconStyle: React.CSSProperties = {
     position: "absolute",
-    left: "var(--space-3)",
+    left: spacing.md,
     top: "50%",
     transform: "translateY(-50%)",
     pointerEvents: "none",
@@ -50,21 +71,28 @@ export const SearchInput: React.FC<SearchInputProps> = ({
 
   return (
     <div style={wrapperStyle}>
-      <div style={iconStyle}>
+      <label htmlFor={inputId} className="sr-only">
+        {ariaLabel}
+      </label>
+      <div style={iconStyle} aria-hidden="true">
         <IconSearch
           size={18}
-          primary="var(--color-grey-400)"
-          secondary="var(--color-grey-300)"
+          primary={colors.grey[400]}
+          secondary={colors.grey[300]}
         />
       </div>
       <input
-        type="text"
+        id={inputId}
+        type="search"
+        role="searchbox"
         style={inputStyle}
         placeholder={placeholder}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
+        onKeyDown={handleKeyDown}
+        aria-label={ariaLabel}
       />
     </div>
   );

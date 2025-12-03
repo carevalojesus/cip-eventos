@@ -1,0 +1,303 @@
+/* ============================================
+   TicketsTab Component Styles
+   Refactoring UI Design System
+   ============================================ */
+
+/* Container */
+.tickets-tab {
+  background-color: var(--color-bg-primary);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Loading & Error states */
+.tickets-tab__loading,
+.tickets-tab__error {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem;
+  background-color: var(--color-bg-primary);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-sm);
+}
+
+.tickets-tab__error {
+  flex-direction: column;
+  color: var(--color-grey-500);
+  font-size: var(--font-size-sm);
+}
+
+.tickets-tab__loader {
+  color: var(--color-grey-400);
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Header */
+.tickets-tab__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-5);
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.tickets-tab__title {
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  color: var(--color-grey-900);
+  margin: 0;
+}
+
+/* Empty state wrapper */
+.tickets-tab__empty {
+  padding: var(--space-4);
+}
+
+/* List */
+.tickets-tab__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* List item */
+.tickets-tab__item {
+  display: flex;
+  align-items: center;
+  padding: var(--space-4) var(--space-5);
+  border-bottom: 1px solid var(--color-border-light);
+  transition: background-color 150ms ease;
+}
+
+.tickets-tab__item:last-child {
+  border-bottom: none;
+}
+
+.tickets-tab__item:hover {
+  background-color: var(--color-grey-050);
+}
+
+/* Item icon */
+.tickets-tab__item-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background-color: var(--color-yellow-100);
+  border-radius: var(--radius-lg);
+  margin-right: var(--space-4);
+  flex-shrink: 0;
+}
+
+/* Item info */
+.tickets-tab__item-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* Header row: name + badges inline */
+.tickets-tab__item-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.tickets-tab__item-name {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-grey-900);
+}
+
+/* Badge (same style as EventCard) */
+.tickets-tab__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.tickets-tab__badge--gray {
+  background-color: var(--color-grey-100);
+  color: var(--color-grey-600);
+}
+
+.tickets-tab__badge--info {
+  background-color: var(--color-cyan-050);
+  color: var(--color-cyan-700);
+}
+
+/* Meta row: stock, limit, dates */
+.tickets-tab__item-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--font-size-xs);
+  color: var(--color-grey-500);
+}
+
+.tickets-tab__item-meta > span::after {
+  content: "·";
+  margin-left: var(--space-1);
+  color: var(--color-grey-300);
+}
+
+.tickets-tab__item-meta > span:last-child::after {
+  content: none;
+}
+
+.tickets-tab__item-dates {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--color-grey-500);
+}
+
+/* Description */
+.tickets-tab__item-description {
+  font-size: var(--font-size-xs);
+  color: var(--color-grey-400);
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* Item price */
+.tickets-tab__item-price {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-grey-900);
+  margin-right: var(--space-4);
+  min-width: 70px;
+  text-align: right;
+}
+
+/* Item actions */
+.tickets-tab__item-actions {
+  display: flex;
+  gap: var(--space-1);
+}
+
+.tickets-tab__action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all 150ms ease;
+}
+
+.tickets-tab__action-btn--edit {
+  color: var(--color-grey-400);
+}
+
+.tickets-tab__action-btn--edit:hover {
+  color: var(--color-grey-700);
+  background-color: var(--color-grey-100);
+}
+
+.tickets-tab__action-btn--delete {
+  color: var(--color-red-400);
+}
+
+.tickets-tab__action-btn--delete:hover {
+  color: var(--color-red-600);
+  background-color: var(--color-red-050);
+}
+
+/* ============================================
+   Form Styles (Drawer)
+   ============================================ */
+
+.tickets-tab__form {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+/* Toggle switch component */
+.tickets-tab__toggle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-4);
+  background-color: var(--color-grey-050);
+  border-radius: var(--radius-lg);
+}
+
+.tickets-tab__toggle-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.tickets-tab__toggle-label {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-grey-900);
+  cursor: pointer;
+}
+
+.tickets-tab__toggle-desc {
+  font-size: var(--font-size-xs);
+  color: var(--color-grey-500);
+}
+
+.tickets-tab__toggle-switch {
+  position: relative;
+  width: 44px;
+  height: 24px;
+  background-color: var(--color-grey-300);
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background-color 200ms ease;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.tickets-tab__toggle-switch:hover {
+  background-color: var(--color-grey-400);
+}
+
+.tickets-tab__toggle-switch--active {
+  background-color: var(--color-action);
+}
+
+.tickets-tab__toggle-switch--active:hover {
+  background-color: var(--color-action-dark);
+}
+
+.tickets-tab__toggle-thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 20px;
+  height: 20px;
+  background-color: white;
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  transition: transform 200ms ease;
+}
+
+.tickets-tab__toggle-switch--active .tickets-tab__toggle-thumb {
+  transform: translateX(20px);
+}

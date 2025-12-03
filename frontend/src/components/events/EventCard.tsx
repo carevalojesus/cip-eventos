@@ -1,69 +1,23 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import type { Event, EventStatus } from "@/types/event";
+import type { Event } from "@/types/event";
 import { IconCalendar, IconLocation, IconClock } from "@/components/icons/DuotoneIcons";
 import { getCurrentLocale } from "@/lib/routes";
+import { formatEventDate, formatEventTime, getLocaleFromLang } from "@/lib/dateUtils";
+import { getEventStatusStyle } from "@/lib/statusConfig";
+import { spacing, radius, fontSize, shadows, transition, semanticColors, colors } from "@/lib/styleTokens";
 
 interface EventCardProps {
   event: Event;
   onManage: () => void;
 }
 
-// Status badge config
-const statusConfig: Record<EventStatus, {
-  bg: string;
-  text: string;
-  dot: string;
-}> = {
-  PUBLISHED: {
-    bg: 'var(--color-green-050)',
-    text: 'var(--color-green-700)',
-    dot: 'var(--color-green-500)',
-  },
-  DRAFT: {
-    bg: 'var(--color-grey-100)',
-    text: 'var(--color-grey-600)',
-    dot: 'var(--color-grey-400)',
-  },
-  COMPLETED: {
-    bg: 'var(--color-cyan-050)',
-    text: 'var(--color-cyan-700)',
-    dot: 'var(--color-cyan-500)',
-  },
-  CANCELLED: {
-    bg: 'var(--color-red-050)',
-    text: 'var(--color-red-700)',
-    dot: 'var(--color-red-500)',
-  },
-};
-
 export const EventCard: React.FC<EventCardProps> = ({ event, onManage }) => {
   const { t } = useTranslation();
   const [isHovered, setIsHovered] = useState(false);
 
-  const status = statusConfig[event.status] || statusConfig.DRAFT;
-
-  const locale = getCurrentLocale() === "es" ? "es-PE" : "en-US";
-
-  const formatDate = (dateString: string) => {
-    if (!dateString) return "";
-    const date = new Date(dateString);
-    return date.toLocaleDateString(locale, {
-      day: "2-digit",
-      month: "short",
-      year: "numeric",
-    });
-  };
-
-  const formatTime = (dateString: string) => {
-    if (!dateString) return "";
-    const date = new Date(dateString);
-    return date.toLocaleTimeString(locale, {
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: true,
-    });
-  };
+  const status = getEventStatusStyle(event.status);
+  const locale = getLocaleFromLang(getCurrentLocale());
 
   const getLocationText = () => {
     if (event.location?.name) {
@@ -80,14 +34,14 @@ export const EventCard: React.FC<EventCardProps> = ({ event, onManage }) => {
     return "—";
   };
 
-  // Styles
+  // Styles using design tokens
   const cardStyle: React.CSSProperties = {
-    backgroundColor: 'var(--color-bg-primary)',
-    borderRadius: 'var(--radius-xl)',
-    border: '1px solid var(--color-border-light)',
+    backgroundColor: semanticColors.bgPrimary,
+    borderRadius: radius.xl,
+    border: `1px solid ${semanticColors.borderLight}`,
     overflow: 'hidden',
-    transition: 'box-shadow 0.2s ease, transform 0.2s ease',
-    boxShadow: isHovered ? 'var(--shadow-md)' : 'var(--shadow-sm)',
+    transition: `box-shadow ${transition.fast}, transform ${transition.fast}`,
+    boxShadow: isHovered ? shadows.md : shadows.sm,
     transform: isHovered ? 'translateY(-2px)' : 'translateY(0)',
     cursor: 'pointer',
   };
@@ -96,7 +50,7 @@ export const EventCard: React.FC<EventCardProps> = ({ event, onManage }) => {
     position: 'relative',
     width: '100%',
     paddingTop: '56.25%', // 16:9 ratio
-    backgroundColor: 'var(--color-grey-100)',
+    backgroundColor: colors.grey[100],
     overflow: 'hidden',
   };
 
@@ -120,20 +74,20 @@ export const EventCard: React.FC<EventCardProps> = ({ event, onManage }) => {
   };
 
   const contentStyle: React.CSSProperties = {
-    padding: 'var(--space-4) var(--space-5) var(--space-5)',
+    padding: `${spacing.lg} ${spacing.xl} ${spacing.xl}`,
   };
 
   const badgeStyle: React.CSSProperties = {
     display: 'inline-flex',
     alignItems: 'center',
-    gap: '6px',
-    padding: 'var(--space-1) 10px',
-    borderRadius: 'var(--radius-full)',
-    fontSize: 'var(--font-size-xs)',
+    gap: spacing.xs,
+    padding: `${spacing.xs} 10px`,
+    borderRadius: radius.full,
+    fontSize: fontSize.xs,
     fontWeight: 500,
-    backgroundColor: status.bg,
+    backgroundColor: status.bgLight || status.bg,
     color: status.text,
-    marginBottom: 'var(--space-3)',
+    marginBottom: spacing.md,
   };
 
   const dotStyle: React.CSSProperties = {
@@ -144,10 +98,10 @@ export const EventCard: React.FC<EventCardProps> = ({ event, onManage }) => {
   };
 
   const titleStyle: React.CSSProperties = {
-    fontSize: 'var(--font-size-base)',
+    fontSize: fontSize.base,
     fontWeight: 600,
-    color: 'var(--color-grey-900)',
-    margin: '0 0 var(--space-3) 0',
+    color: semanticColors.textPrimary,
+    margin: `0 0 ${spacing.md} 0`,
     lineHeight: 1.4,
     display: '-webkit-box',
     WebkitLineClamp: 2,
@@ -158,16 +112,16 @@ export const EventCard: React.FC<EventCardProps> = ({ event, onManage }) => {
   const metaContainerStyle: React.CSSProperties = {
     display: 'flex',
     flexDirection: 'column',
-    gap: '6px',
-    marginBottom: 'var(--space-4)',
+    gap: spacing.xs,
+    marginBottom: spacing.lg,
   };
 
   const metaRowStyle: React.CSSProperties = {
     display: 'flex',
     alignItems: 'center',
-    gap: 'var(--space-2)',
-    fontSize: 'var(--font-size-sm)',
-    color: 'var(--color-grey-500)',
+    gap: spacing.sm,
+    fontSize: fontSize.sm,
+    color: semanticColors.textMuted,
   };
 
   const metaIconStyle: React.CSSProperties = {
@@ -183,34 +137,33 @@ export const EventCard: React.FC<EventCardProps> = ({ event, onManage }) => {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingTop: 'var(--space-3)',
-    borderTop: '1px solid var(--color-grey-100)',
+    paddingTop: spacing.md,
+    borderTop: `1px solid ${colors.grey[100]}`,
   };
 
   const enrolledStyle: React.CSSProperties = {
-    fontSize: 'var(--font-size-sm)',
-    color: 'var(--color-grey-500)',
+    fontSize: fontSize.sm,
+    color: semanticColors.textMuted,
   };
 
   const enrolledCountStyle: React.CSSProperties = {
     fontWeight: 600,
-    color: 'var(--color-grey-700)',
+    color: semanticColors.textSecondary,
   };
 
   // Tertiary action: styled as link (Refactoring UI)
-  // Usa --color-action (cyan) para acciones, no rojo (que es para danger)
   const linkStyle: React.CSSProperties = {
     display: 'inline-flex',
     alignItems: 'center',
-    gap: '4px',
-    fontSize: 'var(--font-size-sm)',
+    gap: spacing.xs,
+    fontSize: fontSize.sm,
     fontWeight: 500,
-    color: 'var(--color-action)',
+    color: semanticColors.action,
     background: 'none',
     border: 'none',
     padding: 0,
     cursor: 'pointer',
-    transition: 'color 150ms ease',
+    transition: `color ${transition.fast}`,
   };
 
   const enrolledCount = event.enrolledCount ?? 0;
@@ -256,13 +209,13 @@ export const EventCard: React.FC<EventCardProps> = ({ event, onManage }) => {
         <div style={metaContainerStyle}>
           <div style={metaRowStyle}>
             <span style={metaIconStyle}>
-              <IconClock size={16} primary="var(--color-grey-500)" secondary="var(--color-grey-300)" />
+              <IconClock size={16} primary={colors.grey[500]} secondary={colors.grey[300]} />
             </span>
-            <span>{formatDate(event.startAt)} · {formatTime(event.startAt)}</span>
+            <span>{formatEventDate(event.startAt, locale)} · {formatEventTime(event.startAt, locale)}</span>
           </div>
           <div style={metaRowStyle}>
             <span style={metaIconStyle}>
-              <IconLocation size={16} primary="var(--color-grey-500)" secondary="var(--color-grey-300)" />
+              <IconLocation size={16} primary={colors.grey[500]} secondary={colors.grey[300]} />
             </span>
             <span>{getLocationText()}</span>
           </div>
@@ -280,10 +233,10 @@ export const EventCard: React.FC<EventCardProps> = ({ event, onManage }) => {
               onManage();
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.color = 'var(--color-action-dark)';
+              e.currentTarget.style.color = semanticColors.actionDark;
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.color = 'var(--color-action)';
+              e.currentTarget.style.color = semanticColors.action;
             }}
           >
             {t("dashboard.events_view.actions.view", "Ver detalles")}

@@ -1,4 +1,5 @@
 import React from "react";
+import { spacing, radius, fontSize, semanticColors, colors } from "@/lib/styleTokens";
 
 interface EmptyStateProps {
   icon: React.ReactNode;
@@ -18,41 +19,41 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
-    padding: "4rem 2rem",
-    backgroundColor: "var(--color-bg-primary)",
-    borderRadius: "var(--radius-xl)",
-    border: "1px dashed var(--color-border-light)",
+    padding: `${spacing["6xl"]} ${spacing["3xl"]}`,
+    backgroundColor: semanticColors.bgPrimary,
+    borderRadius: radius.xl,
+    border: `1px dashed ${semanticColors.borderLight}`,
   };
 
   const iconContainerStyle: React.CSSProperties = {
     width: "64px",
     height: "64px",
     borderRadius: "50%",
-    backgroundColor: "var(--color-grey-100)",
+    backgroundColor: colors.grey[100],
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: "1rem",
+    marginBottom: spacing.lg,
   };
 
   const titleStyle: React.CSSProperties = {
-    fontSize: "1rem",
+    fontSize: fontSize.base,
     fontWeight: 600,
-    color: "var(--color-grey-900)",
-    margin: "0 0 0.25rem 0",
+    color: semanticColors.textPrimary,
+    margin: `0 0 ${spacing.xs} 0`,
   };
 
   const descriptionStyle: React.CSSProperties = {
-    fontSize: "0.875rem",
-    color: "var(--color-grey-500)",
-    margin: "0 0 1.5rem 0",
+    fontSize: fontSize.sm,
+    color: semanticColors.textMuted,
+    margin: `0 0 ${spacing["2xl"]} 0`,
     textAlign: "center",
     maxWidth: "320px",
   };
 
   return (
-    <div style={containerStyle}>
-      <div style={iconContainerStyle}>{icon}</div>
+    <div style={containerStyle} role="status" aria-label={title}>
+      <div style={iconContainerStyle} aria-hidden="true">{icon}</div>
       <h3 style={titleStyle}>{title}</h3>
       <p style={descriptionStyle}>{description}</p>
       {action}

@@ -14,13 +14,14 @@ import { AppLayout } from "@/components/layout";
 import type { Breadcrumb } from "./DashboardApp";
 import { useTranslation } from "react-i18next";
 
-const SectionPlaceholder: React.FC<{ title: string; description?: string }> = ({
+const SectionPlaceholder: React.FC<{ title: string; description?: string; defaultDescription?: string }> = ({
   title,
-  description = "Próximamente podrás gestionar esta sección desde aquí.",
+  description,
+  defaultDescription = "Próximamente podrás gestionar esta sección desde aquí.",
 }) => (
   <div className="rounded-xl border border-dashed border-gray-200 bg-white p-8 text-center shadow-sm">
     <h2 className="text-xl font-semibold text-gray-900">{title}</h2>
-    <p className="mt-2 text-sm text-gray-500">{description}</p>
+    <p className="mt-2 text-sm text-gray-500">{description || defaultDescription}</p>
   </div>
 );
 
@@ -254,46 +255,46 @@ export const RuiDashboardApp: React.FC<RuiDashboardAppProps> = ({ initialPath })
     }
     // Placeholders para otras secciones
     if (startsWithRoute(["/ponentes", "/en/speakers"])) {
-      return <SectionPlaceholder title="Ponentes" />;
+      return <SectionPlaceholder title={t("sections.speakers")} description={t("sections.coming_soon")} />;
     }
     if (startsWithRoute(["/organizadores", "/en/organizers"])) {
-      return <SectionPlaceholder title="Organizadores" />;
+      return <SectionPlaceholder title={t("sections.organizers")} description={t("sections.coming_soon")} />;
     }
     if (startsWithRoute(["/inscripciones", "/en/registrations"])) {
-      return <SectionPlaceholder title="Inscripciones" />;
+      return <SectionPlaceholder title={t("sections.registrations")} description={t("sections.coming_soon")} />;
     }
     if (startsWithRoute(["/control-acceso", "/en/access-control"])) {
-      return <SectionPlaceholder title="Control de Puerta" />;
+      return <SectionPlaceholder title={t("sections.access_control")} description={t("sections.coming_soon")} />;
     }
     if (startsWithRoute(["/certificados", "/en/certificates"])) {
-      return <SectionPlaceholder title="Certificados" />;
+      return <SectionPlaceholder title={t("sections.certificates")} description={t("sections.coming_soon")} />;
     }
     // Finanzas
     if (startsWithRoute(["/ingresos", "/en/revenue"])) {
-      return <SectionPlaceholder title="Ingresos" />;
+      return <SectionPlaceholder title={t("sections.revenue")} description={t("sections.coming_soon")} />;
     }
     if (startsWithRoute(["/pagos", "/en/payments"])) {
-      return <SectionPlaceholder title="Pagos" />;
+      return <SectionPlaceholder title={t("sections.payments")} description={t("sections.coming_soon")} />;
     }
     if (startsWithRoute(["/reportes", "/en/reports"])) {
-      return <SectionPlaceholder title="Reportes" />;
+      return <SectionPlaceholder title={t("sections.reports")} description={t("sections.coming_soon")} />;
     }
     if (startsWithRoute(["/finanzas", "/en/finance"])) {
-      return <SectionPlaceholder title="Pagos y Reportes" />;
+      return <SectionPlaceholder title={t("sections.payments_reports")} description={t("sections.coming_soon")} />;
     }
     if (startsWithRoute(["/usuarios", "/en/users"])) {
-      return <SectionPlaceholder title="Usuarios" />;
+      return <SectionPlaceholder title={t("sections.users")} description={t("sections.coming_soon")} />;
     }
     if (startsWithRoute(["/padron-cip", "/en/cip-registry"])) {
-      return <SectionPlaceholder title="Padrón CIP" />;
+      return <SectionPlaceholder title={t("sections.cip_registry")} description={t("sections.coming_soon")} />;
     }
     if (startsWithRoute(["/configuracion", "/en/settings"])) {
-      return <SectionPlaceholder title="Configuración" />;
+      return <SectionPlaceholder title={t("sections.settings")} description={t("sections.coming_soon")} />;
     }
     return (
       <SectionPlaceholder
-        title="Sección en construcción"
-        description="Aún no hay contenido disponible para esta ruta."
+        title={t("sections.under_construction")}
+        description={t("sections.no_content")}
       />
     );
   };

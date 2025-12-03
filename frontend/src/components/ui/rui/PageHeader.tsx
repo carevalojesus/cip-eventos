@@ -1,4 +1,5 @@
 import React from "react";
+import { spacing, fontSize, semanticColors, lineHeight } from "@/lib/styleTokens";
 
 interface PageHeaderProps {
   title: string;
@@ -15,25 +16,26 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
     display: "flex",
     justifyContent: "space-between",
     alignItems: "flex-start",
-    marginBottom: "1.5rem",
+    marginBottom: spacing["2xl"],
   };
 
   const contentStyle: React.CSSProperties = {
     display: "flex",
     flexDirection: "column",
-    gap: "0.25rem",
+    gap: spacing.xs,
   };
 
   const titleStyle: React.CSSProperties = {
-    fontSize: "1.5rem",
+    fontSize: fontSize["2xl"],
     fontWeight: 600,
-    color: "var(--color-grey-900)",
+    color: semanticColors.textPrimary,
     margin: 0,
+    lineHeight: lineHeight.tight,
   };
 
   const subtitleStyle: React.CSSProperties = {
-    fontSize: "0.875rem",
-    color: "var(--color-grey-500)",
+    fontSize: fontSize.sm,
+    color: semanticColors.textMuted,
     margin: 0,
   };
 

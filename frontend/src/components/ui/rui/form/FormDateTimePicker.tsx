@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useMemo } from "react";
 import { format, isValid } from "date-fns";
 import { es, enUS } from "date-fns/locale";
 import { getCurrentLocale } from "@/lib/routes";
@@ -11,6 +11,10 @@ interface FormDateTimePickerProps {
   error?: string;
   hint?: string;
   required?: boolean;
+  /** Minimum allowed datetime (ISO string) */
+  minDate?: string;
+  /** Maximum allowed datetime (ISO string) */
+  maxDate?: string;
 }
 
 // Generar opciones de hora (cada 30 minutos)
@@ -26,7 +30,7 @@ const generateTimeOptions = () => {
   return options;
 };
 
-const timeOptions = generateTimeOptions();
+const allTimeOptions = generateTimeOptions();
 
 export const FormDateTimePicker: React.FC<FormDateTimePickerProps> = ({
   label,
@@ -35,19 +39,39 @@ export const FormDateTimePicker: React.FC<FormDateTimePickerProps> = ({
   error,
   hint,
   required,
+  minDate,
+  maxDate,
 }) => {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
-  const [currentMonth, setCurrentMonth] = useState(new Date());
   const dateRef = useRef<HTMLDivElement>(null);
   const timeRef = useRef<HTMLDivElement>(null);
 
   const locale = getCurrentLocale();
   const dateLocale = locale === "es" ? es : enUS;
 
+  // Parse dates
   const hasValue = value && isValid(new Date(value));
   const currentDate = hasValue ? new Date(value) : null;
   const currentTime = currentDate ? format(currentDate, "HH:mm") : null;
+
+  // Parse min/max dates
+  const minDateObj = useMemo(() => (minDate ? new Date(minDate) : null), [minDate]);
+  const maxDateObj = useMemo(() => (maxDate ? new Date(maxDate) : null), [maxDate]);
+
+  // Initialize calendar to the correct month (minDate month or current value month)
+  const [currentMonth, setCurrentMonth] = useState(() => {
+    if (currentDate) return new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+    if (minDateObj) return new Date(minDateObj.getFullYear(), minDateObj.getMonth(), 1);
+    return new Date();
+  });
+
+  // Update currentMonth when minDate changes and no value selected
+  useEffect(() => {
+    if (!currentDate && minDateObj) {
+      setCurrentMonth(new Date(minDateObj.getFullYear(), minDateObj.getMonth(), 1));
+    }
+  }, [minDateObj, currentDate]);
 
   // Close on click outside
   useEffect(() => {
@@ -63,8 +87,84 @@ export const FormDateTimePicker: React.FC<FormDateTimePickerProps> = ({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // Check if a day is disabled
+  const isDateDisabled = (day: Date): boolean => {
+    if (!day) return true;
+    const dayStart = new Date(day);
+    dayStart.setHours(0, 0, 0, 0);
+    const dayEnd = new Date(day);
+    dayEnd.setHours(23, 59, 59, 999);
+
+    if (minDateObj) {
+      const minDayStart = new Date(minDateObj);
+      minDayStart.setHours(0, 0, 0, 0);
+      if (dayStart < minDayStart) return true;
+    }
+    if (maxDateObj) {
+      const maxDayEnd = new Date(maxDateObj);
+      maxDayEnd.setHours(23, 59, 59, 999);
+      if (dayEnd > maxDayEnd) return true;
+    }
+    return false;
+  };
+
+  // Get available time options based on selected date and min/max constraints
+  const getAvailableTimeOptions = useMemo(() => {
+    if (!currentDate) return allTimeOptions;
+
+    const selectedDateStr = format(currentDate, "yyyy-MM-dd");
+    const minDateStr = minDateObj ? format(minDateObj, "yyyy-MM-dd") : null;
+    const maxDateStr = maxDateObj ? format(maxDateObj, "yyyy-MM-dd") : null;
+
+    let minTimeStr: string | null = null;
+    let maxTimeStr: string | null = null;
+
+    // If selected date is the same as minDate, restrict minimum time
+    if (minDateStr && selectedDateStr === minDateStr && minDateObj) {
+      minTimeStr = format(minDateObj, "HH:mm");
+    }
+
+    // If selected date is the same as maxDate, restrict maximum time
+    if (maxDateStr && selectedDateStr === maxDateStr && maxDateObj) {
+      maxTimeStr = format(maxDateObj, "HH:mm");
+    }
+
+    return allTimeOptions.filter((time) => {
+      if (minTimeStr && time < minTimeStr) return false;
+      if (maxTimeStr && time > maxTimeStr) return false;
+      return true;
+    });
+  }, [currentDate, minDateObj, maxDateObj]);
+
+  // Check if a time option is disabled
+  const isTimeDisabled = (time: string): boolean => {
+    return !getAvailableTimeOptions.includes(time);
+  };
+
   const handleDateSelect = (date: Date) => {
-    const timeStr = currentTime || "09:00";
+    // Determine default time based on constraints
+    let timeStr = currentTime || "09:00";
+
+    const selectedDateStr = format(date, "yyyy-MM-dd");
+    const minDateStr = minDateObj ? format(minDateObj, "yyyy-MM-dd") : null;
+    const maxDateStr = maxDateObj ? format(maxDateObj, "yyyy-MM-dd") : null;
+
+    // If selecting minDate day, use minDate time as minimum
+    if (minDateStr && selectedDateStr === minDateStr && minDateObj) {
+      const minTime = format(minDateObj, "HH:mm");
+      if (timeStr < minTime) {
+        timeStr = minTime;
+      }
+    }
+
+    // If selecting maxDate day, ensure time doesn't exceed max
+    if (maxDateStr && selectedDateStr === maxDateStr && maxDateObj) {
+      const maxTime = format(maxDateObj, "HH:mm");
+      if (timeStr > maxTime) {
+        timeStr = maxTime;
+      }
+    }
+
     const dateStr = format(date, "yyyy-MM-dd");
     onChange(`${dateStr}T${timeStr}`);
     setShowDatePicker(false);
@@ -73,7 +173,9 @@ export const FormDateTimePicker: React.FC<FormDateTimePickerProps> = ({
   const handleTimeSelect = (time: string) => {
     const dateStr = currentDate
       ? format(currentDate, "yyyy-MM-dd")
-      : format(new Date(), "yyyy-MM-dd");
+      : minDateObj
+        ? format(minDateObj, "yyyy-MM-dd")
+        : format(new Date(), "yyyy-MM-dd");
     onChange(`${dateStr}T${time}`);
     setShowTimePicker(false);
   };
@@ -110,22 +212,21 @@ export const FormDateTimePicker: React.FC<FormDateTimePickerProps> = ({
   const labelStyle: React.CSSProperties = {
     fontSize: "14px",
     fontWeight: 500,
-    color: "#504A40",
+    color: "var(--color-grey-700)",
     lineHeight: 1.5,
   };
 
   const requiredStyle: React.CSSProperties = {
-    color: "#BA2525",
+    color: "var(--color-red-600)",
     marginLeft: "2px",
   };
 
-  // Combined input look - date and time in one visual group
   const inputGroupStyle: React.CSSProperties = {
     position: "relative",
     display: "flex",
-    border: `1px solid ${error ? "#BA2525" : "#D3CEC4"}`,
-    borderRadius: "6px",
-    backgroundColor: "#FFFFFF",
+    border: `1px solid ${error ? "var(--color-red-500)" : "var(--color-grey-300)"}`,
+    borderRadius: "var(--radius-md)",
+    backgroundColor: "var(--color-bg-primary)",
     boxShadow: "inset 0 2px 4px rgba(39, 36, 29, 0.06)",
   };
 
@@ -137,10 +238,10 @@ export const FormDateTimePicker: React.FC<FormDateTimePickerProps> = ({
     height: "40px",
     padding: "0 12px",
     fontSize: "14px",
-    color: hasValue ? "#27241D" : "#857F72",
+    color: hasValue ? "var(--color-grey-900)" : "var(--color-grey-500)",
     backgroundColor: "transparent",
     border: "none",
-    borderRadius: "6px 0 0 6px",
+    borderRadius: "var(--radius-md) 0 0 var(--radius-md)",
     cursor: "pointer",
     outline: "none",
     transition: "background-color 150ms ease",
@@ -148,7 +249,7 @@ export const FormDateTimePicker: React.FC<FormDateTimePickerProps> = ({
 
   const separatorStyle: React.CSSProperties = {
     width: "1px",
-    backgroundColor: "#D3CEC4",
+    backgroundColor: "var(--color-grey-300)",
     margin: "8px 0",
   };
 
@@ -159,10 +260,10 @@ export const FormDateTimePicker: React.FC<FormDateTimePickerProps> = ({
     height: "40px",
     padding: "0 12px",
     fontSize: "14px",
-    color: currentTime ? "#27241D" : "#857F72",
+    color: currentTime ? "var(--color-grey-900)" : "var(--color-grey-500)",
     backgroundColor: "transparent",
     border: "none",
-    borderRadius: "0 6px 6px 0",
+    borderRadius: "0 var(--radius-md) var(--radius-md) 0",
     cursor: "pointer",
     outline: "none",
     transition: "background-color 150ms ease",
@@ -174,11 +275,10 @@ export const FormDateTimePicker: React.FC<FormDateTimePickerProps> = ({
     top: "calc(100% + 8px)",
     left: 0,
     zIndex: 1000,
-    backgroundColor: "#FFFFFF",
-    border: "1px solid #D3CEC4",
-    borderRadius: "8px",
-    boxShadow:
-      "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
+    backgroundColor: "var(--color-bg-primary)",
+    border: "1px solid var(--color-grey-300)",
+    borderRadius: "var(--radius-lg)",
+    boxShadow: "var(--shadow-lg)",
     padding: "12px",
   };
 
@@ -196,16 +296,16 @@ export const FormDateTimePicker: React.FC<FormDateTimePickerProps> = ({
     width: "28px",
     height: "28px",
     border: "none",
-    borderRadius: "4px",
+    borderRadius: "var(--radius-sm)",
     backgroundColor: "transparent",
     cursor: "pointer",
-    color: "#504A40",
+    color: "var(--color-grey-600)",
   };
 
   const monthLabelStyle: React.CSSProperties = {
     fontSize: "14px",
     fontWeight: 600,
-    color: "#27241D",
+    color: "var(--color-grey-900)",
     textTransform: "capitalize",
   };
 
@@ -219,7 +319,7 @@ export const FormDateTimePicker: React.FC<FormDateTimePickerProps> = ({
   const weekdayStyle: React.CSSProperties = {
     fontSize: "12px",
     fontWeight: 500,
-    color: "#857F72",
+    color: "var(--color-grey-500)",
     textAlign: "center",
     padding: "4px 0",
   };
@@ -233,7 +333,8 @@ export const FormDateTimePicker: React.FC<FormDateTimePickerProps> = ({
   const getDayStyle = (
     day: Date | null,
     isSelected: boolean,
-    isToday: boolean
+    isToday: boolean,
+    isDisabled: boolean
   ): React.CSSProperties => ({
     width: "32px",
     height: "32px",
@@ -243,16 +344,19 @@ export const FormDateTimePicker: React.FC<FormDateTimePickerProps> = ({
     fontSize: "13px",
     fontWeight: isSelected ? 600 : 400,
     color: day
-      ? isSelected
-        ? "#FFFFFF"
-        : isToday
-          ? "#BA2525"
-          : "#27241D"
+      ? isDisabled
+        ? "var(--color-grey-300)"
+        : isSelected
+          ? "#FFFFFF"
+          : isToday
+            ? "var(--color-red-600)"
+            : "var(--color-grey-900)"
       : "transparent",
-    backgroundColor: isSelected ? "#BA2525" : "transparent",
+    backgroundColor: isSelected && !isDisabled ? "var(--color-red-600)" : "transparent",
     border: "none",
-    borderRadius: "4px",
-    cursor: day ? "pointer" : "default",
+    borderRadius: "var(--radius-sm)",
+    cursor: day && !isDisabled ? "pointer" : "default",
+    opacity: isDisabled ? 0.5 : 1,
     transition: "background-color 100ms ease",
   });
 
@@ -264,22 +368,27 @@ export const FormDateTimePicker: React.FC<FormDateTimePickerProps> = ({
     width: "80px",
   };
 
-  const timeOptionStyle = (isSelected: boolean): React.CSSProperties => ({
+  const getTimeOptionStyle = (isSelected: boolean, isDisabled: boolean): React.CSSProperties => ({
     padding: "8px 12px",
     fontSize: "13px",
     fontWeight: isSelected ? 500 : 400,
-    color: isSelected ? "#BA2525" : "#504A40",
-    backgroundColor: isSelected ? "#FFEEEE" : "transparent",
+    color: isDisabled
+      ? "var(--color-grey-300)"
+      : isSelected
+        ? "var(--color-red-600)"
+        : "var(--color-grey-700)",
+    backgroundColor: isSelected && !isDisabled ? "var(--color-red-050)" : "transparent",
     border: "none",
-    borderRadius: "4px",
-    cursor: "pointer",
+    borderRadius: "var(--radius-sm)",
+    cursor: isDisabled ? "default" : "pointer",
     textAlign: "center",
+    opacity: isDisabled ? 0.5 : 1,
     transition: "background-color 100ms ease",
   });
 
   const hintStyle: React.CSSProperties = {
     fontSize: "13px",
-    color: error ? "#BA2525" : "#857F72",
+    color: error ? "var(--color-red-600)" : "var(--color-grey-500)",
   };
 
   const weekdays =
@@ -308,20 +417,20 @@ export const FormDateTimePicker: React.FC<FormDateTimePickerProps> = ({
             style={{
               ...dateButtonStyle,
               width: "100%",
-              backgroundColor: showDatePicker ? "#FAF9F7" : "transparent",
+              backgroundColor: showDatePicker ? "var(--color-grey-050)" : "transparent",
             }}
             onClick={() => {
               setShowDatePicker(!showDatePicker);
               setShowTimePicker(false);
             }}
             onMouseEnter={(e) => {
-              if (!showDatePicker) e.currentTarget.style.backgroundColor = "#FAF9F7";
+              if (!showDatePicker) e.currentTarget.style.backgroundColor = "var(--color-grey-050)";
             }}
             onMouseLeave={(e) => {
               if (!showDatePicker) e.currentTarget.style.backgroundColor = "transparent";
             }}
           >
-            <IconCalendar size={16} primary="#857F72" secondary="#D3CEC4" />
+            <IconCalendar size={16} primary="var(--color-grey-500)" secondary="var(--color-grey-300)" />
             {currentDate
               ? format(currentDate, "d MMM yyyy", { locale: dateLocale })
               : locale === "es"
@@ -340,7 +449,7 @@ export const FormDateTimePicker: React.FC<FormDateTimePickerProps> = ({
                       new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1)
                     )
                   }
-                  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#FAF9F7")}
+                  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "var(--color-grey-050)")}
                   onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent")}
                 >
                   ←
@@ -356,7 +465,7 @@ export const FormDateTimePicker: React.FC<FormDateTimePickerProps> = ({
                       new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1)
                     )
                   }
-                  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#FAF9F7")}
+                  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "var(--color-grey-050)")}
                   onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent")}
                 >
                   →
@@ -373,20 +482,21 @@ export const FormDateTimePicker: React.FC<FormDateTimePickerProps> = ({
                 {getDaysInMonth(currentMonth).map((day, index) => {
                   const isSelected = day && currentDate && day.toDateString() === currentDate.toDateString();
                   const isToday = day && day.toDateString() === today.toDateString();
+                  const isDisabled = day ? isDateDisabled(day) : false;
 
                   return (
                     <button
                       key={index}
                       type="button"
-                      style={getDayStyle(day, !!isSelected, !!isToday)}
-                      onClick={() => day && handleDateSelect(day)}
+                      style={getDayStyle(day, !!isSelected, !!isToday, isDisabled)}
+                      onClick={() => day && !isDisabled && handleDateSelect(day)}
                       onMouseEnter={(e) => {
-                        if (day && !isSelected) e.currentTarget.style.backgroundColor = "#FAF9F7";
+                        if (day && !isSelected && !isDisabled) e.currentTarget.style.backgroundColor = "var(--color-grey-050)";
                       }}
                       onMouseLeave={(e) => {
-                        if (day && !isSelected) e.currentTarget.style.backgroundColor = "transparent";
+                        if (day && !isSelected && !isDisabled) e.currentTarget.style.backgroundColor = "transparent";
                       }}
-                      disabled={!day}
+                      disabled={!day || isDisabled}
                     >
                       {day?.getDate()}
                     </button>
@@ -406,42 +516,48 @@ export const FormDateTimePicker: React.FC<FormDateTimePickerProps> = ({
             type="button"
             style={{
               ...timeButtonStyle,
-              backgroundColor: showTimePicker ? "#FAF9F7" : "transparent",
+              backgroundColor: showTimePicker ? "var(--color-grey-050)" : "transparent",
             }}
             onClick={() => {
               setShowTimePicker(!showTimePicker);
               setShowDatePicker(false);
             }}
             onMouseEnter={(e) => {
-              if (!showTimePicker) e.currentTarget.style.backgroundColor = "#FAF9F7";
+              if (!showTimePicker) e.currentTarget.style.backgroundColor = "var(--color-grey-050)";
             }}
             onMouseLeave={(e) => {
               if (!showTimePicker) e.currentTarget.style.backgroundColor = "transparent";
             }}
           >
-            <IconClock size={14} primary="#857F72" secondary="#D3CEC4" />
+            <IconClock size={14} primary="var(--color-grey-500)" secondary="var(--color-grey-300)" />
             {currentTime || (locale === "es" ? "Hora" : "Time")}
           </button>
 
           {showTimePicker && (
             <div style={{ ...dropdownStyle, right: 0, left: "auto" }}>
               <div style={timeListStyle}>
-                {timeOptions.map((time) => (
-                  <button
-                    key={time}
-                    type="button"
-                    style={timeOptionStyle(currentTime === time)}
-                    onClick={() => handleTimeSelect(time)}
-                    onMouseEnter={(e) => {
-                      if (currentTime !== time) e.currentTarget.style.backgroundColor = "#FAF9F7";
-                    }}
-                    onMouseLeave={(e) => {
-                      if (currentTime !== time) e.currentTarget.style.backgroundColor = "transparent";
-                    }}
-                  >
-                    {time}
-                  </button>
-                ))}
+                {allTimeOptions.map((time) => {
+                  const isDisabled = isTimeDisabled(time);
+                  const isSelected = currentTime === time;
+
+                  return (
+                    <button
+                      key={time}
+                      type="button"
+                      style={getTimeOptionStyle(isSelected, isDisabled)}
+                      onClick={() => !isDisabled && handleTimeSelect(time)}
+                      onMouseEnter={(e) => {
+                        if (!isSelected && !isDisabled) e.currentTarget.style.backgroundColor = "var(--color-grey-050)";
+                      }}
+                      onMouseLeave={(e) => {
+                        if (!isSelected && !isDisabled) e.currentTarget.style.backgroundColor = "transparent";
+                      }}
+                      disabled={isDisabled}
+                    >
+                      {time}
+                    </button>
+                  );
+                })}
               </div>
             </div>
           )}

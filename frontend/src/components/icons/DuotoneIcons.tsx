@@ -458,8 +458,8 @@ export function IconLocation({
 }: DuotoneIconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className}>
-      <path d="M12 22s-8-4.5-8-11.8A8 8 0 0 1 12 2a8 8 0 0 1 8 8.2c0 7.3-8 11.8-8 11.8z" fill={secondary} opacity="0.3"/>
-      <circle cx="12" cy="10" r="3" fill={primary}/>
+      <path fill={primary} d="M5.64 16.36a9 9 0 1 1 12.72 0l-5.65 5.66a1 1 0 0 1-1.42 0l-5.65-5.66zM12 13a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
+      <path fill={secondary} d="M12 1a9 9 0 0 1 6.36 15.36l-5.65 5.66a1 1 0 0 1-.71.3V13a3 3 0 0 0 0-6V1z"/>
     </svg>
   )
 }
@@ -473,8 +473,8 @@ export function IconClock({
 }: DuotoneIconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className}>
-      <circle cx="12" cy="12" r="9" fill={secondary} opacity="0.3"/>
-      <path d="M12 6v6l4 2" stroke={primary} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      <circle cx="12" cy="12" r="10" fill={secondary}/>
+      <path d="M13 11.59l3.2 3.2a1 1 0 0 1-1.4 1.42l-3.5-3.5A1 1 0 0 1 11 12V7a1 1 0 0 1 2 0v4.59z" fill={primary}/>
     </svg>
   )
 }
@@ -490,6 +490,158 @@ export function IconArrowRight({
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className}>
       <path d="M5 12h14" stroke={primary} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
       <path d="M12 5l7 7-7 7" stroke={primary} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  )
+}
+
+// 29. Edit Icon - Pencil
+export function IconEdit({
+  primary = 'currentColor',
+  secondary = 'currentColor',
+  size = 24,
+  className = ''
+}: DuotoneIconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className}>
+      <path d="M4 21v-4a1 1 0 0 1 .3-.7l11-11a1 1 0 0 1 1.4 0l3 3a1 1 0 0 1 0 1.4l-11 11a1 1 0 0 1-.7.3H4z" fill={secondary} opacity="0.3"/>
+      <path d="M15.3 5.3l3.4 3.4" stroke={primary} strokeWidth="2" strokeLinecap="round"/>
+      <path d="M4 21h16" stroke={primary} strokeWidth="2" strokeLinecap="round"/>
+    </svg>
+  )
+}
+
+// 30. Trash Icon - Delete
+export function IconTrash({
+  primary = 'currentColor',
+  secondary = 'currentColor',
+  size = 24,
+  className = ''
+}: DuotoneIconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className}>
+      <path d="M5 7h14l-1 12a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 7z" fill={secondary} opacity="0.3"/>
+      <path d="M3 7h18M9 7V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3" stroke={primary} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M10 11v6M14 11v6" stroke={primary} strokeWidth="2" strokeLinecap="round"/>
+    </svg>
+  )
+}
+
+// 31. QR Code Icon
+export function IconQrCode({
+  primary = 'currentColor',
+  secondary = 'currentColor',
+  size = 24,
+  className = ''
+}: DuotoneIconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className}>
+      {/* Top-left corner */}
+      <rect x="3" y="3" width="8" height="8" rx="1" stroke={primary} strokeWidth="2"/>
+      <rect x="5" y="5" width="4" height="4" fill={primary}/>
+      {/* Top-right corner */}
+      <rect x="13" y="3" width="8" height="8" rx="1" stroke={primary} strokeWidth="2"/>
+      <rect x="15" y="5" width="4" height="4" fill={primary}/>
+      {/* Bottom-left corner */}
+      <rect x="3" y="13" width="8" height="8" rx="1" stroke={primary} strokeWidth="2"/>
+      <rect x="5" y="15" width="4" height="4" fill={primary}/>
+      {/* Bottom-right pattern */}
+      <rect x="13" y="13" width="3" height="3" fill={secondary}/>
+      <rect x="17" y="13" width="3" height="3" fill={secondary}/>
+      <rect x="13" y="17" width="3" height="3" fill={secondary}/>
+      <rect x="17" y="17" width="3" height="3" fill={secondary}/>
+    </svg>
+  )
+}
+
+// 32. Check Icon - Checkmark
+export function IconCheck({
+  primary = 'currentColor',
+  secondary = 'currentColor',
+  size = 24,
+  className = ''
+}: DuotoneIconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className}>
+      <circle cx="12" cy="12" r="9" fill={secondary} opacity="0.3"/>
+      <path d="M8 12l3 3 5-6" stroke={primary} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  )
+}
+
+// 33. Chevron Right Icon
+export function IconChevronRight({
+  primary = 'currentColor',
+  secondary = 'currentColor',
+  size = 24,
+  className = ''
+}: DuotoneIconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className}>
+      <path d="M9 6l6 6-6 6" stroke={primary} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  )
+}
+
+// 34. Share Icon
+export function IconShare({
+  primary = 'currentColor',
+  secondary = 'currentColor',
+  size = 24,
+  className = ''
+}: DuotoneIconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className}>
+      <circle cx="18" cy="5" r="3" fill={secondary} opacity="0.3"/>
+      <circle cx="6" cy="12" r="3" fill={secondary} opacity="0.3"/>
+      <circle cx="18" cy="19" r="3" fill={secondary} opacity="0.3"/>
+      <path d="M8.59 13.51l6.83 3.98M15.41 6.51l-6.82 3.98" stroke={primary} strokeWidth="2" strokeLinecap="round"/>
+    </svg>
+  )
+}
+
+// 35. Alert Circle Icon
+export function IconAlertCircle({
+  primary = 'currentColor',
+  secondary = 'currentColor',
+  size = 24,
+  className = ''
+}: DuotoneIconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className}>
+      <circle cx="12" cy="12" r="9" fill={secondary} opacity="0.3"/>
+      <path d="M12 8v4M12 16h.01" stroke={primary} strokeWidth="2" strokeLinecap="round"/>
+    </svg>
+  )
+}
+
+// 36. Download Icon
+export function IconDownload({
+  primary = 'currentColor',
+  secondary = 'currentColor',
+  size = 24,
+  className = ''
+}: DuotoneIconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className}>
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" stroke={primary} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M7 10l5 5 5-5" stroke={primary} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M12 15V3" stroke={secondary} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  )
+}
+
+// 37. External Link Icon
+export function IconExternalLink({
+  primary = 'currentColor',
+  secondary = 'currentColor',
+  size = 24,
+  className = ''
+}: DuotoneIconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className}>
+      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" stroke={primary} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M15 3h6v6" stroke={secondary} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M10 14L21 3" stroke={primary} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
     </svg>
   )
 }
@@ -521,7 +673,19 @@ export const DuotoneIcons = {
   Menu: IconMenu,
   Close: IconClose,
   ChevronDown: IconChevronDown,
+  ChevronRight: IconChevronRight,
   Store: IconStore,
   Folder: IconFolder,
   Help: IconHelp,
+  Location: IconLocation,
+  Clock: IconClock,
+  ArrowRight: IconArrowRight,
+  Edit: IconEdit,
+  Trash: IconTrash,
+  QrCode: IconQrCode,
+  Check: IconCheck,
+  Share: IconShare,
+  AlertCircle: IconAlertCircle,
+  Download: IconDownload,
+  ExternalLink: IconExternalLink,
 }

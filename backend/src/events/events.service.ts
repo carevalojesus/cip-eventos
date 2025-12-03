@@ -850,6 +850,14 @@ export class EventsService {
       throw new BadRequestException('Only draft events can be published');
     }
 
+    // Validar que la fecha de inicio no haya pasado
+    const now = new Date();
+    if (new Date(event.startAt) < now) {
+      throw new BadRequestException(
+        'No se puede publicar un evento cuya fecha de inicio ya pasó',
+      );
+    }
+
     event.status = EventStatus.PUBLISHED;
     const saved = await this.eventRepository.save(event);
     await this.invalidateEventCache(id);

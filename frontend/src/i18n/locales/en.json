@@ -513,10 +513,15 @@
         "total_stock": "Total Stock",
         "available": "available in total",
         "cip_validation": "With CIP Validation",
-        "requires_membership": "require active membership"
+        "requires_membership": "require active membership",
+        "enrolled": "Enrolled",
+        "revenue": "Revenue",
+        "tickets": "Tickets",
+        "checkins": "Check-ins"
       },
       "table": {
         "title": "Ticket Types",
+        "title_count": "Ticket Types ({{count}})",
         "description": "Manage the ticket types available for this event.",
         "name": "Name",
         "price": "Price",
@@ -527,66 +532,206 @@
         "required": "Required",
         "active": "Active",
         "inactive": "Inactive",
-        "free": "Free"
+        "free": "Free",
+        "sold": "{{sold}} / {{total}} sold",
+        "max_per_order": "Max. {{count}}/order",
+        "hidden": "Hidden",
+        "cip_badge": "CIP",
+        "from_date": "From {{date}}",
+        "until_date": "Until {{date}}"
       },
       "empty": {
         "title": "No tickets configured",
-        "description": "Create ticket types so attendees can register for the event.",
+        "description": "Create your first ticket so attendees can register for the event.",
         "create_first": "Create first ticket"
       },
       "dialog": {
         "create_title": "New Ticket",
         "edit_title": "Edit Ticket",
-        "create_description": "Create a new ticket type for the event.",
-        "edit_description": "Modify the ticket details.",
-        "name_label": "Name",
-        "name_placeholder": "E.g: General, Active Member, Student",
+        "create_description": "Configure a new ticket type for the event",
+        "edit_description": "Modify the ticket details",
+        "name_label": "Ticket name",
+        "name_placeholder": "E.g: General, Student, VIP",
+        "description_label": "Description",
+        "description_placeholder": "E.g: Includes coffee break and materials",
+        "description_hint": "Optional. Describe the ticket benefits",
         "pricing": "Price",
         "free_ticket": "Free ticket",
-        "free_ticket_description": "This ticket will be free for attendees.",
-        "price_label": "Price (S/)",
-        "stock_label": "Stock (seats)",
+        "free_ticket_description": "No cost for attendees",
+        "price_label": "Price",
+        "stock_label": "Available seats",
         "stock_hint": "Maximum number of tickets available for sale.",
+        "max_per_order_label": "Max per order",
+        "max_per_order_hint": "Maximum quantity a user can purchase",
+        "sales_start": "Sales start",
+        "sales_end": "Sales end",
         "cip_validation_label": "Requires CIP validation",
-        "cip_validation_description": "Only licensed engineers with active membership can purchase this ticket.",
+        "cip_validation_description": "Only licensed engineers with active membership",
+        "visibility_label": "Publicly visible",
+        "visibility_description": "The ticket will appear on the event page",
         "cancel": "Cancel",
-        "save": "Save changes",
-        "create": "Create ticket"
+        "save": "Save Changes",
+        "create": "Create Ticket",
+        "saving": "Saving...",
+        "creating": "Creating..."
       },
       "delete": {
         "title": "Delete ticket?",
-        "description": "You are about to delete the ticket \"{{name}}\". If it already has associated registrations, it will be deactivated instead of deleted.",
+        "description": "This action cannot be undone. The ticket \"{{name}}\" will be permanently deleted.",
         "cancel": "Cancel",
-        "confirm": "Delete"
+        "confirm": "Delete",
+        "deleting": "Deleting..."
       },
       "actions": {
-        "new": "New Ticket",
+        "new": "Add Ticket",
         "edit": "Edit",
         "activate": "Activate",
         "deactivate": "Deactivate",
         "delete": "Delete"
       },
       "toast": {
-        "created": "Ticket created",
+        "created": "Ticket created successfully",
         "created_desc": "\"{{name}}\" has been created successfully.",
-        "updated": "Ticket updated",
+        "updated": "Ticket updated successfully",
         "updated_desc": "\"{{name}}\" has been updated successfully.",
-        "deleted": "Ticket deleted",
+        "deleted": "Ticket deleted successfully",
         "deleted_desc": "\"{{name}}\" has been deleted.",
         "activated": "Ticket activated",
         "deactivated": "Ticket deactivated",
         "status_changed_desc": "\"{{name}}\" has been {{status}}.",
         "error": "Error",
-        "error_save": "Could not save the ticket. Please try again.",
-        "error_delete": "Could not delete the ticket.",
+        "error_save": "Error saving the ticket",
+        "error_delete": "Error deleting the ticket",
         "error_status": "Could not change the ticket status."
       },
       "validation": {
         "name_required": "Name is required",
         "price_min": "Price must be greater than or equal to 0",
-        "stock_min": "Stock must be greater than or equal to 0"
+        "stock_min": "Stock must be greater than or equal to 0",
+        "max_per_order_min": "Minimum 1 per order"
       },
       "loading_error": "Error loading tickets"
+    },
+    "breadcrumb": {
+      "my_events": "My Events",
+      "details": "Details"
+    },
+    "header": {
+      "share": "Share",
+      "edit": "Edit"
+    },
+    "tabs": {
+      "general": "General",
+      "sessions": "Sessions",
+      "tickets": "Tickets",
+      "enrollments": "Attendees",
+      "speakers": "Speakers"
+    },
+    "placeholder": {
+      "sessions": "Soon you will be able to manage event sessions here.",
+      "enrollments": "Soon you will be able to view the attendees list here.",
+      "speakers": "Soon you will be able to manage speakers here."
+    },
+    "sessions": {
+      "table": {
+        "title_count": "Sessions ({{count}})",
+        "session_count": "{{count}} sessions",
+        "session_count_one": "{{count}} session",
+        "time": "Time",
+        "room": "Room",
+        "speakers": "speakers",
+        "has_meeting_url": "Virtual link"
+      },
+      "empty": {
+        "title": "No sessions configured",
+        "description": "Create your first session to organize the event schedule."
+      },
+      "dialog": {
+        "create_title": "New Session",
+        "edit_title": "Edit Session",
+        "create_description": "Configure a new session for the event",
+        "edit_description": "Modify the session details",
+        "title_label": "Session title",
+        "title_placeholder": "E.g: Keynote Speech, Workshop on...",
+        "description_label": "Description",
+        "description_placeholder": "Briefly describe the session content...",
+        "description_hint": "Optional. Detail the topic or content to cover",
+        "start_time": "Start",
+        "end_time": "End",
+        "room_label": "Room or Venue",
+        "room_placeholder": "E.g: Main Auditorium, Room A",
+        "room_hint": "Optional. Indicate where the session will take place",
+        "meeting_url_label": "Virtual Meeting URL",
+        "meeting_url_placeholder": "https://zoom.us/j/...",
+        "meeting_url_hint": "Optional. Link for virtual or hybrid sessions",
+        "cancel": "Cancel",
+        "save": "Save Changes",
+        "create": "Create Session",
+        "saving": "Saving...",
+        "creating": "Creating..."
+      },
+      "delete": {
+        "title": "Delete session?",
+        "description": "This action cannot be undone. The session \"{{name}}\" will be permanently deleted.",
+        "cancel": "Cancel",
+        "confirm": "Delete",
+        "deleting": "Deleting..."
+      },
+      "actions": {
+        "new": "Add Session",
+        "edit": "Edit",
+        "delete": "Delete"
+      },
+      "toast": {
+        "created": "Session created successfully",
+        "updated": "Session updated successfully",
+        "deleted": "Session deleted successfully",
+        "error_save": "Error saving the session",
+        "error_delete": "Error deleting the session"
+      },
+      "validation": {
+        "title_required": "Title is required",
+        "start_required": "Start time is required",
+        "end_required": "End time is required",
+        "url_invalid": "Enter a valid URL"
+      },
+      "loading_error": "Error loading sessions"
+    },
+    "general": {
+      "occupation": "Occupation",
+      "available_spots": "{{count}} spots available",
+      "date_time": "Date & Time",
+      "location": "Location",
+      "qr_code": "QR Code",
+      "download_qr": "Download QR",
+      "status": {
+        "PUBLISHED": "Published",
+        "DRAFT": "Draft",
+        "CANCELLED": "Cancelled",
+        "COMPLETED": "Completed"
+      }
     }
+  },
+  "sections": {
+    "coming_soon": "Soon you will be able to manage this section here.",
+    "under_construction": "Section under construction",
+    "no_content": "No content available for this route yet.",
+    "speakers": "Speakers",
+    "organizers": "Organizers",
+    "registrations": "Registrations",
+    "access_control": "Access Control",
+    "certificates": "Certificates",
+    "revenue": "Revenue",
+    "payments": "Payments",
+    "reports": "Reports",
+    "payments_reports": "Payments & Reports",
+    "users": "Users",
+    "cip_registry": "CIP Registry",
+    "settings": "Settings"
+  },
+  "error_state": {
+    "title": "Error loading data",
+    "default_message": "An error occurred while loading the data",
+    "retry": "Retry"
   }
 }
