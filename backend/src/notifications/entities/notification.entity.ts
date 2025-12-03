@@ -11,10 +11,10 @@ import {
 import { User } from '../../users/entities/user.entity';
 
 export enum NotificationType {
-  INFO = 'info',
-  SUCCESS = 'success',
-  WARNING = 'warning',
-  ERROR = 'error',
+  INFO = 'INFO',
+  SUCCESS = 'SUCCESS',
+  WARNING = 'WARNING',
+  ERROR = 'ERROR',
 }
 
 @Entity('notifications')

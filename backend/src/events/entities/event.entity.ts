@@ -26,10 +26,11 @@ import { EventSession } from './event-session.entity';
 import { Signer } from '../../signers/entities/signer.entity';
 
 export enum EventStatus {
-  DRAFT = 'DRAFT',
-  PUBLISHED = 'PUBLISHED',
-  COMPLETED = 'COMPLETED',
-  CANCELLED = 'CANCELLED',
+  DRAFT = 'DRAFT', // Borrador, no visible al público
+  PUBLISHED = 'PUBLISHED', // Publicado, visible y abierto a inscripciones
+  COMPLETED = 'COMPLETED', // Evento finalizado
+  CANCELLED = 'CANCELLED', // Evento cancelado
+  ARCHIVED = 'ARCHIVED', // Archivado, oculto pero preservado
 }
 
 @Entity('events')

@@ -1,4 +1,13 @@
-import { Controller, Get, Param, Res, Logger, NotFoundException, BadRequestException, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Param,
+  Res,
+  Logger,
+  NotFoundException,
+  BadRequestException,
+  Query,
+} from '@nestjs/common';
 import type { Response } from 'express';
 import { WalletService } from './wallet.service';
 import { RegistrationsService } from '../registrations/registrations.service';
@@ -11,7 +20,7 @@ export class WalletController {
 
   constructor(
     private readonly walletService: WalletService,
-    private readonly registrationsService: RegistrationsService
+    private readonly registrationsService: RegistrationsService,
   ) {}
 
   /**
@@ -23,7 +32,7 @@ export class WalletController {
   async getGoogleWalletLink(
     @Param('registrationId') id: string,
     @Query('token') token: string,
-    @Res() res: Response
+    @Res() res: Response,
   ) {
     this.logger.log(`Wallet link requested for registration: ${id}`);
 
@@ -58,15 +67,18 @@ export class WalletController {
     } catch (error) {
       this.logger.error(
         `Failed to generate wallet link for registration ${id}: ${error.message}`,
-        error.stack
+        error.stack,
       );
 
       // Manejar diferentes tipos de errores
-      if (error instanceof NotFoundException || error instanceof BadRequestException) {
+      if (
+        error instanceof NotFoundException ||
+        error instanceof BadRequestException
+      ) {
         return res.status(error.getStatus()).json({
           statusCode: error.getStatus(),
           message: error.message,
-          error: error.name
+          error: error.name,
         });
       }
 
@@ -74,7 +86,7 @@ export class WalletController {
       return res.status(500).json({
         statusCode: 500,
         message: 'Failed to generate Google Wallet link',
-        error: 'Internal Server Error'
+        error: 'Internal Server Error',
       });
     }
   }

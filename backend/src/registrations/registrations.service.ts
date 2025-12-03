@@ -24,6 +24,7 @@ import { EventStatus } from '../events/entities/event.entity';
 import { CreateRegistrationDto } from './dto/create-registration.dto';
 import { MailService } from '../mail/mail.service';
 import { CipIntegrationService } from '../cip-integration/cip-integration.service';
+import { EmailQueueService } from '../queue/services/email-queue.service';
 
 @Injectable()
 export class RegistrationsService {
@@ -37,6 +38,7 @@ export class RegistrationsService {
     private readonly cipService: CipIntegrationService,
     private readonly dataSource: DataSource,
     private readonly i18n: I18nService,
+    private readonly emailQueueService: EmailQueueService,
   ) {}
 
   async create(dto: CreateRegistrationDto, user?: User | null) {
@@ -203,7 +205,11 @@ export class RegistrationsService {
 
         // 8. 📧 COMUNICACIÓN
         if (savedReg.status === RegistrationStatus.CONFIRMED) {
-          // TODO: Enviar email de confirmación
+          // Encolar email de confirmación con ticket
+          await this.emailQueueService.queueTicketEmail(savedReg.id);
+          this.logger.log(
+            `✅ Email de confirmación encolado para ${attendee.email}`,
+          );
         } else if (finalPrice > 0) {
           this.logger.log('⏳ Enviar correo de instrucciones de pago...');
         }

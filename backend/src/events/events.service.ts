@@ -21,7 +21,11 @@ import { EventTicket } from './entities/event-ticket.entity';
 import { EventLocation } from './entities/event-location.entity';
 import { CreateTicketDto } from './dto/create-ticket.dto';
 import { UpdateTicketDto } from './dto/update-ticket.dto';
-import { PaginationDto, paginate, PaginatedResult } from '../common/dto/pagination.dto';
+import {
+  PaginationDto,
+  paginate,
+  PaginatedResult,
+} from '../common/dto/pagination.dto';
 import { RedisService } from '../redis/redis.service';
 
 // Cache TTLs
@@ -68,36 +72,52 @@ export class EventsService {
     } = createEventDto;
 
     // Ejecutar todas las consultas en paralelo para evitar N+1
-    const [user, type, category, modality, speakers, organizers] = await Promise.all([
-      this.userRepository.findOne({
-        where: { id: userId, isActive: true },
-      }),
-      this.eventTypeRepository.findOneBy({ id: typeId }),
-      categoryId
-        ? this.eventCategoryRepository.findOneBy({ id: categoryId })
-        : Promise.resolve(null),
-      this.eventModalityRepository.findOneBy({ id: modalityId }),
-      speakersIds && speakersIds.length > 0
-        ? this.speakerRepository.findBy({ id: In(speakersIds), isActive: true })
-        : Promise.resolve([]),
-      organizersIds && organizersIds.length > 0
-        ? this.organizerRepository.findBy({ id: In(organizersIds), isActive: true })
-        : Promise.resolve([]),
-    ]);
+    const [user, type, category, modality, speakers, organizers] =
+      await Promise.all([
+        this.userRepository.findOne({
+          where: { id: userId, isActive: true },
+        }),
+        this.eventTypeRepository.findOneBy({ id: typeId }),
+        categoryId
+          ? this.eventCategoryRepository.findOneBy({ id: categoryId })
+          : Promise.resolve(null),
+        this.eventModalityRepository.findOneBy({ id: modalityId }),
+        speakersIds && speakersIds.length > 0
+          ? this.speakerRepository.findBy({
+              id: In(speakersIds),
+              isActive: true,
+            })
+          : Promise.resolve([]),
+        organizersIds && organizersIds.length > 0
+          ? this.organizerRepository.findBy({
+              id: In(organizersIds),
+              isActive: true,
+            })
+          : Promise.resolve([]),
+      ]);
 
     // Validaciones
     if (!user) throw new NotFoundException('User not found');
     if (!type) throw new NotFoundException('Event Type not found');
-    if (categoryId && !category) throw new NotFoundException('Event Category not found');
+    if (categoryId && !category)
+      throw new NotFoundException('Event Category not found');
     if (!modality) throw new NotFoundException('Event Modality not found');
 
     // Validar speakers si se proporcionaron
-    if (speakersIds && speakersIds.length > 0 && speakers.length !== speakersIds.length) {
+    if (
+      speakersIds &&
+      speakersIds.length > 0 &&
+      speakers.length !== speakersIds.length
+    ) {
       throw new NotFoundException('One or more speakers not found');
     }
 
     // Validar organizers si se proporcionaron
-    if (organizersIds && organizersIds.length > 0 && organizers.length !== organizersIds.length) {
+    if (
+      organizersIds &&
+      organizersIds.length > 0 &&
+      organizers.length !== organizersIds.length
+    ) {
       throw new NotFoundException('One or more organizers not found');
     }
 
@@ -138,8 +158,6 @@ export class EventsService {
     await this.invalidateEventCache(savedEvent.id);
     return savedEvent;
   }
-
-
 
   async getTypes() {
     const cacheKey = 'catalog:event-types';
@@ -212,21 +230,24 @@ export class EventsService {
     return Array.from(uniqueMap.values());
   }
 
-  async findAll(paginationDto?: PaginationDto): Promise<PaginatedResult<Event>> {
+  async findAll(
+    paginationDto?: PaginationDto,
+  ): Promise<PaginatedResult<Event>> {
     const page = paginationDto?.page || 1;
     const limit = paginationDto?.limit || 10;
 
     // Intentar obtener del cache
     const cacheKey = `events:list:${page}:${limit}`;
-    const cached = await this.redisService.get<PaginatedResult<Event>>(cacheKey);
+    const cached =
+      await this.redisService.get<PaginatedResult<Event>>(cacheKey);
     if (cached) {
       return cached;
     }
 
     const skip = (page - 1) * limit;
 
-    // No incluye virtualAccess por seguridad (lazy loading)
-    const [events, total] = await this.eventRepository.findAndCount({
+    // Obtener TODOS los eventos activos sin paginación para ordenar correctamente
+    const allEvents = await this.eventRepository.find({
       where: { isActive: true },
       relations: [
         'type',
@@ -236,11 +257,31 @@ export class EventsService {
         'location',
         'speakers',
         'organizers',
+        'tickets',
       ],
-      skip,
-      take: limit,
-      order: { createdAt: 'DESC' },
     });
+
+    // Ordenar en memoria:
+    // 1. PUBLISHED primero, ordenados por fecha próxima
+    // 2. DRAFT segundo
+    // 3. COMPLETED/CANCELLED/ARCHIVED al final
+    const statusPriority: Record<EventStatus, number> = {
+      [EventStatus.PUBLISHED]: 1,
+      [EventStatus.DRAFT]: 2,
+      [EventStatus.COMPLETED]: 3,
+      [EventStatus.CANCELLED]: 4,
+      [EventStatus.ARCHIVED]: 5,
+    };
+
+    allEvents.sort((a, b) => {
+      const statusDiff = statusPriority[a.status] - statusPriority[b.status];
+      if (statusDiff !== 0) return statusDiff;
+      return new Date(a.startAt).getTime() - new Date(b.startAt).getTime();
+    });
+
+    // Aplicar paginación después de ordenar
+    const total = allEvents.length;
+    const events = allEvents.slice(skip, skip + limit);
 
     const result = paginate(events, total, page, limit);
     await this.redisService.set(cacheKey, result, EVENTS_LIST_CACHE_TTL);
@@ -343,11 +384,24 @@ export class EventsService {
 
     // Cargar todas las relaciones necesarias en paralelo
     const [type, category, modality, speakers, organizers] = await Promise.all([
-      typeId ? this.eventTypeRepository.findOneBy({ id: typeId }) : Promise.resolve(null),
-      categoryId ? this.eventCategoryRepository.findOneBy({ id: categoryId }) : Promise.resolve(null),
-      modalityId ? this.eventModalityRepository.findOneBy({ id: modalityId }) : Promise.resolve(null),
-      speakersIds ? this.speakerRepository.findBy({ id: In(speakersIds), isActive: true }) : Promise.resolve(null),
-      organizersIds ? this.organizerRepository.findBy({ id: In(organizersIds), isActive: true }) : Promise.resolve(null),
+      typeId
+        ? this.eventTypeRepository.findOneBy({ id: typeId })
+        : Promise.resolve(null),
+      categoryId
+        ? this.eventCategoryRepository.findOneBy({ id: categoryId })
+        : Promise.resolve(null),
+      modalityId
+        ? this.eventModalityRepository.findOneBy({ id: modalityId })
+        : Promise.resolve(null),
+      speakersIds
+        ? this.speakerRepository.findBy({ id: In(speakersIds), isActive: true })
+        : Promise.resolve(null),
+      organizersIds
+        ? this.organizerRepository.findBy({
+            id: In(organizersIds),
+            isActive: true,
+          })
+        : Promise.resolve(null),
     ]);
 
     // Validaciones y asignaciones

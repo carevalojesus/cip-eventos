@@ -1,8 +1,8 @@
 export enum EmailJobType {
-  WELCOME = 'welcome',
-  PASSWORD_RESET = 'password-reset',
-  ACCOUNT_CONFIRMED = 'account-confirmed',
-  TICKET = 'ticket',
+  WELCOME = 'WELCOME',
+  PASSWORD_RESET = 'PASSWORD_RESET',
+  ACCOUNT_CONFIRMED = 'ACCOUNT_CONFIRMED',
+  TICKET = 'TICKET',
 }
 
 export interface WelcomeEmailJob {

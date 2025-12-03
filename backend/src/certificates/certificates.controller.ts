@@ -8,6 +8,7 @@ import {
   Delete,
   UseGuards,
 } from '@nestjs/common';
+import { Throttle } from '@nestjs/throttler';
 import { CertificatesService } from './certificates.service';
 import { CreateCertificateDto } from './dto/create-certificate.dto';
 import { UpdateCertificateDto } from './dto/update-certificate.dto';
@@ -43,6 +44,7 @@ export class CertificatesController {
 
   @Get('verify/:code')
   @Public()
+  @Throttle({ short: { limit: 10, ttl: 60000 } }) // 10 requests por minuto para prevenir enumeration attacks
   verify(@Param('code') code: string) {
     return this.certificatesService.findByValidationCode(code);
   }

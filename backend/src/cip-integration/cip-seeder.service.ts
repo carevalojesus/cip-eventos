@@ -28,12 +28,19 @@ export class CipSeederService {
   async importCsv(buffer: Buffer): Promise<boolean> {
     const results: CsvRow[] = [];
 
-    this.logger.log(`Iniciando importación de padrón (Buffer de ${buffer.length} bytes)`);
+    this.logger.log(
+      `Iniciando importación de padrón (Buffer de ${buffer.length} bytes)`,
+    );
 
     // Remover BOM (Byte Order Mark) si existe
     // BOM es el carácter invisible U+FEFF que Excel/Windows agrega al inicio de archivos UTF-8
     let cleanBuffer = buffer;
-    if (buffer.length >= 3 && buffer[0] === 0xEF && buffer[1] === 0xBB && buffer[2] === 0xBF) {
+    if (
+      buffer.length >= 3 &&
+      buffer[0] === 0xef &&
+      buffer[1] === 0xbb &&
+      buffer[2] === 0xbf
+    ) {
       this.logger.debug('BOM detectado, removiendo...');
       cleanBuffer = buffer.slice(3);
     }
@@ -50,7 +57,9 @@ export class CipSeederService {
           // Log del primer registro para debug
           if (rowCount === 1) {
             this.logger.debug(`Primera fila parseada: ${JSON.stringify(data)}`);
-            this.logger.debug(`Headers detectados: ${Object.keys(data).join(', ')}`);
+            this.logger.debug(
+              `Headers detectados: ${Object.keys(data).join(', ')}`,
+            );
           }
         })
         .on('end', () => {
@@ -59,12 +68,18 @@ export class CipSeederService {
           this.processData(results)
             .then(() => resolve(true))
             .catch((err) => {
-              this.logger.error(`Error en processData: ${err.message}`, err.stack);
+              this.logger.error(
+                `Error en processData: ${err.message}`,
+                err.stack,
+              );
               reject(err instanceof Error ? err : new Error(String(err)));
             });
         })
         .on('error', (error) => {
-          this.logger.error(`Error al parsear CSV: ${error.message}`, error.stack);
+          this.logger.error(
+            `Error al parsear CSV: ${error.message}`,
+            error.stack,
+          );
           reject(error);
         });
     });
@@ -137,7 +152,9 @@ export class CipSeederService {
 
         // Si hay muchos errores consecutivos, abortar
         if (errors > 10 && processed === 0) {
-          throw new Error(`Demasiados errores al inicio del procesamiento (${errors}). Abortando.`);
+          throw new Error(
+            `Demasiados errores al inicio del procesamiento (${errors}). Abortando.`,
+          );
         }
       }
     }
@@ -147,7 +164,9 @@ export class CipSeederService {
     );
 
     if (processed === 0 && rows.length > 0) {
-      throw new Error(`No se procesó ningún registro de ${rows.length} filas. Verificar formato del CSV.`);
+      throw new Error(
+        `No se procesó ningún registro de ${rows.length} filas. Verificar formato del CSV.`,
+      );
     }
   }
 }

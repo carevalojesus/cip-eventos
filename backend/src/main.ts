@@ -14,7 +14,8 @@ async function bootstrap() {
 
   const port = configService.get<number>('PORT') || 3000;
   const prefix = configService.get<string>('API_PREFIX') || 'api';
-  const frontendUrl = configService.get<string>('FRONTEND_URL') || 'http://localhost:4321';
+  const frontendUrl =
+    configService.get<string>('FRONTEND_URL') || 'http://localhost:4321';
   const isProduction = configService.get<string>('NODE_ENV') === 'production';
 
   app.setGlobalPrefix(prefix, {
@@ -58,7 +59,9 @@ async function bootstrap() {
 
   // CORS configurado con origen específico y soporte para cookies
   app.enableCors({
-    origin: isProduction ? frontendUrl : [frontendUrl, 'http://localhost:4321', 'http://localhost:3000'],
+    origin: isProduction
+      ? frontendUrl
+      : [frontendUrl, 'http://localhost:4321', 'http://localhost:3000'],
     credentials: true,
     methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'Accept-Language'],
@@ -67,7 +70,9 @@ async function bootstrap() {
   // Swagger/OpenAPI Configuration
   const config = new DocumentBuilder()
     .setTitle('CIP Eventos API')
-    .setDescription('API documentation for CIP Eventos - Event Management System')
+    .setDescription(
+      'API documentation for CIP Eventos - Event Management System',
+    )
     .setVersion('1.0')
     .addTag('auth', 'Authentication endpoints')
     .addTag('users', 'User management')
@@ -99,7 +104,9 @@ async function bootstrap() {
   await app.listen(port);
   const logger = new Logger('Bootstrap');
   logger.log(`🚀 Servidor corriendo en: http://localhost:${port}/${prefix}`);
-  logger.log(`📚 Documentación Swagger disponible en: http://localhost:${port}/api/docs`);
+  logger.log(
+    `📚 Documentación Swagger disponible en: http://localhost:${port}/api/docs`,
+  );
 }
 
 bootstrap().catch((err) => {

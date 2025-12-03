@@ -20,8 +20,9 @@ export enum CertificateType {
 }
 
 export enum CertificateStatus {
-  ACTIVE = 'ACTIVE',
-  REVOKED = 'REVOKED',
+  ACTIVE = 'ACTIVE', // Certificado válido
+  REVOKED = 'REVOKED', // Certificado revocado por admin
+  EXPIRED = 'EXPIRED', // Certificado expirado por tiempo
 }
 
 @Entity('certificates')

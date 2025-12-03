@@ -1,4 +1,15 @@
-import { Body, Controller, Post, UseGuards, Get, Param, Res, NotFoundException, BadRequestException, StreamableFile } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Post,
+  UseGuards,
+  Get,
+  Param,
+  Res,
+  NotFoundException,
+  BadRequestException,
+  StreamableFile,
+} from '@nestjs/common';
 import { UploadsService } from './uploads.service';
 import { RequestAvatarUrlDto } from './dto/request-avatar-url.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
@@ -35,7 +46,8 @@ export class UploadsController {
     const key = `${folder}/${file}`;
 
     try {
-      const { stream, contentType } = await this.uploadsService.getFileStream(key);
+      const { stream, contentType } =
+        await this.uploadsService.getFileStream(key);
 
       res.setHeader('Content-Type', contentType || 'application/octet-stream');
       res.setHeader('Cache-Control', 'public, max-age=31536000'); // Cache por 1 año

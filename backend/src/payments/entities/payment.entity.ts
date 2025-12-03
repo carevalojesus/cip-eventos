@@ -17,7 +17,22 @@ export enum PaymentStatus {
   WAITING_APPROVAL = 'WAITING_APPROVAL', // Usuario reportó pago (Yapeó), falta que Admin revise
   COMPLETED = 'COMPLETED', // Dinero confirmado, Ticket enviado
   REJECTED = 'REJECTED', // Admin rechazó (foto falsa, monto incorrecto)
-  REFUNDED = 'REFUNDED',
+  REFUNDED = 'REFUNDED', // Pago reembolsado
+  EXPIRED = 'EXPIRED', // Pago expiró sin completarse
+  FAILED = 'FAILED', // Error en procesamiento de pago
+}
+
+// Tipo de documento para facturación (diferente a DocumentType de attendees)
+export enum BillingDocumentType {
+  DNI = 'DNI', // Boleta - Persona natural
+  RUC = 'RUC', // Factura - Empresa
+}
+
+// Origen de la compra/pago
+export enum PaymentSource {
+  ONLINE = 'ONLINE', // Compra por web
+  BOX_OFFICE = 'BOX_OFFICE', // Compra en taquilla/oficina
+  ADMIN = 'ADMIN', // Registrado por admin
 }
 
 export enum PaymentProvider {
@@ -74,7 +89,7 @@ export class Payment {
   // Datos de facturación (snapshot al momento del pago)
   @Column({ type: 'jsonb', nullable: true })
   billingData: {
-    documentType: 'DNI' | 'RUC';
+    documentType: BillingDocumentType;
     documentNumber: string;
     businessName?: string;
     address?: string;
@@ -83,8 +98,12 @@ export class Payment {
   @Column({ type: 'text', nullable: true })
   invoiceUrl: string; // URL al PDF de factura/boleta
 
-  @Column({ type: 'text', default: 'ONLINE' })
-  source: 'ONLINE' | 'BOX_OFFICE' | 'ADMIN'; // Origen de la compra
+  @Column({
+    type: 'enum',
+    enum: PaymentSource,
+    default: PaymentSource.ONLINE,
+  })
+  source: PaymentSource;
 
   // 👇 Auditoría: ¿Qué admin aprobó esto?
   @ManyToOne(() => User, { nullable: true })

@@ -23,7 +23,9 @@ export class MailService {
     private configService: ConfigService,
     private qrService: QrService,
     private walletService: WalletService,
-    @Optional() @Inject(RESEND_CLIENT) private readonly resendClient: Resend | null,
+    @Optional()
+    @Inject(RESEND_CLIENT)
+    private readonly resendClient: Resend | null,
   ) {}
 
   private getLocale(): 'es' | 'en' {
@@ -32,17 +34,29 @@ export class MailService {
     return 'es';
   }
 
-  private getFrontendPath(key: 'login' | 'confirm' | 'reset', locale: 'es' | 'en'): string {
+  private getFrontendPath(
+    key: 'login' | 'confirm' | 'reset',
+    locale: 'es' | 'en',
+  ): string {
     const map = {
-      login: locale === 'en'
-        ? this.configService.get<string>('FRONTEND_LOGIN_PATH_EN') ?? '/en/login'
-        : this.configService.get<string>('FRONTEND_LOGIN_PATH_ES') ?? '/iniciar-sesion',
-      confirm: locale === 'en'
-        ? this.configService.get<string>('FRONTEND_CONFIRM_PATH_EN') ?? '/en/auth/confirm'
-        : this.configService.get<string>('FRONTEND_CONFIRM_PATH_ES') ?? '/auth/confirm',
-      reset: locale === 'en'
-        ? this.configService.get<string>('FRONTEND_RESET_PATH_EN') ?? '/en/auth/reset-password'
-        : this.configService.get<string>('FRONTEND_RESET_PATH_ES') ?? '/auth/restablecer-contrasena',
+      login:
+        locale === 'en'
+          ? (this.configService.get<string>('FRONTEND_LOGIN_PATH_EN') ??
+            '/en/login')
+          : (this.configService.get<string>('FRONTEND_LOGIN_PATH_ES') ??
+            '/iniciar-sesion'),
+      confirm:
+        locale === 'en'
+          ? (this.configService.get<string>('FRONTEND_CONFIRM_PATH_EN') ??
+            '/en/auth/confirm')
+          : (this.configService.get<string>('FRONTEND_CONFIRM_PATH_ES') ??
+            '/auth/confirm'),
+      reset:
+        locale === 'en'
+          ? (this.configService.get<string>('FRONTEND_RESET_PATH_EN') ??
+            '/en/auth/reset-password')
+          : (this.configService.get<string>('FRONTEND_RESET_PATH_ES') ??
+            '/auth/restablecer-contrasena'),
     };
     return map[key];
   }
@@ -111,7 +125,11 @@ export class MailService {
   async sendAccountConfirmed(email: string, name: string) {
     const locale = this.getLocale();
     const loginUrl = this.buildLoginUrl(locale);
-    const { subject, html } = await renderAccountConfirmedEmail(name, loginUrl, locale);
+    const { subject, html } = await renderAccountConfirmedEmail(
+      name,
+      loginUrl,
+      locale,
+    );
     await this.dispatchMail(email, subject, html);
   }
 
@@ -189,7 +207,9 @@ export class MailService {
     }
 
     // Generar QR code
-    const qrCode = await this.qrService.generateQrBase64(contextData.ticketCode);
+    const qrCode = await this.qrService.generateQrBase64(
+      contextData.ticketCode,
+    );
 
     const safeContext = {
       name: contextData.name || 'colega',

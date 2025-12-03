@@ -4,9 +4,17 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
-  OneToMany, // <--- 1. AGREGAR ESTO
+  OneToMany,
 } from 'typeorm';
-import { User } from '../../users/entities/user.entity'; // <--- 2. IMPORTAR USUARIO
+import { User } from '../../users/entities/user.entity';
+
+// Enum para los nombres de roles predefinidos
+export enum UserRole {
+  ADMIN = 'ADMIN',
+  USER = 'USER',
+  MODERATOR = 'MODERATOR', // Para futura expansión
+  ORGANIZER = 'ORGANIZER', // Organizador de eventos
+}
 
 @Entity('roles')
 export class Role {

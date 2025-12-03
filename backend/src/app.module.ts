@@ -34,6 +34,7 @@ import { DashboardModule } from './dashboard/dashboard.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { RedisModule } from './redis/redis.module';
 import { QueueModule } from './queue/queue.module';
+import { SeedModule } from './database/seeds/seed.module';
 
 @Module({
   imports: [
@@ -123,6 +124,7 @@ import { QueueModule } from './queue/queue.module';
     NotificationsModule,
     RedisModule,
     QueueModule,
+    SeedModule,
 
     I18nModule.forRoot({
       fallbackLanguage: 'es',

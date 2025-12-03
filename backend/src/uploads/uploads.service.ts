@@ -48,8 +48,9 @@ export class UploadsService {
     });
 
     const uploadUrl = await getSignedUrl(s3, command, { expiresIn: 300 }); // 5 min
-    const normalizedEndpoint = this.configService.get<string>('API_URL') ?? 'http://localhost:3000';
-    
+    const normalizedEndpoint =
+      this.configService.get<string>('API_URL') ?? 'http://localhost:3000';
+
     // Return proxy URL instead of direct MinIO URL
     const publicUrl = `${normalizedEndpoint}/uploads/public/${key}`;
 
@@ -65,7 +66,10 @@ export class UploadsService {
     return getSignedUrl(s3, command, { expiresIn: 3600 }); // 1 hour
   }
 
-  async getFileStream(key: string): Promise<{ stream: NodeJS.ReadableStream; contentType: string | undefined }> {
+  async getFileStream(key: string): Promise<{
+    stream: NodeJS.ReadableStream;
+    contentType: string | undefined;
+  }> {
     const s3 = this.getOrCreateClient();
     const command = new GetObjectCommand({
       Bucket: this.bucket,
@@ -105,7 +109,8 @@ export class UploadsService {
 
     // Siempre usar URLs del backend (proxy)
     // Esto permite: cambiar storage sin cambiar URLs, control de CORS centralizado, métricas
-    const apiUrl = this.configService.get<string>('API_URL') ?? 'http://localhost:3000';
+    const apiUrl =
+      this.configService.get<string>('API_URL') ?? 'http://localhost:3000';
     const isPublic = folder === 'events';
     const accessType = isPublic ? 'public' : 'private';
 

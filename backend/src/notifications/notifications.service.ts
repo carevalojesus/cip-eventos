@@ -30,7 +30,9 @@ export class NotificationsService {
     });
 
     const saved = await this.notificationRepo.save(notification);
-    this.logger.log(`[create] Notificación creada para usuario ${dto.userId}: ${dto.title}`);
+    this.logger.log(
+      `[create] Notificación creada para usuario ${dto.userId}: ${dto.title}`,
+    );
     return saved;
   }
 
@@ -59,15 +61,16 @@ export class NotificationsService {
 
     notification.read = true;
     await this.notificationRepo.save(notification);
-    this.logger.log(`[markAsRead] Notificación ${notificationId} marcada como leída`);
+    this.logger.log(
+      `[markAsRead] Notificación ${notificationId} marcada como leída`,
+    );
   }
 
   async markAllAsRead(userId: string): Promise<void> {
-    await this.notificationRepo.update(
-      { userId, read: false },
-      { read: true },
+    await this.notificationRepo.update({ userId, read: false }, { read: true });
+    this.logger.log(
+      `[markAllAsRead] Todas las notificaciones de ${userId} marcadas como leídas`,
     );
-    this.logger.log(`[markAllAsRead] Todas las notificaciones de ${userId} marcadas como leídas`);
   }
 
   async deleteOldNotifications(daysOld = 30): Promise<number> {
@@ -81,12 +84,17 @@ export class NotificationsService {
       .andWhere('read = :read', { read: true })
       .execute();
 
-    this.logger.log(`[deleteOldNotifications] Eliminadas ${result.affected} notificaciones antiguas`);
+    this.logger.log(
+      `[deleteOldNotifications] Eliminadas ${result.affected} notificaciones antiguas`,
+    );
     return result.affected || 0;
   }
 
   // Métodos helper para crear notificaciones específicas
-  async notifyPaymentConfirmed(userId: string, amount: number): Promise<Notification> {
+  async notifyPaymentConfirmed(
+    userId: string,
+    amount: number,
+  ): Promise<Notification> {
     return this.create({
       type: NotificationType.SUCCESS,
       title: 'Pago confirmado',
@@ -96,7 +104,10 @@ export class NotificationsService {
     });
   }
 
-  async notifyPaymentRejected(userId: string, reason: string): Promise<Notification> {
+  async notifyPaymentRejected(
+    userId: string,
+    reason: string,
+  ): Promise<Notification> {
     return this.create({
       type: NotificationType.ERROR,
       title: 'Pago rechazado',
@@ -106,7 +117,11 @@ export class NotificationsService {
     });
   }
 
-  async notifyEventPublished(userId: string, eventTitle: string, eventId: string): Promise<Notification> {
+  async notifyEventPublished(
+    userId: string,
+    eventTitle: string,
+    eventId: string,
+  ): Promise<Notification> {
     return this.create({
       type: NotificationType.INFO,
       title: 'Nuevo evento publicado',
@@ -116,7 +131,12 @@ export class NotificationsService {
     });
   }
 
-  async notifyUpcomingEvent(userId: string, eventTitle: string, eventId: string, daysUntil: number): Promise<Notification> {
+  async notifyUpcomingEvent(
+    userId: string,
+    eventTitle: string,
+    eventId: string,
+    daysUntil: number,
+  ): Promise<Notification> {
     return this.create({
       type: NotificationType.WARNING,
       title: 'Evento próximo',

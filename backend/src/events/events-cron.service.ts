@@ -23,7 +23,9 @@ export class EventsCronService {
     if (this.enableCron) {
       this.logger.log('✅ Events Cron jobs habilitados');
     } else {
-      this.logger.log('⏸️ Events Cron jobs deshabilitados (NODE_ENV !== production)');
+      this.logger.log(
+        '⏸️ Events Cron jobs deshabilitados (NODE_ENV !== production)',
+      );
     }
   }
 
@@ -31,7 +33,7 @@ export class EventsCronService {
    * Auto-completar eventos cuya fecha de fin ya pasó
    * Se ejecuta cada 15 minutos
    */
-  @Cron(CronExpression.EVERY_15_MINUTES, {
+  @Cron('0 */15 * * * *', {
     name: 'auto-complete-events',
     timeZone: 'America/Lima',
   })
@@ -63,7 +65,9 @@ export class EventsCronService {
       for (const event of eventsToComplete) {
         event.status = EventStatus.COMPLETED;
         await this.eventRepository.save(event);
-        this.logger.log(`✅ Evento completado: "${event.title}" (ID: ${event.id})`);
+        this.logger.log(
+          `✅ Evento completado: "${event.title}" (ID: ${event.id})`,
+        );
       }
 
       this.logger.log(
@@ -108,14 +112,18 @@ export class EventsCronService {
         .getMany();
 
       if (upcomingEvents.length > 0) {
-        this.logger.log(`📊 Eventos próximos (próximas 48h): ${upcomingEvents.length}`);
+        this.logger.log(
+          `📊 Eventos próximos (próximas 48h): ${upcomingEvents.length}`,
+        );
         upcomingEvents.forEach((event) => {
           this.logger.log(
             `   - "${event.title}" - ${new Date(event.startAt).toLocaleString('es-PE')}`,
           );
         });
       } else {
-        this.logger.log('📊 No hay eventos programados para las próximas 48 horas');
+        this.logger.log(
+          '📊 No hay eventos programados para las próximas 48 horas',
+        );
       }
 
       // Estadísticas generales

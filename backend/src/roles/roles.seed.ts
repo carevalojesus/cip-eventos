@@ -1,7 +1,7 @@
 import { Injectable, Logger, OnApplicationBootstrap } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Role } from './entities/role.entity';
+import { Role, UserRole } from './entities/role.entity';
 
 @Injectable()
 export class RolesSeedService implements OnApplicationBootstrap {
@@ -13,8 +13,8 @@ export class RolesSeedService implements OnApplicationBootstrap {
   ) {}
 
   async onApplicationBootstrap() {
-    await this.ensureRoleExists('ADMIN', 'Administrador');
-    await this.ensureRoleExists('USER', 'Usuario');
+    await this.ensureRoleExists(UserRole.ADMIN, 'Administrador del sistema');
+    await this.ensureRoleExists(UserRole.USER, 'Usuario regular');
   }
 
   private async ensureRoleExists(name: string, description?: string) {

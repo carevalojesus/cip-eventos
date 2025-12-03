@@ -47,7 +47,9 @@ export class AddPhase1And2Fields1733150400000 implements MigrationInterface {
     await queryRunner.query(`ALTER TABLE "payments" DROP COLUMN "billingData"`);
 
     // Revert Phase 1: Event
-    await queryRunner.query(`ALTER TABLE "events" DROP COLUMN "checkInStartAt"`);
+    await queryRunner.query(
+      `ALTER TABLE "events" DROP COLUMN "checkInStartAt"`,
+    );
 
     // Revert Phase 1: EventTicket
     await queryRunner.query(

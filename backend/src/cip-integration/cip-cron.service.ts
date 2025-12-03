@@ -13,7 +13,8 @@ export class CipCronService {
     private readonly configService: ConfigService,
   ) {
     // Solo habilitar en producción o si se configura explícitamente
-    this.enableCron = this.configService.get<string>('NODE_ENV') === 'production' ||
+    this.enableCron =
+      this.configService.get<string>('NODE_ENV') === 'production' ||
       this.configService.get<boolean>('CIP_CRON_ENABLED') === true;
 
     if (this.enableCron) {
@@ -42,7 +43,9 @@ export class CipCronService {
       const importInfo = await this.cipIntegrationService.getLastImportInfo();
 
       if (!importInfo.hasData) {
-        this.logger.warn('⚠️ No hay datos del padrón CIP. Se requiere primera importación.');
+        this.logger.warn(
+          '⚠️ No hay datos del padrón CIP. Se requiere primera importación.',
+        );
         // Aquí podrías enviar notificación al admin
         return;
       }
@@ -59,7 +62,10 @@ export class CipCronService {
         );
       }
     } catch (error) {
-      this.logger.error(`Error al verificar padrón: ${error.message}`, error.stack);
+      this.logger.error(
+        `Error al verificar padrón: ${error.message}`,
+        error.stack,
+      );
     }
   }
 
@@ -83,7 +89,9 @@ export class CipCronService {
 
       this.logger.log(`📊 Reporte Semanal CIP:`);
       this.logger.log(`   Total miembros: ${stats.total}`);
-      this.logger.log(`   Habilitados: ${stats.habilitados} (${stats.percentageHabilitados}%)`);
+      this.logger.log(
+        `   Habilitados: ${stats.habilitados} (${stats.percentageHabilitados}%)`,
+      );
       this.logger.log(`   No habilitados: ${stats.noHabilitados}`);
       this.logger.log(`   Top 5 Capítulos:`);
 
@@ -96,7 +104,10 @@ export class CipCronService {
       // Aquí podrías enviar este reporte por email a los administradores
       // await this.mailService.sendWeeklyReport(stats)
     } catch (error) {
-      this.logger.error(`Error al generar reporte: ${error.message}`, error.stack);
+      this.logger.error(
+        `Error al generar reporte: ${error.message}`,
+        error.stack,
+      );
     }
   }
 
@@ -121,7 +132,10 @@ export class CipCronService {
 
       this.logger.log('✅ Mantenimiento completado');
     } catch (error) {
-      this.logger.error(`Error en mantenimiento: ${error.message}`, error.stack);
+      this.logger.error(
+        `Error en mantenimiento: ${error.message}`,
+        error.stack,
+      );
     }
   }
 }
