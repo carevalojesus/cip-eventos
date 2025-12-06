@@ -15,6 +15,7 @@ import {
   Payment,
   PaymentStatus,
   PaymentProvider,
+  BillingDocumentType,
 } from './entities/payment.entity';
 import {
   Registration,
@@ -23,6 +24,9 @@ import {
 import { MailService } from '../mail/mail.service';
 import { User } from '../users/entities/user.entity';
 import { v4 as uuidv4 } from 'uuid';
+import { FiscalDocumentsService } from '../fiscal-documents/fiscal-documents.service';
+import { FiscalDocumentType } from '../fiscal-documents/entities/fiscal-document.entity';
+import { NotificationTriggersService } from '../notifications/services/notification-triggers.service';
 
 @Injectable()
 export class PaymentsService {
@@ -35,7 +39,45 @@ export class PaymentsService {
     private readonly mailService: MailService,
     private readonly paypalService: PaypalService,
     private readonly i18n: I18nService,
+    private readonly fiscalService: FiscalDocumentsService,
+    private readonly notificationTriggers: NotificationTriggersService,
   ) {}
+
+  // Helper para emitir comprobante fiscal después de pago completado
+  private async issueFiscalDocument(payment: Payment, user?: User) {
+    try {
+      // Solo emitir si hay datos de facturación
+      if (!payment.billingData?.documentNumber) {
+        this.logger.log(
+          `⚠️ No se emite comprobante para pago ${payment.id}: sin datos de facturación`,
+        );
+        return;
+      }
+
+      const isBoleta = payment.billingData.documentType === BillingDocumentType.DNI;
+
+      await this.fiscalService.createDocument(
+        {
+          paymentId: payment.id,
+          type: isBoleta ? FiscalDocumentType.BOLETA : FiscalDocumentType.FACTURA,
+          dniReceiver: isBoleta ? payment.billingData.documentNumber : undefined,
+          rucReceiver: !isBoleta ? payment.billingData.documentNumber : undefined,
+          nameReceiver: payment.billingData.businessName || 'Sin nombre',
+          addressReceiver: payment.billingData.address,
+        },
+        user || ({ id: 'system' } as User),
+      );
+
+      this.logger.log(
+        `📄 Comprobante fiscal emitido para pago ${payment.id}`,
+      );
+    } catch (error) {
+      // No fallar el pago si falla la emisión del comprobante
+      this.logger.error(
+        `❌ Error emitiendo comprobante para pago ${payment.id}: ${error.message}`,
+      );
+    }
+  }
 
   // 1. INICIAR PAGO
   async createPaymentIntent(dto: CreatePaymentDto, userId: string) {
@@ -240,6 +282,12 @@ export class PaymentsService {
       // Usar nuevo formato: pasar registration completo (incluye Google Wallet)
       await this.mailService.sendTicket(registration);
 
+      // Emitir comprobante fiscal si hay datos de facturación
+      await this.issueFiscalDocument(payment);
+
+      // Trigger notificación de pago confirmado
+      await this.notificationTriggers.onPaymentCompleted(payment);
+
       this.logger.log(
         `[completePaypalPayment] Proceso completado exitosamente - Payment: ${paymentId}, Registration: ${registration.id}`,
       );
@@ -374,6 +422,12 @@ export class PaymentsService {
 
       // Enviar Ticket con Google Wallet incluido
       await this.mailService.sendTicket(payment.registration);
+
+      // Emitir comprobante fiscal si hay datos de facturación
+      await this.issueFiscalDocument(payment, adminUser);
+
+      // Trigger notificación de pago confirmado
+      await this.notificationTriggers.onPaymentCompleted(payment);
 
       this.logger.log(
         `[reviewPayment] Pago aprobado exitosamente: ${paymentId}, Admin: ${adminUser.email}`,

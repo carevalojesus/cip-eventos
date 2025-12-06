@@ -36,6 +36,23 @@ export class EventSession {
   @Column({ type: 'text', nullable: true })
   meetingUrl: string;
 
+  @Column({
+    type: 'enum',
+    enum: ['SCHEDULED', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED'],
+    default: 'SCHEDULED',
+  })
+  status: 'SCHEDULED' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELLED';
+
+  // 👇 Configuración de certificado por sesión
+  @Column({ type: 'boolean', default: false })
+  hasCertificate: boolean; // Esta sesión emite certificado individual
+
+  @Column({ type: 'decimal', precision: 4, scale: 2, default: 0 })
+  certificateHours: number; // Horas académicas (si difiere del cálculo automático)
+
+  @Column({ type: 'int', default: 70 })
+  minAttendancePercentage: number; // % mínimo de asistencia para certificado de sesión
+
   // --- RELACIONES ---
 
   // 1. Pertenece a un Evento Padre

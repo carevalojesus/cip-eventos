@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+    .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center; border-radius: 8px 8px 0 0; }
+    .content { background: #fff; padding: 30px; border: 1px solid #e0e0e0; border-top: none; }
+    .event-details { background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0; }
+    .detail-row { display: flex; justify-content: space-between; margin: 10px 0; }
+    .label { font-weight: bold; color: #667eea; }
+    .value { text-align: right; }
+    .price-summary { background: #fff3cd; padding: 15px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #ffc107; }
+    .total { font-size: 24px; font-weight: bold; color: #667eea; }
+    .btn { display: inline-block; background: #667eea; color: white; padding: 15px 40px; text-decoration: none; border-radius: 8px; margin: 20px 0; font-weight: bold; }
+    .btn:hover { background: #5568d3; }
+    .warning { background: #fff3cd; padding: 15px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #ffc107; }
+    .footer { text-align: center; padding: 20px; color: #666; font-size: 12px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Inscripción Pendiente de Pago</h1>
+    </div>
+    <div class="content">
+      <p>Hola <strong>{{name}}</strong>,</p>
+
+      <p>Hemos recibido tu solicitud de inscripción al evento:</p>
+
+      <div class="event-details">
+        <h2>{{eventTitle}}</h2>
+        <div class="detail-row">
+          <span class="label">Fecha:</span>
+          <span class="value">{{eventDate}}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Ubicación:</span>
+          <span class="value">{{eventLocation}}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Tipo de entrada:</span>
+          <span class="value">{{ticketType}}</span>
+        </div>
+      </div>
+
+      <div class="price-summary">
+        <div class="detail-row">
+          <span class="label">Precio original:</span>
+          <span class="value">{{currency}} {{originalPrice}}</span>
+        </div>
+        {{#if discountAmount}}
+        <div class="detail-row">
+          <span class="label">Descuento aplicado:</span>
+          <span class="value" style="color: #28a745;">-{{currency}} {{discountAmount}}</span>
+        </div>
+        {{/if}}
+        <hr>
+        <div class="detail-row">
+          <span class="label">Total a pagar:</span>
+          <span class="total">{{currency}} {{finalPrice}}</span>
+        </div>
+      </div>
+
+      <div class="warning">
+        <strong>⏰ Importante:</strong> Tu reserva expira el <strong>{{expiresAt}}</strong>.
+        Por favor completa tu pago antes de esa fecha para asegurar tu lugar.
+      </div>
+
+      <div style="text-align: center;">
+        <a href="{{paymentUrl}}" class="btn">Completar Pago</a>
+      </div>
+
+      <p>Código de reserva: <strong>{{ticketCode}}</strong></p>
+
+      <p>¡Esperamos verte pronto!</p>
+
+      <p>Saludos,<br>
+      <strong>Equipo CIP Eventos</strong></p>
+    </div>
+    <div class="footer">
+      <p>Este es un correo automático, por favor no responder.</p>
+      <p>&copy; 2024 CIP Eventos. Todos los derechos reservados.</p>
+    </div>
+  </div>
+</body>
+</html>

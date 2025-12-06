@@ -19,6 +19,7 @@ import { EventSession } from './entities/event-session.entity';
 import { Signer } from '../signers/entities/signer.entity';
 import { RegistrationsModule } from '../registrations/registrations.module';
 import { UploadsModule } from '../uploads/uploads.module';
+import { Registration } from '../registrations/entities/registration.entity';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { UploadsModule } from '../uploads/uploads.module';
       EventTicket,
       EventSession,
       Signer,
+      Registration,
     ]),
     AuthModule,
     forwardRef(() => RegistrationsModule),

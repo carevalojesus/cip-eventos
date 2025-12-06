@@ -13,8 +13,21 @@ export class RolesSeedService implements OnApplicationBootstrap {
   ) {}
 
   async onApplicationBootstrap() {
-    await this.ensureRoleExists(UserRole.ADMIN, 'Administrador del sistema');
-    await this.ensureRoleExists(UserRole.USER, 'Usuario regular');
+    const bootstrapRoles: { name: UserRole; description: string }[] = [
+      { name: UserRole.SUPER_ADMIN, description: 'Super administrador de la plataforma' },
+      { name: UserRole.ORG_ADMIN, description: 'Administrador de organizador' },
+      { name: UserRole.ORG_STAFF_ACCESO, description: 'Staff de acreditación/puerta' },
+      { name: UserRole.ORG_STAFF_ACADEMICO, description: 'Staff académico (asistencias/notas)' },
+      { name: UserRole.ORG_FINANZAS, description: 'Gestión financiera y comprobantes' },
+      { name: UserRole.PONENTE, description: 'Ponente con acceso a sus sesiones' },
+      { name: UserRole.PARTICIPANTE, description: 'Participante con panel personal' },
+      { name: UserRole.ADMIN, description: 'Administrador del sistema (compatibilidad)' },
+      { name: UserRole.USER, description: 'Usuario regular (compatibilidad)' },
+    ];
+
+    for (const role of bootstrapRoles) {
+      await this.ensureRoleExists(role.name, role.description);
+    }
   }
 
   private async ensureRoleExists(name: string, description?: string) {

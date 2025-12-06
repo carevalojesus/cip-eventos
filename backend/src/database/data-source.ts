@@ -14,7 +14,7 @@ export const AppDataSource = new DataSource({
   database: process.env.DB_NAME || 'backend_db',
   entities: [join(__dirname, '..', '**', '*.entity.{ts,js}')],
   migrations: [join(__dirname, 'migrations', '*.{ts,js}')],
-  synchronize: process.env.DB_SYNC === 'true', // true en desarrollo, false en producción
+  synchronize: false, // Desactivado - usar migraciones en su lugar
   logging: process.env.NODE_ENV === 'development',
   migrationsRun: process.env.NODE_ENV === 'production', // Auto-run migrations en producción
   migrationsTableName: 'migrations_history', // Tabla personalizada para el historial de migraciones

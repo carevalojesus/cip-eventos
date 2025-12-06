@@ -1,0 +1,75 @@
+{
+  "block_not_found": "Bloque evaluable no encontrado",
+  "block_not_open": "El bloque no está abierto para inscripciones",
+  "enrollment_not_started": "El período de inscripción aún no ha comenzado",
+  "enrollment_ended": "El período de inscripción ha finalizado",
+  "block_full": "El bloque ha alcanzado su capacidad máxima",
+  "already_enrolled": "Ya estás inscrito en este bloque",
+  "event_registration_required": "Debes estar registrado en el evento para inscribirte en este bloque",
+  "enrollment_not_found": "Inscripción no encontrada",
+  "enrollment_not_pending": "La inscripción no está pendiente de pago",
+  "cannot_cancel_enrollment": "No se puede cancelar esta inscripción en su estado actual",
+  "cannot_withdraw": "No se puede realizar el retiro en el estado actual de la inscripción",
+  "enrollment_not_in_progress": "La inscripción no está en progreso",
+  "event_not_found": "Evento no encontrado",
+  "evaluation_not_found": "Evaluación no encontrada",
+  "weight_exceeds_100": "El peso total de las evaluaciones no puede exceder el 100%. Disponible: {available}%",
+  "original_evaluation_not_found": "La evaluación original para recuperación no fue encontrada",
+  "evaluation_block_mismatch": "La evaluación no pertenece al mismo bloque que la inscripción",
+  "grade_out_of_range": "La nota debe estar entre {min} y {max}",
+  "invalid_status_transition": "Transición de estado inválida: de {from} a {to}",
+  "session_not_found": "Sesión no encontrada",
+  "not_enrolled_in_session": "El participante no está inscrito en ningún bloque que incluya esta sesión",
+  "ticket_not_found": "Ticket no encontrado o inválido",
+  "already_checked_in": "Ya se ha registrado el ingreso para esta sesión",
+  "no_check_in": "No hay registro de ingreso para esta sesión",
+  "already_checked_out": "Ya se ha registrado la salida para esta sesión",
+  "session_or_enrollment_not_found": "Sesión o inscripción no encontrada",
+  "block_types": {
+    "WORKSHOP": "Taller",
+    "COURSE": "Curso",
+    "MODULE": "Módulo",
+    "SEMINAR": "Seminario",
+    "DIPLOMA": "Diplomado"
+  },
+  "block_statuses": {
+    "DRAFT": "Borrador",
+    "OPEN": "Abierto",
+    "IN_PROGRESS": "En progreso",
+    "GRADING": "En calificación",
+    "COMPLETED": "Completado",
+    "CANCELLED": "Cancelado"
+  },
+  "enrollment_statuses": {
+    "PENDING": "Pendiente de pago",
+    "ENROLLED": "Inscrito",
+    "IN_PROGRESS": "En progreso",
+    "APPROVED": "Aprobado",
+    "FAILED": "Desaprobado",
+    "WITHDRAWN": "Retirado",
+    "CANCELLED": "Cancelado"
+  },
+  "evaluation_types": {
+    "EXAM": "Examen",
+    "QUIZ": "Prueba corta",
+    "ASSIGNMENT": "Tarea",
+    "PROJECT": "Proyecto",
+    "PARTICIPATION": "Participación",
+    "RETAKE": "Recuperación"
+  },
+  "attendance_statuses": {
+    "PRESENT": "Presente",
+    "PARTIAL": "Parcial",
+    "ABSENT": "Ausente",
+    "LATE": "Tardanza",
+    "EXCUSED": "Justificado"
+  },
+  "notifications": {
+    "enrolled": "Te has inscrito exitosamente en {blockName}",
+    "grade_published": "Se ha publicado tu nota en {evaluationName}: {grade}",
+    "final_grade": "Tu nota final en {blockName} es: {grade}",
+    "approved": "¡Felicidades! Has aprobado {blockName}",
+    "failed": "No has aprobado {blockName}. Nota final: {grade}",
+    "certificate_ready": "Tu certificado de aprobación está listo para descargar"
+  }
+}

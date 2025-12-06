@@ -1,0 +1,12 @@
+{
+  "registration_not_found": "Registration not found",
+  "not_owner": "You don't have permission to request a refund for this registration",
+  "registration_not_confirmed": "You can only request refunds for confirmed registrations",
+  "no_completed_payment": "There is no completed payment associated with this registration",
+  "already_requested": "A refund request already exists for this registration",
+  "event_already_ended": "You cannot request a refund after the event has ended",
+  "already_attended": "You cannot request a refund if you already attended the event",
+  "not_found": "Refund request not found",
+  "not_pending_review": "This request is not pending review",
+  "not_approved": "This request is not approved for processing"
+}

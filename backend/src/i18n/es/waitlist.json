@@ -1,0 +1,14 @@
+{
+  "ticket_not_found": "Ticket no encontrado",
+  "not_allowed": "Este ticket no permite lista de espera",
+  "tickets_still_available": "Aún hay tickets disponibles. No puedes unirte a la lista de espera.",
+  "person_not_found": "Persona no encontrada",
+  "already_in_waitlist": "Ya estás en la lista de espera para este ticket",
+  "already_registered": "Ya estás registrado para este evento",
+  "not_in_waitlist": "No estás en la lista de espera para este ticket",
+  "invalid_token": "Token de compra inválido o ya utilizado",
+  "invitation_expired": "La invitación ha expirado",
+  "joined_waitlist": "Te has unido a la lista de espera exitosamente",
+  "left_waitlist": "Has salido de la lista de espera",
+  "invitation_sent": "Invitación enviada exitosamente"
+}

@@ -1,0 +1,12 @@
+{
+  "not_found": "Transfer not found",
+  "not_pending": "The transfer is not pending",
+  "not_allowed": "This ticket does not allow transfers",
+  "deadline_passed": "The deadline to transfer has passed",
+  "has_attendance": "Cannot transfer a ticket with registered attendance",
+  "not_confirmed": "Only confirmed tickets can be transferred",
+  "can_transfer": "The ticket can be transferred",
+  "initiated": "Transfer initiated successfully",
+  "completed": "Transfer completed successfully",
+  "cancelled": "Transfer cancelled successfully"
+}

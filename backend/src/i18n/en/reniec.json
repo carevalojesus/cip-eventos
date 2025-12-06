@@ -1,0 +1,50 @@
+{
+  "validation": {
+    "success": {
+      "perfect": "Data matches perfectly with RENIEC",
+      "veryGood": "Data matches very well with RENIEC",
+      "acceptable": "Data matches acceptably with RENIEC"
+    },
+    "failed": {
+      "similarButBelowThreshold": "Data has similarities with RENIEC but does not reach the minimum threshold. Review recommended.",
+      "significantDifferences": "Data has significant differences with RENIEC. Review required.",
+      "noMatch": "Data does not match RENIEC. Manual verification required."
+    },
+    "errors": {
+      "serviceDisabled": "RENIEC validation disabled by configuration",
+      "unavailable": "Could not query RENIEC or DNI not found. Will be marked for review.",
+      "invalidDni": "Invalid DNI: must have exactly 8 numeric digits",
+      "notFound": "No information found for this DNI in RENIEC",
+      "apiError": "Error querying RENIEC service",
+      "rateLimitExceeded": "RENIEC query rate limit exceeded"
+    }
+  },
+  "fields": {
+    "dni": "DNI",
+    "nombres": "First Names",
+    "apellidoPaterno": "Paternal Surname",
+    "apellidoMaterno": "Maternal Surname",
+    "nombreCompleto": "Full Name",
+    "fechaNacimiento": "Date of Birth",
+    "sexo": "Sex",
+    "estadoCivil": "Marital Status",
+    "departamento": "Department",
+    "provincia": "Province",
+    "distrito": "District",
+    "direccion": "Address",
+    "ubigeo": "Ubigeo"
+  },
+  "messages": {
+    "dataObserved": "This person's data has been marked for review due to discrepancies with RENIEC",
+    "validationPending": "RENIEC validation pending",
+    "cacheCleared": "RENIEC cache cleared successfully",
+    "serviceInfo": "RENIEC service information"
+  },
+  "logs": {
+    "validationFailed": "Person data does not match RENIEC",
+    "validationSuccess": "Person successfully validated with RENIEC",
+    "errorValidating": "Error validating person with RENIEC",
+    "queryingReniec": "Querying RENIEC for DNI",
+    "cachedData": "RENIEC data found in cache"
+  }
+}

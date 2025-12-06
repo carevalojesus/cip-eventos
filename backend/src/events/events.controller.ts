@@ -34,6 +34,7 @@ import { CreateTicketDto } from './dto/create-ticket.dto';
 import { UpdateTicketDto } from './dto/update-ticket.dto';
 import { PaginationDto } from '../common/dto/pagination.dto';
 import { FileValidationPipe } from '../common/pipes/file-validation.pipe';
+import { FindEventsDto } from './dto/find-events.dto';
 
 @Controller('events')
 export class EventsController {
@@ -116,8 +117,8 @@ export class EventsController {
 
   @Public()
   @Get()
-  findAll(@Query() paginationDto: PaginationDto) {
-    return this.eventsService.findAll(paginationDto);
+  findAll(@Query() filters: FindEventsDto) {
+    return this.eventsService.findAll(filters);
   }
 
   @Public()
@@ -177,6 +178,12 @@ export class EventsController {
   @Patch(':id/publish')
   publish(@Param('id') id: string) {
     return this.eventsService.publish(id);
+  }
+
+  @UseGuards(EmailVerifiedGuard, EventOwnershipGuard)
+  @Get(':id/metrics')
+  getMetrics(@Param('id') id: string) {
+    return this.eventsService.getMetrics(id);
   }
 
   @UseGuards(EmailVerifiedGuard, EventOwnershipGuard)

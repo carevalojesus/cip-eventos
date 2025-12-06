@@ -77,6 +77,219 @@ export class EmailQueueService {
   }
 
   /**
+   * Encolar email de inscripción pendiente
+   */
+  async queueRegistrationPendingEmail(registrationId: string) {
+    const job: EmailJob = {
+      type: EmailJobType.REGISTRATION_PENDING,
+      data: { registrationId },
+    };
+
+    await this.emailQueue.add(EmailJobType.REGISTRATION_PENDING, job, {
+      priority: 2,
+    });
+
+    this.logger.log(
+      `Registration pending email queued for registration ${registrationId}`,
+    );
+  }
+
+  /**
+   * Encolar email de pago confirmado
+   */
+  async queuePaymentConfirmedEmail(paymentId: string) {
+    const job: EmailJob = {
+      type: EmailJobType.PAYMENT_CONFIRMED,
+      data: { paymentId },
+    };
+
+    await this.emailQueue.add(EmailJobType.PAYMENT_CONFIRMED, job, {
+      priority: 1, // Alta prioridad
+    });
+
+    this.logger.log(`Payment confirmed email queued for payment ${paymentId}`);
+  }
+
+  /**
+   * Encolar email de reserva por expirar
+   */
+  async queueReservationExpiringEmail(
+    registrationId: string,
+    minutesLeft: number,
+  ) {
+    const job: EmailJob = {
+      type: EmailJobType.RESERVATION_EXPIRING,
+      data: { registrationId, minutesLeft },
+    };
+
+    await this.emailQueue.add(EmailJobType.RESERVATION_EXPIRING, job, {
+      priority: 1, // Alta prioridad
+    });
+
+    this.logger.log(
+      `Reservation expiring email queued for registration ${registrationId} (${minutesLeft} minutes left)`,
+    );
+  }
+
+  /**
+   * Encolar email de reserva expirada
+   */
+  async queueReservationExpiredEmail(registrationId: string) {
+    const job: EmailJob = {
+      type: EmailJobType.RESERVATION_EXPIRED,
+      data: { registrationId },
+    };
+
+    await this.emailQueue.add(EmailJobType.RESERVATION_EXPIRED, job, {
+      priority: 3, // Prioridad baja
+    });
+
+    this.logger.log(
+      `Reservation expired email queued for registration ${registrationId}`,
+    );
+  }
+
+  /**
+   * Encolar email de cambio en sesión
+   */
+  async queueSessionChangedEmail(
+    sessionId: string,
+    changeType: 'cancelled' | 'rescheduled',
+    oldData?: any,
+  ) {
+    const job: EmailJob = {
+      type: EmailJobType.SESSION_CHANGED,
+      data: { sessionId, changeType, oldData },
+    };
+
+    await this.emailQueue.add(EmailJobType.SESSION_CHANGED, job, {
+      priority: 1, // Alta prioridad
+    });
+
+    this.logger.log(
+      `Session changed email queued for session ${sessionId} (${changeType})`,
+    );
+  }
+
+  /**
+   * Encolar email de certificado disponible
+   */
+  async queueCertificateReadyEmail(certificateId: string) {
+    const job: EmailJob = {
+      type: EmailJobType.CERTIFICATE_READY,
+      data: { certificateId },
+    };
+
+    await this.emailQueue.add(EmailJobType.CERTIFICATE_READY, job, {
+      priority: 2,
+    });
+
+    this.logger.log(
+      `Certificate ready email queued for certificate ${certificateId}`,
+    );
+  }
+
+  /**
+   * Encolar email de reembolso aprobado
+   */
+  async queueRefundApprovedEmail(refundId: string) {
+    const job: EmailJob = {
+      type: EmailJobType.REFUND_APPROVED,
+      data: { refundId },
+    };
+
+    await this.emailQueue.add(EmailJobType.REFUND_APPROVED, job, {
+      priority: 1, // Alta prioridad
+    });
+
+    this.logger.log(`Refund approved email queued for refund ${refundId}`);
+  }
+
+  /**
+   * Encolar email de cortesía otorgada
+   */
+  async queueCourtesyGrantedEmail(courtesyId: string) {
+    const job: EmailJob = {
+      type: EmailJobType.COURTESY_GRANTED,
+      data: { courtesyId },
+    };
+
+    await this.emailQueue.add(EmailJobType.COURTESY_GRANTED, job, {
+      priority: 2,
+    });
+
+    this.logger.log(
+      `Courtesy granted email queued for courtesy ${courtesyId}`,
+    );
+  }
+
+  /**
+   * Encolar email de invitación de lista de espera
+   */
+  async queueWaitlistInvitedEmail(waitlistEntryId: string) {
+    const job: EmailJob = {
+      type: EmailJobType.WAITLIST_INVITED,
+      data: { waitlistEntryId },
+    };
+
+    await this.emailQueue.add(EmailJobType.WAITLIST_INVITED, job, {
+      priority: 1, // Alta prioridad
+    });
+
+    this.logger.log(
+      `Waitlist invited email queued for entry ${waitlistEntryId}`,
+    );
+  }
+
+  /**
+   * Encolar email de ticket transferido
+   */
+  async queueTicketTransferredEmail(transferId: string) {
+    const job: EmailJob = {
+      type: EmailJobType.TICKET_TRANSFERRED,
+      data: { transferId },
+    };
+
+    await this.emailQueue.add(EmailJobType.TICKET_TRANSFERRED, job, {
+      priority: 2,
+    });
+
+    this.logger.log(
+      `Ticket transferred email queued for transfer ${transferId}`,
+    );
+  }
+
+  /**
+   * Encolar email de reporte programado
+   */
+  async queueScheduledReportEmail(
+    scheduledReportId: string,
+    recipients: string[],
+    reportName: string,
+    fileBuffer: Buffer,
+    fileExtension: string,
+  ) {
+    const job: EmailJob = {
+      type: EmailJobType.SCHEDULED_REPORT,
+      data: {
+        scheduledReportId,
+        recipients,
+        reportName,
+        fileBuffer,
+        fileExtension,
+      },
+    };
+
+    await this.emailQueue.add(EmailJobType.SCHEDULED_REPORT, job, {
+      priority: 2, // Prioridad media
+    });
+
+    this.logger.log(
+      `Scheduled report email queued for report ${scheduledReportId} to ${recipients.length} recipients`,
+    );
+  }
+
+  /**
    * Obtener estadísticas de la cola
    */
   async getQueueStats() {

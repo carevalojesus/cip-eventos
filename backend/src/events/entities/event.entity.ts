@@ -24,6 +24,7 @@ import { Organizer } from '../../organizers/entities/organizer.entity';
 import { EventTicket } from './event-ticket.entity';
 import { EventSession } from './event-session.entity';
 import { Signer } from '../../signers/entities/signer.entity';
+import { EventCoorganizer } from '../../organizers/entities/event-coorganizer.entity';
 
 export enum EventStatus {
   DRAFT = 'DRAFT', // Borrador, no visible al público
@@ -155,12 +156,25 @@ export class Event {
   @JoinTable({ name: 'event_signers' })
   signers: Signer[];
 
+  // 👇 Coorganizadores con roles
+  @OneToMany(() => EventCoorganizer, (coorg) => coorg.event, {
+    cascade: true,
+    eager: false,
+  })
+  coorganizers: EventCoorganizer[];
+
   // 👇 Configuración del Certificado
   @Column({ type: 'boolean', default: false })
   hasCertificate: boolean;
 
   @Column({ type: 'int', default: 0 })
   certificateHours: number;
+
+  @Column({ type: 'boolean', default: false })
+  allowsSessionCertificates: boolean; // Permite certificados por sesión individual
+
+  @Column({ type: 'int', default: 70 })
+  minAttendancePercentage: number; // % mínimo de asistencia para certificado
 
   // -------------------------
   // Auditoría y soft delete

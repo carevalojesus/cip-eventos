@@ -2,6 +2,8 @@ import {
   BadRequestException,
   Injectable,
   NotFoundException,
+  Inject,
+  forwardRef,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -12,6 +14,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { Role } from '../roles/entities/role.entity';
+import { DataDeletionService } from '../persons/services/data-deletion.service';
 
 @Injectable()
 export class UsersService {
@@ -21,6 +24,8 @@ export class UsersService {
     @InjectRepository(Role)
     private readonly roleRepository: Repository<Role>,
     private readonly i18n: I18nService,
+    @Inject(forwardRef(() => DataDeletionService))
+    private readonly dataDeletionService: DataDeletionService,
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
@@ -197,5 +202,9 @@ export class UsersService {
       resetPasswordToken: null,
       resetPasswordExpires: null,
     });
+  }
+
+  async requestDeletion(userId: string, reason?: string): Promise<void> {
+    return this.dataDeletionService.requestDeletion(userId, reason);
   }
 }

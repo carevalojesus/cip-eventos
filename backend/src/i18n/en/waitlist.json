@@ -1,0 +1,14 @@
+{
+  "ticket_not_found": "Ticket not found",
+  "not_allowed": "This ticket does not allow waitlist",
+  "tickets_still_available": "Tickets are still available. You cannot join the waitlist.",
+  "person_not_found": "Person not found",
+  "already_in_waitlist": "You are already on the waitlist for this ticket",
+  "already_registered": "You are already registered for this event",
+  "not_in_waitlist": "You are not on the waitlist for this ticket",
+  "invalid_token": "Invalid or already used purchase token",
+  "invitation_expired": "The invitation has expired",
+  "joined_waitlist": "You have successfully joined the waitlist",
+  "left_waitlist": "You have left the waitlist",
+  "invitation_sent": "Invitation sent successfully"
+}

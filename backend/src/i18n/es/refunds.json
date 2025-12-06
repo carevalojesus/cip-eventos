@@ -1,0 +1,12 @@
+{
+  "registration_not_found": "Registro no encontrado",
+  "not_owner": "No tienes permiso para solicitar reembolso de este registro",
+  "registration_not_confirmed": "Solo puedes solicitar reembolso de registros confirmados",
+  "no_completed_payment": "No hay pago completado asociado a este registro",
+  "already_requested": "Ya existe una solicitud de reembolso pendiente para este registro",
+  "event_already_ended": "No puedes solicitar reembolso después de finalizado el evento",
+  "already_attended": "No puedes solicitar reembolso si ya asististe al evento",
+  "not_found": "Solicitud de reembolso no encontrada",
+  "not_pending_review": "Esta solicitud no está pendiente de revisión",
+  "not_approved": "Esta solicitud no está aprobada para procesar"
+}

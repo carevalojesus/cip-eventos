@@ -18,6 +18,8 @@ import { v4 as uuidv4 } from 'uuid';
 import { MailService } from 'src/mail/mail.service';
 import { User } from 'src/users/entities/user.entity';
 import { RedisService } from 'src/redis/redis.service';
+import { ConsentService } from 'src/common/services/consent.service';
+import { ConsentType } from 'src/common/enums/consent-type.enum';
 
 @Injectable()
 export class AuthService {
@@ -28,6 +30,7 @@ export class AuthService {
     private readonly mailService: MailService,
     private readonly i18n: I18nService,
     private readonly redisService: RedisService,
+    private readonly consentService: ConsentService,
   ) {}
 
   async login(
@@ -111,7 +114,19 @@ export class AuthService {
     }
   }
 
-  async register(registerDto: RegisterAuthDto) {
+  async register(
+    registerDto: RegisterAuthDto,
+    metadata?: { userAgent?: string; ip?: string },
+  ) {
+    // Validar que los consentimientos obligatorios estén aceptados
+    if (!registerDto.acceptTerms || !registerDto.acceptPrivacy) {
+      throw new BadRequestException(
+        this.i18n.t('consent.required_for_registration', {
+          lang: I18nContext.current()?.lang,
+        }),
+      );
+    }
+
     const role = await this.usersService.findRoleByName('USER');
     if (!role)
       throw new BadRequestException(
@@ -121,7 +136,8 @@ export class AuthService {
       );
 
     const newUser = await this.usersService.create({
-      ...registerDto,
+      email: registerDto.email,
+      password: registerDto.password,
       roleId: role.id,
     });
 
@@ -136,6 +152,76 @@ export class AuthService {
       hashedVerificationToken,
       expires,
     );
+
+    // Registrar consentimientos
+    const consents: Array<{
+      consentType: ConsentType;
+      documentVersion: string;
+      metadata?: Record<string, any>;
+    }> = [];
+
+    // Términos y Condiciones (obligatorio)
+    if (registerDto.acceptTerms) {
+      consents.push({
+        consentType: ConsentType.TERMS_AND_CONDITIONS,
+        documentVersion:
+          registerDto.termsVersion ||
+          this.consentService.getCurrentDocumentVersion(
+            ConsentType.TERMS_AND_CONDITIONS,
+          ),
+        metadata: { source: 'registration', userId: newUser.id },
+      });
+    }
+
+    // Política de Privacidad (obligatorio)
+    if (registerDto.acceptPrivacy) {
+      consents.push({
+        consentType: ConsentType.PRIVACY_POLICY,
+        documentVersion:
+          registerDto.privacyVersion ||
+          this.consentService.getCurrentDocumentVersion(
+            ConsentType.PRIVACY_POLICY,
+          ),
+        metadata: { source: 'registration', userId: newUser.id },
+      });
+    }
+
+    // Marketing (opcional)
+    if (registerDto.acceptMarketing) {
+      consents.push({
+        consentType: ConsentType.MARKETING,
+        documentVersion:
+          this.consentService.getCurrentDocumentVersion(ConsentType.MARKETING),
+        metadata: { source: 'registration', userId: newUser.id },
+      });
+    }
+
+    // Procesamiento de Datos (opcional)
+    if (registerDto.acceptDataProcessing) {
+      consents.push({
+        consentType: ConsentType.DATA_PROCESSING,
+        documentVersion: this.consentService.getCurrentDocumentVersion(
+          ConsentType.DATA_PROCESSING,
+        ),
+        metadata: { source: 'registration', userId: newUser.id },
+      });
+    }
+
+    // Registrar todos los consentimientos en bulk
+    if (consents.length > 0) {
+      try {
+        await this.consentService.recordBulkConsents(
+          undefined, // personId
+          newUser.id, // userId
+          consents,
+          metadata?.ip,
+          metadata?.userAgent,
+        );
+      } catch (error) {
+        // Log error pero no fallar el registro
+        console.error('Error recording consents during registration:', error);
+      }
+    }
 
     await this.mailService.sendUserWelcome(
       newUser.email,

@@ -1,0 +1,12 @@
+{
+  "not_found": "Transferencia no encontrada",
+  "not_pending": "La transferencia no está pendiente",
+  "not_allowed": "Este ticket no permite transferencias",
+  "deadline_passed": "La fecha límite para transferir ha pasado",
+  "has_attendance": "No se puede transferir un ticket con asistencia registrada",
+  "not_confirmed": "Solo se pueden transferir tickets confirmados",
+  "can_transfer": "El ticket puede ser transferido",
+  "initiated": "Transferencia iniciada exitosamente",
+  "completed": "Transferencia completada exitosamente",
+  "cancelled": "Transferencia cancelada exitosamente"
+}

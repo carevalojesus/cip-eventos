@@ -3,9 +3,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { OrganizersService } from './organizers.service';
 import { OrganizersController } from './organizers.controller';
 import { Organizer } from './entities/organizer.entity';
+import { EventCoorganizer } from './entities/event-coorganizer.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Organizer])],
+  imports: [TypeOrmModule.forFeature([Organizer, EventCoorganizer])],
   controllers: [OrganizersController],
   providers: [OrganizersService],
   exports: [TypeOrmModule],

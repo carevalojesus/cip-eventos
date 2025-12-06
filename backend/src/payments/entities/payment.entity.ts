@@ -11,6 +11,7 @@ import {
 } from 'typeorm';
 import { Registration } from '../../registrations/entities/registration.entity';
 import { User } from '../../users/entities/user.entity';
+import { PurchaseOrder } from '../../purchase-orders/entities/purchase-order.entity';
 
 export enum PaymentStatus {
   PENDING = 'PENDING', // Creado, esperando acción
@@ -18,8 +19,11 @@ export enum PaymentStatus {
   COMPLETED = 'COMPLETED', // Dinero confirmado, Ticket enviado
   REJECTED = 'REJECTED', // Admin rechazó (foto falsa, monto incorrecto)
   REFUNDED = 'REFUNDED', // Pago reembolsado
+  PARTIALLY_REFUNDED = 'PARTIALLY_REFUNDED', // Pago parcialmente reembolsado
   EXPIRED = 'EXPIRED', // Pago expiró sin completarse
   FAILED = 'FAILED', // Error en procesamiento de pago
+  CHARGEBACK = 'CHARGEBACK', // Contracargo bancario
+  CHARGEBACK_REVERSED = 'CHARGEBACK_REVERSED', // Contracargo revertido (ganamos disputa)
 }
 
 // Tipo de documento para facturación (diferente a DocumentType de attendees)
@@ -119,6 +123,29 @@ export class Payment {
   @OneToOne(() => Registration, (reg) => reg.payment)
   @JoinColumn({ name: 'registrationId' })
   registration: Registration;
+
+  // 👇 Campos de Contracargo (Chargeback)
+  @Column({ type: 'timestamptz', nullable: true })
+  chargebackAt: Date | null;
+
+  @Column({ type: 'text', nullable: true })
+  chargebackReason: string | null;
+
+  @Column({ type: 'text', nullable: true })
+  chargebackExternalId: string | null; // ID del caso en el banco/procesador
+
+  @ManyToOne(() => User, { nullable: true })
+  @JoinColumn({ name: 'chargebackProcessedById' })
+  chargebackProcessedBy: User | null;
+
+  @Column({ type: 'timestamptz', nullable: true })
+  chargebackReversedAt: Date | null;
+
+  // Relacion con PurchaseOrder (pedido de compra)
+  // Representa el pago exitoso final de un pedido
+  @OneToOne(() => PurchaseOrder, (order) => order.payment, { nullable: true })
+  @JoinColumn({ name: 'purchaseOrderId' })
+  purchaseOrder: PurchaseOrder | null;
 
   @CreateDateColumn()
   createdAt: Date;

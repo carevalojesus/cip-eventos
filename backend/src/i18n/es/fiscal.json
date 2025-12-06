@@ -1,0 +1,12 @@
+{
+  "payment_not_found": "Pago no encontrado",
+  "payment_not_completed": "El pago no está completado",
+  "document_already_exists": "Ya existe un comprobante para este pago",
+  "document_not_found": "Comprobante no encontrado",
+  "ruc_required": "El RUC es requerido para facturas",
+  "dni_required": "El DNI es requerido para boletas",
+  "address_required": "La dirección es requerida para facturas",
+  "already_voided": "Este comprobante ya está anulado",
+  "void_period_exceeded": "El plazo para anular este comprobante ha vencido (máximo 7 días)",
+  "invalid_document_for_credit_note": "No se puede emitir nota de crédito para este comprobante"
+}

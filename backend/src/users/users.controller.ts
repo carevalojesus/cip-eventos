@@ -11,6 +11,7 @@ import {
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { RequestDeletionDto } from './dto/request-deletion.dto';
 import { User } from './entities/user.entity';
 
 import { Roles } from 'src/auth/decorators/roles.decorator';
@@ -24,7 +25,9 @@ import { EmailVerifiedGuard } from 'src/auth/guards/email-verified.guard';
 @Controller('users')
 @UseGuards(JwtAuthGuard, EmailVerifiedGuard, RolesGuard) // 🔒 Candado General: Todas las rutas requieren Token y email verificado
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+  ) {}
 
   // 👇 Endpoint nuevo: Obtener mis propios datos (Perfil)
   // Recibe el userId del token y busca los datos frescos en la DB
@@ -64,5 +67,16 @@ export class UsersController {
   @Roles('SUPER_ADMIN')
   remove(@Param('id') id: string): Promise<User> {
     return this.usersService.remove(id);
+  }
+
+  @Post('request-deletion')
+  async requestDeletion(
+    @CurrentUser() user: { userId: string },
+    @Body() dto: RequestDeletionDto,
+  ): Promise<{ message: string }> {
+    await this.usersService.requestDeletion(user.userId, dto.reason);
+    return {
+      message: 'Deletion request submitted successfully. An administrator will process your request.',
+    };
   }
 }

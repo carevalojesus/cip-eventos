@@ -10,10 +10,17 @@ import { User } from '../../users/entities/user.entity';
 
 // Enum para los nombres de roles predefinidos
 export enum UserRole {
-  ADMIN = 'ADMIN',
-  USER = 'USER',
-  MODERATOR = 'MODERATOR', // Para futura expansión
-  ORGANIZER = 'ORGANIZER', // Organizador de eventos
+  SUPER_ADMIN = 'SUPER_ADMIN',
+  ORG_ADMIN = 'ORG_ADMIN',
+  ORG_STAFF_ACCESO = 'ORG_STAFF_ACCESO',
+  ORG_STAFF_ACADEMICO = 'ORG_STAFF_ACADEMICO',
+  ORG_FINANZAS = 'ORG_FINANZAS',
+  PONENTE = 'PONENTE',
+  PARTICIPANTE = 'PARTICIPANTE',
+  ADMIN = 'ADMIN', // Compatibilidad retro
+  USER = 'USER', // Compatibilidad retro
+  MODERATOR = 'MODERATOR',
+  ORGANIZER = 'ORGANIZER',
 }
 
 @Entity('roles')

@@ -61,6 +61,13 @@ export class User {
   @OneToOne(() => Profile, (profile) => profile.user)
   profile: Profile;
 
+  // Campos de eliminación de cuenta (soft delete)
+  @Column({ type: 'timestamptz', nullable: true })
+  deletedAt: Date | null;
+
+  @Column({ type: 'text', nullable: true })
+  deletionReason: string | null;
+
   @CreateDateColumn()
   createdAt: Date;
 

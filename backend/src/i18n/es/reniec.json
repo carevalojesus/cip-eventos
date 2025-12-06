@@ -1,0 +1,50 @@
+{
+  "validation": {
+    "success": {
+      "perfect": "Los datos coinciden perfectamente con RENIEC",
+      "veryGood": "Los datos coinciden muy bien con RENIEC",
+      "acceptable": "Los datos coinciden aceptablemente con RENIEC"
+    },
+    "failed": {
+      "similarButBelowThreshold": "Los datos tienen similitudes con RENIEC pero no alcanzan el umbral mínimo. Se recomienda revisar.",
+      "significantDifferences": "Los datos tienen diferencias significativas con RENIEC. Se requiere revisión.",
+      "noMatch": "Los datos no coinciden con RENIEC. Se requiere verificación manual."
+    },
+    "errors": {
+      "serviceDisabled": "Validación RENIEC deshabilitada por configuración",
+      "unavailable": "No se pudo consultar RENIEC o DNI no encontrado. Se marcará para revisión.",
+      "invalidDni": "DNI inválido: debe tener 8 dígitos numéricos",
+      "notFound": "No se encontró información para este DNI en RENIEC",
+      "apiError": "Error al consultar el servicio RENIEC",
+      "rateLimitExceeded": "Se excedió el límite de consultas a RENIEC"
+    }
+  },
+  "fields": {
+    "dni": "DNI",
+    "nombres": "Nombres",
+    "apellidoPaterno": "Apellido Paterno",
+    "apellidoMaterno": "Apellido Materno",
+    "nombreCompleto": "Nombre Completo",
+    "fechaNacimiento": "Fecha de Nacimiento",
+    "sexo": "Sexo",
+    "estadoCivil": "Estado Civil",
+    "departamento": "Departamento",
+    "provincia": "Provincia",
+    "distrito": "Distrito",
+    "direccion": "Dirección",
+    "ubigeo": "Ubigeo"
+  },
+  "messages": {
+    "dataObserved": "Los datos de esta persona han sido marcados para revisión debido a discrepancias con RENIEC",
+    "validationPending": "Validación RENIEC pendiente",
+    "cacheCleared": "Caché de RENIEC limpiado exitosamente",
+    "serviceInfo": "Información del servicio RENIEC"
+  },
+  "logs": {
+    "validationFailed": "Datos de persona no coinciden con RENIEC",
+    "validationSuccess": "Persona validada exitosamente con RENIEC",
+    "errorValidating": "Error validando persona con RENIEC",
+    "queryingReniec": "Consultando RENIEC para DNI",
+    "cachedData": "Datos de RENIEC encontrados en caché"
+  }
+}

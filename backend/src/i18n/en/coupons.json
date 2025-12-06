@@ -1,0 +1,16 @@
+{
+  "not_found": "Coupon not found",
+  "code_already_exists": "A coupon with this code already exists",
+  "event_not_found": "Event not found",
+  "ticket_not_found": "Ticket type not found",
+  "inactive": "This coupon is inactive",
+  "not_yet_valid": "This coupon is not yet valid",
+  "expired": "This coupon has expired",
+  "wrong_event": "This coupon is not valid for this event",
+  "wrong_ticket": "This coupon is not valid for this ticket type",
+  "min_purchase_not_met": "Minimum purchase amount for this coupon is S/ {amount}",
+  "max_uses_reached": "This coupon has reached its usage limit",
+  "max_uses_per_person": "You have already used this coupon the maximum number of times",
+  "cip_required": "This coupon requires a valid CIP code",
+  "cip_not_valid": "Your CIP code is not valid or you are not enabled"
+}

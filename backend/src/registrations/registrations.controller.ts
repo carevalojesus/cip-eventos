@@ -1,6 +1,7 @@
-import { Controller, Post, Body, UseGuards } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, Get, Param } from '@nestjs/common';
 import { RegistrationsService } from './registrations.service';
 import { CreateRegistrationDto } from './dto/create-registration.dto';
+import { CheckInDto, CheckOutDto } from './dto/check-in.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { User } from 'src/users/entities/user.entity';
@@ -32,11 +33,93 @@ export class RegistrationsController {
     return this.regService.create(dto, user);
   }
 
-  // 🚪 Endpoint Check-In (Staff/Admin)
+  // 🚪 Endpoint Check-In (Staff/Admin) - LEGACY
   @Post('check-in')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('ADMIN', 'STAFF')
   checkIn(@Body('ticketCode') ticketCode: string) {
     return this.regService.checkIn(ticketCode);
+  }
+
+  // ============================================
+  // 🎟️ NUEVOS ENDPOINTS DE CHECK-IN POR QR
+  // ============================================
+
+  /**
+   * Check-in avanzado con soporte para sesiones
+   * Permite check-in general al evento o a una sesión específica
+   *
+   * POST /registrations/qr/check-in
+   * Body: { ticketCode, sessionId?, mode? }
+   */
+  @Post('qr/check-in')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ADMIN', 'STAFF', 'ORGANIZER')
+  @Throttle({ default: { limit: 30, ttl: 60000 } }) // 30 check-ins por minuto
+  checkInQr(@Body() dto: CheckInDto, @CurrentUser() user: User) {
+    return this.regService.checkInAdvanced(dto, user);
+  }
+
+  /**
+   * Check-out de una sesión (modo avanzado)
+   * Registra la salida y calcula tiempo de asistencia
+   *
+   * POST /registrations/qr/check-out
+   * Body: { ticketCode, sessionId }
+   */
+  @Post('qr/check-out')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ADMIN', 'STAFF', 'ORGANIZER')
+  @Throttle({ default: { limit: 30, ttl: 60000 } })
+  checkOutQr(@Body() dto: CheckOutDto, @CurrentUser() user: User) {
+    return this.regService.checkOutSession(dto, user);
+  }
+
+  /**
+   * Obtener estado de check-in de un ticket
+   * Muestra historial completo de asistencia
+   *
+   * GET /registrations/qr/:ticketCode/status
+   */
+  @Get('qr/:ticketCode/status')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ADMIN', 'STAFF', 'ORGANIZER')
+  getTicketStatus(@Param('ticketCode') ticketCode: string) {
+    return this.regService.getCheckInStatus(ticketCode);
+  }
+
+  /**
+   * Validar ticket sin registrar check-in
+   * Útil para pre-validación antes del escaneo
+   *
+   * GET /registrations/qr/:ticketCode/validate
+   */
+  @Get('qr/:ticketCode/validate')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ADMIN', 'STAFF', 'ORGANIZER')
+  async validateTicketQr(@Param('ticketCode') ticketCode: string) {
+    const registration = await this.regService.validateTicket(ticketCode);
+
+    return {
+      valid: true,
+      ticketCode: registration.ticketCode,
+      attendee: {
+        firstName: registration.attendee.firstName,
+        lastName: registration.attendee.lastName,
+        email: registration.attendee.email,
+        documentNumber: registration.attendee.documentNumber,
+      },
+      event: {
+        id: registration.event.id,
+        title: registration.event.title,
+      },
+      eventTicket: {
+        id: registration.eventTicket.id,
+        name: registration.eventTicket.name,
+      },
+      status: registration.status,
+      attended: registration.attended,
+      attendedAt: registration.attendedAt,
+    };
   }
 }

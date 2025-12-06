@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+    .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center; border-radius: 8px 8px 0 0; }
+    .content { background: #fff; padding: 30px; border: 1px solid #e0e0e0; border-top: none; }
+    .report-badge { background: #e7e5ff; color: #4c3d9b; padding: 15px; border-radius: 8px; text-align: center; margin: 20px 0; border-left: 4px solid #667eea; }
+    .report-details { background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0; }
+    .detail-row { display: flex; justify-content: space-between; margin: 10px 0; padding: 8px 0; border-bottom: 1px solid #e0e0e0; }
+    .detail-row:last-child { border-bottom: none; }
+    .label { font-weight: bold; color: #667eea; }
+    .value { text-align: right; color: #555; }
+    .attachment-section { text-align: center; margin: 30px 0; padding: 20px; background: #f8f9fa; border-radius: 8px; border: 2px dashed #667eea; }
+    .attachment-icon { font-size: 48px; margin-bottom: 10px; }
+    .btn { display: inline-block; background: #667eea; color: white; padding: 15px 40px; text-decoration: none; border-radius: 8px; margin: 10px; font-weight: bold; }
+    .info-box { background: #d1ecf1; border-left: 4px solid #0c5460; padding: 15px; border-radius: 4px; margin: 20px 0; color: #0c5460; }
+    .footer { text-align: center; padding: 20px; color: #666; font-size: 12px; border-top: 1px solid #e0e0e0; margin-top: 20px; }
+    .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin: 20px 0; }
+    .stat-card { background: white; padding: 15px; border-radius: 8px; border: 1px solid #e0e0e0; text-align: center; }
+    .stat-value { font-size: 24px; font-weight: bold; color: #667eea; margin: 5px 0; }
+    .stat-label { font-size: 12px; color: #666; text-transform: uppercase; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Reporte Automático</h1>
+      <p style="margin: 0; opacity: 0.9;">{{reportName}}</p>
+    </div>
+    <div class="content">
+      <div class="report-badge">
+        <h2 style="margin: 0;">Tu reporte está listo</h2>
+      </div>
+
+      <p>Hola,</p>
+
+      <p>Se ha generado automáticamente el reporte <strong>{{reportName}}</strong> según tu configuración.</p>
+
+      <div class="report-details">
+        <h3 style="margin-top: 0; color: #667eea;">Detalles del Reporte</h3>
+        <div class="detail-row">
+          <span class="label">Tipo de Reporte:</span>
+          <span class="value">{{reportType}}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Frecuencia:</span>
+          <span class="value">{{frequency}}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Formato:</span>
+          <span class="value">{{format}}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Fecha de generación:</span>
+          <span class="value">{{generatedAt}}</span>
+        </div>
+        {{#if eventTitle}}
+        <div class="detail-row">
+          <span class="label">Evento:</span>
+          <span class="value">{{eventTitle}}</span>
+        </div>
+        {{/if}}
+        {{#if period}}
+        <div class="detail-row">
+          <span class="label">Período:</span>
+          <span class="value">{{period}}</span>
+        </div>
+        {{/if}}
+      </div>
+
+      {{#if summary}}
+      <div class="info-box">
+        <h3 style="margin-top: 0;">Resumen Ejecutivo</h3>
+        {{#if summary.totalRegistrations}}
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-label">Inscripciones</div>
+            <div class="stat-value">{{summary.totalRegistrations}}</div>
+          </div>
+          {{#if summary.totalRevenue}}
+          <div class="stat-card">
+            <div class="stat-label">Ingresos</div>
+            <div class="stat-value">S/. {{summary.totalRevenue}}</div>
+          </div>
+          {{/if}}
+          {{#if summary.attendanceRate}}
+          <div class="stat-card">
+            <div class="stat-label">Asistencia</div>
+            <div class="stat-value">{{summary.attendanceRate}}%</div>
+          </div>
+          {{/if}}
+          {{#if summary.certificatesIssued}}
+          <div class="stat-card">
+            <div class="stat-label">Certificados</div>
+            <div class="stat-value">{{summary.certificatesIssued}}</div>
+          </div>
+          {{/if}}
+        </div>
+        {{/if}}
+      </div>
+      {{/if}}
+
+      <div class="attachment-section">
+        <div class="attachment-icon">📊</div>
+        <h3 style="margin: 10px 0;">Archivo Adjunto</h3>
+        <p style="color: #666; margin: 5px 0;">El reporte completo se encuentra adjunto a este correo</p>
+        <p style="font-size: 14px; color: #888;">
+          <strong>Archivo:</strong> {{fileName}}<br>
+          <strong>Formato:</strong> {{format}}
+        </p>
+      </div>
+
+      <div class="info-box" style="background: #fff3cd; border-color: #856404; color: #856404;">
+        <strong>Nota:</strong> Este es un reporte automático generado según tu configuración.
+        Si deseas modificar la frecuencia o los destinatarios, puedes hacerlo desde el panel de administración.
+      </div>
+
+      <p><strong>Próximo envío programado:</strong></p>
+      <p>{{#if nextScheduledAt}}El próximo reporte se generará el <strong>{{nextScheduledAt}}</strong>{{else}}Este es un reporte único{{/if}}</p>
+
+      <div style="text-align: center; margin: 30px 0;">
+        {{#if dashboardUrl}}
+        <a href="{{dashboardUrl}}" class="btn">Ver Dashboard</a>
+        {{/if}}
+      </div>
+
+      <p style="color: #666; font-size: 14px; margin-top: 30px;">
+        Si tienes preguntas sobre este reporte o necesitas información adicional, no dudes en contactarnos.
+      </p>
+
+      <p>Saludos,<br>
+      <strong>Sistema de Reportes CIP Eventos</strong></p>
+    </div>
+    <div class="footer">
+      <p>Este es un correo automático generado por el sistema de reportes programados.</p>
+      <p>Para desactivar estos reportes, accede al panel de administración.</p>
+      <p>&copy; 2024 CIP Eventos. Todos los derechos reservados.</p>
+    </div>
+  </div>
+</body>
+</html>

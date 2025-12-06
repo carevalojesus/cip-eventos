@@ -186,8 +186,13 @@ export class AuthController {
   async register(
     @Body() registerDto: RegisterAuthDto,
     @Res({ passthrough: true }) res: Response,
+    @Req() req: RequestWithUserId,
   ) {
-    const result = await this.authService.register(registerDto);
+    const metadata = {
+      userAgent: req.headers['user-agent'],
+      ip: req.ip,
+    };
+    const result = await this.authService.register(registerDto, metadata);
     this.setRefreshTokenCookie(res, result.refresh_token);
     return {
       access_token: result.access_token,

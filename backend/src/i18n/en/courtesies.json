@@ -1,0 +1,14 @@
+{
+  "event_not_found": "Event not found",
+  "event_cancelled": "Cannot grant courtesy to a cancelled event",
+  "person_required": "You must provide a person ID or data to create a new person",
+  "already_granted": "An active courtesy already exists for this person in this event",
+  "blocks_required": "You must specify at least one block for specific blocks courtesies",
+  "invalid_blocks": "One or more specified blocks are invalid or do not belong to the event",
+  "speaker_not_found": "Speaker not found",
+  "not_found": "Courtesy not found",
+  "not_active": "The courtesy is not active",
+  "no_speakers": "The event has no registered speakers",
+  "granted_successfully": "Courtesy granted successfully",
+  "cancelled_successfully": "Courtesy cancelled successfully"
+}

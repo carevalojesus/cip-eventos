@@ -1,0 +1,75 @@
+{
+  "block_not_found": "Evaluable block not found",
+  "block_not_open": "Block is not open for enrollment",
+  "enrollment_not_started": "Enrollment period has not started yet",
+  "enrollment_ended": "Enrollment period has ended",
+  "block_full": "Block has reached maximum capacity",
+  "already_enrolled": "You are already enrolled in this block",
+  "event_registration_required": "You must be registered for the event to enroll in this block",
+  "enrollment_not_found": "Enrollment not found",
+  "enrollment_not_pending": "Enrollment is not pending payment",
+  "cannot_cancel_enrollment": "Cannot cancel enrollment in its current status",
+  "cannot_withdraw": "Cannot withdraw in the current enrollment status",
+  "enrollment_not_in_progress": "Enrollment is not in progress",
+  "event_not_found": "Event not found",
+  "evaluation_not_found": "Evaluation not found",
+  "weight_exceeds_100": "Total evaluation weight cannot exceed 100%. Available: {available}%",
+  "original_evaluation_not_found": "Original evaluation for retake not found",
+  "evaluation_block_mismatch": "Evaluation does not belong to the same block as the enrollment",
+  "grade_out_of_range": "Grade must be between {min} and {max}",
+  "invalid_status_transition": "Invalid status transition: from {from} to {to}",
+  "session_not_found": "Session not found",
+  "not_enrolled_in_session": "Participant is not enrolled in any block that includes this session",
+  "ticket_not_found": "Ticket not found or invalid",
+  "already_checked_in": "Already checked in for this session",
+  "no_check_in": "No check-in record for this session",
+  "already_checked_out": "Already checked out from this session",
+  "session_or_enrollment_not_found": "Session or enrollment not found",
+  "block_types": {
+    "WORKSHOP": "Workshop",
+    "COURSE": "Course",
+    "MODULE": "Module",
+    "SEMINAR": "Seminar",
+    "DIPLOMA": "Diploma Program"
+  },
+  "block_statuses": {
+    "DRAFT": "Draft",
+    "OPEN": "Open",
+    "IN_PROGRESS": "In Progress",
+    "GRADING": "Grading",
+    "COMPLETED": "Completed",
+    "CANCELLED": "Cancelled"
+  },
+  "enrollment_statuses": {
+    "PENDING": "Pending Payment",
+    "ENROLLED": "Enrolled",
+    "IN_PROGRESS": "In Progress",
+    "APPROVED": "Approved",
+    "FAILED": "Failed",
+    "WITHDRAWN": "Withdrawn",
+    "CANCELLED": "Cancelled"
+  },
+  "evaluation_types": {
+    "EXAM": "Exam",
+    "QUIZ": "Quiz",
+    "ASSIGNMENT": "Assignment",
+    "PROJECT": "Project",
+    "PARTICIPATION": "Participation",
+    "RETAKE": "Retake"
+  },
+  "attendance_statuses": {
+    "PRESENT": "Present",
+    "PARTIAL": "Partial",
+    "ABSENT": "Absent",
+    "LATE": "Late",
+    "EXCUSED": "Excused"
+  },
+  "notifications": {
+    "enrolled": "You have successfully enrolled in {blockName}",
+    "grade_published": "Your grade in {evaluationName} has been published: {grade}",
+    "final_grade": "Your final grade in {blockName} is: {grade}",
+    "approved": "Congratulations! You have passed {blockName}",
+    "failed": "You did not pass {blockName}. Final grade: {grade}",
+    "certificate_ready": "Your approval certificate is ready to download"
+  }
+}

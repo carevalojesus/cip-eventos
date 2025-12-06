@@ -8,6 +8,7 @@ import {
   Matches,
   MaxLength,
   MinLength,
+  IsBoolean,
 } from 'class-validator';
 import { DocumentType } from '../../attendees/entities/attendee.entity';
 import { Transform } from 'class-transformer';
@@ -37,4 +38,18 @@ export class CreateRegistrationDto {
     typeof value === 'string' ? value.trim().toUpperCase() : value,
   )
   cipCode?: string;
+
+  // Código de cupón de descuento
+  @IsString()
+  @IsOptional()
+  @MaxLength(50)
+  @Transform(({ value }: { value: unknown }) =>
+    typeof value === 'string' ? value.trim().toUpperCase() : value,
+  )
+  couponCode?: string;
+
+  // Aceptación de términos y condiciones
+  @IsBoolean()
+  @IsOptional()
+  acceptedTerms?: boolean;
 }

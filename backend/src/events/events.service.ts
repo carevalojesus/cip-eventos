@@ -4,7 +4,7 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, In } from 'typeorm';
+import { Repository, In, Between, ILike } from 'typeorm';
 import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
 import { Event, EventStatus } from './entities/event.entity';
@@ -27,6 +27,8 @@ import {
   PaginatedResult,
 } from '../common/dto/pagination.dto';
 import { RedisService } from '../redis/redis.service';
+import { Registration, RegistrationStatus } from '../registrations/entities/registration.entity';
+import { FindEventsDto } from './dto/find-events.dto';
 
 // Cache TTLs
 const CATALOG_CACHE_TTL = 60 * 60 * 1000; // 1 hora para catálogos
@@ -56,6 +58,8 @@ export class EventsService {
     private readonly ticketRepository: Repository<EventTicket>,
     @InjectRepository(EventLocation)
     private readonly locationRepository: Repository<EventLocation>,
+    @InjectRepository(Registration)
+    private readonly registrationRepository: Repository<Registration>,
     private readonly redisService: RedisService,
   ) {}
 
@@ -230,62 +234,71 @@ export class EventsService {
     return Array.from(uniqueMap.values());
   }
 
-  async findAll(
-    paginationDto?: PaginationDto,
-  ): Promise<PaginatedResult<Event>> {
-    const page = paginationDto?.page || 1;
-    const limit = paginationDto?.limit || 10;
-
-    // Intentar obtener del cache
-    const cacheKey = `events:list:${page}:${limit}`;
-    const cached =
-      await this.redisService.get<PaginatedResult<Event>>(cacheKey);
-    if (cached) {
-      return cached;
-    }
-
+  async findAll(filters?: FindEventsDto): Promise<PaginatedResult<Event>> {
+    const page = filters?.page || 1;
+    const limit = filters?.limit || 10;
     const skip = (page - 1) * limit;
 
-    // Obtener TODOS los eventos activos sin paginación para ordenar correctamente
-    const allEvents = await this.eventRepository.find({
-      where: { isActive: true },
-      relations: [
-        'type',
-        'category',
-        'modality',
-        'createdBy',
-        'location',
-        'speakers',
-        'organizers',
-        'tickets',
-      ],
+    const qb = this.eventRepository
+      .createQueryBuilder('event')
+      .leftJoinAndSelect('event.type', 'type')
+      .leftJoinAndSelect('event.category', 'category')
+      .leftJoinAndSelect('event.modality', 'modality')
+      .leftJoinAndSelect('event.createdBy', 'createdBy')
+      .leftJoinAndSelect('event.location', 'location')
+      .leftJoinAndSelect('event.speakers', 'speakers')
+      .leftJoinAndSelect('event.organizers', 'organizers')
+      .leftJoinAndSelect('event.tickets', 'tickets')
+      .where('event.isActive = :active', { active: true });
+
+    // Filtro por estado (opcional)
+    if (filters?.status) {
+      qb.andWhere('event.status = :status', { status: filters.status });
+    }
+
+    // Rango de fechas (inicio)
+    if (filters?.from && filters?.to) {
+      qb.andWhere('event.startAt BETWEEN :from AND :to', {
+        from: new Date(filters.from),
+        to: new Date(filters.to),
+      });
+    } else if (filters?.from) {
+      qb.andWhere('event.startAt >= :from', { from: new Date(filters.from) });
+    } else if (filters?.to) {
+      qb.andWhere('event.startAt <= :to', { to: new Date(filters.to) });
+    }
+
+    // Búsqueda por título/resumen/ciudad
+    if (filters?.search) {
+      const term = `%${filters.search.toLowerCase()}%`;
+      qb.andWhere(
+        '(LOWER(event.title) LIKE :term OR LOWER(event.summary) LIKE :term OR LOWER(location.city) LIKE :term)',
+        { term },
+      );
+    }
+
+    // Ordenar por prioridad de estado y fecha de inicio
+    qb.addSelect(
+      `CASE 
+        WHEN event.status = :published THEN 1
+        WHEN event.status = :draft THEN 2
+        WHEN event.status = :completed THEN 3
+        WHEN event.status = :cancelled THEN 4
+        ELSE 5
+      END`,
+      'status_priority',
+    ).setParameters({
+      published: EventStatus.PUBLISHED,
+      draft: EventStatus.DRAFT,
+      completed: EventStatus.COMPLETED,
+      cancelled: EventStatus.CANCELLED,
     });
 
-    // Ordenar en memoria:
-    // 1. PUBLISHED primero, ordenados por fecha próxima
-    // 2. DRAFT segundo
-    // 3. COMPLETED/CANCELLED/ARCHIVED al final
-    const statusPriority: Record<EventStatus, number> = {
-      [EventStatus.PUBLISHED]: 1,
-      [EventStatus.DRAFT]: 2,
-      [EventStatus.COMPLETED]: 3,
-      [EventStatus.CANCELLED]: 4,
-      [EventStatus.ARCHIVED]: 5,
-    };
+    qb.orderBy('status_priority', 'ASC').addOrderBy('event.startAt', 'ASC');
 
-    allEvents.sort((a, b) => {
-      const statusDiff = statusPriority[a.status] - statusPriority[b.status];
-      if (statusDiff !== 0) return statusDiff;
-      return new Date(a.startAt).getTime() - new Date(b.startAt).getTime();
-    });
+    const [events, total] = await qb.skip(skip).take(limit).getManyAndCount();
 
-    // Aplicar paginación después de ordenar
-    const total = allEvents.length;
-    const events = allEvents.slice(skip, skip + limit);
-
-    const result = paginate(events, total, page, limit);
-    await this.redisService.set(cacheKey, result, EVENTS_LIST_CACHE_TTL);
-    return result;
+    return paginate(events, total, page, limit);
   }
 
   async findOne(id: string) {
@@ -327,12 +340,66 @@ export class EventsService {
         'location',
         'virtualAccess',
         'speakers',
+        'tickets',
       ],
     });
 
     if (!event) throw new NotFoundException(`Event with ID ${id} not found`);
 
     return event;
+  }
+
+  async getMetrics(eventId: string) {
+    const event = await this.eventRepository.findOne({
+      where: { id: eventId, isActive: true },
+      relations: ['tickets'],
+    });
+
+    if (!event) throw new NotFoundException(`Event with ID ${eventId} not found`);
+
+    const ticketsCount = event.tickets?.length || 0;
+    const totalStock =
+      event.tickets?.reduce((acc, ticket) => acc + (ticket.stock || 0), 0) || 0;
+
+    const [enrolledCount, revenue, checkInsCount] = await Promise.all([
+      this.registrationRepository.count({
+        where: {
+          event: { id: eventId },
+          status: In([
+            RegistrationStatus.CONFIRMED,
+            RegistrationStatus.PENDING,
+            RegistrationStatus.ATTENDED,
+          ]),
+        },
+      }),
+      this.registrationRepository
+        .createQueryBuilder('registration')
+        .select('SUM(registration.finalPrice)', 'sum')
+        .where('registration.eventId = :eventId', { eventId })
+        .andWhere('registration.status IN (:...statuses)', {
+          statuses: [
+            RegistrationStatus.CONFIRMED,
+            RegistrationStatus.ATTENDED,
+          ],
+        })
+        .getRawOne()
+        .then((result) => Number(result?.sum || 0)),
+      this.registrationRepository.count({
+        where: {
+          event: { id: eventId },
+          status: In([RegistrationStatus.CONFIRMED, RegistrationStatus.ATTENDED]),
+          attended: true,
+        },
+      }),
+    ]);
+
+    return {
+      ticketsCount,
+      totalStock,
+      enrolledCount,
+      totalRevenue: revenue,
+      checkInsCount,
+    };
   }
 
   async update(id: string, updateEventDto: UpdateEventDto) {

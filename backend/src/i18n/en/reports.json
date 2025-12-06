@@ -1,0 +1,119 @@
+{
+  "columns": {
+    "ticketCode": "Ticket Code",
+    "attendeeName": "Name",
+    "attendeeEmail": "Email",
+    "attendeeDocument": "Document",
+    "ticketType": "Ticket Type",
+    "status": "Status",
+    "origin": "Origin",
+    "finalPrice": "Final Price",
+    "discountAmount": "Discount",
+    "originalPrice": "Original Price",
+    "attended": "Attended",
+    "attendedAt": "Attendance Date",
+    "registeredAt": "Registration Date",
+    "paymentStatus": "Payment Status",
+    "paymentProvider": "Payment Method",
+    "sessionName": "Session",
+    "sessionDate": "Session Date",
+    "totalRegistered": "Total Registered",
+    "present": "Present",
+    "absent": "Absent",
+    "partial": "Partial",
+    "late": "Late",
+    "excused": "Excused",
+    "inPerson": "In Person",
+    "virtual": "Virtual",
+    "attendanceRate": "Attendance Rate",
+    "provider": "Provider",
+    "count": "Count",
+    "amount": "Amount",
+    "percentage": "Percentage",
+    "avgAmount": "Average Amount",
+    "revenue": "Revenue",
+    "quantity": "Quantity",
+    "finalGrade": "Final Grade",
+    "attendancePercentage": "Attendance %",
+    "meetsAttendanceRequirement": "Meets Attendance",
+    "passed": "Passed",
+    "certificateIssued": "Certificate Issued",
+    "enrolledAt": "Enrollment Date",
+    "gradedAt": "Grading Date",
+    "modality": "Modality",
+    "checkInAt": "Check In Time",
+    "checkOutAt": "Check Out Time",
+    "minutesAttended": "Minutes Attended"
+  },
+  "messages": {
+    "report_generated": "Report generated successfully",
+    "export_completed": "Export completed",
+    "no_data_found": "No data found for report",
+    "error_generating_report": "Error generating report"
+  },
+  "statuses": {
+    "PENDING": "Pending",
+    "CONFIRMED": "Confirmed",
+    "CANCELLED": "Cancelled",
+    "ATTENDED": "Attended",
+    "EXPIRED": "Expired",
+    "ENROLLED": "Enrolled",
+    "IN_PROGRESS": "In Progress",
+    "APPROVED": "Approved",
+    "FAILED": "Failed",
+    "WITHDRAWN": "Withdrawn",
+    "PRESENT": "Present",
+    "ABSENT": "Absent",
+    "PARTIAL": "Partial",
+    "LATE": "Late",
+    "EXCUSED": "Excused"
+  },
+  "origins": {
+    "PURCHASE": "Purchase",
+    "COURTESY": "Courtesy",
+    "TRANSFER": "Transfer"
+  },
+  "paymentProviders": {
+    "STRIPE": "Stripe",
+    "NIUBIZ": "Niubiz",
+    "PAYPAL": "PayPal",
+    "YAPE": "Yape",
+    "PLIN": "Plin",
+    "BANK_TRANSFER": "Bank Transfer",
+    "CASH": "Cash",
+    "SIMULATED": "Simulated"
+  },
+  "scheduled": {
+    "types": {
+      "DAILY_REGISTRATIONS": "Daily Registrations",
+      "DAILY_ATTENDANCE": "Daily Attendance",
+      "DAILY_REVENUE": "Daily Revenue",
+      "WEEKLY_SUMMARY": "Weekly Summary",
+      "MONTHLY_SUMMARY": "Monthly Summary",
+      "FINANCIAL_SUMMARY": "Financial Summary",
+      "CERTIFICATE_SUMMARY": "Certificate Summary",
+      "EVENT_FINAL_REPORT": "Event Final Report"
+    },
+    "frequencies": {
+      "DAILY": "Daily",
+      "WEEKLY": "Weekly",
+      "MONTHLY": "Monthly",
+      "ON_EVENT_END": "On Event End"
+    },
+    "formats": {
+      "CSV": "CSV",
+      "EXCEL": "Excel",
+      "PDF": "PDF"
+    },
+    "messages": {
+      "created": "Scheduled report created successfully",
+      "updated": "Scheduled report updated successfully",
+      "deleted": "Scheduled report deleted successfully",
+      "executed": "Report executed and sent successfully",
+      "not_found": "Scheduled report not found",
+      "execution_failed": "Error executing scheduled report",
+      "invalid_config": "Invalid configuration for selected frequency",
+      "deactivated_due_to_failures": "Report deactivated due to multiple failures"
+    }
+  }
+}

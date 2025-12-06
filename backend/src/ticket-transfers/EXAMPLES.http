@@ -1,0 +1,56 @@
+### Archivo de ejemplos para probar el módulo de transferencias
+### Usa la extensión REST Client de VS Code
+
+@baseUrl = http://localhost:3000
+@token = YOUR_JWT_TOKEN_HERE
+
+### 1. Verificar si un ticket puede ser transferido (Público)
+GET {{baseUrl}}/ticket-transfers/registrations/REGISTRATION_ID_HERE/can-transfer
+
+### 2. Iniciar una transferencia de ticket
+POST {{baseUrl}}/ticket-transfers/registrations/REGISTRATION_ID_HERE/transfer
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "firstName": "Ana",
+  "lastName": "García",
+  "email": "ana@example.com",
+  "documentType": "DNI",
+  "documentNumber": "87654321",
+  "phone": "+51987654321",
+  "reason": "No puedo asistir por motivos de trabajo"
+}
+
+### 3. Obtener historial de transferencias de un ticket
+GET {{baseUrl}}/ticket-transfers/registrations/REGISTRATION_ID_HERE/history
+Authorization: Bearer {{token}}
+
+### 4. Completar una transferencia pendiente (Solo admins)
+POST {{baseUrl}}/ticket-transfers/TRANSFER_ID_HERE/complete
+Authorization: Bearer {{token}}
+
+### 5. Cancelar una transferencia pendiente
+POST {{baseUrl}}/ticket-transfers/TRANSFER_ID_HERE/cancel
+Authorization: Bearer {{token}}
+
+### Escenarios de prueba
+
+### Escenario 1: Transferencia exitosa
+# 1. Crear un evento con tickets que permiten transferencia
+# 2. Registrar a Juan con un ticket
+# 3. Verificar que puede transferir
+# 4. Transferir a Ana (usa endpoint #2)
+# 5. Verificar que Ana es ahora la titular
+
+### Escenario 2: Transferencia después del deadline
+# 1. Crear evento con transferDeadline en el pasado
+# 2. Intentar transferir (debe fallar)
+
+### Escenario 3: Transferencia con asistencia registrada
+# 1. Registrar asistencia de Juan
+# 2. Intentar transferir (debe fallar)
+
+### Escenario 4: Transferencia de ticket no confirmado
+# 1. Crear registration en estado PENDING
+# 2. Intentar transferir (debe fallar)
