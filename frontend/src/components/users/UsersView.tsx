@@ -18,6 +18,7 @@ import {
 } from "@phosphor-icons/react";
 import { Button } from "@/components/ui/rui-button";
 import { ConfirmDialog } from "@/components/ui/rui-confirm-dialog";
+import { ResetPasswordModal } from "./ResetPasswordModal";
 import {
     usersService,
     rolesService,
@@ -84,6 +85,17 @@ export const UsersView: React.FC<UsersViewProps> = ({ onNavigate }) => {
 
     // Resend verification dialog state
     const [resendVerificationDialog, setResendVerificationDialog] = useState<{
+        isOpen: boolean;
+        user: User | null;
+        isLoading: boolean;
+    }>({
+        isOpen: false,
+        user: null,
+        isLoading: false,
+    });
+
+    // Reset password dialog state
+    const [resetPasswordDialog, setResetPasswordDialog] = useState<{
         isOpen: boolean;
         user: User | null;
         isLoading: boolean;
@@ -208,16 +220,17 @@ export const UsersView: React.FC<UsersViewProps> = ({ onNavigate }) => {
         try {
             await usersService.remove(deleteDialog.user.id);
 
-            // Si es SUPER_ADMIN, actualizar el estado a inactivo (soft delete visible)
+            // Si es SUPER_ADMIN, actualizar el estado a inactivo y reordenar (soft delete visible)
             // Si no, remover de la lista
             if (isSuperAdmin) {
-                setUsers((prevUsers) =>
-                    prevUsers.map((u) =>
+                setUsers((prevUsers) => {
+                    const updatedUsers = prevUsers.map((u) =>
                         u.id === deleteDialog.user?.id
                             ? { ...u, isActive: false }
                             : u
-                    )
-                );
+                    );
+                    return sortUsers(updatedUsers);
+                });
             } else {
                 setUsers((prevUsers) =>
                     prevUsers.filter((u) => u.id !== deleteDialog.user?.id)
@@ -267,14 +280,15 @@ export const UsersView: React.FC<UsersViewProps> = ({ onNavigate }) => {
                 { isActive: true }
             );
 
-            // Update user in local state
-            setUsers((prevUsers) =>
-                prevUsers.map((u) =>
+            // Update user in local state and reorder
+            setUsers((prevUsers) => {
+                const updatedUsers = prevUsers.map((u) =>
                     u.id === toggleStatusDialog.user?.id
                         ? { ...u, isActive: updatedUser.isActive }
                         : u
-                )
-            );
+                );
+                return sortUsers(updatedUsers);
+            });
 
             toast.success(
                 t(
@@ -310,10 +324,75 @@ export const UsersView: React.FC<UsersViewProps> = ({ onNavigate }) => {
         }
     };
 
-    const handleResetPassword = (userId: string) => {
+    const handleResetPassword = (user: User) => {
         setOpenDropdown(null);
-        // TODO: Implement reset password with confirmation
-        toast.info(t("sections.coming_soon", "Próximamente"));
+        setResetPasswordDialog({
+            isOpen: true,
+            user,
+            isLoading: false,
+        });
+    };
+
+    const handleSendResetLink = async () => {
+        if (!resetPasswordDialog.user) return;
+
+        setResetPasswordDialog((prev) => ({ ...prev, isLoading: true }));
+
+        try {
+            await usersService.adminResetPassword(resetPasswordDialog.user.email);
+
+            toast.success(
+                t(
+                    "users.list.reset_password.link_success",
+                    "Se ha enviado un correo con el enlace de restablecimiento"
+                )
+            );
+
+            setResetPasswordDialog({ isOpen: false, user: null, isLoading: false });
+        } catch (error) {
+            console.error("Error sending reset password email:", error);
+            toast.error(
+                t(
+                    "users.list.reset_password.error",
+                    "Error al enviar el correo de restablecimiento"
+                )
+            );
+            setResetPasswordDialog((prev) => ({ ...prev, isLoading: false }));
+        }
+    };
+
+    const handleSetPassword = async (password: string) => {
+        if (!resetPasswordDialog.user) return;
+
+        setResetPasswordDialog((prev) => ({ ...prev, isLoading: true }));
+
+        try {
+            await usersService.adminSetPassword(resetPasswordDialog.user.email, password);
+
+            toast.success(
+                t(
+                    "users.list.reset_password.password_success",
+                    "Contraseña establecida y enviada al usuario"
+                )
+            );
+
+            setResetPasswordDialog({ isOpen: false, user: null, isLoading: false });
+        } catch (error) {
+            console.error("Error setting password:", error);
+            toast.error(
+                t(
+                    "users.list.reset_password.error",
+                    "Error al establecer la contraseña"
+                )
+            );
+            setResetPasswordDialog((prev) => ({ ...prev, isLoading: false }));
+        }
+    };
+
+    const handleCloseResetPasswordDialog = () => {
+        if (!resetPasswordDialog.isLoading) {
+            setResetPasswordDialog({ isOpen: false, user: null, isLoading: false });
+        }
     };
 
     const handleResendVerification = (user: User) => {
@@ -385,6 +464,22 @@ export const UsersView: React.FC<UsersViewProps> = ({ onNavigate }) => {
         const now = Date.now();
         const fiveMinutes = 5 * 60 * 1000;
         return now - sentTime < fiveMinutes;
+    };
+
+    // Sort users: active first, then verified, then by createdAt
+    const sortUsers = (usersToSort: User[]): User[] => {
+        return [...usersToSort].sort((a, b) => {
+            // Active users first
+            if (a.isActive !== b.isActive) {
+                return a.isActive ? -1 : 1;
+            }
+            // Then verified users
+            if (a.isVerified !== b.isVerified) {
+                return a.isVerified ? -1 : 1;
+            }
+            // Then by createdAt (most recent first)
+            return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+        });
     };
 
     // Format time ago for display
@@ -1155,9 +1250,7 @@ export const UsersView: React.FC<UsersViewProps> = ({ onNavigate }) => {
                                                                 <button
                                                                     style={dropdownItemStyle()}
                                                                     onClick={() =>
-                                                                        handleResetPassword(
-                                                                            user.id
-                                                                        )
+                                                                        handleResetPassword(user)
                                                                     }
                                                                     onMouseEnter={(e) =>
                                                                         (e.currentTarget.style.backgroundColor =
@@ -1408,6 +1501,17 @@ export const UsersView: React.FC<UsersViewProps> = ({ onNavigate }) => {
                 cancelText={t("users.list.resend_verification.cancel", "Cancelar")}
                 variant="info"
                 isLoading={resendVerificationDialog.isLoading}
+            />
+
+            {/* Reset Password Modal */}
+            <ResetPasswordModal
+                isOpen={resetPasswordDialog.isOpen}
+                onClose={handleCloseResetPasswordDialog}
+                userEmail={resetPasswordDialog.user?.email || ""}
+                userName={resetPasswordDialog.user ? getFullName(resetPasswordDialog.user) : null}
+                onSendResetLink={handleSendResetLink}
+                onSetPassword={handleSetPassword}
+                isLoading={resetPasswordDialog.isLoading}
             />
         </div>
     );

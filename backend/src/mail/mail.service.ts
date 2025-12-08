@@ -9,6 +9,7 @@ import { Registration } from '../registrations/entities/registration.entity';
 import {
   renderAccountConfirmedEmail,
   renderAdminCreatedEmail,
+  renderAdminResetPasswordEmail,
   renderResetPasswordEmail,
   renderTicketEmail,
   renderWelcomeEmail,
@@ -149,6 +150,19 @@ export class MailService {
       email,
       tempPassword,
       verifyUrl,
+      locale,
+    );
+    await this.dispatchMail(email, subject, html);
+  }
+
+  async sendAdminResetPassword(email: string, name: string, newPassword: string) {
+    const locale = this.getLocale();
+    const loginUrl = this.buildLoginUrl(locale);
+
+    const { subject, html } = await renderAdminResetPasswordEmail(
+      name,
+      newPassword,
+      loginUrl,
       locale,
     );
     await this.dispatchMail(email, subject, html);

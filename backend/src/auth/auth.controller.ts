@@ -32,6 +32,8 @@ import { ResetPasswordDto } from './dto/reset-password.dto';
 import { EmailVerifiedGuard } from './guards/email-verified.guard';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
+import { Roles } from './decorators/roles.decorator';
+import { RolesGuard } from './guards/roles.guard';
 
 // 1. Interfaz para cuando usas JwtAuthGuard (Logout)
 // La estrategia JWT mapeaba 'sub' a 'userId', recuerda?
@@ -359,6 +361,64 @@ export class AuthController {
   @Post('resend-verification')
   async resendVerification(@Body('email') email: string) {
     return this.authService.resendVerification(email);
+  }
+
+  @UseGuards(JwtAuthGuard, EmailVerifiedGuard, RolesGuard)
+  @Roles('ADMIN', 'SUPER_ADMIN')
+  @Post('admin-reset-password')
+  @ApiBearerAuth('JWT-auth')
+  @ApiOperation({
+    summary: 'Admin-initiated password reset',
+    description: 'Send password reset email to a user (admin only)',
+  })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: { email: { type: 'string', format: 'email' } },
+      required: ['email'],
+    },
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Password reset email sent to user',
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 403, description: 'Forbidden - requires ADMIN role' })
+  @ApiResponse({ status: 404, description: 'User not found' })
+  async adminResetPassword(@Body('email') email: string) {
+    return this.authService.adminInitiatedPasswordReset(email);
+  }
+
+  @UseGuards(JwtAuthGuard, EmailVerifiedGuard, RolesGuard)
+  @Roles('ADMIN', 'SUPER_ADMIN')
+  @Post('admin-set-password')
+  @ApiBearerAuth('JWT-auth')
+  @ApiOperation({
+    summary: 'Admin set user password',
+    description: 'Set a new password for a user and send it via email (admin only)',
+  })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        email: { type: 'string', format: 'email' },
+        password: { type: 'string', minLength: 8 },
+      },
+      required: ['email', 'password'],
+    },
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Password set and email sent to user',
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 403, description: 'Forbidden - requires ADMIN role' })
+  @ApiResponse({ status: 404, description: 'User not found' })
+  async adminSetPassword(
+    @Body('email') email: string,
+    @Body('password') password: string,
+  ) {
+    return this.authService.adminSetPassword(email, password);
   }
 
   // ==================== SESIONES ACTIVAS ====================

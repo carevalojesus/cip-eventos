@@ -81,6 +81,16 @@ export const usersService = {
     const response = await api.post<{ message: string }>("/auth/resend-verification", { email });
     return response.data;
   },
+
+  async adminResetPassword(email: string): Promise<{ message: string }> {
+    const response = await api.post<{ message: string }>("/auth/admin-reset-password", { email });
+    return response.data;
+  },
+
+  async adminSetPassword(email: string, password: string): Promise<{ message: string }> {
+    const response = await api.post<{ message: string }>("/auth/admin-set-password", { email, password });
+    return response.data;
+  },
 };
 
 export const rolesService = {

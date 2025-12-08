@@ -568,6 +568,69 @@ export class AuthService {
     };
   }
 
+  /**
+   * Admin-initiated password reset - sends a reset email to the user
+   */
+  async adminInitiatedPasswordReset(email: string) {
+    const user = await this.usersService.findOneByEmail(email);
+
+    if (!user) {
+      throw new NotFoundException(
+        this.i18n.t('users.user_not_found_email', {
+          lang: I18nContext.current()?.lang,
+          args: { email },
+        }),
+      );
+    }
+
+    const token = uuidv4();
+    const hashedToken = this.hashToken(token);
+    const expires = new Date();
+    expires.setHours(expires.getHours() + 24); // 24 hours for admin-initiated
+    await this.usersService.setResetPasswordData(user.id, hashedToken, expires);
+
+    await this.mailService.sendPasswordReset(user.email, user.email, token);
+
+    return {
+      message: this.i18n.t('auth.password_reset_email_sent', {
+        lang: I18nContext.current()?.lang,
+      }),
+    };
+  }
+
+  /**
+   * Admin sets a new password for a user directly
+   */
+  async adminSetPassword(email: string, newPassword: string) {
+    const user = await this.usersService.findOneByEmail(email);
+
+    if (!user) {
+      throw new NotFoundException(
+        this.i18n.t('users.user_not_found_email', {
+          lang: I18nContext.current()?.lang,
+          args: { email },
+        }),
+      );
+    }
+
+    // Hash and update password
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    await this.usersService.updatePassword(user.id, hashedPassword);
+
+    // Clear any existing reset tokens
+    await this.usersService.consumeResetPasswordToken(user.id);
+
+    // Send email with new password
+    const userName = user.profile?.firstName || user.email;
+    await this.mailService.sendAdminResetPassword(user.email, userName, newPassword);
+
+    return {
+      message: this.i18n.t('auth.password_set_success', {
+        lang: I18nContext.current()?.lang,
+      }),
+    };
+  }
+
   private hashToken(token: string): string {
     return crypto.createHash('sha256').update(token).digest('hex');
   }

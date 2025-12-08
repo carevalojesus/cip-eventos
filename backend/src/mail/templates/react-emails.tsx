@@ -47,6 +47,18 @@ const translations = {
       afterVerify: 'Una vez verificada tu cuenta, podrás iniciar sesión con las credenciales proporcionadas.',
       questions: '¿Tienes preguntas? Contacta al administrador del sistema.',
     },
+    adminResetPassword: {
+      title: 'Tu contraseña ha sido restablecida',
+      preview: 'Un administrador ha restablecido tu contraseña en CIP Eventos.',
+      greeting: 'Hola',
+      colleague: 'colega',
+      intro: 'Un administrador ha restablecido la contraseña de tu cuenta en el sistema de CIP Eventos.',
+      newPassword: 'Tu nueva contraseña',
+      important: 'Importante',
+      securityNote: 'Por seguridad, te recomendamos cambiar esta contraseña después de iniciar sesión.',
+      button: 'Iniciar sesión',
+      questions: '¿Tienes preguntas? Contacta al administrador del sistema.',
+    },
     reset: {
       title: 'Restablece tu contraseña',
       preview: 'Recupera el acceso a tu cuenta de CIP Eventos.',
@@ -71,6 +83,7 @@ const translations = {
       reset: 'Restablecer contraseña',
       confirmed: 'Cuenta verificada',
       adminCreated: 'Tu cuenta ha sido creada',
+      adminResetPassword: 'Tu contraseña ha sido restablecida',
     },
   },
   en: {
@@ -100,6 +113,18 @@ const translations = {
       afterVerify: 'Once your account is verified, you can log in with the credentials provided.',
       questions: 'Have questions? Contact the system administrator.',
     },
+    adminResetPassword: {
+      title: 'Your password has been reset',
+      preview: 'An administrator has reset your password in CIP Events.',
+      greeting: 'Hello',
+      colleague: 'colleague',
+      intro: 'An administrator has reset your password in the CIP Events system.',
+      newPassword: 'Your new password',
+      important: 'Important',
+      securityNote: 'For security, we recommend changing this password after logging in.',
+      button: 'Log in',
+      questions: 'Have questions? Contact the system administrator.',
+    },
     reset: {
       title: 'Reset your password',
       preview: 'Recover access to your CIP Events account.',
@@ -124,6 +149,7 @@ const translations = {
       reset: 'Reset password',
       confirmed: 'Account verified',
       adminCreated: 'Your account has been created',
+      adminResetPassword: 'Your password has been reset',
     },
   },
 };
@@ -284,6 +310,52 @@ const AdminCreatedEmail: React.FC<AdminCreatedEmailProps> = ({ name, email, temp
   );
 };
 
+// Admin reset password email
+interface AdminResetPasswordEmailProps {
+  name: string;
+  newPassword: string;
+  loginUrl: string;
+  locale: 'es' | 'en';
+}
+
+const AdminResetPasswordEmail: React.FC<AdminResetPasswordEmailProps> = ({ name, newPassword, loginUrl, locale }) => {
+  const t = translations[locale].adminResetPassword;
+  return (
+    <BaseLayout title={t.title} preview={t.preview} footer={translations[locale].welcome.footer}>
+      <Text style={{ color: '#111827', fontSize: '15px', lineHeight: '22px' }}>{t.greeting} {name || t.colleague},</Text>
+      <Text style={{ color: '#111827', fontSize: '15px', lineHeight: '22px' }}>
+        {t.intro}
+      </Text>
+
+      {/* Nueva contraseña */}
+      <Section style={{ background: '#f9fafb', borderRadius: '12px', padding: '20px', margin: '20px 0', border: '1px solid #e5e7eb' }}>
+        <Text style={{ margin: '0 0 12px', fontWeight: 600, color: '#111827', fontSize: '15px' }}>{t.newPassword}</Text>
+        <Text style={{ margin: '6px 0', color: '#4b5563', fontSize: '14px' }}>
+          <span style={{ fontFamily: 'monospace', background: '#e5e7eb', padding: '6px 12px', borderRadius: '4px', fontSize: '16px' }}>{newPassword}</span>
+        </Text>
+      </Section>
+
+      {/* Aviso de seguridad */}
+      <Section style={{ background: '#FFF3C4', borderRadius: '12px', padding: '16px 18px', marginBottom: '20px', border: '1px solid #F0B429' }}>
+        <Text style={{ margin: 0, color: '#8D2B0B', fontWeight: 700 }}>{t.important}</Text>
+        <Text style={{ margin: '6px 0 0', color: '#625D52', fontSize: '14px' }}>
+          {t.securityNote}
+        </Text>
+      </Section>
+
+      <Section style={{ textAlign: 'center', margin: '24px 0' }}>
+        <Button style={baseStyles.button} href={loginUrl}>
+          {t.button}
+        </Button>
+      </Section>
+
+      <Text style={{ color: '#6b7280', fontSize: '13px', marginTop: '16px' }}>
+        {t.questions}
+      </Text>
+    </BaseLayout>
+  );
+};
+
 // Ticket email
 interface TicketEmailProps {
   name: string;
@@ -389,6 +461,16 @@ export const renderAdminCreatedEmail = async (
 ): Promise<RenderResult> => ({
   subject: translations[locale].subject.adminCreated,
   html: await render(<AdminCreatedEmail name={name} email={email} tempPassword={tempPassword} verifyUrl={verifyUrl} locale={locale} />),
+});
+
+export const renderAdminResetPasswordEmail = async (
+  name: string,
+  newPassword: string,
+  loginUrl: string,
+  locale: 'es' | 'en' = 'es',
+): Promise<RenderResult> => ({
+  subject: translations[locale].subject.adminResetPassword,
+  html: await render(<AdminResetPasswordEmail name={name} newPassword={newPassword} loginUrl={loginUrl} locale={locale} />),
 });
 
 export const renderTicketEmail = async (props: TicketEmailProps): Promise<RenderResult> => ({
