@@ -1,12 +1,18 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { UserRole, ROLE_LABELS, ROLE_LABELS_EN } from '@/constants/roles';
 
-interface User {
+export interface User {
   email: string;
-  role: string;
+  role: UserRole;
   firstName?: string;
   lastName?: string;
   avatar?: string;
+}
+
+/** Obtiene el label del rol en el idioma especificado */
+export function getRoleLabel(role: UserRole, locale: 'es' | 'en' = 'es'): string {
+  return locale === 'en' ? ROLE_LABELS_EN[role] : ROLE_LABELS[role];
 }
 
 interface AuthState {

@@ -1,14 +1,9 @@
 import { useState, type InputHTMLAttributes } from 'react'
 import { Check } from 'lucide-react'
+import { red, grey, colors, rings, shadows } from '@/lib/design-tokens'
 
 interface CheckboxProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'type'> {
   label?: string
-}
-
-const colors = {
-  red: { 500: '#BA2525' },
-  grey: { 300: '#B8B2A7', 600: '#625D52' },
-  white: '#FFFFFF',
 }
 
 export function Checkbox({
@@ -47,22 +42,22 @@ export function Checkbox({
     alignItems: 'center',
     justifyContent: 'center',
     transition: 'all 0.15s ease',
-    backgroundColor: checked ? colors.red[500] : colors.white,
+    backgroundColor: checked ? red[500] : colors.white,
     border: isFocused
-      ? `1.5px solid ${checked ? colors.red[500] : colors.grey[600]}`
+      ? `1.5px solid ${checked ? red[500] : grey[600]}`
       : checked
         ? 'none'
-        : `1.5px solid ${colors.grey[300]}`,
+        : `1.5px solid ${grey[300]}`,
     boxShadow: isFocused
-      ? '0 1px 3px rgba(39, 36, 29, 0.15)'
+      ? rings.neutral
       : checked
-        ? '0 1px 2px rgba(185,28,28,0.2)'
-        : 'inset 0 1px 2px rgba(0,0,0,0.05)',
+        ? shadows.buttonDefault
+        : shadows.inputInset,
   }
 
   const labelStyles: React.CSSProperties = {
-    fontSize: '0.813rem',
-    color: colors.grey[600],
+    fontSize: '0.875rem', // 14px - token: sm
+    color: grey[600],
   }
 
   return (

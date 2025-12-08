@@ -1,29 +1,20 @@
-import { useState } from 'react'
+import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { SidebarItem } from './rui-sidebar-item'
 import { SidebarSection } from './rui-sidebar-section'
-import {
-  IconDashboard,
-  IconCalendar,
-  IconMicrophone,
-  IconUserGroup,
-  IconSurvey,
-  IconIdentification,
-  IconCertificate,
-  IconWallet,
-  IconMoney,
-  IconChart,
-  IconUser,
-  IconFolder,
-  IconCog,
-  IconDoorExit,
-} from '@/components/icons/DuotoneIcons'
+import { UserRole } from '@/constants/roles'
+import { getNavigationForRole } from '@/config/navigation'
+import { getRoleLabel } from '@/store/auth.store'
 
 interface SidebarProps {
-  user: { name: string; role: string; avatar?: string }
+  user: {
+    name: string
+    role: UserRole
+    avatar?: string
+  }
   activeNav: string
   onNavChange: (navId: string) => void
-  onLogout?: () => void | Promise<void>
+  onLogout?: () => void | Promise<void> // Mantenido por compatibilidad, pero ya no se usa aquí
   isOpen?: boolean
   onClose?: () => void
 }
@@ -32,11 +23,21 @@ export function Sidebar({
   user,
   activeNav,
   onNavChange,
-  onLogout,
   isOpen = true,
   onClose,
 }: SidebarProps) {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
+
+  // Obtener navegación filtrada por rol
+  const navigation = useMemo(() => {
+    return getNavigationForRole(user.role)
+  }, [user.role])
+
+  // Obtener label del rol en el idioma actual
+  const roleLabel = useMemo(() => {
+    const locale = i18n.language?.startsWith('en') ? 'en' : 'es'
+    return getRoleLabel(user.role, locale)
+  }, [user.role, i18n.language])
 
   const sidebarStyle: React.CSSProperties = {
     position: 'fixed',
@@ -133,39 +134,21 @@ export function Sidebar({
     color: 'var(--color-text-muted)',
   }
 
-  const logoutButtonStyle: React.CSSProperties = {
-    padding: '0.5rem',
-    background: 'none',
-    border: 'none',
-    cursor: 'pointer',
-    borderRadius: '0.375rem',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    transition: 'background-color 0.15s ease',
-  }
-
   const getInitials = (name: string) => {
     const parts = name.trim().split(' ').filter(Boolean)
     if (parts.length === 0) return '?'
     if (parts.length === 1) return parts[0][0].toUpperCase()
-    // Primera letra del primer nombre + primera letra del primer apellido (segundo elemento)
     return (parts[0][0] + parts[1][0]).toUpperCase()
   }
 
-  // Obtiene solo el primer nombre y primer apellido para mostrar
   const getDisplayName = (name: string) => {
     const parts = name.trim().split(' ').filter(Boolean)
     if (parts.length <= 2) return name
-    // Primer nombre + primer apellido
     return `${parts[0]} ${parts[1]}`
   }
 
   // Detectar si es móvil
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 768
-
-  // Estado hover para botón logout
-  const [isLogoutHovered, setIsLogoutHovered] = useState(false)
 
   return (
     <>
@@ -190,108 +173,31 @@ export function Sidebar({
           </div>
         </div>
 
-        {/* Navigation */}
+        {/* Navigation - Renderizado dinámico basado en rol */}
         <nav style={navStyle}>
-          {/* GENERAL */}
-          <SidebarSection>
-            <SidebarItem
-              icon={IconDashboard}
-              label={t('dashboard.nav.dashboard')}
-              isActive={activeNav === 'dashboard'}
-              onClick={() => onNavChange('dashboard')}
-            />
-          </SidebarSection>
-
-          {/* GESTIÓN DE EVENTOS */}
-          <SidebarSection title={t('dashboard.nav.events_management')}>
-            <SidebarItem
-              icon={IconCalendar}
-              label={t('dashboard.nav.my_events')}
-              isActive={activeNav === 'eventos'}
-              onClick={() => onNavChange('eventos')}
-            />
-            <SidebarItem
-              icon={IconMicrophone}
-              label={t('dashboard.nav.speakers')}
-              isActive={activeNav === 'ponentes'}
-              onClick={() => onNavChange('ponentes')}
-            />
-            <SidebarItem
-              icon={IconUserGroup}
-              label={t('dashboard.nav.organizers')}
-              isActive={activeNav === 'organizadores'}
-              onClick={() => onNavChange('organizadores')}
-            />
-          </SidebarSection>
-
-          {/* OPERACIONES */}
-          <SidebarSection title={t('dashboard.nav.operations')}>
-            <SidebarItem
-              icon={IconSurvey}
-              label={t('dashboard.nav.registrations')}
-              isActive={activeNav === 'inscripciones'}
-              onClick={() => onNavChange('inscripciones')}
-            />
-            <SidebarItem
-              icon={IconIdentification}
-              label={t('dashboard.nav.access_control')}
-              isActive={activeNav === 'control-acceso'}
-              onClick={() => onNavChange('control-acceso')}
-            />
-            <SidebarItem
-              icon={IconCertificate}
-              label={t('dashboard.nav.certificates')}
-              isActive={activeNav === 'certificados'}
-              onClick={() => onNavChange('certificados')}
-            />
-          </SidebarSection>
-
-          {/* FINANZAS */}
-          <SidebarSection title={t('dashboard.nav.finance')}>
-            <SidebarItem
-              icon={IconWallet}
-              label={t('dashboard.nav.income')}
-              isActive={activeNav === 'ingresos'}
-              onClick={() => onNavChange('ingresos')}
-            />
-            <SidebarItem
-              icon={IconMoney}
-              label={t('dashboard.nav.payments')}
-              isActive={activeNav === 'pagos'}
-              onClick={() => onNavChange('pagos')}
-            />
-            <SidebarItem
-              icon={IconChart}
-              label={t('dashboard.nav.reports')}
-              isActive={activeNav === 'reportes'}
-              onClick={() => onNavChange('reportes')}
-            />
-          </SidebarSection>
-
-          {/* ADMINISTRACIÓN */}
-          <SidebarSection title={t('dashboard.nav.administration')}>
-            <SidebarItem
-              icon={IconUser}
-              label={t('dashboard.nav.users')}
-              isActive={activeNav === 'usuarios'}
-              onClick={() => onNavChange('usuarios')}
-            />
-            <SidebarItem
-              icon={IconFolder}
-              label={t('dashboard.nav.cip_registry')}
-              isActive={activeNav === 'padron-cip'}
-              onClick={() => onNavChange('padron-cip')}
-            />
-            <SidebarItem
-              icon={IconCog}
-              label={t('dashboard.nav.settings')}
-              isActive={activeNav === 'configuracion'}
-              onClick={() => onNavChange('configuracion')}
-            />
-          </SidebarSection>
+          {navigation.map((section) => (
+            <SidebarSection
+              key={section.id}
+              title={section.titleKey ? t(section.titleKey) : undefined}
+            >
+              {section.items.map((item) => {
+                const IconComponent = item.icon
+                return (
+                  <SidebarItem
+                    key={item.id}
+                    icon={IconComponent}
+                    label={t(item.labelKey)}
+                    isActive={activeNav === item.id}
+                    onClick={() => onNavChange(item.id)}
+                    badge={item.badge}
+                  />
+                )
+              })}
+            </SidebarSection>
+          ))}
         </nav>
 
-        {/* User Profile */}
+        {/* User Profile - Logout movido al dropdown del header */}
         <div style={userContainerStyle}>
           <div style={userInnerStyle}>
             {user.avatar ? (
@@ -305,24 +211,8 @@ export function Sidebar({
             )}
             <div style={userInfoStyle}>
               <div style={userNameStyle}>{getDisplayName(user.name)}</div>
-              <div style={userRoleStyle}>{user.role}</div>
+              <div style={userRoleStyle}>{roleLabel}</div>
             </div>
-            <button
-              style={{
-                ...logoutButtonStyle,
-                backgroundColor: isLogoutHovered ? 'var(--color-red-050)' : 'transparent',
-              }}
-              onClick={onLogout}
-              onMouseEnter={() => setIsLogoutHovered(true)}
-              onMouseLeave={() => setIsLogoutHovered(false)}
-              title={t('dashboard.nav.logout')}
-            >
-              <IconDoorExit
-                size={18}
-                primary={isLogoutHovered ? 'var(--color-danger)' : 'var(--color-grey-400)'}
-                secondary={isLogoutHovered ? 'var(--color-red-200)' : 'var(--color-grey-300)'}
-              />
-            </button>
           </div>
         </div>
       </aside>

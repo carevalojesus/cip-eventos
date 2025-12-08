@@ -12,11 +12,11 @@ export function SidebarSection({ title, children }: SidebarSectionProps) {
 
   const titleStyle: React.CSSProperties = {
     padding: '0.5rem 1rem',
-    fontSize: '0.688rem',
+    fontSize: '0.75rem', // 12px - token: xs
     fontWeight: 600,
     textTransform: 'uppercase',
     letterSpacing: '0.05em',
-    color: 'var(--color-grey-700)',
+    color: 'var(--color-grey-500)',
   }
 
   const itemsStyle: React.CSSProperties = {

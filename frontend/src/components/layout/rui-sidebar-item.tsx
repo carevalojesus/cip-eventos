@@ -48,21 +48,17 @@ export function SidebarItem({
     transition: 'opacity 0.15s ease',
   }
 
-  // Colores duotono para iconos basados en el estado
-  // Primary = trazo principal, Secondary = relleno/detalle (siempre más claro que primary)
-  // Regla Refactoring UI: iconos deben ser más sutiles que el texto para no competir
-  // Hover sutil: solo ligero cambio de tono, sin cambios drásticos
+  // Colores para iconos basados en el estado
+  // Iconos inactivos: grey-600 para mejor visibilidad
+  // Iconos activos: primary (red-500)
   const iconPrimary = isActive
     ? 'var(--color-primary)'
-    : (isHovered ? 'var(--color-grey-500)' : 'var(--color-grey-400)')
-  const iconSecondary = isActive
-    ? 'var(--color-red-200)'
-    : (isHovered ? 'var(--color-grey-300)' : 'var(--color-grey-300)')
+    : 'var(--color-grey-600)'
 
   const content = (
     <>
       <span style={activeIndicatorStyle} />
-      <Icon size={20} primary={iconPrimary} secondary={iconSecondary} />
+      <Icon size={20} primary={iconPrimary} />
       <span style={{
         flex: 1,
         fontSize: '0.875rem',

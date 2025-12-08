@@ -1,14 +1,15 @@
 import { useState, type ButtonHTMLAttributes, type ReactNode } from 'react'
+import { red, grey, cyan, colors, rings, shadows } from '@/lib/design-tokens'
 
 /**
  * Button Component - Refactoring UI Design System
  *
  * Variantes:
- * - primary: Acción principal (rojo CIP) - alto contraste
+ * - primary: Identidad de marca CIP (rojo) - para acciones de alta jerarquía
  * - secondary: Acción secundaria (borde gris) - contraste medio
  * - ghost: Sin borde, solo hover - bajo énfasis
  * - outline: Borde primario sin relleno
- * - soft: Fondo suave con texto de color - para acciones de agregar/crear
+ * - soft: Fondo suave con texto de color - para acciones de crear/agregar (cyan)
  * - danger: Acciones destructivas (eliminar)
  * - icon: Botones cuadrados solo para iconos - aspecto ghost
  *
@@ -31,39 +32,6 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   loadingText?: string
   loadingAriaLabel?: string
   icon?: ReactNode
-}
-
-// Colores de la paleta Refactoring UI - Palette 06
-const colors = {
-  // Primary (Red) - Para marca CIP
-  red: {
-    50: '#FFEEEE',
-    100: '#FACDCD',
-    400: '#D64545',
-    500: '#BA2525',
-    600: '#A61B1B',
-    700: '#911111',
-  },
-  // Neutrals (Warm Grey)
-  grey: {
-    50: '#FAF9F7',
-    100: '#E8E6E1',
-    200: '#D3CEC4',
-    300: '#B8B2A7',
-    500: '#857F72',
-    700: '#504A40',
-    900: '#27241D',
-  },
-  // Action (Cyan) - Para acciones, links, CTAs
-  cyan: {
-    50: '#E0FCFF',
-    100: '#BEF8FD',
-    400: '#38BEC9',
-    500: '#2CB1BC',
-    600: '#14919B',
-    700: '#0E7C86',
-  },
-  white: '#FFFFFF',
 }
 
 export function Button({
@@ -144,22 +112,22 @@ export function Button({
   }
 
   const getVariantStyles = (): React.CSSProperties => {
-    // PRIMARY - Acción principal, alto contraste (4.5:1 mínimo)
+    // PRIMARY - Identidad de marca CIP, alto contraste (4.5:1 mínimo)
     // Fondo: red-500, Texto: white
     if (variant === 'primary') {
       return {
         backgroundColor: isPressed
-          ? colors.red[700]
+          ? red[700]
           : isHovered
-            ? colors.red[600]
-            : colors.red[500],
+            ? red[600]
+            : red[500],
         color: colors.white,
         border: 'none',
         boxShadow: isPressed
-          ? 'inset 0 2px 4px rgba(0,0,0,0.2)'
+          ? shadows.buttonPressed
           : isFocused
-            ? `0 0 0 3px rgba(186, 37, 37, 0.3)`
-            : '0 1px 2px rgba(0,0,0,0.1)',
+            ? rings.primary
+            : shadows.buttonDefault,
       }
     }
 
@@ -168,17 +136,17 @@ export function Button({
     if (variant === 'secondary') {
       return {
         backgroundColor: isPressed
-          ? colors.grey[100]
+          ? grey[100]
           : isHovered
-            ? colors.grey[50]
+            ? grey[50]
             : colors.white,
-        color: colors.grey[700],
-        border: `1px solid ${isFocused ? colors.grey[300] : colors.grey[200]}`,
+        color: grey[700],
+        border: `1px solid ${isFocused ? grey[300] : grey[200]}`,
         boxShadow: isPressed
-          ? 'inset 0 1px 2px rgba(0,0,0,0.06)'
+          ? shadows.buttonSecondaryPressed
           : isFocused
-            ? '0 0 0 3px rgba(184, 178, 167, 0.3)'
-            : '0 1px 2px rgba(0,0,0,0.05)',
+            ? rings.neutral
+            : shadows.buttonSecondary,
       }
     }
 
@@ -187,13 +155,13 @@ export function Button({
     if (variant === 'ghost') {
       return {
         backgroundColor: isPressed
-          ? colors.grey[200]
+          ? grey[200]
           : isHovered || isFocused
-            ? colors.grey[100]
-            : 'transparent',
-        color: colors.grey[700],
+            ? grey[100]
+            : colors.transparent,
+        color: grey[700],
         border: 'none',
-        boxShadow: isFocused ? '0 0 0 3px rgba(184, 178, 167, 0.3)' : 'none',
+        boxShadow: isFocused ? rings.neutral : shadows.none,
       }
     }
 
@@ -202,13 +170,13 @@ export function Button({
     if (variant === 'outline') {
       return {
         backgroundColor: isPressed
-          ? colors.red[50]
+          ? red[50]
           : isHovered
-            ? 'rgba(186, 37, 37, 0.04)'
-            : 'transparent',
-        color: colors.red[500],
-        border: `1px solid ${colors.red[500]}`,
-        boxShadow: isFocused ? '0 0 0 3px rgba(186, 37, 37, 0.2)' : 'none',
+            ? 'var(--color-hover-primary)'
+            : colors.transparent,
+        color: red[500],
+        border: `1px solid ${red[500]}`,
+        boxShadow: isFocused ? rings.primary : shadows.none,
       }
     }
 
@@ -218,13 +186,13 @@ export function Button({
     if (variant === 'soft') {
       return {
         backgroundColor: isPressed
-          ? colors.cyan[100]
+          ? cyan[100]
           : isHovered
-            ? colors.cyan[100]
-            : colors.cyan[50],
-        color: colors.cyan[700], // cyan-700 sobre cyan-50 = ~5:1 contraste
+            ? cyan[100]
+            : cyan[50],
+        color: cyan[700], // cyan-700 sobre cyan-50 = ~5:1 contraste
         border: 'none',
-        boxShadow: isFocused ? '0 0 0 3px rgba(44, 177, 188, 0.3)' : 'none',
+        boxShadow: isFocused ? rings.action : shadows.none,
       }
     }
 
@@ -233,13 +201,13 @@ export function Button({
     if (variant === 'danger') {
       return {
         backgroundColor: isPressed
-          ? colors.red[100]
+          ? red[100]
           : isHovered
-            ? colors.red[100]
-            : colors.red[50],
-        color: colors.red[700], // red-700 sobre red-50 = alto contraste
+            ? red[100]
+            : red[50],
+        color: red[700], // red-700 sobre red-50 = alto contraste
         border: 'none',
-        boxShadow: isFocused ? '0 0 0 3px rgba(186, 37, 37, 0.2)' : 'none',
+        boxShadow: isFocused ? rings.danger : shadows.none,
       }
     }
 
@@ -248,13 +216,13 @@ export function Button({
     if (variant === 'icon') {
       return {
         backgroundColor: isPressed
-          ? colors.grey[200]
+          ? grey[200]
           : isHovered || isFocused
-            ? colors.grey[100]
-            : 'transparent',
-        color: colors.grey[700],
+            ? grey[100]
+            : colors.transparent,
+        color: grey[700],
         border: 'none',
-        boxShadow: isFocused ? '0 0 0 3px rgba(184, 178, 167, 0.3)' : 'none',
+        boxShadow: isFocused ? rings.neutral : shadows.none,
       }
     }
 

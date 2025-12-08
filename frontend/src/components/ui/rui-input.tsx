@@ -1,5 +1,6 @@
 import { forwardRef, useState, type InputHTMLAttributes, type ReactNode } from 'react'
 import { Eye, EyeOff } from 'lucide-react'
+import { colors, rings, shadows } from '@/lib/design-tokens'
 
 type InputSize = 'sm' | 'md' | 'lg' | 'xl'
 
@@ -75,12 +76,12 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(({
     paddingRight: (rightIcon || shouldShowToggle) ? 'var(--space-10)' : 'var(--space-4)',
     fontSize,
     color: 'var(--color-grey-900)',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.white,
     border: `1px solid ${error ? 'var(--color-danger)' : 'var(--color-grey-200)'}`,
     borderRadius: '6px',
     outline: 'none',
     transition: 'border-color 150ms ease, box-shadow 150ms ease',
-    boxShadow: 'inset 0 2px 4px rgba(39, 36, 29, 0.06)',
+    boxShadow: shadows.inputInset,
   }
 
   const iconStyles: React.CSSProperties = {
@@ -136,14 +137,14 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(({
           onFocus={(e) => {
             if (!error) {
               e.currentTarget.style.borderColor = 'var(--color-grey-300)'
-              e.currentTarget.style.boxShadow = '0 0 0 3px rgba(184, 178, 167, 0.25)'
+              e.currentTarget.style.boxShadow = rings.neutral
             }
             props.onFocus?.(e)
           }}
           onBlur={(e) => {
             if (!error) {
               e.currentTarget.style.borderColor = 'var(--color-grey-200)'
-              e.currentTarget.style.boxShadow = 'inset 0 2px 4px rgba(39, 36, 29, 0.06)'
+              e.currentTarget.style.boxShadow = shadows.inputInset
             }
             props.onBlur?.(e)
           }}

@@ -1,10 +1,13 @@
-import { useState, useEffect, type ReactNode } from 'react'
+import { useState, useEffect, useMemo, type ReactNode } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Sidebar } from './rui-sidebar'
 import { Header } from './rui-header'
+import { UserRole } from '@/constants/roles'
+import { getRoleLabel } from '@/store/auth.store'
 
 interface AppLayoutProps {
   children: ReactNode
-  user: { name: string; role: string; avatar?: string }
+  user: { name: string; role: UserRole; avatar?: string }
   activeNav: string
   onNavChange: (navId: string) => void
   onLogout?: () => void | Promise<void>
@@ -17,8 +20,15 @@ export function AppLayout({
   onNavChange,
   onLogout,
 }: AppLayoutProps) {
+  const { i18n } = useTranslation()
   const [isMobile, setIsMobile] = useState(false)
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
+
+  // Obtener label del rol en el idioma actual
+  const roleLabel = useMemo(() => {
+    const locale = i18n.language?.startsWith('en') ? 'en' : 'es'
+    return getRoleLabel(user.role, locale)
+  }, [user.role, i18n.language])
 
   useEffect(() => {
     const checkMobile = () => {
@@ -63,8 +73,9 @@ export function AppLayout({
         onClose={handleSidebarClose}
       />
       <Header
-        user={user}
+        user={{ name: user.name, avatar: user.avatar, role: roleLabel }}
         onMenuToggle={handleMenuToggle}
+        onLogout={onLogout}
         notificationCount={3}
       />
       <main style={mainStyle}>

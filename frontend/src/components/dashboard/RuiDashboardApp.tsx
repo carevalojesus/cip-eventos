@@ -13,6 +13,8 @@ import { Toaster } from "@/components/ui/sonner";
 import { AppLayout } from "@/components/layout";
 import type { Breadcrumb } from "./DashboardApp";
 import { useTranslation } from "react-i18next";
+import { UserRole } from "@/constants/roles";
+import { getDefaultNavForRole, canAccessNav } from "@/config/navigation";
 
 const SectionPlaceholder: React.FC<{ title: string; description?: string; defaultDescription?: string }> = ({
   title,
@@ -299,25 +301,15 @@ export const RuiDashboardApp: React.FC<RuiDashboardAppProps> = ({ initialPath })
     );
   };
 
-  // Helper para traducir el rol del usuario
-  const translateRole = (role: string | undefined): string => {
-    if (!role) return t('roles.USER');
-
-    // El backend devuelve roles en mayúsculas (ADMIN, USER, SUPER_ADMIN)
-    // Verificar si existe la traducción para ese rol
-    const roleKey = `roles.${role}`;
-    const translatedRole = t(roleKey as any) as string;
-
-    // Si la traducción existe (no devuelve la key), usarla; sino usar el rol original
-    return translatedRole !== roleKey ? translatedRole : role;
-  };
+  // Obtener el rol del usuario (con fallback a PARTICIPANTE)
+  const userRole = (user?.role as UserRole) || UserRole.PARTICIPANTE;
 
   // Preparar datos de usuario para el layout
   const layoutUser = {
     name: user?.firstName && user?.lastName
       ? `${user.firstName} ${user.lastName}`
       : user?.email || "Usuario",
-    role: translateRole(user?.role),
+    role: userRole,
     avatar: user?.avatar,
   };
 

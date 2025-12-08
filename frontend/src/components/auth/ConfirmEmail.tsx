@@ -77,9 +77,9 @@ function ConfirmEmailContent() {
 
   const statusColor =
     status === 'success'
-      ? { color: 'var(--color-success, #0F9D58)' }
+      ? { color: 'var(--color-success)' }
       : status === 'error'
-      ? { color: 'var(--color-danger, #B91C1C)' }
+      ? { color: 'var(--color-danger)' }
       : { color: 'var(--color-grey-600)' };
 
   return (

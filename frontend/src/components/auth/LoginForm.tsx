@@ -63,10 +63,10 @@ function LoginFormContent({ onSuccess }: LoginFormProps) {
   }
 
   const subtitleStyles: React.CSSProperties = {
-    fontSize: '16px',
+    fontSize: '0.875rem', // 14px - token: sm
     color: 'var(--color-text-muted)',
     margin: 0,
-    lineHeight: 1.6,
+    lineHeight: 1.5,
   }
 
   const formStyles: React.CSSProperties = {

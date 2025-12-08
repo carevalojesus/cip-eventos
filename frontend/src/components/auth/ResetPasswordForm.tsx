@@ -140,8 +140,8 @@ function ResetPasswordFormContent() {
             role="status"
             style={{
               ...alertStyles,
-              backgroundColor: 'var(--color-success-light, #E2F7C2)',
-              color: 'var(--color-success-dark, var(--color-success, #507712))',
+              backgroundColor: 'var(--color-success-light)',
+              color: 'var(--color-success-dark)',
             }}
           >
             {successMessage}
