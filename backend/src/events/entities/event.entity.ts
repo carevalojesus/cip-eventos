@@ -88,7 +88,7 @@ export class Event {
   type: EventType;
 
   @ManyToOne(() => EventCategory, (category) => category.events, {
-    eager: true,
+    eager: false, // Removed eager to improve performance - load via QueryBuilder when needed
     nullable: true,
   })
   @JoinColumn({ name: 'categoryId' })
@@ -102,7 +102,7 @@ export class Event {
 
   @ManyToOne(() => EventLocation, (loc) => loc.events, {
     cascade: ['insert', 'update'],
-    eager: true,
+    eager: false, // Removed eager to improve performance - load via QueryBuilder when needed
     nullable: true,
   })
   @JoinColumn()
@@ -131,7 +131,7 @@ export class Event {
 
   @OneToMany(() => EventTicket, (ticket) => ticket.event, {
     cascade: true,
-    eager: true,
+    eager: false, // Removed eager - major performance issue when loading event lists
   })
   tickets: EventTicket[];
 
@@ -148,7 +148,7 @@ export class Event {
 
   @OneToMany(() => EventSession, (session) => session.event, {
     cascade: true,
-    eager: true,
+    eager: false, // Removed eager - major performance issue when loading event lists
   })
   sessions: EventSession[];
 
@@ -182,7 +182,7 @@ export class Event {
   @Column({ type: 'boolean', default: true })
   isActive: boolean;
 
-  @ManyToOne(() => User, { eager: true })
+  @ManyToOne(() => User, { eager: false }) // Removed eager - load only when needed
   @JoinColumn({ name: 'createdById' })
   createdBy: User;
 

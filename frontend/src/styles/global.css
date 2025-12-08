@@ -187,7 +187,7 @@
   --color-warning-dark: var(--color-yellow-700);
 
   /* Danger - Solo para acciones destructivas (eliminar, cancelar) */
-  --color-danger: var(--color-red-700);
+  --color-danger: var(--color-red-500);
   --color-danger-light: var(--color-red-100);
   --color-danger-dark: var(--color-red-800);
 

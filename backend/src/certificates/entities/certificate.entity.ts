@@ -14,6 +14,7 @@ import { Registration } from '../../registrations/entities/registration.entity';
 import { Speaker } from '../../speakers/entities/speaker.entity';
 import { User } from '../../users/entities/user.entity';
 import { BlockEnrollment } from '../../evaluations/entities/block-enrollment.entity';
+import { CertificateOwnerType } from '../enums/certificate-owner-type.enum';
 
 export enum CertificateType {
   ATTENDANCE = 'ATTENDANCE', // Asistencia al evento completo
@@ -97,7 +98,17 @@ export class Certificate {
   @JoinColumn({ name: 'lastReissuedById' })
   lastReissuedBy: User;
 
-  // --- VINCULACIÓN (Polimórfica simplificada) ---
+  // --- DISCRIMINADOR DE TIPO DE PROPIETARIO ---
+  // Este campo indica explícitamente qué tipo de entidad es el propietario del certificado.
+  // Junto con el CHECK constraint en la BD, garantiza que exactamente una FK esté seteada.
+  @Index('idx_certificates_owner_type')
+  @Column({
+    type: 'enum',
+    enum: CertificateOwnerType,
+  })
+  ownerType: CertificateOwnerType;
+
+  // --- VINCULACIÓN (Polimórfica con discriminador) ---
 
   @ManyToOne(() => Event, { nullable: false })
   @JoinColumn({ name: 'eventId' })

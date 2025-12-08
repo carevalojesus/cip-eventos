@@ -70,6 +70,9 @@ export class AuthService {
     );
     await this.updateRefreshToken(user.id, tokens.refresh_token);
 
+    // Actualizar último acceso
+    await this.usersService.updateLastLogin(user.id);
+
     // Registrar sesión activa
     const refreshExpires =
       this.configService.get<string>('JWT_REFRESH_EXPIRES_IN') ?? '7d';

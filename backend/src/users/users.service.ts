@@ -8,6 +8,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
+import * as crypto from 'crypto';
 import { I18nService, I18nContext } from 'nestjs-i18n';
 
 import { CreateUserDto } from './dto/create-user.dto';
@@ -15,6 +16,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { Role } from '../roles/entities/role.entity';
 import { DataDeletionService } from '../persons/services/data-deletion.service';
+import { MailService } from '../mail/mail.service';
 
 @Injectable()
 export class UsersService {
@@ -26,6 +28,7 @@ export class UsersService {
     private readonly i18n: I18nService,
     @Inject(forwardRef(() => DataDeletionService))
     private readonly dataDeletionService: DataDeletionService,
+    private readonly mailService: MailService,
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
@@ -54,21 +57,52 @@ export class UsersService {
       );
     }
 
-    const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
+    // Guardar la contraseña original antes de hashear (para enviar por correo)
+    const originalPassword = createUserDto.password;
+    const hashedPassword = await bcrypt.hash(originalPassword, 10);
+
+    // Generar token de verificación
+    const verificationToken = crypto.randomBytes(32).toString('hex');
+    const verificationExpires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 días
 
     const newUser = this.userRepository.create({
       ...createUserDto,
       password: hashedPassword,
       role: role,
+      isVerified: false,
+      verificationToken,
+      verificationExpires,
+      verificationEmailSentAt: new Date(),
     });
 
-    return await this.userRepository.save(newUser);
+    const savedUser = await this.userRepository.save(newUser);
+
+    // Enviar correo de bienvenida con credenciales
+    try {
+      await this.mailService.sendAdminCreatedUser(
+        savedUser.email,
+        savedUser.email, // Usar email como nombre (el perfil se crea después)
+        originalPassword,
+        verificationToken,
+      );
+    } catch (error) {
+      // Log error pero no fallar la creación del usuario
+      console.error('Error sending admin created user email:', error);
+    }
+
+    return savedUser;
   }
 
-  async findAll(): Promise<User[]> {
+  async findAll(includeInactive: boolean = false): Promise<User[]> {
+    const whereCondition = includeInactive ? {} : { isActive: true };
     return await this.userRepository.find({
-      where: { isActive: true },
-      relations: ['role'],
+      where: whereCondition,
+      relations: ['role', 'profile'],
+      order: {
+        isActive: 'DESC',      // Activos primero
+        isVerified: 'DESC',    // Verificados después
+        createdAt: 'DESC',     // Más recientes primero
+      },
     });
   }
 
@@ -151,6 +185,12 @@ export class UsersService {
     });
   }
 
+  async updateLastLogin(id: string): Promise<void> {
+    await this.userRepository.update(id, {
+      lastLoginAt: new Date(),
+    });
+  }
+
   async findOneByVerificationToken(token: string): Promise<User | null> {
     return await this.userRepository.findOneBy({ verificationToken: token });
   }
@@ -183,6 +223,7 @@ export class UsersService {
     await this.userRepository.update(id, {
       verificationToken: token,
       verificationExpires: expires,
+      verificationEmailSentAt: new Date(),
     });
   }
 

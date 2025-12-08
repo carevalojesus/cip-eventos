@@ -6,6 +6,7 @@ import { EventsView } from "@/components/events/EventsView";
 import { CreateEventViewRui } from "@/components/events/rui";
 import { EventManagementView } from "@/components/events/EventManagementView";
 import { EditEventView } from "@/components/events/EditEventView";
+import { UsersView, CreateUserView } from "@/components/users";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "@/lib/queryClient";
 import { getCurrentLocale, routes } from "@/lib/routes";
@@ -284,8 +285,13 @@ export const RuiDashboardApp: React.FC<RuiDashboardAppProps> = ({ initialPath })
     if (startsWithRoute(["/finanzas", "/en/finance"])) {
       return <SectionPlaceholder title={t("sections.payments_reports")} description={t("sections.coming_soon")} />;
     }
+    // Crear usuario
+    if (matchesRoute(["/usuarios/nuevo", "/en/users/new"])) {
+      return <CreateUserView onNavigate={handleNavigate} />;
+    }
+    // Lista de usuarios
     if (startsWithRoute(["/usuarios", "/en/users"])) {
-      return <SectionPlaceholder title={t("sections.users")} description={t("sections.coming_soon")} />;
+      return <UsersView onNavigate={handleNavigate} />;
     }
     if (startsWithRoute(["/padron-cip", "/en/cip-registry"])) {
       return <SectionPlaceholder title={t("sections.cip_registry")} description={t("sections.coming_soon")} />;

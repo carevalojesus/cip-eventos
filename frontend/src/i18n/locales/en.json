@@ -1,761 +1,859 @@
 {
-  "routes": {
-    "home": "/en",
-    "login": "/en/login",
-    "events": "/en/events",
-    "events_new": "/en/events/new",
-    "dashboard": "/en/dashboard"
-  },
-  "welcome": "Welcome to Dashboard",
-  "greeting": "Hello {{name}}",
-  "events": "Events",
-  "create_event": "Create Event",
-  "edit_event": "Edit Event",
-  "delete_event": "Delete Event",
-  "no_events": "No events available",
-  "event_count_one": "{{count}} event",
-  "event_count_other": "{{count}} events",
-  "login": {
-    "title": "Welcome",
-    "subtitle": "Enter your credentials to access the panel.",
-    "email": "Email Address",
-    "email_placeholder": "admin@ciploreto.org.pe",
-    "password": "Password",
-    "password_placeholder": "••••••••",
-    "btn": "Login to System",
-    "btn_loading": "Logging in...",
-    "forgot_password": "Forgot your password?",
-    "remember_me": "Remember me",
-    "show_password": "Show password",
-    "hide_password": "Hide password",
-    "loading_aria": "Loading",
-    "access_problems": "Access problems?",
-    "contact_support": "Contact",
-    "support_it": "IT Support",
-    "support_message": "if you forgot your password.",
-    "no_account": "Don't have an account?",
-    "sign_up": "Sign Up",
-    "error": "Login error",
-    "success": "Successfully logged in",
-    "brand": {
-      "council": "Departmental Council",
-      "region": "Of Loreto",
-      "quotes": [
-        {
-          "text": "Engineering is not only knowing and understanding, but making known and making understood.",
-          "author": "Engineers Association of Peru"
-        },
-        {
-          "text": "Engineering is the art of applying scientific knowledge to the invention, improvement and use of technique.",
-          "author": "Engineers Association of Peru"
-        },
-        {
-          "text": "Engineers transform dreams into reality, solving today's challenges to build tomorrow.",
-          "author": "Engineers Association of Peru"
-        },
-        {
-          "text": "Excellence in engineering requires passion, dedication and commitment to sustainable development.",
-          "author": "Engineers Association of Peru"
-        },
-        {
-          "text": "A good engineer not only solves problems, but anticipates solutions for future generations.",
-          "author": "Engineers Association of Peru"
-        },
-        {
-          "text": "Engineering is the profession that makes the impossible possible, transforming ideas into infrastructure.",
-          "author": "Engineers Association of Peru"
-        }
-      ]
+    "routes": {
+        "home": "/en",
+        "login": "/en/login",
+        "events": "/en/events",
+        "events_new": "/en/events/new",
+        "dashboard": "/en/dashboard"
     },
-    "footer": {
-      "platform": "Official platform of",
-      "council": "Departmental Council",
-      "developed_by": "Developed with ❤️ by",
-      "company": "Devcloud"
-    },
-    "validation": {
-      "email_required": "Email address is required",
-      "email_invalid": "Please enter a valid institutional email",
-      "password_required": "Password is required",
-      "password_min_length": "Password must be at least 8 characters",
-      "password_uppercase": "Password must contain at least one uppercase letter",
-      "password_number": "Password must contain at least one number"
-    },
-    "loading": "Loading..."
-  },
-  "forgot": {
-    "title": "Recover your password",
-    "subtitle": "Enter your email and we'll send you a reset link.",
-    "email": "Email Address",
-    "email_placeholder": "admin@ciploreto.org.pe",
-    "btn": "Send link",
-    "success": "If the email exists, we've sent a recovery link.",
-    "error": "We couldn't process the request. Please try again.",
-    "back_to_login": "Back to login",
-    "loading": "Sending..."
-  },
-  "confirm": {
-    "title": "Confirm your email",
-    "subtitle": "We will verify your account so you can sign in.",
-    "success": "Your email was verified successfully. You can now sign in.",
-    "already_verified": "This account was already verified. You can sign in.",
-    "invalid": "The link is invalid or has expired.",
-    "missing_token": "Verification token is missing.",
-    "cta": "Go to login",
-    "loading": "Verifying..."
-  },
-  "reset": {
-    "title": "Create a new password",
-    "subtitle": "Enter your new password to regain access.",
-    "password": "New password",
-    "password_placeholder": "••••••••",
-    "confirm_password": "Confirm password",
-    "btn": "Update password",
-    "success": "Your password was updated. You can now sign in.",
-    "error": "We couldn't update the password. Please try again.",
-    "missing_token": "The link is invalid or has expired.",
-    "loading": "Saving...",
-    "validation": {
-      "password_required": "Password is required",
-      "password_min_length": "Must be at least 8 characters",
-      "password_uppercase": "Must contain at least one uppercase letter",
-      "password_number": "Must contain at least one number",
-      "password_match": "Passwords do not match"
-    },
-    "cta_login": "Go to login"
-  },
-  "logout": {
-    "btn": "Logout",
-    "confirm": "Are you sure you want to logout?",
-    "success": "Successfully logged out"
-  },
-  "dashboard": {
-    "title": "Overview",
-    "subtitle": "Welcome to the CIP Events administration panel.",
-    "new_event": "New Event",
-    "stats": {
-      "active_events": "Active Events",
-      "active_events_desc": "+{{count}} scheduled this week",
-      "total_registered": "Total Registered",
-      "total_registered_trend": "+{{percent}}% vs last month",
-      "monthly_income": "Monthly Income",
-      "monthly_income_desc": "Updated 1 hour ago",
-      "tickets_sold": "Tickets Sold",
-      "tickets_sold_desc": "{{percent}}% total occupancy"
-    },
-    "upcoming_events": {
-      "title": "Upcoming Events",
-      "subtitle": "You have {{count}} events scheduled for the next 7 days.",
-      "attendees": "{{count}} attendees",
-      "status": {
-        "published": "Published",
-        "draft": "Draft",
-        "completed": "Completed",
-        "cancelled": "Cancelled"
-      }
-    },
-    "recent_activity": {
-      "title": "Recent Activity",
-      "subtitle": "Latest movements on the platform.",
-      "actions": {
-        "registered_payment": "registered a",
-        "created_event": "created the event",
-        "updated_registry": "updated the CIP Registry"
-      },
-      "time": {
-        "minutes_ago": "{{count}} min ago",
-        "hours_ago": "{{count}} hour ago",
-        "days_ago": "{{count}} day ago"
-      }
-    },
-    "nav": {
-      "general": "GENERAL",
-      "dashboard": "Dashboard",
-      "events_management": "EVENTS MANAGEMENT",
-      "my_events": "Events",
-      "speakers": "Speakers",
-      "organizers": "Organizers",
-      "tickets": "Tickets",
-      "courtesies": "Courtesies",
-      "operations": "OPERATIONS",
-      "registrations": "Registrations",
-      "access_control": "Access Control",
-      "attendance": "Attendance",
-      "evaluations": "Evaluations",
-      "certificates": "Certificates",
-      "finance": "FINANCE",
-      "income": "Income",
-      "payments": "Payments",
-      "receipts": "Receipts",
-      "refunds": "Refunds",
-      "reports": "Reports",
-      "financial_reports": "Financial Reports",
-      "payments_reports": "Payments & Reports",
-      "academic_reports": "ACADEMIC REPORTS",
-      "attendance_report": "Attendance Report",
-      "grades_report": "Grades Report",
-      "eligible_certificates": "Eligible for Certificate",
-      "administration": "ADMINISTRATION",
-      "users": "Users",
-      "persons": "Persons",
-      "cip_registry": "CIP Registry",
-      "settings": "Settings",
-      "my_account": "MY ACCOUNT",
-      "my_profile": "My Profile",
-      "platform_management": "PLATFORM MANAGEMENT",
-      "global_metrics": "Global Metrics",
-      "security": "Security",
-      "my_sessions": "MY SESSIONS",
-      "assigned_sessions": "Assigned Sessions",
-      "my_material": "My Material",
-      "my_events_participant": "MY EVENTS",
-      "my_registrations": "My Registrations",
-      "my_certificates": "My Certificates",
-      "my_receipts": "My Receipts",
-      "logout": "Logout"
-    },
-    "events_view": {
-      "create_title": "Create New Event",
-      "create_subtitle": "Complete the information to publish an event on the CIP calendar.",
-      "title": "My Events",
-      "subtitle": "Manage chapter events and their registrations.",
-      "search_placeholder": "Search event...",
-      "filter_status": "All statuses",
-      "select_range": "Select range",
-      "clear_filters": "Clear",
-      "export_excel": "Export",
-      "table": {
-        "event": "Event",
-        "date": "Date",
-        "organizer": "Organizer",
-        "location": "Location",
-        "modality": "Modality",
-        "enrolled": "Attendees",
-        "enrolled_label": "attendees",
-        "status": "Status",
-        "actions": "Actions",
-        "empty": "No events found",
-        "empty_title": "No events"
-      },
-      "status": {
-        "PUBLISHED": "Published",
-        "DRAFT": "Draft",
-        "COMPLETED": "Completed",
-        "CANCELLED": "Cancelled"
-      },
-      "modality": {
-        "presential": "In-person",
-        "virtual": "Virtual",
-        "hybrid": "Hybrid"
-      },
-      "modality_description": {
-        "in_person": "Participants attend the event physically",
-        "virtual": "The event takes place entirely online",
-        "hybrid": "Combines in-person and virtual attendance"
-      },
-      "actions": {
-        "title": "Actions",
-        "manage": "Manage (Full)",
-        "view": "View details",
-        "view_details": "View details",
-        "view_enrolled": "View attendees",
-        "edit": "Edit event",
-        "duplicate": "Duplicate",
-        "delete": "Delete"
-      },
-      "empty": {
-        "title": "No events",
-        "description": "Create your first event to get started.",
-        "no_results": "No events found matching your search criteria."
-      }
-    }
-  },
-  "event": {
-    "title": "Title",
-    "description": "Description",
-    "date": "Date",
-    "location": {
-      "label": "Location",
-      "search": "Search address...",
-      "no_results": "No locations found",
-      "create_new": "Type to create a new address",
-      "recent": "Recent locations"
-    },
-    "capacity": "Capacity",
-    "attendees": "Attendees",
-    "status": "Status",
-    "created_at": "Created at",
-    "updated_at": "Updated at"
-  },
-  "form": {
-    "required": "This field is required",
-    "invalid_email": "Invalid email address",
-    "invalid_url": "Invalid URL",
-    "min_length": "Minimum {{count}} characters",
-    "max_length": "Maximum {{count}} characters",
-    "save": "Save",
-    "save_event": "Save Event",
-    "save_changes": "Save Changes",
-    "save_draft": "Save Draft",
-    "publish_event": "Publish Event",
+    "welcome": "Welcome to Dashboard",
+    "greeting": "Hello {{name}}",
+    "events": "Events",
     "create_event": "Create Event",
-    "cancel": "Cancel",
-    "back": "Back",
-    "submit": "Submit",
-    "loading": "Saving...",
-    "select": "Select...",
-    "date": "Date",
-    "time": "Time",
-    "success": "Operation successful",
-    "error": "An error occurred",
-    "date_future": "Start date must be in the future",
-    "date_end_after_start": "End date must be after start date",
-    "image": {
-      "drag": "Drag an image here or",
-      "click": "click to upload",
-      "hint": "PNG, JPG or WebP • Maximum 5MB",
-      "remove": "Remove image",
-      "change": "Change image"
-    }
-  },
-  "common": {
-    "yes": "Yes",
-    "no": "No",
-    "ok": "OK",
-    "close": "Close",
-    "delete": "Delete",
-    "edit": "Edit",
-    "view": "View",
-    "search": "Search",
-    "filter": "Filter",
-    "sort": "Sort",
-    "export": "Export",
-    "import": "Import",
-    "settings": "Settings",
-    "help": "Help",
-    "retry": "Retry",
-    "about": "About",
-    "language": "Language",
-    "loading": "Loading..."
-  },
-  "roles": {
-    "ADMIN": "Administrator",
-    "USER": "User",
-    "SUPER_ADMIN": "Super Administrator"
-  },
-  "errors": {
-    "404": "Page not found",
-    "500": "Server error",
-    "network": "Connection error",
-    "unauthorized": "Unauthorized",
-    "forbidden": "Access denied",
-    "validation": "Validation error",
-    "unknown": "Unknown error"
-  },
-  "create_event": {
-    "back": "Back",
-    "type": "Type",
-    "type_placeholder": "Select a type",
-    "category": "Category",
-    "category_placeholder": "Select a category",
-    "configuration": "Configuration",
-    "modality": "Modality",
-    "start": "Start",
-    "end": "End",
-    "breadcrumb": {
-      "title": "New Event"
+    "edit_event": "Edit Event",
+    "delete_event": "Delete Event",
+    "no_events": "No events available",
+    "event_count_one": "{{count}} event",
+    "event_count_other": "{{count}} events",
+    "login": {
+        "title": "Welcome",
+        "subtitle": "Enter your credentials to access the panel.",
+        "email": "Email Address",
+        "email_placeholder": "admin@ciploreto.org.pe",
+        "password": "Password",
+        "password_placeholder": "••••••••",
+        "btn": "Login to System",
+        "btn_loading": "Logging in...",
+        "forgot_password": "Forgot your password?",
+        "remember_me": "Remember me",
+        "show_password": "Show password",
+        "hide_password": "Hide password",
+        "loading_aria": "Loading",
+        "access_problems": "Access problems?",
+        "contact_support": "Contact",
+        "support_it": "IT Support",
+        "support_message": "if you forgot your password.",
+        "no_account": "Don't have an account?",
+        "sign_up": "Sign Up",
+        "error": "Login error",
+        "success": "Successfully logged in",
+        "brand": {
+            "council": "Departmental Council",
+            "region": "Of Loreto",
+            "quotes": [
+                {
+                    "text": "Engineering is not only knowing and understanding, but making known and making understood.",
+                    "author": "Engineers Association of Peru"
+                },
+                {
+                    "text": "Engineering is the art of applying scientific knowledge to the invention, improvement and use of technique.",
+                    "author": "Engineers Association of Peru"
+                },
+                {
+                    "text": "Engineers transform dreams into reality, solving today's challenges to build tomorrow.",
+                    "author": "Engineers Association of Peru"
+                },
+                {
+                    "text": "Excellence in engineering requires passion, dedication and commitment to sustainable development.",
+                    "author": "Engineers Association of Peru"
+                },
+                {
+                    "text": "A good engineer not only solves problems, but anticipates solutions for future generations.",
+                    "author": "Engineers Association of Peru"
+                },
+                {
+                    "text": "Engineering is the profession that makes the impossible possible, transforming ideas into infrastructure.",
+                    "author": "Engineers Association of Peru"
+                }
+            ]
+        },
+        "footer": {
+            "platform": "Official platform of",
+            "council": "Departmental Council",
+            "developed_by": "Developed with ❤️ by",
+            "company": "Devcloud"
+        },
+        "validation": {
+            "email_required": "Email address is required",
+            "email_invalid": "Please enter a valid institutional email",
+            "password_required": "Password is required",
+            "password_min_length": "Password must be at least 8 characters",
+            "password_uppercase": "Password must contain at least one uppercase letter",
+            "password_number": "Password must contain at least one number"
+        },
+        "loading": "Loading..."
     },
-    "drawer": {
-      "subtitle": "Complete the event information",
-      "info": "After creating the event you can add image, location, virtual access, tickets and more details.",
-      "name": "Event name",
-      "name_placeholder": "E.g: Technology Conference 2025",
-      "description_placeholder": "Briefly describe the event...",
-      "type": "Type",
-      "category": "Category",
-      "start_date": "Start date",
-      "start_time": "Time",
-      "end_date": "End date",
-      "end_time": "Time",
-      "create_btn": "Create event"
-    },
-    "dates": {
-      "title": "Dates"
-    },
-    "basic": {
-      "title": "Basic Information",
-      "description": "Main event data.",
-      "event_title": "Event Title",
-      "event_title_placeholder": "Event name",
-      "event_title_hint": "E.g: Civil Engineering Congress 2024",
-      "summary": "Short Summary",
-      "summary_placeholder": "Brief description shown on cards",
-      "summary_hint": "Shown on listing cards",
-      "detailed_description": "Description",
-      "detailed_description_placeholder": "Complete event information...",
-      "type": "Type",
-      "category": "Category"
-    },
-    "image": {
-      "title": "Image",
-      "description": "Event banner.",
-      "current": "Current event image",
-      "drag_text": "Drag an image or",
-      "click_text": "click to upload",
-      "hint": "PNG, JPG or WebP • Maximum 5MB • Recommended: 1200x630px",
-      "banner_hint": "This image will be shown as the event banner in the listing and details page."
-    },
-    "config": {
-      "title": "Date and Modality",
-      "description": "When and how it will take place.",
-      "modality": "Modality",
-      "start": "Start",
-      "end": "End"
-    },
-    "location": {
-      "title": "Location",
-      "description": "Physical event venue.",
-      "name": "Venue Name",
-      "name_placeholder": "E.g: CIP Auditorium",
-      "address": "Address",
-      "address_placeholder": "E.g: 4 Pevas Ave",
-      "city": "City",
-      "city_placeholder": "Lima",
-      "reference": "Reference",
-      "reference_placeholder": "In front of the Park...",
-      "map_link": "Map Link",
-      "map_hint": "Copy the link from Google Maps for easy navigation"
-    },
-    "virtual": {
-      "title": "Virtual Access",
-      "description": "Virtual meeting details.",
-      "platform": "Platform",
-      "password": "Password",
-      "password_placeholder": "CIP2024",
-      "meeting_url": "Meeting Link",
-      "meeting_url_hint": "The link will be sent to attendees before the event",
-      "instructions": "Instructions",
-      "instructions_placeholder": "Instructions to join...",
-      "other": "Other"
+    "forgot": {
+        "title": "Recover your password",
+        "subtitle": "Enter your email and we'll send you a reset link.",
+        "email": "Email Address",
+        "email_placeholder": "admin@ciploreto.org.pe",
+        "btn": "Send link",
+        "success": "If the email exists, we've sent a recovery link.",
+        "error": "We couldn't process the request. Please try again.",
+        "back_to_login": "Back to login",
+        "loading": "Sending..."
     },
     "confirm": {
-      "title": "Save event?",
-      "description": "You are about to create a new event. Once saved, you can edit or publish it from the management view.",
-      "create_title": "Create event?",
-      "create_description": "The event will be saved as a draft. You can edit and publish it when ready."
+        "title": "Confirm your email",
+        "subtitle": "We will verify your account so you can sign in.",
+        "success": "Your email was verified successfully. You can now sign in.",
+        "already_verified": "This account was already verified. You can sign in.",
+        "invalid": "The link is invalid or has expired.",
+        "missing_token": "Verification token is missing.",
+        "cta": "Go to login",
+        "loading": "Verifying..."
     },
-    "toast": {
-      "created": "Event created",
-      "created_description": "Now you can complete the event details.",
-      "draft_success": "Draft saved",
-      "draft_description": "The event has been saved as a draft.",
-      "publish_success": "Event published",
-      "publish_description": "The event is now visible.",
-      "error": "Error creating event",
-      "error_description": "Check the data and try again.",
-      "error_unexpected": "An unexpected error occurred.",
-      "metadata_error": "Error loading form data"
-    }
-  },
-  "edit_event": {
-    "title": "Edit Event",
-    "subtitle": "Modify the event information.",
-    "breadcrumb": {
-      "title": "Edit"
+    "reset": {
+        "title": "Create a new password",
+        "subtitle": "Enter your new password to regain access.",
+        "password": "New password",
+        "password_placeholder": "••••••••",
+        "confirm_password": "Confirm password",
+        "btn": "Update password",
+        "success": "Your password was updated. You can now sign in.",
+        "error": "We couldn't update the password. Please try again.",
+        "missing_token": "The link is invalid or has expired.",
+        "loading": "Saving...",
+        "validation": {
+            "password_required": "Password is required",
+            "password_min_length": "Must be at least 8 characters",
+            "password_uppercase": "Must contain at least one uppercase letter",
+            "password_number": "Must contain at least one number",
+            "password_match": "Passwords do not match"
+        },
+        "cta_login": "Go to login"
     },
-    "success_title": "Event updated",
-    "success_description": "Changes have been saved successfully.",
-    "error_title": "Update error",
-    "error_description": "Please check the data and try again.",
-    "error_unknown": "An unexpected error occurred. Please try again.",
-    "confirm_title": "Save changes?",
-    "confirm_description": "Changes will be applied immediately to the event."
-  },
-  "event_management": {
-    "breadcrumb": {
-      "back": "Back",
-      "title": "Event Management"
+    "logout": {
+        "btn": "Logout",
+        "confirm": "Are you sure you want to logout?",
+        "success": "Successfully logged out"
     },
-    "actions": {
-      "edit": "Edit",
-      "publish": "Publish",
-      "preview": "Preview",
-      "unpublish": "Unpublish",
-      "save": "Save Changes"
+    "dashboard": {
+        "title": "Overview",
+        "subtitle": "Welcome to the CIP Events administration panel.",
+        "new_event": "New Event",
+        "stats": {
+            "active_events": "Active Events",
+            "active_events_desc": "+{{count}} scheduled this week",
+            "total_registered": "Total Registered",
+            "total_registered_trend": "+{{percent}}% vs last month",
+            "monthly_income": "Monthly Income",
+            "monthly_income_desc": "Updated 1 hour ago",
+            "tickets_sold": "Tickets Sold",
+            "tickets_sold_desc": "{{percent}}% total occupancy"
+        },
+        "upcoming_events": {
+            "title": "Upcoming Events",
+            "subtitle": "You have {{count}} events scheduled for the next 7 days.",
+            "attendees": "{{count}} attendees",
+            "status": {
+                "published": "Published",
+                "draft": "Draft",
+                "completed": "Completed",
+                "cancelled": "Cancelled"
+            }
+        },
+        "recent_activity": {
+            "title": "Recent Activity",
+            "subtitle": "Latest movements on the platform.",
+            "actions": {
+                "registered_payment": "registered a",
+                "created_event": "created the event",
+                "updated_registry": "updated the CIP Registry"
+            },
+            "time": {
+                "minutes_ago": "{{count}} min ago",
+                "hours_ago": "{{count}} hour ago",
+                "days_ago": "{{count}} day ago"
+            }
+        },
+        "nav": {
+            "general": "GENERAL",
+            "dashboard": "Dashboard",
+            "events_management": "EVENTS MANAGEMENT",
+            "my_events": "Events",
+            "speakers": "Speakers",
+            "organizers": "Organizers",
+            "tickets": "Tickets",
+            "courtesies": "Courtesies",
+            "operations": "OPERATIONS",
+            "registrations": "Registrations",
+            "access_control": "Access Control",
+            "attendance": "Attendance",
+            "evaluations": "Evaluations",
+            "certificates": "Certificates",
+            "finance": "FINANCE",
+            "income": "Income",
+            "payments": "Payments",
+            "receipts": "Receipts",
+            "refunds": "Refunds",
+            "reports": "Reports",
+            "financial_reports": "Financial Reports",
+            "payments_reports": "Payments & Reports",
+            "academic_reports": "ACADEMIC REPORTS",
+            "attendance_report": "Attendance Report",
+            "grades_report": "Grades Report",
+            "eligible_certificates": "Eligible for Certificate",
+            "administration": "ADMINISTRATION",
+            "users": "Users",
+            "persons": "Persons",
+            "cip_registry": "CIP Registry",
+            "settings": "Settings",
+            "my_account": "MY ACCOUNT",
+            "my_profile": "My Profile",
+            "platform_management": "PLATFORM MANAGEMENT",
+            "global_metrics": "Global Metrics",
+            "security": "Security",
+            "my_sessions": "MY SESSIONS",
+            "assigned_sessions": "Assigned Sessions",
+            "my_material": "My Material",
+            "my_events_participant": "MY EVENTS",
+            "my_registrations": "My Registrations",
+            "my_certificates": "My Certificates",
+            "my_receipts": "My Receipts",
+            "logout": "Logout"
+        },
+        "events_view": {
+            "create_title": "Create New Event",
+            "create_subtitle": "Complete the information to publish an event on the CIP calendar.",
+            "title": "My Events",
+            "subtitle": "Manage chapter events and their registrations.",
+            "search_placeholder": "Search event...",
+            "filter_status": "All statuses",
+            "select_range": "Select range",
+            "clear_filters": "Clear",
+            "export_excel": "Export",
+            "table": {
+                "event": "Event",
+                "date": "Date",
+                "organizer": "Organizer",
+                "location": "Location",
+                "modality": "Modality",
+                "enrolled": "Attendees",
+                "enrolled_label": "attendees",
+                "status": "Status",
+                "actions": "Actions",
+                "empty": "No events found",
+                "empty_title": "No events"
+            },
+            "status": {
+                "PUBLISHED": "Published",
+                "DRAFT": "Draft",
+                "COMPLETED": "Completed",
+                "CANCELLED": "Cancelled"
+            },
+            "modality": {
+                "presential": "In-person",
+                "virtual": "Virtual",
+                "hybrid": "Hybrid"
+            },
+            "modality_description": {
+                "in_person": "Participants attend the event physically",
+                "virtual": "The event takes place entirely online",
+                "hybrid": "Combines in-person and virtual attendance"
+            },
+            "actions": {
+                "title": "Actions",
+                "manage": "Manage (Full)",
+                "view": "View details",
+                "view_details": "View details",
+                "view_enrolled": "View attendees",
+                "edit": "Edit event",
+                "duplicate": "Duplicate",
+                "delete": "Delete"
+            },
+            "empty": {
+                "title": "No events",
+                "description": "Create your first event to get started.",
+                "no_results": "No events found matching your search criteria."
+            }
+        }
     },
-    "tabs": {
-      "general": "General",
-      "tickets": "Tickets",
-      "agenda": "Agenda",
-      "participants": "Participants",
-      "attendees": "Attendees"
-    },
-    "coming_soon": "This section will be available soon.",
-    "general": {
-      "basic_info": "Basic Information",
-      "basic_info_desc": "Main event details visible to the public.",
-      "title": "Event Title",
-      "title_placeholder": "E.g: Civil Engineering Congress 2024",
-      "description": "Description",
-      "description_placeholder": "Describe the event, its objectives and target audience...",
-      "modality": "Modality",
-      "modality_placeholder": "Select a modality",
-      "start_date": "Start",
-      "end_date": "End"
-    },
-    "location": {
-      "title": "Physical Location",
-      "description": "Information about the venue for the in-person event.",
-      "name": "Venue Name",
-      "name_placeholder": "E.g: CIP Main Auditorium",
-      "address": "Address",
-      "address_placeholder": "E.g: 4947 Arequipa Ave",
-      "city": "City",
-      "city_placeholder": "E.g: Lima",
-      "reference": "Reference",
-      "reference_placeholder": "E.g: In front of Kennedy Park",
-      "map_link": "Google Maps Link",
-      "map_link_placeholder": "https://maps.google.com/..."
-    },
-    "virtual": {
-      "title": "Virtual Access",
-      "description": "Virtual platform configuration for the event.",
-      "platform": "Platform",
-      "platform_placeholder": "Select a platform",
-      "meeting_url": "Meeting URL",
-      "meeting_url_placeholder": "https://zoom.us/j/...",
-      "password": "Access Password",
-      "password_placeholder": "Optional",
-      "instructions": "Access Instructions",
-      "instructions_placeholder": "Additional instructions for participants...",
-      "other": "Other"
-    },
-    "tickets": {
-      "stats": {
-        "total": "Total Tickets",
-        "active": "active",
-        "total_stock": "Total Stock",
-        "available": "available in total",
-        "cip_validation": "With CIP Validation",
-        "requires_membership": "require active membership",
-        "enrolled": "Enrolled",
-        "revenue": "Revenue",
-        "tickets": "Tickets",
-        "checkins": "Check-ins"
-      },
-      "table": {
-        "title": "Ticket Types",
-        "title_count": "Ticket Types ({{count}})",
-        "description": "Manage the ticket types available for this event.",
-        "name": "Name",
-        "price": "Price",
-        "stock": "Stock",
-        "cip_validation": "CIP Validation",
+    "event": {
+        "title": "Title",
+        "description": "Description",
+        "date": "Date",
+        "location": {
+            "label": "Location",
+            "search": "Search address...",
+            "no_results": "No locations found",
+            "create_new": "Type to create a new address",
+            "recent": "Recent locations"
+        },
+        "capacity": "Capacity",
+        "attendees": "Attendees",
         "status": "Status",
-        "actions": "Actions",
-        "required": "Required",
-        "active": "Active",
-        "inactive": "Inactive",
-        "free": "Free",
-        "sold": "{{sold}} / {{total}} sold",
-        "max_per_order": "Max. {{count}}/order",
-        "hidden": "Hidden",
-        "cip_badge": "CIP",
-        "from_date": "From {{date}}",
-        "until_date": "Until {{date}}"
-      },
-      "empty": {
-        "title": "No tickets configured",
-        "description": "Create your first ticket so attendees can register for the event.",
-        "create_first": "Create first ticket"
-      },
-      "dialog": {
-        "create_title": "New Ticket",
-        "edit_title": "Edit Ticket",
-        "create_description": "Configure a new ticket type for the event",
-        "edit_description": "Modify the ticket details",
-        "name_label": "Ticket name",
-        "name_placeholder": "E.g: General, Student, VIP",
-        "description_label": "Description",
-        "description_placeholder": "E.g: Includes coffee break and materials",
-        "description_hint": "Optional. Describe the ticket benefits",
-        "pricing": "Price",
-        "free_ticket": "Free ticket",
-        "free_ticket_description": "No cost for attendees",
-        "price_label": "Price",
-        "stock_label": "Available seats",
-        "stock_hint": "Maximum number of tickets available for sale.",
-        "max_per_order_label": "Max per order",
-        "max_per_order_hint": "Maximum quantity a user can purchase",
-        "sales_start": "Sales start",
-        "sales_end": "Sales end",
-        "cip_validation_label": "Requires CIP validation",
-        "cip_validation_description": "Only licensed engineers with active membership",
-        "visibility_label": "Publicly visible",
-        "visibility_description": "The ticket will appear on the event page",
+        "created_at": "Created at",
+        "updated_at": "Updated at"
+    },
+    "form": {
+        "required": "This field is required",
+        "invalid_email": "Invalid email address",
+        "passwords_not_match": "Passwords do not match",
+        "invalid_url": "Invalid URL",
+        "min_length": "Minimum {{count}} characters",
+        "max_length": "Maximum {{count}} characters",
+        "save": "Save",
+        "save_event": "Save Event",
+        "save_changes": "Save Changes",
+        "save_draft": "Save Draft",
+        "publish_event": "Publish Event",
+        "create_event": "Create Event",
         "cancel": "Cancel",
-        "save": "Save Changes",
-        "create": "Create Ticket",
-        "saving": "Saving...",
-        "creating": "Creating..."
-      },
-      "delete": {
-        "title": "Delete ticket?",
-        "description": "This action cannot be undone. The ticket \"{{name}}\" will be permanently deleted.",
-        "cancel": "Cancel",
-        "confirm": "Delete",
-        "deleting": "Deleting..."
-      },
-      "actions": {
-        "new": "Add Ticket",
-        "edit": "Edit",
-        "activate": "Activate",
-        "deactivate": "Deactivate",
-        "delete": "Delete"
-      },
-      "toast": {
-        "created": "Ticket created successfully",
-        "created_desc": "\"{{name}}\" has been created successfully.",
-        "updated": "Ticket updated successfully",
-        "updated_desc": "\"{{name}}\" has been updated successfully.",
-        "deleted": "Ticket deleted successfully",
-        "deleted_desc": "\"{{name}}\" has been deleted.",
-        "activated": "Ticket activated",
-        "deactivated": "Ticket deactivated",
-        "status_changed_desc": "\"{{name}}\" has been {{status}}.",
-        "error": "Error",
-        "error_save": "Error saving the ticket",
-        "error_delete": "Error deleting the ticket",
-        "error_status": "Could not change the ticket status."
-      },
-      "validation": {
-        "name_required": "Name is required",
-        "price_min": "Price must be greater than or equal to 0",
-        "stock_min": "Stock must be greater than or equal to 0",
-        "max_per_order_min": "Minimum 1 per order"
-      },
-      "loading_error": "Error loading tickets"
-    },
-    "breadcrumb": {
-      "my_events": "My Events",
-      "details": "Details"
-    },
-    "header": {
-      "share": "Share",
-      "edit": "Edit"
-    },
-    "tabs": {
-      "general": "General",
-      "sessions": "Sessions",
-      "tickets": "Tickets",
-      "enrollments": "Attendees",
-      "speakers": "Speakers"
-    },
-    "placeholder": {
-      "sessions": "Soon you will be able to manage event sessions here.",
-      "enrollments": "Soon you will be able to view the attendees list here.",
-      "speakers": "Soon you will be able to manage speakers here."
-    },
-    "sessions": {
-      "table": {
-        "title_count": "Sessions ({{count}})",
-        "session_count": "{{count}} sessions",
-        "session_count_one": "{{count}} session",
+        "back": "Back",
+        "submit": "Submit",
+        "loading": "Saving...",
+        "select": "Select...",
+        "date": "Date",
         "time": "Time",
-        "room": "Room",
-        "speakers": "speakers",
-        "has_meeting_url": "Virtual link"
-      },
-      "empty": {
-        "title": "No sessions configured",
-        "description": "Create your first session to organize the event schedule."
-      },
-      "dialog": {
-        "create_title": "New Session",
-        "edit_title": "Edit Session",
-        "create_description": "Configure a new session for the event",
-        "edit_description": "Modify the session details",
-        "title_label": "Session title",
-        "title_placeholder": "E.g: Keynote Speech, Workshop on...",
-        "description_label": "Description",
-        "description_placeholder": "Briefly describe the session content...",
-        "description_hint": "Optional. Detail the topic or content to cover",
-        "start_time": "Start",
-        "end_time": "End",
-        "room_label": "Room or Venue",
-        "room_placeholder": "E.g: Main Auditorium, Room A",
-        "room_hint": "Optional. Indicate where the session will take place",
-        "meeting_url_label": "Virtual Meeting URL",
-        "meeting_url_placeholder": "https://zoom.us/j/...",
-        "meeting_url_hint": "Optional. Link for virtual or hybrid sessions",
-        "cancel": "Cancel",
-        "save": "Save Changes",
-        "create": "Create Session",
-        "saving": "Saving...",
-        "creating": "Creating..."
-      },
-      "delete": {
-        "title": "Delete session?",
-        "description": "This action cannot be undone. The session \"{{name}}\" will be permanently deleted.",
-        "cancel": "Cancel",
-        "confirm": "Delete",
-        "deleting": "Deleting..."
-      },
-      "actions": {
-        "new": "Add Session",
-        "edit": "Edit",
-        "delete": "Delete"
-      },
-      "toast": {
-        "created": "Session created successfully",
-        "updated": "Session updated successfully",
-        "deleted": "Session deleted successfully",
-        "error_save": "Error saving the session",
-        "error_delete": "Error deleting the session"
-      },
-      "validation": {
-        "title_required": "Title is required",
-        "start_required": "Start time is required",
-        "end_required": "End time is required",
-        "url_invalid": "Enter a valid URL"
-      },
-      "loading_error": "Error loading sessions"
+        "success": "Operation successful",
+        "error": "An error occurred",
+        "date_future": "Start date must be in the future",
+        "date_end_after_start": "End date must be after start date",
+        "image": {
+            "drag": "Drag an image here or",
+            "click": "click to upload",
+            "hint": "PNG, JPG or WebP • Maximum 5MB",
+            "remove": "Remove image",
+            "change": "Change image"
+        }
     },
-    "general": {
-      "occupation": "Occupation",
-      "available_spots": "{{count}} spots available",
-      "date_time": "Date & Time",
-      "location": "Location",
-      "qr_code": "QR Code",
-      "download_qr": "Download QR",
-      "status": {
-        "PUBLISHED": "Published",
-        "DRAFT": "Draft",
-        "CANCELLED": "Cancelled",
-        "COMPLETED": "Completed"
-      }
+    "common": {
+        "yes": "Yes",
+        "no": "No",
+        "ok": "OK",
+        "close": "Close",
+        "delete": "Delete",
+        "edit": "Edit",
+        "view": "View",
+        "search": "Search",
+        "filter": "Filter",
+        "sort": "Sort",
+        "export": "Export",
+        "import": "Import",
+        "settings": "Settings",
+        "help": "Help",
+        "retry": "Retry",
+        "about": "About",
+        "language": "Language",
+        "loading": "Loading..."
+    },
+    "roles": {
+        "ADMIN": "Administrator",
+        "USER": "User",
+        "SUPER_ADMIN": "Super Administrator"
+    },
+    "errors": {
+        "404": "Page not found",
+        "500": "Server error",
+        "network": "Connection error",
+        "unauthorized": "Unauthorized",
+        "forbidden": "Access denied",
+        "validation": "Validation error",
+        "unknown": "Unknown error"
+    },
+    "create_event": {
+        "back": "Back",
+        "type": "Type",
+        "type_placeholder": "Select a type",
+        "category": "Category",
+        "category_placeholder": "Select a category",
+        "configuration": "Configuration",
+        "modality": "Modality",
+        "start": "Start",
+        "end": "End",
+        "breadcrumb": {
+            "title": "New Event"
+        },
+        "drawer": {
+            "subtitle": "Complete the event information",
+            "info": "After creating the event you can add image, location, virtual access, tickets and more details.",
+            "name": "Event name",
+            "name_placeholder": "E.g: Technology Conference 2025",
+            "description_placeholder": "Briefly describe the event...",
+            "type": "Type",
+            "category": "Category",
+            "start_date": "Start date",
+            "start_time": "Time",
+            "end_date": "End date",
+            "end_time": "Time",
+            "create_btn": "Create event"
+        },
+        "dates": {
+            "title": "Dates"
+        },
+        "basic": {
+            "title": "Basic Information",
+            "description": "Main event data.",
+            "event_title": "Event Title",
+            "event_title_placeholder": "Event name",
+            "event_title_hint": "E.g: Civil Engineering Congress 2024",
+            "summary": "Short Summary",
+            "summary_placeholder": "Brief description shown on cards",
+            "summary_hint": "Shown on listing cards",
+            "detailed_description": "Description",
+            "detailed_description_placeholder": "Complete event information...",
+            "type": "Type",
+            "category": "Category"
+        },
+        "image": {
+            "title": "Image",
+            "description": "Event banner.",
+            "current": "Current event image",
+            "drag_text": "Drag an image or",
+            "click_text": "click to upload",
+            "hint": "PNG, JPG or WebP • Maximum 5MB • Recommended: 1200x630px",
+            "banner_hint": "This image will be shown as the event banner in the listing and details page."
+        },
+        "config": {
+            "title": "Date and Modality",
+            "description": "When and how it will take place.",
+            "modality": "Modality",
+            "start": "Start",
+            "end": "End"
+        },
+        "location": {
+            "title": "Location",
+            "description": "Physical event venue.",
+            "name": "Venue Name",
+            "name_placeholder": "E.g: CIP Auditorium",
+            "address": "Address",
+            "address_placeholder": "E.g: 4 Pevas Ave",
+            "city": "City",
+            "city_placeholder": "Lima",
+            "reference": "Reference",
+            "reference_placeholder": "In front of the Park...",
+            "map_link": "Map Link",
+            "map_hint": "Copy the link from Google Maps for easy navigation"
+        },
+        "virtual": {
+            "title": "Virtual Access",
+            "description": "Virtual meeting details.",
+            "platform": "Platform",
+            "password": "Password",
+            "password_placeholder": "CIP2024",
+            "meeting_url": "Meeting Link",
+            "meeting_url_hint": "The link will be sent to attendees before the event",
+            "instructions": "Instructions",
+            "instructions_placeholder": "Instructions to join...",
+            "other": "Other"
+        },
+        "confirm": {
+            "title": "Save event?",
+            "description": "You are about to create a new event. Once saved, you can edit or publish it from the management view.",
+            "create_title": "Create event?",
+            "create_description": "The event will be saved as a draft. You can edit and publish it when ready."
+        },
+        "toast": {
+            "created": "Event created",
+            "created_description": "Now you can complete the event details.",
+            "draft_success": "Draft saved",
+            "draft_description": "The event has been saved as a draft.",
+            "publish_success": "Event published",
+            "publish_description": "The event is now visible.",
+            "error": "Error creating event",
+            "error_description": "Check the data and try again.",
+            "error_unexpected": "An unexpected error occurred.",
+            "metadata_error": "Error loading form data"
+        }
+    },
+    "edit_event": {
+        "title": "Edit Event",
+        "subtitle": "Modify the event information.",
+        "breadcrumb": {
+            "title": "Edit"
+        },
+        "success_title": "Event updated",
+        "success_description": "Changes have been saved successfully.",
+        "error_title": "Update error",
+        "error_description": "Please check the data and try again.",
+        "error_unknown": "An unexpected error occurred. Please try again.",
+        "confirm_title": "Save changes?",
+        "confirm_description": "Changes will be applied immediately to the event."
+    },
+    "event_management": {
+        "breadcrumb": {
+            "back": "Back",
+            "title": "Event Management"
+        },
+        "actions": {
+            "edit": "Edit",
+            "publish": "Publish",
+            "preview": "Preview",
+            "unpublish": "Unpublish",
+            "save": "Save Changes"
+        },
+        "tabs": {
+            "general": "General",
+            "tickets": "Tickets",
+            "agenda": "Agenda",
+            "participants": "Participants",
+            "attendees": "Attendees"
+        },
+        "coming_soon": "This section will be available soon.",
+        "general": {
+            "basic_info": "Basic Information",
+            "basic_info_desc": "Main event details visible to the public.",
+            "title": "Event Title",
+            "title_placeholder": "E.g: Civil Engineering Congress 2024",
+            "description": "Description",
+            "description_placeholder": "Describe the event, its objectives and target audience...",
+            "modality": "Modality",
+            "modality_placeholder": "Select a modality",
+            "start_date": "Start",
+            "end_date": "End"
+        },
+        "location": {
+            "title": "Physical Location",
+            "description": "Information about the venue for the in-person event.",
+            "name": "Venue Name",
+            "name_placeholder": "E.g: CIP Main Auditorium",
+            "address": "Address",
+            "address_placeholder": "E.g: 4947 Arequipa Ave",
+            "city": "City",
+            "city_placeholder": "E.g: Lima",
+            "reference": "Reference",
+            "reference_placeholder": "E.g: In front of Kennedy Park",
+            "map_link": "Google Maps Link",
+            "map_link_placeholder": "https://maps.google.com/..."
+        },
+        "virtual": {
+            "title": "Virtual Access",
+            "description": "Virtual platform configuration for the event.",
+            "platform": "Platform",
+            "platform_placeholder": "Select a platform",
+            "meeting_url": "Meeting URL",
+            "meeting_url_placeholder": "https://zoom.us/j/...",
+            "password": "Access Password",
+            "password_placeholder": "Optional",
+            "instructions": "Access Instructions",
+            "instructions_placeholder": "Additional instructions for participants...",
+            "other": "Other"
+        },
+        "tickets": {
+            "stats": {
+                "total": "Total Tickets",
+                "active": "active",
+                "total_stock": "Total Stock",
+                "available": "available in total",
+                "cip_validation": "With CIP Validation",
+                "requires_membership": "require active membership",
+                "enrolled": "Enrolled",
+                "revenue": "Revenue",
+                "tickets": "Tickets",
+                "checkins": "Check-ins"
+            },
+            "table": {
+                "title": "Ticket Types",
+                "title_count": "Ticket Types ({{count}})",
+                "description": "Manage the ticket types available for this event.",
+                "name": "Name",
+                "price": "Price",
+                "stock": "Stock",
+                "cip_validation": "CIP Validation",
+                "status": "Status",
+                "actions": "Actions",
+                "required": "Required",
+                "active": "Active",
+                "inactive": "Inactive",
+                "free": "Free",
+                "sold": "{{sold}} / {{total}} sold",
+                "max_per_order": "Max. {{count}}/order",
+                "hidden": "Hidden",
+                "cip_badge": "CIP",
+                "from_date": "From {{date}}",
+                "until_date": "Until {{date}}"
+            },
+            "empty": {
+                "title": "No tickets configured",
+                "description": "Create your first ticket so attendees can register for the event.",
+                "create_first": "Create first ticket"
+            },
+            "dialog": {
+                "create_title": "New Ticket",
+                "edit_title": "Edit Ticket",
+                "create_description": "Configure a new ticket type for the event",
+                "edit_description": "Modify the ticket details",
+                "name_label": "Ticket name",
+                "name_placeholder": "E.g: General, Student, VIP",
+                "description_label": "Description",
+                "description_placeholder": "E.g: Includes coffee break and materials",
+                "description_hint": "Optional. Describe the ticket benefits",
+                "pricing": "Price",
+                "free_ticket": "Free ticket",
+                "free_ticket_description": "No cost for attendees",
+                "price_label": "Price",
+                "stock_label": "Available seats",
+                "stock_hint": "Maximum number of tickets available for sale.",
+                "max_per_order_label": "Max per order",
+                "max_per_order_hint": "Maximum quantity a user can purchase",
+                "sales_start": "Sales start",
+                "sales_end": "Sales end",
+                "cip_validation_label": "Requires CIP validation",
+                "cip_validation_description": "Only licensed engineers with active membership",
+                "visibility_label": "Publicly visible",
+                "visibility_description": "The ticket will appear on the event page",
+                "cancel": "Cancel",
+                "save": "Save Changes",
+                "create": "Create Ticket",
+                "saving": "Saving...",
+                "creating": "Creating..."
+            },
+            "delete": {
+                "title": "Delete ticket?",
+                "description": "This action cannot be undone. The ticket \"{{name}}\" will be permanently deleted.",
+                "cancel": "Cancel",
+                "confirm": "Delete",
+                "deleting": "Deleting..."
+            },
+            "actions": {
+                "new": "Add Ticket",
+                "edit": "Edit",
+                "activate": "Activate",
+                "deactivate": "Deactivate",
+                "delete": "Delete"
+            },
+            "toast": {
+                "created": "Ticket created successfully",
+                "created_desc": "\"{{name}}\" has been created successfully.",
+                "updated": "Ticket updated successfully",
+                "updated_desc": "\"{{name}}\" has been updated successfully.",
+                "deleted": "Ticket deleted successfully",
+                "deleted_desc": "\"{{name}}\" has been deleted.",
+                "activated": "Ticket activated",
+                "deactivated": "Ticket deactivated",
+                "status_changed_desc": "\"{{name}}\" has been {{status}}.",
+                "error": "Error",
+                "error_save": "Error saving the ticket",
+                "error_delete": "Error deleting the ticket",
+                "error_status": "Could not change the ticket status."
+            },
+            "validation": {
+                "name_required": "Name is required",
+                "price_min": "Price must be greater than or equal to 0",
+                "stock_min": "Stock must be greater than or equal to 0",
+                "max_per_order_min": "Minimum 1 per order"
+            },
+            "loading_error": "Error loading tickets"
+        },
+        "breadcrumb": {
+            "my_events": "My Events",
+            "details": "Details"
+        },
+        "header": {
+            "share": "Share",
+            "edit": "Edit"
+        },
+        "tabs": {
+            "general": "General",
+            "sessions": "Sessions",
+            "tickets": "Tickets",
+            "enrollments": "Attendees",
+            "speakers": "Speakers"
+        },
+        "placeholder": {
+            "sessions": "Soon you will be able to manage event sessions here.",
+            "enrollments": "Soon you will be able to view the attendees list here.",
+            "speakers": "Soon you will be able to manage speakers here."
+        },
+        "sessions": {
+            "table": {
+                "title_count": "Sessions ({{count}})",
+                "session_count": "{{count}} sessions",
+                "session_count_one": "{{count}} session",
+                "time": "Time",
+                "room": "Room",
+                "speakers": "speakers",
+                "has_meeting_url": "Virtual link"
+            },
+            "empty": {
+                "title": "No sessions configured",
+                "description": "Create your first session to organize the event schedule."
+            },
+            "dialog": {
+                "create_title": "New Session",
+                "edit_title": "Edit Session",
+                "create_description": "Configure a new session for the event",
+                "edit_description": "Modify the session details",
+                "title_label": "Session title",
+                "title_placeholder": "E.g: Keynote Speech, Workshop on...",
+                "description_label": "Description",
+                "description_placeholder": "Briefly describe the session content...",
+                "description_hint": "Optional. Detail the topic or content to cover",
+                "start_time": "Start",
+                "end_time": "End",
+                "room_label": "Room or Venue",
+                "room_placeholder": "E.g: Main Auditorium, Room A",
+                "room_hint": "Optional. Indicate where the session will take place",
+                "meeting_url_label": "Virtual Meeting URL",
+                "meeting_url_placeholder": "https://zoom.us/j/...",
+                "meeting_url_hint": "Optional. Link for virtual or hybrid sessions",
+                "cancel": "Cancel",
+                "save": "Save Changes",
+                "create": "Create Session",
+                "saving": "Saving...",
+                "creating": "Creating..."
+            },
+            "delete": {
+                "title": "Delete session?",
+                "description": "This action cannot be undone. The session \"{{name}}\" will be permanently deleted.",
+                "cancel": "Cancel",
+                "confirm": "Delete",
+                "deleting": "Deleting..."
+            },
+            "actions": {
+                "new": "Add Session",
+                "edit": "Edit",
+                "delete": "Delete"
+            },
+            "toast": {
+                "created": "Session created successfully",
+                "updated": "Session updated successfully",
+                "deleted": "Session deleted successfully",
+                "error_save": "Error saving the session",
+                "error_delete": "Error deleting the session"
+            },
+            "validation": {
+                "title_required": "Title is required",
+                "start_required": "Start time is required",
+                "end_required": "End time is required",
+                "url_invalid": "Enter a valid URL"
+            },
+            "loading_error": "Error loading sessions"
+        },
+        "general": {
+            "occupation": "Occupation",
+            "available_spots": "{{count}} spots available",
+            "date_time": "Date & Time",
+            "location": "Location",
+            "qr_code": "QR Code",
+            "download_qr": "Download QR",
+            "status": {
+                "PUBLISHED": "Published",
+                "DRAFT": "Draft",
+                "CANCELLED": "Cancelled",
+                "COMPLETED": "Completed"
+            }
+        }
+    },
+    "sections": {
+        "coming_soon": "Soon you will be able to manage this section here.",
+        "under_construction": "Section under construction",
+        "no_content": "No content available for this route yet.",
+        "speakers": "Speakers",
+        "organizers": "Organizers",
+        "registrations": "Registrations",
+        "access_control": "Access Control",
+        "certificates": "Certificates",
+        "revenue": "Revenue",
+        "payments": "Payments",
+        "reports": "Reports",
+        "payments_reports": "Payments & Reports",
+        "users": "Users",
+        "cip_registry": "CIP Registry",
+        "settings": "Settings"
+    },
+    "error_state": {
+        "title": "Error loading data",
+        "default_message": "An error occurred while loading the data",
+        "retry": "Retry"
+    },
+    "users": {
+        "back": "Back",
+        "create_title": "Create User",
+        "create_subtitle": "Complete the information to register a new user in the system.",
+        "create_btn": "Create User",
+        "account": {
+            "title": "Account",
+            "description": "User access credentials.",
+            "email": "Email",
+            "email_placeholder": "user@example.com",
+            "password": "Password",
+            "password_placeholder": "Minimum 6 characters",
+            "confirm_password": "Confirm Password",
+            "confirm_password_placeholder": "Repeat the password",
+            "generate_password": "Generate secure password",
+            "generate_btn": "Generate",
+            "generate_hint": "Generated password includes uppercase, lowercase, numbers, and symbols.",
+            "copy_password": "Copy password"
+        },
+        "role": {
+            "title": "Role",
+            "description": "User permissions and access in the system.",
+            "select_label": "User Role",
+            "info": "The role determines what actions the user can perform. Administrators have full access to the system."
+        },
+        "toast": {
+            "create_success": "User created",
+            "create_description": "The user has been created successfully. They will receive an email to verify their account.",
+            "create_error": "Error creating user",
+            "email_exists": "Email already registered",
+            "email_exists_description": "Please use a different email.",
+            "error_description": "Check the data and try again.",
+            "error_unexpected": "An unexpected error occurred.",
+            "error_loading_roles": "Error loading roles"
+        },
+        "list": {
+            "title": "Users",
+            "subtitle": "Manage system users.",
+            "search_placeholder": "Search user...",
+            "new_user": "New User",
+            "error_loading": "Error loading users",
+            "table": {
+                "user": "User",
+                "email": "Email",
+                "role": "Role",
+                "verified": "Verified",
+                "status": "Status",
+                "created": "Created",
+                "last_access": "Last access",
+                "actions": "Actions"
+            },
+            "filter": {
+                "all_roles": "All roles",
+                "all_status": "All statuses"
+            },
+            "status": {
+                "active": "Active",
+                "inactive": "Inactive",
+                "pending": "Pending"
+            },
+            "actions": {
+                "edit": "Edit",
+                "change_role": "Change role",
+                "reset_password": "Reset password",
+                "resend_verification": "Resend verification",
+                "activate": "Activate user",
+                "delete": "Delete"
+            },
+            "pagination": {
+                "showing": "Showing",
+                "of": "of",
+                "users": "users"
+            },
+            "empty": {
+                "title": "No users",
+                "description": "Create your first user to get started.",
+                "no_results": "No users found",
+                "try_different": "Try different search filters."
+            },
+            "delete": {
+                "title": "Delete user",
+                "description": "Are you sure you want to delete {{name}}? This action cannot be undone.",
+                "confirm": "Delete",
+                "cancel": "Cancel",
+                "success": "User deleted successfully",
+                "error": "Error deleting user"
+            },
+            "toggle_status": {
+                "activate_title": "Activate user",
+                "activate_description": "Are you sure you want to activate {{name}}? The user will be able to access the system again.",
+                "activate_confirm": "Activate",
+                "activate_success": "User activated successfully",
+                "cancel": "Cancel",
+                "error": "Error activating user"
+            }
+        }
     }
-  },
-  "sections": {
-    "coming_soon": "Soon you will be able to manage this section here.",
-    "under_construction": "Section under construction",
-    "no_content": "No content available for this route yet.",
-    "speakers": "Speakers",
-    "organizers": "Organizers",
-    "registrations": "Registrations",
-    "access_control": "Access Control",
-    "certificates": "Certificates",
-    "revenue": "Revenue",
-    "payments": "Payments",
-    "reports": "Reports",
-    "payments_reports": "Payments & Reports",
-    "users": "Users",
-    "cip_registry": "CIP Registry",
-    "settings": "Settings"
-  },
-  "error_state": {
-    "title": "Error loading data",
-    "default_message": "An error occurred while loading the data",
-    "retry": "Retry"
-  }
 }

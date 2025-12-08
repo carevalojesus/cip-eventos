@@ -8,6 +8,7 @@ import { WalletService } from '../wallet/wallet.service';
 import { Registration } from '../registrations/entities/registration.entity';
 import {
   renderAccountConfirmedEmail,
+  renderAdminCreatedEmail,
   renderResetPasswordEmail,
   renderTicketEmail,
   renderWelcomeEmail,
@@ -128,6 +129,26 @@ export class MailService {
     const { subject, html } = await renderAccountConfirmedEmail(
       name,
       loginUrl,
+      locale,
+    );
+    await this.dispatchMail(email, subject, html);
+  }
+
+  async sendAdminCreatedUser(
+    email: string,
+    name: string,
+    tempPassword: string,
+    token: string,
+  ) {
+    const locale = this.getLocale();
+    const confirmPath = this.getFrontendPath('confirm', locale);
+    const verifyUrl = this.buildUrlWithToken(token, confirmPath);
+
+    const { subject, html } = await renderAdminCreatedEmail(
+      name,
+      email,
+      tempPassword,
+      verifyUrl,
       locale,
     );
     await this.dispatchMail(email, subject, html);

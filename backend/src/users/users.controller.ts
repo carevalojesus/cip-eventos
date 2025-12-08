@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -44,8 +45,13 @@ export class UsersController {
 
   @Get()
   @Roles('ADMIN', 'SUPER_ADMIN')
-  findAll(): Promise<User[]> {
-    return this.usersService.findAll();
+  findAll(
+    @CurrentUser() user: { userId: string; role: string },
+    @Query('includeInactive') includeInactive?: string,
+  ): Promise<User[]> {
+    // Solo SUPER_ADMIN puede ver usuarios inactivos
+    const canSeeInactive = user.role === 'SUPER_ADMIN' && includeInactive === 'true';
+    return this.usersService.findAll(canSeeInactive);
   }
 
   @Get(':id')
