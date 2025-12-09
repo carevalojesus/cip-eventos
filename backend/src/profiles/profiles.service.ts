@@ -111,4 +111,45 @@ export class ProfilesService {
 
     return await this.profileRepository.remove(profile);
   }
+
+  // ============================================
+  // Admin methods for managing other users' profiles
+  // ============================================
+
+  async findByUserIdOrNull(userId: string): Promise<Profile | null> {
+    return this.profileRepository.findOne({
+      where: { user: { id: userId } },
+      relations: ['user'],
+    });
+  }
+
+  async updateByUserId(
+    userId: string,
+    updateProfileDto: UpdateProfileDto,
+  ): Promise<Profile> {
+    let profile = await this.profileRepository.findOne({
+      where: { user: { id: userId } },
+    });
+
+    // If profile doesn't exist, create it
+    if (!profile) {
+      const user = await this.userRepository.findOneBy({ id: userId });
+      if (!user) {
+        throw new NotFoundException(
+          this.i18n.t('profiles.user_not_found', {
+            lang: I18nContext.current()?.lang,
+          }),
+        );
+      }
+
+      profile = this.profileRepository.create({
+        ...updateProfileDto,
+        user: user,
+      });
+    } else {
+      profile = this.profileRepository.merge(profile, updateProfileDto);
+    }
+
+    return this.profileRepository.save(profile);
+  }
 }

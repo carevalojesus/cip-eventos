@@ -24,26 +24,46 @@ export enum UserRole {
 
   /** Participante con cuenta - ve su historial, certificados */
   PARTICIPANTE = 'PARTICIPANTE',
+
+  /** Administrador del sistema (compatibilidad) */
+  ADMIN = 'ADMIN',
+
+  /** Usuario regular (compatibilidad) */
+  USER = 'USER',
+
+  /** Moderador */
+  MODERATOR = 'MODERATOR',
+
+  /** Organizador */
+  ORGANIZER = 'ORGANIZER',
 }
 
 export const ROLE_LABELS: Record<UserRole, string> = {
-  [UserRole.SUPER_ADMIN]: 'Super Administrador',
+  [UserRole.SUPER_ADMIN]: 'Acceso Total',
   [UserRole.ORG_ADMIN]: 'Administrador',
   [UserRole.ORG_STAFF_ACCESO]: 'Staff de Acceso',
   [UserRole.ORG_STAFF_ACADEMICO]: 'Staff Académico',
   [UserRole.ORG_FINANZAS]: 'Finanzas',
   [UserRole.PONENTE]: 'Ponente',
   [UserRole.PARTICIPANTE]: 'Participante',
+  [UserRole.ADMIN]: 'Administrador',
+  [UserRole.USER]: 'Usuario',
+  [UserRole.MODERATOR]: 'Moderador',
+  [UserRole.ORGANIZER]: 'Organizador',
 }
 
 export const ROLE_LABELS_EN: Record<UserRole, string> = {
-  [UserRole.SUPER_ADMIN]: 'Super Administrator',
+  [UserRole.SUPER_ADMIN]: 'Full Access',
   [UserRole.ORG_ADMIN]: 'Administrator',
   [UserRole.ORG_STAFF_ACCESO]: 'Access Staff',
   [UserRole.ORG_STAFF_ACADEMICO]: 'Academic Staff',
   [UserRole.ORG_FINANZAS]: 'Finance',
   [UserRole.PONENTE]: 'Speaker',
   [UserRole.PARTICIPANTE]: 'Participant',
+  [UserRole.ADMIN]: 'Administrator',
+  [UserRole.USER]: 'User',
+  [UserRole.MODERATOR]: 'Moderator',
+  [UserRole.ORGANIZER]: 'Organizer',
 }
 
 /** Verifica si un rol tiene permisos de administración */

@@ -27,6 +27,7 @@ import { DocumentType } from './entities/person.entity';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
+import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { UserRole } from '../roles/entities/role.entity';
 
 @ApiTags('persons')
@@ -38,6 +39,45 @@ export class PersonsController {
     private readonly personMergeService: PersonMergeService,
     private readonly dataDeletionService: DataDeletionService,
   ) {}
+
+  @Get('me')
+  @ApiOperation({
+    summary: 'Get current user nominal data',
+    description: 'Returns the Person record linked to the current authenticated user',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Person data retrieved successfully',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'No Person linked to this user',
+  })
+  async findMyPerson(@CurrentUser() user: { userId: string }) {
+    const person = await this.personsService.findByUserId(user.userId);
+    return { data: person, hasData: !!person };
+  }
+
+  @Post('me')
+  @HttpCode(HttpStatus.CREATED)
+  @ApiOperation({
+    summary: 'Create and link nominal data to current user',
+    description: 'Creates a new Person record and links it to the current authenticated user',
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'Person data created and linked successfully',
+  })
+  @ApiResponse({
+    status: 409,
+    description: 'User already has linked Person or document already exists',
+  })
+  async createMyPerson(
+    @CurrentUser() user: { userId: string },
+    @Body() createPersonDto: CreatePersonDto,
+  ) {
+    return this.personsService.createAndLinkToUser(user.userId, createPersonDto);
+  }
 
   @Post()
   create(@Body() createPersonDto: CreatePersonDto) {

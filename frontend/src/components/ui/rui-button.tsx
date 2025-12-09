@@ -1,5 +1,5 @@
 import { useState, type ButtonHTMLAttributes, type ReactNode } from 'react'
-import { red, grey, cyan, colors, rings, shadows } from '@/lib/design-tokens'
+import { red, grey, cyan, colors, rings, shadows } from '@/lib/styleTokens'
 
 /**
  * Button Component - Refactoring UI Design System

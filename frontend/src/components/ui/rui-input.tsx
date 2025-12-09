@@ -1,6 +1,6 @@
 import { forwardRef, useState, type InputHTMLAttributes, type ReactNode } from 'react'
-import { Eye, EyeOff } from 'lucide-react'
-import { colors, rings, shadows } from '@/lib/design-tokens'
+import { Eye, EyeSlash } from '@phosphor-icons/react'
+import { colors, rings, shadows } from '@/lib/styleTokens'
 
 type InputSize = 'sm' | 'md' | 'lg' | 'xl'
 
@@ -165,7 +165,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(({
             aria-label={showPassword ? hidePasswordLabel : showPasswordLabel}
             tabIndex={-1}
           >
-            {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+            {showPassword ? <EyeSlash size={16} /> : <Eye size={16} />}
           </button>
         ) : rightIcon ? (
           <span style={{ ...iconStyles, right: 'var(--space-3)' }}>

@@ -1,96 +1,110 @@
 /**
  * Style Tokens - Refactoring UI Design System
  *
- * Centralized design tokens for consistent styling across all components.
- * Use these instead of hardcoded values.
+ * Archivo único y consolidado de tokens de diseño.
+ * Centraliza todos los tokens para uso consistente en componentes.
  *
  * @example
- * import { tokens, styles } from '@/lib/styleTokens';
+ * import { colors, semanticColors, spacing, shadows } from '@/lib/styleTokens';
  *
- * const myStyle = {
- *   padding: tokens.spacing.md,
- *   borderRadius: tokens.radius.lg,
- *   fontSize: tokens.fontSize.base,
+ * const style = {
+ *   backgroundColor: colors.cyan[50],
+ *   color: semanticColors.textPrimary,
+ *   padding: spacing.lg,
+ *   boxShadow: shadows.sm,
  * };
  */
 
 // ============================================
-// COLOR TOKENS
+// COLOR PALETTES
 // ============================================
 
-export const colors = {
-  // Primary (Red) - CIP Brand
-  red: {
-    50: 'var(--color-red-050)',
-    100: 'var(--color-red-100)',
-    200: 'var(--color-red-200)',
-    300: 'var(--color-red-300)',
-    400: 'var(--color-red-400)',
-    500: 'var(--color-red-500)',
-    600: 'var(--color-red-600)',
-    700: 'var(--color-red-700)',
-    800: 'var(--color-red-800)',
-    900: 'var(--color-red-900)',
-  },
-
-  // Neutrals (Warm Grey)
-  grey: {
-    50: 'var(--color-grey-050)',
-    100: 'var(--color-grey-100)',
-    200: 'var(--color-grey-200)',
-    300: 'var(--color-grey-300)',
-    400: 'var(--color-grey-400)',
-    500: 'var(--color-grey-500)',
-    600: 'var(--color-grey-600)',
-    700: 'var(--color-grey-700)',
-    800: 'var(--color-grey-800)',
-    900: 'var(--color-grey-900)',
-  },
-
-  // Cyan (Action color)
-  cyan: {
-    50: 'var(--color-cyan-050)',
-    100: 'var(--color-cyan-100)',
-    200: 'var(--color-cyan-200)',
-    300: 'var(--color-cyan-300)',
-    400: 'var(--color-cyan-400)',
-    500: 'var(--color-cyan-500)',
-    600: 'var(--color-cyan-600)',
-    700: 'var(--color-cyan-700)',
-    800: 'var(--color-cyan-800)',
-    900: 'var(--color-cyan-900)',
-  },
-
-  // Green (Success)
-  green: {
-    50: 'var(--color-green-050)',
-    100: 'var(--color-green-100)',
-    200: 'var(--color-green-200)',
-    300: 'var(--color-green-300)',
-    400: 'var(--color-green-400)',
-    500: 'var(--color-green-500)',
-    600: 'var(--color-green-600)',
-    700: 'var(--color-green-700)',
-    800: 'var(--color-green-800)',
-    900: 'var(--color-green-900)',
-  },
-
-  // Yellow (Warning)
-  yellow: {
-    50: 'var(--color-yellow-050)',
-    100: 'var(--color-yellow-100)',
-    200: 'var(--color-yellow-200)',
-    300: 'var(--color-yellow-300)',
-    400: 'var(--color-yellow-400)',
-    500: 'var(--color-yellow-500)',
-    600: 'var(--color-yellow-600)',
-    700: 'var(--color-yellow-700)',
-    800: 'var(--color-yellow-800)',
-    900: 'var(--color-yellow-900)',
-  },
+/** Primary (Red) - CIP Brand Identity */
+export const red = {
+  50: 'var(--color-red-050)',
+  100: 'var(--color-red-100)',
+  200: 'var(--color-red-200)',
+  300: 'var(--color-red-300)',
+  400: 'var(--color-red-400)',
+  500: 'var(--color-red-500)',
+  600: 'var(--color-red-600)',
+  700: 'var(--color-red-700)',
+  800: 'var(--color-red-800)',
+  900: 'var(--color-red-900)',
 } as const;
 
-// Semantic color aliases
+/** Secondary Accent (Yellow Vivid) - Highlights, warnings */
+export const yellow = {
+  50: 'var(--color-yellow-050)',
+  100: 'var(--color-yellow-100)',
+  200: 'var(--color-yellow-200)',
+  300: 'var(--color-yellow-300)',
+  400: 'var(--color-yellow-400)',
+  500: 'var(--color-yellow-500)',
+  600: 'var(--color-yellow-600)',
+  700: 'var(--color-yellow-700)',
+  800: 'var(--color-yellow-800)',
+  900: 'var(--color-yellow-900)',
+} as const;
+
+/** Neutrals (Warm Grey) - Text, backgrounds, borders */
+export const grey = {
+  50: 'var(--color-grey-050)',
+  100: 'var(--color-grey-100)',
+  200: 'var(--color-grey-200)',
+  300: 'var(--color-grey-300)',
+  400: 'var(--color-grey-400)',
+  500: 'var(--color-grey-500)',
+  600: 'var(--color-grey-600)',
+  700: 'var(--color-grey-700)',
+  800: 'var(--color-grey-800)',
+  900: 'var(--color-grey-900)',
+} as const;
+
+/** Supporting (Cyan) - Action color for CTAs */
+export const cyan = {
+  50: 'var(--color-cyan-050)',
+  100: 'var(--color-cyan-100)',
+  200: 'var(--color-cyan-200)',
+  300: 'var(--color-cyan-300)',
+  400: 'var(--color-cyan-400)',
+  500: 'var(--color-cyan-500)',
+  600: 'var(--color-cyan-600)',
+  700: 'var(--color-cyan-700)',
+  800: 'var(--color-cyan-800)',
+  900: 'var(--color-cyan-900)',
+} as const;
+
+/** Supporting (Green Lime) - Success states */
+export const green = {
+  50: 'var(--color-green-050)',
+  100: 'var(--color-green-100)',
+  200: 'var(--color-green-200)',
+  300: 'var(--color-green-300)',
+  400: 'var(--color-green-400)',
+  500: 'var(--color-green-500)',
+  600: 'var(--color-green-600)',
+  700: 'var(--color-green-700)',
+  800: 'var(--color-green-800)',
+  900: 'var(--color-green-900)',
+} as const;
+
+/** All color palettes grouped */
+export const colors = {
+  red,
+  yellow,
+  grey,
+  cyan,
+  green,
+  white: '#FFFFFF',
+  black: '#000000',
+  transparent: 'transparent',
+} as const;
+
+// ============================================
+// SEMANTIC COLORS
+// ============================================
+
 export const semanticColors = {
   // Brand
   primary: 'var(--color-primary)',
@@ -101,6 +115,11 @@ export const semanticColors = {
   action: 'var(--color-action)',
   actionLight: 'var(--color-action-light)',
   actionDark: 'var(--color-action-dark)',
+
+  // Accent (highlights, decorative)
+  accent: 'var(--color-accent)',
+  accentLight: 'var(--color-accent-light)',
+  accentDark: 'var(--color-accent-dark)',
 
   // States
   success: 'var(--color-success)',
@@ -166,7 +185,7 @@ export const spacing = {
   /** 64px - Page spacing */
   '6xl': 'var(--space-16)',
 
-  // Numeric values (for calculations)
+  // Numeric aliases (for calculations)
   1: 'var(--space-1)',
   2: 'var(--space-2)',
   3: 'var(--space-3)',
@@ -247,8 +266,93 @@ export const shadows = {
   success: 'var(--shadow-success)',
   /** Warning colored shadow */
   warning: 'var(--shadow-warning)',
+  /** Action colored shadow */
+  action: 'var(--shadow-action)',
+  /** Danger colored shadow */
+  danger: 'var(--shadow-danger)',
+  /** Button default shadow */
+  buttonDefault: '0 1px 2px rgba(0,0,0,0.1)',
+  /** Button pressed shadow */
+  buttonPressed: 'inset 0 2px 4px rgba(0,0,0,0.2)',
+  /** Secondary button shadow */
+  buttonSecondary: '0 1px 2px rgba(0,0,0,0.05)',
+  /** Secondary button pressed shadow */
+  buttonSecondaryPressed: 'inset 0 1px 2px rgba(0,0,0,0.06)',
+  /** Input inset shadow */
+  inputInset: 'inset 0 2px 4px rgba(39, 36, 29, 0.06)',
   /** No shadow */
   none: 'none',
+} as const;
+
+// ============================================
+// FOCUS RINGS
+// ============================================
+
+export const rings = {
+  primary: 'var(--ring-primary)',
+  neutral: 'var(--ring-neutral)',
+  action: 'var(--ring-action)',
+  accent: 'var(--ring-accent)',
+  warning: 'var(--ring-warning)',
+  danger: 'var(--ring-danger)',
+  success: 'var(--ring-success)',
+  info: 'var(--ring-info)',
+  none: 'none',
+} as const;
+
+// ============================================
+// INTERACTIVE STATES
+// ============================================
+
+export const states = {
+  hover: {
+    primary: 'var(--color-hover-primary)',
+    neutral: 'var(--color-hover-neutral)',
+    action: 'var(--color-hover-action)',
+    accent: 'var(--color-hover-accent)',
+  },
+  pressed: {
+    primary: 'var(--color-pressed-primary)',
+    neutral: 'var(--color-pressed-neutral)',
+    action: 'var(--color-pressed-action)',
+    accent: 'var(--color-pressed-accent)',
+  },
+  disabled: {
+    bg: 'var(--color-disabled-bg)',
+    text: 'var(--color-disabled-text)',
+    border: 'var(--color-disabled-border)',
+  },
+} as const;
+
+// ============================================
+// BADGE COLORS
+// ============================================
+
+export const badge = {
+  success: {
+    bg: 'var(--color-badge-success-bg)',
+    text: 'var(--color-badge-success-text)',
+  },
+  warning: {
+    bg: 'var(--color-badge-warning-bg)',
+    text: 'var(--color-badge-warning-text)',
+  },
+  info: {
+    bg: 'var(--color-badge-info-bg)',
+    text: 'var(--color-badge-info-text)',
+  },
+  danger: {
+    bg: 'var(--color-badge-danger-bg)',
+    text: 'var(--color-badge-danger-text)',
+  },
+  neutral: {
+    bg: 'var(--color-badge-neutral-bg)',
+    text: 'var(--color-badge-neutral-text)',
+  },
+  accent: {
+    bg: 'var(--color-badge-accent-bg)',
+    text: 'var(--color-badge-accent-text)',
+  },
 } as const;
 
 // ============================================
@@ -272,6 +376,8 @@ export const fontSize = {
   '3xl': 'var(--font-size-3xl)',
   /** 36px - h1 */
   '4xl': 'var(--font-size-4xl)',
+  /** 48px - Hero headlines */
+  '5xl': 'var(--font-size-5xl)',
 } as const;
 
 export const fontWeight = {
@@ -300,17 +406,6 @@ export const letterSpacing = {
   wider: 'var(--letter-spacing-wider)',
   /** 0.1em - Widest (emphasis) */
   widest: 'var(--letter-spacing-widest)',
-} as const;
-
-export const textTransform = {
-  /** No transformation */
-  none: 'var(--text-transform-none)',
-  /** Uppercase */
-  uppercase: 'var(--text-transform-uppercase)',
-  /** Lowercase */
-  lowercase: 'var(--text-transform-lowercase)',
-  /** Capitalize */
-  capitalize: 'var(--text-transform-capitalize)',
 } as const;
 
 // ============================================
@@ -342,34 +437,42 @@ export const transition = {
 } as const;
 
 // ============================================
-// Z-INDEX TOKENS
+// Z-INDEX SCALE (Unified with global.css)
+// Uses numeric values matching CSS variables for inline styles
+// CSS Variables: --z-dropdown (1000), --z-sticky (1100), etc.
 // ============================================
 
 export const zIndex = {
   /** Behind everything */
   behind: -1,
-  /** Default layer */
+  /** Default layer (--z-base) */
   base: 0,
-  /** Dropdowns */
-  dropdown: 10,
-  /** Sticky elements */
-  sticky: 20,
-  /** Fixed elements */
-  fixed: 30,
-  /** Sidebar overlay */
-  sidebarOverlay: 40,
-  /** Sidebar */
-  sidebar: 50,
-  /** Modal backdrop */
-  modalBackdrop: 60,
-  /** Modal content */
-  modal: 70,
-  /** Popover */
-  popover: 80,
-  /** Tooltip */
-  tooltip: 90,
-  /** Toast notifications */
-  toast: 100,
+  /** Dropdowns (--z-dropdown: 1000) */
+  dropdown: 1000,
+  /** Sticky elements (--z-sticky: 1100) */
+  sticky: 1100,
+  /** Modal backdrop (--z-modal-backdrop: 1200) */
+  modalBackdrop: 1200,
+  /** Modal content (--z-modal: 1300) */
+  modal: 1300,
+  /** Popover (--z-popover: 1400) */
+  popover: 1400,
+  /** Tooltip (--z-tooltip: 1500) */
+  tooltip: 1500,
+  /** Toast notifications (--z-toast: 1600) */
+  toast: 1600,
+} as const;
+
+/** CSS variable references for use in className strings */
+export const zIndexVars = {
+  base: 'var(--z-base)',
+  dropdown: 'var(--z-dropdown)',
+  sticky: 'var(--z-sticky)',
+  modalBackdrop: 'var(--z-modal-backdrop)',
+  modal: 'var(--z-modal)',
+  popover: 'var(--z-popover)',
+  tooltip: 'var(--z-tooltip)',
+  toast: 'var(--z-toast)',
 } as const;
 
 // ============================================
@@ -397,20 +500,28 @@ export const iconSize = {
 
 export const tokens = {
   colors,
+  red,
+  yellow,
+  grey,
+  cyan,
+  green,
   semanticColors,
   spacing,
   cardPadding,
   formSpacing,
   radius,
   shadows,
+  rings,
+  states,
+  badge,
   fontSize,
   fontWeight,
   lineHeight,
   letterSpacing,
-  textTransform,
   buttonHeight,
   transition,
   zIndex,
+  zIndexVars,
   iconSize,
 } as const;
 
@@ -501,7 +612,7 @@ export const styles = {
   /** Focus ring */
   focusRing: {
     outline: 'none',
-    boxShadow: `0 0 0 3px ${colors.grey[100]}`,
+    boxShadow: rings.neutral,
   } as React.CSSProperties,
 } as const;
 

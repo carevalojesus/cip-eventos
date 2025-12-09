@@ -208,7 +208,7 @@ export const EventsView: React.FC<EventsViewProps> = ({ onNavigate }) => {
         </>
       ) : (
         <EmptyState
-          icon={<IconAdd size={28} primary="var(--color-grey-400)" secondary="var(--color-grey-300)" />}
+          illustration={hasActiveFilters ? "no-results" : "no-events"}
           title={
             hasActiveFilters
               ? t("dashboard.events_view.table.empty")
@@ -219,6 +219,7 @@ export const EventsView: React.FC<EventsViewProps> = ({ onNavigate }) => {
               ? t("dashboard.events_view.empty.no_results", "No se encontraron eventos con los filtros aplicados")
               : t("dashboard.events_view.empty.description", "Crea tu primer evento para comenzar")
           }
+          size="lg"
           action={
             !hasActiveFilters ? (
               <Button variant="primary" size="lg" onClick={handleCreateEvent}>

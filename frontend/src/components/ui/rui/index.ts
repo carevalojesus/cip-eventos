@@ -1,9 +1,12 @@
 export { Button } from "../rui-button";
+export { Checkbox } from "./Checkbox";
 export { EmptyState } from "./EmptyState";
 export { PageHeader } from "./PageHeader";
 export { Pagination } from "./Pagination";
+export { TablePagination } from "./TablePagination";
 export { SearchInput } from "./SearchInput";
 export { Select } from "./Select";
+export { FilterCombobox } from "./FilterCombobox";
 export { DatePicker } from "./DatePicker";
 export { TimePicker } from "./TimePicker";
 export { ModalitySelector } from "./ModalitySelector";

@@ -1,5 +1,5 @@
 import React, { useState, useId } from "react";
-import { IconSearch } from "@/components/icons/DuotoneIcons";
+import { MagnifyingGlass } from "@phosphor-icons/react";
 import { spacing, radius, fontSize, buttonHeight, transition, semanticColors, colors } from "@/lib/styleTokens";
 
 interface SearchInputProps {
@@ -75,11 +75,7 @@ export const SearchInput: React.FC<SearchInputProps> = ({
         {ariaLabel}
       </label>
       <div style={iconStyle} aria-hidden="true">
-        <IconSearch
-          size={18}
-          primary={colors.grey[400]}
-          secondary={colors.grey[300]}
-        />
+        <MagnifyingGlass size={18} color={colors.grey[400]} />
       </div>
       <input
         id={inputId}

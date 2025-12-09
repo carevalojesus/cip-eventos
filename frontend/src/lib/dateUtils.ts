@@ -234,3 +234,200 @@ export const getRelativeTime = (
 
   return formatEventDate(dateString, locale);
 };
+
+/**
+ * Get human-readable relative time for last access/connection
+ * More comprehensive than getRelativeTime, includes weeks/months
+ * Example: "Hace 2 horas", "Ayer", "La semana pasada", "Hace 3 meses"
+ */
+export const getLastAccessTime = (
+  dateString: string | null | undefined,
+  locale: SupportedLocale = "es-PE"
+): { text: string; fullDate: string } => {
+  const isSpanish = locale === "es-PE";
+
+  // Handle null/undefined
+  if (!dateString) {
+    return {
+      text: isSpanish ? "Nunca" : "Never",
+      fullDate: "",
+    };
+  }
+
+  const date = new Date(dateString);
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+
+  // Handle future dates (shouldn't happen, but just in case)
+  if (diffMs < 0) {
+    return {
+      text: isSpanish ? "Justo ahora" : "Just now",
+      fullDate: formatDateTimeLong(dateString, locale),
+    };
+  }
+
+  const diffSeconds = Math.floor(diffMs / 1000);
+  const diffMinutes = Math.floor(diffMs / (1000 * 60));
+  const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+  const diffWeeks = Math.floor(diffDays / 7);
+  const diffMonths = Math.floor(diffDays / 30);
+  const diffYears = Math.floor(diffDays / 365);
+
+  const fullDate = formatDateTimeLong(dateString, locale);
+
+  // Just now (less than 1 minute)
+  if (diffSeconds < 60) {
+    return {
+      text: isSpanish ? "Justo ahora" : "Just now",
+      fullDate,
+    };
+  }
+
+  // Minutes (1-59)
+  if (diffMinutes < 60) {
+    return {
+      text: isSpanish
+        ? `Hace ${diffMinutes} ${diffMinutes === 1 ? "minuto" : "minutos"}`
+        : `${diffMinutes} ${diffMinutes === 1 ? "minute" : "minutes"} ago`,
+      fullDate,
+    };
+  }
+
+  // Hours (1-23)
+  if (diffHours < 24) {
+    return {
+      text: isSpanish
+        ? `Hace ${diffHours} ${diffHours === 1 ? "hora" : "horas"}`
+        : `${diffHours} ${diffHours === 1 ? "hour" : "hours"} ago`,
+      fullDate,
+    };
+  }
+
+  // Yesterday (24-47 hours)
+  if (diffHours < 48) {
+    return {
+      text: isSpanish ? "Ayer" : "Yesterday",
+      fullDate,
+    };
+  }
+
+  // Days (2-6)
+  if (diffDays < 7) {
+    return {
+      text: isSpanish
+        ? `Hace ${diffDays} días`
+        : `${diffDays} days ago`,
+      fullDate,
+    };
+  }
+
+  // Last week (7-13 days)
+  if (diffDays < 14) {
+    return {
+      text: isSpanish ? "La semana pasada" : "Last week",
+      fullDate,
+    };
+  }
+
+  // Weeks (2-4)
+  if (diffDays < 30) {
+    return {
+      text: isSpanish
+        ? `Hace ${diffWeeks} semanas`
+        : `${diffWeeks} weeks ago`,
+      fullDate,
+    };
+  }
+
+  // Last month (30-59 days)
+  if (diffDays < 60) {
+    return {
+      text: isSpanish ? "El mes pasado" : "Last month",
+      fullDate,
+    };
+  }
+
+  // Months (2-11)
+  if (diffMonths < 12) {
+    return {
+      text: isSpanish
+        ? `Hace ${diffMonths} meses`
+        : `${diffMonths} months ago`,
+      fullDate,
+    };
+  }
+
+  // Years (1+)
+  if (diffYears === 1) {
+    return {
+      text: isSpanish ? "Hace un año" : "A year ago",
+      fullDate,
+    };
+  }
+
+  return {
+    text: isSpanish
+      ? `Hace ${diffYears} años`
+      : `${diffYears} years ago`,
+    fullDate,
+  };
+};
+
+/**
+ * Format date and time for tables and details
+ * Example: "15 dic. 2024, 10:30" or "Dec 15, 2024, 10:30 AM"
+ */
+export const formatDateTime = (
+  dateString: string | null,
+  locale: SupportedLocale = "es-PE",
+  options?: { timezone?: string }
+): string => {
+  if (!dateString) return "-";
+  const date = new Date(dateString);
+  return date.toLocaleString(locale, {
+    timeZone: options?.timezone || "America/Lima",
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+};
+
+/**
+ * Format date and time with long month
+ * Example: "15 de diciembre de 2024, 10:30" or "December 15, 2024, 10:30 AM"
+ */
+export const formatDateTimeLong = (
+  dateString: string | null,
+  locale: SupportedLocale = "es-PE",
+  options?: { timezone?: string }
+): string => {
+  if (!dateString) return "-";
+  const date = new Date(dateString);
+  return date.toLocaleString(locale, {
+    timeZone: options?.timezone || "America/Lima",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+};
+
+/**
+ * Check if a time is within a given window (in minutes)
+ * Useful for rate limiting checks
+ */
+export const isWithinTimeWindow = (
+  dateString: string | null,
+  windowMinutes: number
+): boolean => {
+  if (!dateString) return false;
+  const date = new Date(dateString);
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffMinutes = diffMs / (1000 * 60);
+  return diffMinutes < windowMinutes;
+};

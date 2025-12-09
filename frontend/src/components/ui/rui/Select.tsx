@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Listbox,
   ListboxButton,
@@ -16,6 +16,8 @@ interface SelectProps {
   onChange: (value: string) => void;
   options: SelectOption[];
   placeholder?: string;
+  fullWidth?: boolean;
+  maxLabelLength?: number;
 }
 
 export const Select: React.FC<SelectProps> = ({
@@ -23,49 +25,64 @@ export const Select: React.FC<SelectProps> = ({
   onChange,
   options,
   placeholder = "Seleccionar...",
+  fullWidth = false,
+  maxLabelLength,
 }) => {
+  const [isHovered, setIsHovered] = useState(false);
   const selectedOption = options.find((opt) => opt.value === value);
-  const displayLabel = selectedOption?.label || placeholder;
 
-  // Encontrar el texto más largo para mantener ancho fijo
-  const longestLabel = options.reduce(
-    (longest, opt) => (opt.label.length > longest.length ? opt.label : longest),
-    placeholder
-  );
+  // Función para truncar texto
+  const truncateText = (text: string, maxLength?: number) => {
+    if (!maxLength || text.length <= maxLength) return text;
+    return text.substring(0, maxLength) + "...";
+  };
+
+  const displayLabel = truncateText(selectedOption?.label || placeholder, maxLabelLength);
+
+  // Encontrar el texto más largo para mantener ancho fijo (solo si no es fullWidth)
+  const longestLabel = fullWidth
+    ? placeholder
+    : options.reduce(
+        (longest, opt) => (opt.label.length > longest.length ? opt.label : longest),
+        placeholder
+      );
 
   const buttonStyle: React.CSSProperties = {
     position: "relative",
-    display: "inline-grid",
+    display: fullWidth ? "flex" : "inline-grid",
     alignItems: "center",
-    height: "40px",
-    padding: "0 36px 0 16px",
+    height: "var(--button-height-lg)",
+    padding: "0 32px 0 12px",
     fontSize: "var(--font-size-sm)",
     fontWeight: 400,
     textAlign: "left",
-    borderRadius: "6px",
-    backgroundColor: "#FFFFFF",
+    borderRadius: "var(--radius-md)",
+    backgroundColor: "var(--color-bg-primary)",
     cursor: "pointer",
     outline: "none",
     whiteSpace: "nowrap",
+    width: fullWidth ? "100%" : "auto",
+    overflow: "hidden",
   };
 
   const getButtonStyle = (isOpen: boolean): React.CSSProperties => ({
     ...buttonStyle,
-    border: `1px solid ${isOpen ? "#B8B2A7" : "#D3CEC4"}`,
-    color: selectedOption ? "#27241D" : "#857F72",
+    border: `1px solid ${isOpen ? "var(--color-grey-300)" : isHovered ? "var(--color-grey-300)" : "var(--color-grey-200)"}`,
+    color: selectedOption ? "var(--color-grey-900)" : "var(--color-grey-500)",
+    backgroundColor: isHovered && !isOpen ? "var(--color-grey-050)" : "var(--color-bg-primary)",
     boxShadow: isOpen
-      ? "0 0 0 3px rgba(184, 178, 167, 0.25)"
+      ? "var(--ring-neutral)"
       : "inset 0 2px 4px rgba(39, 36, 29, 0.06)",
-    transition: "border-color 150ms ease, box-shadow 150ms ease",
+    transition: "all 150ms ease",
   });
 
   const chevronStyle: React.CSSProperties = {
     position: "absolute",
-    right: "12px",
+    right: "10px",
     top: "50%",
     transform: "translateY(-50%)",
     pointerEvents: "none",
-    color: "#857F72",
+    color: "var(--color-grey-500)",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
@@ -78,40 +95,59 @@ export const Select: React.FC<SelectProps> = ({
     minWidth: "100%",
     maxHeight: "240px",
     overflowY: "auto",
-    backgroundColor: "#FFFFFF",
-    border: "1px solid #D3CEC4",
-    borderRadius: "6px",
+    backgroundColor: "var(--color-bg-primary)",
+    border: "1px solid var(--color-grey-200)",
+    borderRadius: "var(--radius-md)",
     boxShadow: "var(--shadow-dropdown)",
     padding: "4px",
     outline: "none",
   };
 
   const getOptionStyle = (isSelected: boolean, isFocused: boolean): React.CSSProperties => ({
-    padding: "10px 12px",
+    padding: "8px 10px",
     fontSize: "var(--font-size-sm)",
-    color: isSelected ? "#27241D" : "#504A40",
+    color: isSelected ? "var(--color-grey-900)" : "var(--color-grey-700)",
     fontWeight: isSelected ? 500 : 400,
-    borderRadius: "4px",
+    borderRadius: "var(--radius-sm)",
     cursor: "pointer",
     display: "flex",
     alignItems: "center",
-    gap: "8px",
-    backgroundColor: isFocused ? "#FAF9F7" : "transparent",
+    gap: "6px",
+    backgroundColor: isFocused ? "var(--color-grey-050)" : "transparent",
     transition: "background-color 100ms ease",
     listStyle: "none",
   });
 
+  const optionTextStyle: React.CSSProperties = {
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    whiteSpace: "nowrap",
+  };
+
   return (
     <Listbox value={value} onChange={onChange}>
       {({ open }) => (
-        <div style={{ position: "relative", display: "inline-block" }}>
+        <div
+          style={{ position: "relative", display: fullWidth ? "block" : "inline-block", width: fullWidth ? "100%" : "auto" }}
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+        >
           <ListboxButton style={getButtonStyle(open)}>
-            {/* Texto invisible para mantener ancho fijo */}
-            <span style={{ visibility: "hidden", gridArea: "1 / 1" }}>
-              {longestLabel}
-            </span>
+            {/* Texto invisible para mantener ancho fijo (solo si no es fullWidth) */}
+            {!fullWidth && (
+              <span style={{ visibility: "hidden", gridArea: "1 / 1" }}>
+                {longestLabel}
+              </span>
+            )}
             {/* Texto visible */}
-            <span style={{ gridArea: "1 / 1" }}>{displayLabel}</span>
+            <span style={{
+              gridArea: fullWidth ? undefined : "1 / 1",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              flex: fullWidth ? 1 : undefined,
+            }}>
+              {displayLabel}
+            </span>
             <span style={chevronStyle}>
               <svg
                 width="16"
@@ -143,16 +179,18 @@ export const Select: React.FC<SelectProps> = ({
                   <li style={getOptionStyle(selected, focus)}>
                     <span
                       style={{
-                        width: "16px",
+                        width: "14px",
+                        height: "14px",
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
+                        flexShrink: 0,
                       }}
                     >
                       {selected && (
                         <svg
-                          width="16"
-                          height="16"
+                          width="14"
+                          height="14"
                           viewBox="0 0 24 24"
                           fill="none"
                           stroke="var(--color-action)"
@@ -164,7 +202,7 @@ export const Select: React.FC<SelectProps> = ({
                         </svg>
                       )}
                     </span>
-                    <span>{option.label}</span>
+                    <span style={optionTextStyle} title={option.label}>{option.label}</span>
                   </li>
                 )}
               </ListboxOption>

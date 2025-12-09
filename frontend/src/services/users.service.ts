@@ -104,3 +104,21 @@ export const rolesService = {
     return response.data;
   },
 };
+
+// Admin profile management for other users
+export const adminProfileService = {
+  async getByUserId(userId: string): Promise<Profile | null> {
+    const response = await api.get<Profile | null>(`/profiles/user/${userId}`);
+    return response.data;
+  },
+
+  async updateByUserId(userId: string, data: Partial<Profile>): Promise<Profile> {
+    const response = await api.patch<Profile>(`/profiles/user/${userId}`, data);
+    return response.data;
+  },
+
+  async createForUser(userId: string, data: Partial<Profile>): Promise<Profile> {
+    const response = await api.post<Profile>(`/profiles/user/${userId}`, data);
+    return response.data;
+  },
+};

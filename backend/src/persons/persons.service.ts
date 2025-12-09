@@ -189,6 +189,71 @@ export class PersonsService {
   }
 
   /**
+   * Busca una persona vinculada a un usuario
+   */
+  async findByUserId(userId: string): Promise<Person | null> {
+    return this.personRepository.findOne({
+      where: {
+        user: { id: userId },
+        status: PersonStatus.ACTIVE,
+      },
+      relations: ['user'],
+    });
+  }
+
+  /**
+   * Crea una persona y la vincula automáticamente al usuario actual
+   */
+  async createAndLinkToUser(
+    userId: string,
+    createPersonDto: CreatePersonDto,
+  ): Promise<Person> {
+    // Verificar que el usuario no tenga ya una persona vinculada
+    const existingPerson = await this.findByUserId(userId);
+    if (existingPerson) {
+      throw new ConflictException(
+        'Ya tienes datos nominales registrados. Contacta soporte para modificarlos.',
+      );
+    }
+
+    // Verificar que no exista una persona con el mismo documento
+    const existingByDocument = await this.findByDocument(
+      createPersonDto.documentType,
+      createPersonDto.documentNumber,
+    );
+
+    if (existingByDocument) {
+      // Si existe pero no está vinculada, vincularla al usuario
+      if (!existingByDocument.user) {
+        existingByDocument.user = { id: userId } as any;
+        return this.personRepository.save(existingByDocument);
+      }
+      throw new ConflictException(
+        'Ya existe una persona con este tipo y número de documento',
+      );
+    }
+
+    // Crear nueva persona vinculada al usuario
+    const person = this.personRepository.create({
+      ...createPersonDto,
+      status: PersonStatus.ACTIVE,
+      user: { id: userId } as any,
+    });
+
+    const savedPerson = await this.personRepository.save(person);
+
+    // Validar con RENIEC si es DNI peruano
+    if (
+      createPersonDto.documentType === DocumentType.DNI &&
+      createPersonDto.documentNumber.length === 8
+    ) {
+      await this.validateWithReniec(savedPerson);
+    }
+
+    return savedPerson;
+  }
+
+  /**
    * Busca una persona por ID
    */
   async findOne(id: string): Promise<Person> {

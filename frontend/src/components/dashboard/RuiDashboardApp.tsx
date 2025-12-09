@@ -6,7 +6,8 @@ import { EventsView } from "@/components/events/EventsView";
 import { CreateEventViewRui } from "@/components/events/rui";
 import { EventManagementView } from "@/components/events/EventManagementView";
 import { EditEventView } from "@/components/events/EditEventView";
-import { UsersView, CreateUserView } from "@/components/users";
+import { UsersView, CreateUserView, UserDetailView } from "@/components/users";
+import { ProfileView } from "@/components/profile";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "@/lib/queryClient";
 import { getCurrentLocale, routes } from "@/lib/routes";
@@ -289,6 +290,12 @@ export const RuiDashboardApp: React.FC<RuiDashboardAppProps> = ({ initialPath })
     if (matchesRoute(["/usuarios/nuevo", "/en/users/new"])) {
       return <CreateUserView onNavigate={handleNavigate} />;
     }
+    // Detalle de usuario
+    const userDetailMatch = activePath.match(/^\/(usuarios|en\/users)\/([a-zA-Z0-9-]+)$/);
+    if (userDetailMatch && userDetailMatch[2] !== "nuevo" && userDetailMatch[2] !== "new") {
+      const userId = userDetailMatch[2];
+      return <UserDetailView userId={userId} onNavigate={handleNavigate} />;
+    }
     // Lista de usuarios
     if (startsWithRoute(["/usuarios", "/en/users"])) {
       return <UsersView onNavigate={handleNavigate} />;
@@ -298,6 +305,10 @@ export const RuiDashboardApp: React.FC<RuiDashboardAppProps> = ({ initialPath })
     }
     if (startsWithRoute(["/configuracion", "/en/settings"])) {
       return <SectionPlaceholder title={t("sections.settings")} description={t("sections.coming_soon")} />;
+    }
+    // Mi Perfil
+    if (matchesRoute(["/mi-perfil", "/en/my-profile"])) {
+      return <ProfileView />;
     }
     return (
       <SectionPlaceholder

@@ -1,6 +1,6 @@
 import { useState, type InputHTMLAttributes } from 'react'
-import { Check } from 'lucide-react'
-import { red, grey, colors, rings, shadows } from '@/lib/design-tokens'
+import { Check } from '@phosphor-icons/react'
+import { red, grey, colors, rings, shadows } from '@/lib/styleTokens'
 
 interface CheckboxProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'type'> {
   label?: string
@@ -71,7 +71,7 @@ export function Checkbox({
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
       >
-        {checked && <Check size={12} color={colors.white} strokeWidth={3} aria-hidden="true" />}
+        {checked && <Check size={12} color={colors.white} weight="bold" aria-hidden="true" />}
       </div>
       <input
         type="checkbox"
