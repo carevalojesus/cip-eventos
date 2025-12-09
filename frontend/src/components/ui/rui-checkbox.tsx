@@ -5,7 +5,7 @@ import { red, grey, colors, rings, shadows } from '@/lib/styleTokens'
 interface CheckboxProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'type' | 'onChange' | 'size'> {
   label?: string
   checked?: boolean
-  onChange?: (e?: React.ChangeEvent<HTMLInputElement>) => void
+  onChange?: () => void
   indeterminate?: boolean
   size?: 'sm' | 'md'
   ariaLabel?: string
@@ -25,20 +25,16 @@ export function Checkbox({
 }: CheckboxProps) {
   const [isFocused, setIsFocused] = useState(false)
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
+  const handleToggle = (e: React.MouseEvent | React.KeyboardEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
     if (disabled) return
-    if (e.key === ' ' || e.key === 'Enter') {
-      e.preventDefault()
-      if (onChange) {
-        onChange(undefined)
-      }
-    }
+    onChange?.()
   }
 
-  const handleClick = () => {
-    if (disabled) return
-    if (onChange) {
-      onChange(undefined)
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === ' ' || e.key === 'Enter') {
+      handleToggle(e)
     }
   }
 
@@ -52,7 +48,7 @@ export function Checkbox({
   const dimensions = sizeMap[size]
 
   const containerStyles: React.CSSProperties = {
-    display: 'flex',
+    display: 'inline-flex',
     alignItems: 'center',
     gap: '0.5rem',
     cursor: disabled ? 'not-allowed' : 'pointer',
@@ -88,18 +84,20 @@ export function Checkbox({
   }
 
   return (
-    <label style={containerStyles} className={className}>
-      <div
-        role="checkbox"
-        aria-checked={indeterminate ? 'mixed' : checked}
-        aria-label={ariaLabel}
-        tabIndex={disabled ? -1 : 0}
-        style={checkboxStyles}
-        onKeyDown={handleKeyDown}
-        onFocus={() => !disabled && setIsFocused(true)}
-        onBlur={() => setIsFocused(false)}
-        onClick={handleClick}
-      >
+    <div
+      style={containerStyles}
+      className={className}
+      onClick={handleToggle}
+      role="checkbox"
+      aria-checked={indeterminate ? 'mixed' : checked}
+      aria-label={ariaLabel}
+      aria-disabled={disabled}
+      tabIndex={disabled ? -1 : 0}
+      onKeyDown={handleKeyDown}
+      onFocus={() => !disabled && setIsFocused(true)}
+      onBlur={() => setIsFocused(false)}
+    >
+      <div style={checkboxStyles}>
         {checked && !indeterminate && (
           <Check size={dimensions.icon} color={colors.white} weight="bold" aria-hidden="true" />
         )}
@@ -107,15 +105,7 @@ export function Checkbox({
           <Minus size={dimensions.icon} color={colors.white} weight="bold" aria-hidden="true" />
         )}
       </div>
-      <input
-        type="checkbox"
-        checked={checked}
-        onChange={onChange}
-        disabled={disabled}
-        style={{ display: 'none' }}
-        {...props}
-      />
       {label && <span style={labelStyles}>{label}</span>}
-    </label>
+    </div>
   )
 }

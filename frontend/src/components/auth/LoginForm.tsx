@@ -142,7 +142,7 @@ function LoginFormContent({ onSuccess }: LoginFormProps) {
           <Checkbox
             label={t('login.remember_me')}
             checked={rememberMe}
-            onChange={(e) => setRememberMe(e.target.checked)}
+            onChange={() => setRememberMe(!rememberMe)}
           />
           <Link href={routes[getCurrentLocale()].forgotPassword} variant="muted">
             {t('login.forgot_password')}
