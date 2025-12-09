@@ -24,55 +24,53 @@ export function SidebarItem({
     display: 'flex',
     alignItems: 'center',
     gap: '0.75rem',
-    padding: '0.75rem 1rem',
-    borderRadius: '0.5rem',
+    height: '40px',
+    padding: '0 0.75rem',
+    borderRadius: '6px',
     cursor: 'pointer',
-    transition: 'all 0.15s ease',
+    transition: 'background-color 0.15s ease, color 0.15s ease',
     backgroundColor: isActive
       ? 'var(--color-red-050)'
-      : (isHovered ? 'var(--color-grey-050)' : 'transparent'),
+      : isHovered
+        ? 'var(--color-grey-100)'
+        : 'transparent',
     position: 'relative',
     textDecoration: 'none',
   }
 
-  const activeIndicatorStyle: React.CSSProperties = {
-    position: 'absolute',
-    left: 0,
-    top: '50%',
-    transform: 'translateY(-50%)',
-    width: '3px',
-    height: '60%',
-    backgroundColor: 'var(--color-primary)',
-    borderRadius: '0 2px 2px 0',
-    opacity: isActive ? 1 : 0,
-    transition: 'opacity 0.15s ease',
-  }
-
   // Colores para iconos basados en el estado
-  // Iconos inactivos: grey-600 para mejor visibilidad
-  // Iconos activos: primary (red-500)
-  const iconPrimary = isActive
-    ? 'var(--color-primary)'
-    : 'var(--color-grey-600)'
+  const iconColor = isActive
+    ? 'var(--color-red-600)'
+    : isHovered
+      ? 'var(--color-grey-700)'
+      : 'var(--color-grey-500)'
+
+  // Color del texto
+  const textColor = isActive
+    ? 'var(--color-red-600)'
+    : isHovered
+      ? 'var(--color-grey-800)'
+      : 'var(--color-grey-600)'
 
   const content = (
     <>
-      <span style={activeIndicatorStyle} />
-      <Icon size={20} primary={iconPrimary} />
+      <Icon size={20} primary={iconColor} />
       <span style={{
         flex: 1,
         fontSize: '0.875rem',
-        fontWeight: isActive ? 600 : 400,
-        color: isActive ? 'var(--color-primary)' : (isHovered ? 'var(--color-grey-700)' : 'var(--color-text-muted)'),
+        fontWeight: isActive ? 500 : 400,
+        color: textColor,
+        lineHeight: 1,
       }}>{label}</span>
       {badge && (
         <span style={{
-          padding: '0.125rem 0.5rem',
+          padding: '2px 6px',
           fontSize: '0.688rem',
           fontWeight: 600,
           borderRadius: '9999px',
-          backgroundColor: 'var(--color-primary)',
-          color: 'var(--color-text-inverse)',
+          backgroundColor: 'var(--color-red-500)',
+          color: 'white',
+          lineHeight: 1.2,
         }}>{badge}</span>
       )}
     </>
