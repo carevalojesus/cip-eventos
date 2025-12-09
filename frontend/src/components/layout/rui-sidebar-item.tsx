@@ -52,8 +52,20 @@ export function SidebarItem({
       ? 'var(--color-grey-800)'
       : 'var(--color-grey-600)'
 
+  const activeIndicatorStyle: React.CSSProperties = {
+    position: 'absolute',
+    left: 0,
+    top: '50%',
+    transform: 'translateY(-50%)',
+    width: '3px',
+    height: '24px',
+    backgroundColor: 'var(--color-red-500)',
+    borderRadius: '0 2px 2px 0',
+  }
+
   const content = (
     <>
+      {isActive && <span style={activeIndicatorStyle} />}
       <Icon size={20} primary={iconColor} />
       <span style={{
         flex: 1,
