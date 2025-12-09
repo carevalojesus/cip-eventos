@@ -1,5 +1,8 @@
-export type EventStatus = 'PUBLISHED' | 'DRAFT' | 'COMPLETED' | 'CANCELLED';
-export type EventStatusLower = 'published' | 'draft' | 'completed' | 'cancelled';
+// Re-export from centralized enums
+export { EventStatus } from '@/lib/enums';
+
+// Legacy type for backwards compatibility (lowercase version)
+export type EventStatusLower = 'published' | 'draft' | 'completed' | 'cancelled' | 'archived';
 
 export interface EventModality {
   id: number;
@@ -58,6 +61,11 @@ export interface EventTicket {
   price: number;
   stock: number;
   requiresCipValidation: boolean;
+  description?: string;
+  salesStartAt?: string;
+  salesEndAt?: string;
+  maxPerOrder: number;
+  isVisible: boolean;
   isActive: boolean;
 }
 
@@ -127,11 +135,28 @@ export interface CreateTicketDto {
   price: number;
   stock: number;
   requiresCipValidation?: boolean;
+  description?: string;
+  salesStartAt?: string;
+  salesEndAt?: string;
+  maxPerOrder?: number;
+  isVisible?: boolean;
 }
 
 export interface UpdateTicketDto extends Partial<CreateTicketDto> {
   isActive?: boolean;
 }
+
+export interface CreateSessionDto {
+  title: string;
+  description?: string;
+  startAt: string;
+  endAt: string;
+  room?: string;
+  meetingUrl?: string;
+  speakersIds?: string[];
+}
+
+export interface UpdateSessionDto extends Partial<CreateSessionDto> {}
 
 export interface CreateEventDto {
   title: string;

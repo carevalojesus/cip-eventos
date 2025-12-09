@@ -1,0 +1,22 @@
+{
+  "buyer_not_found": "Buyer not found",
+  "ticket_not_found": "Ticket {ticketId} not found",
+  "event_not_available": "Event is not available for registration",
+  "exceeds_max_per_order": "Quantity exceeds maximum allowed per order ({max})",
+  "insufficient_stock": "Insufficient stock. Only {available} tickets available",
+  "attendee_count_mismatch": "Number of attendees must match the quantity",
+  "already_registered": "{name} is already registered for this event",
+  "invalid_cip_code": "Invalid CIP code",
+  "cip_required": "CIP code is required for this ticket type",
+  "not_habilitated": "CIP member is not habilitated",
+  "invalid_coupon": "Invalid or expired coupon code",
+  "created": "Purchase order created successfully",
+  "not_found": "Purchase order not found",
+  "cannot_expire": "Cannot expire a purchase order that is not pending",
+  "cannot_cancel": "Cannot cancel a purchase order that is not pending",
+  "expired": "Purchase order has expired",
+  "cancelled": "Purchase order has been cancelled",
+  "attempt_not_found": "Payment attempt not found",
+  "ip_limit_exceeded": "You have exceeded the limit of {limit} pending orders per IP. Please complete or cancel your existing orders before creating a new one.",
+  "person_limit_exceeded": "You have exceeded the limit of {limit} pending orders. Please complete or cancel your existing orders before creating a new one."
+}

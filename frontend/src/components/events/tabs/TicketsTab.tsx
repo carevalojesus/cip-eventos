@@ -1,35 +1,9 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
-import {
-  Plus,
-  Pencil,
-  Trash2,
-  Ticket,
-  Users,
-  BadgeCheck,
-  Loader2,
-  MoreHorizontal,
-  AlertCircle,
-} from "lucide-react";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
-import {
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerDescription,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
-} from "@/components/ui/drawer";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -40,26 +14,77 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/rui";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+  Drawer,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerDescription,
+  DrawerBody,
+  DrawerFooter,
+} from "@/components/ui/rui/Drawer";
+import { EmptyState } from "@/components/ui/rui/EmptyState";
+import { Input } from "@/components/ui/rui-input";
+import { FormTextarea } from "@/components/ui/rui/form/FormTextarea";
+import { FormDateTimePicker } from "@/components/ui/rui/form/FormDateTimePicker";
+import { FormRow } from "@/components/ui/rui/form/FormRow";
+import { FormGroup } from "@/components/ui/rui/form/FormGroup";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+  IconTicket,
+  IconAdd,
+  IconEdit,
+  IconTrash,
+  IconClock,
+} from "@/components/icons/DuotoneIcons";
+import { EyeOff } from "lucide-react";
 import { useTickets } from "@/hooks/useTickets";
 import type { EventTicket, CreateTicketDto, UpdateTicketDto } from "@/types/event";
+import "./TicketsTab.css";
 
 interface TicketsTabProps {
   eventId: string;
 }
+
+// Switch toggle component
+interface ToggleSwitchProps {
+  id: string;
+  checked: boolean;
+  onChange: (checked: boolean) => void;
+  label: string;
+  description?: string;
+}
+
+const ToggleSwitch: React.FC<ToggleSwitchProps> = ({
+  id,
+  checked,
+  onChange,
+  label,
+  description,
+}) => {
+  return (
+    <div className="tickets-tab__toggle">
+      <div className="tickets-tab__toggle-info">
+        <label htmlFor={id} className="tickets-tab__toggle-label">
+          {label}
+        </label>
+        {description && (
+          <span className="tickets-tab__toggle-desc">{description}</span>
+        )}
+      </div>
+      <button
+        id={id}
+        type="button"
+        role="switch"
+        aria-checked={checked}
+        className={`tickets-tab__toggle-switch ${checked ? "tickets-tab__toggle-switch--active" : ""}`}
+        onClick={() => onChange(!checked)}
+      >
+        <span className="tickets-tab__toggle-thumb" />
+      </button>
+    </div>
+  );
+};
 
 export const TicketsTab: React.FC<TicketsTabProps> = ({ eventId }) => {
   const { t } = useTranslation();
@@ -73,7 +98,12 @@ export const TicketsTab: React.FC<TicketsTabProps> = ({ eventId }) => {
     name: z.string().min(1, t("event_management.tickets.validation.name_required")),
     price: z.coerce.number().min(0, t("event_management.tickets.validation.price_min")),
     stock: z.coerce.number().min(0, t("event_management.tickets.validation.stock_min")),
+    description: z.string().optional(),
     requiresCipValidation: z.boolean().optional(),
+    salesStartAt: z.string().optional(),
+    salesEndAt: z.string().optional(),
+    maxPerOrder: z.coerce.number().min(1, t("event_management.tickets.validation.max_per_order_min")).optional(),
+    isVisible: z.boolean().optional(),
   });
 
   type TicketFormValues = z.infer<typeof ticketSchema>;
@@ -96,7 +126,12 @@ export const TicketsTab: React.FC<TicketsTabProps> = ({ eventId }) => {
       name: "",
       price: 0,
       stock: 100,
+      description: "",
       requiresCipValidation: false,
+      salesStartAt: "",
+      salesEndAt: "",
+      maxPerOrder: 10,
+      isVisible: true,
     },
   });
 
@@ -107,7 +142,12 @@ export const TicketsTab: React.FC<TicketsTabProps> = ({ eventId }) => {
       name: "",
       price: 0,
       stock: 100,
+      description: "",
       requiresCipValidation: false,
+      salesStartAt: "",
+      salesEndAt: "",
+      maxPerOrder: 10,
+      isVisible: true,
     });
     setIsDrawerOpen(true);
   };
@@ -116,12 +156,19 @@ export const TicketsTab: React.FC<TicketsTabProps> = ({ eventId }) => {
     setEditingTicket(ticket);
     const price = typeof ticket.price === "string" ? parseFloat(ticket.price) : ticket.price;
     const stock = typeof ticket.stock === "string" ? parseInt(ticket.stock) : ticket.stock;
+    const maxPerOrder = typeof ticket.maxPerOrder === "string" ? parseInt(ticket.maxPerOrder) : ticket.maxPerOrder;
     setIsFreeTicket(price === 0);
+
     form.reset({
       name: ticket.name,
       price: price,
       stock: stock,
+      description: ticket.description || "",
       requiresCipValidation: ticket.requiresCipValidation,
+      salesStartAt: ticket.salesStartAt || "",
+      salesEndAt: ticket.salesEndAt || "",
+      maxPerOrder: maxPerOrder || 10,
+      isVisible: ticket.isVisible ?? true,
     });
     setIsDrawerOpen(true);
   };
@@ -133,26 +180,32 @@ export const TicketsTab: React.FC<TicketsTabProps> = ({ eventId }) => {
 
   const handleSubmit = async (values: TicketFormValues) => {
     try {
+      const data: CreateTicketDto = {
+        name: values.name,
+        price: values.price,
+        stock: values.stock,
+        description: values.description || undefined,
+        requiresCipValidation: values.requiresCipValidation,
+        salesStartAt: values.salesStartAt || undefined,
+        salesEndAt: values.salesEndAt || undefined,
+        maxPerOrder: values.maxPerOrder,
+        isVisible: values.isVisible,
+      };
+
       if (editingTicket) {
         await updateTicket({
           ticketId: editingTicket.id,
-          data: values as UpdateTicketDto,
+          data: data as UpdateTicketDto,
         });
-        toast.success(t("event_management.tickets.toast.updated"), {
-          description: t("event_management.tickets.toast.updated_desc", { name: values.name }),
-        });
+        toast.success(t("event_management.tickets.toast.updated"));
       } else {
-        await createTicket(values as CreateTicketDto);
-        toast.success(t("event_management.tickets.toast.created"), {
-          description: t("event_management.tickets.toast.created_desc", { name: values.name }),
-        });
+        await createTicket(data);
+        toast.success(t("event_management.tickets.toast.created"));
       }
       setIsDrawerOpen(false);
       form.reset();
-    } catch (err) {
-      toast.error(t("event_management.tickets.toast.error"), {
-        description: t("event_management.tickets.toast.error_save"),
-      });
+    } catch {
+      toast.error(t("event_management.tickets.toast.error_save"));
     }
   };
 
@@ -161,225 +214,176 @@ export const TicketsTab: React.FC<TicketsTabProps> = ({ eventId }) => {
 
     try {
       await deleteTicket(deletingTicket.id);
-      toast.success(t("event_management.tickets.toast.deleted"), {
-        description: t("event_management.tickets.toast.deleted_desc", { name: deletingTicket.name }),
-      });
+      toast.success(t("event_management.tickets.toast.deleted"));
       setIsDeleteDialogOpen(false);
       setDeletingTicket(null);
-    } catch (err) {
-      toast.error(t("event_management.tickets.toast.error"), {
-        description: t("event_management.tickets.toast.error_delete"),
-      });
-    }
-  };
-
-  const handleToggleActive = async (ticket: EventTicket) => {
-    try {
-      await updateTicket({
-        ticketId: ticket.id,
-        data: { isActive: !ticket.isActive },
-      });
-      const statusKey = ticket.isActive ? "deactivated" : "activated";
-      toast.success(t(`event_management.tickets.toast.${statusKey}`), {
-        description: t("event_management.tickets.toast.status_changed_desc", {
-          name: ticket.name,
-          status: ticket.isActive
-            ? t("event_management.tickets.actions.deactivate").toLowerCase()
-            : t("event_management.tickets.actions.activate").toLowerCase()
-        }),
-      });
-    } catch (err) {
-      toast.error(t("event_management.tickets.toast.error"), {
-        description: t("event_management.tickets.toast.error_status"),
-      });
+    } catch {
+      toast.error(t("event_management.tickets.toast.error_delete"));
     }
   };
 
   const formatPrice = (price: number | string) => {
     const numPrice = typeof price === "string" ? parseFloat(price) : price;
     if (numPrice === 0 || isNaN(numPrice)) return t("event_management.tickets.table.free");
-    return `S/ ${numPrice.toFixed(2)}`;
+    return `S/ ${numPrice.toFixed(0)}`;
   };
 
-  // Calcular estadísticas
-  const totalStock = tickets.reduce((sum, tkt) => sum + (typeof tkt.stock === "string" ? parseInt(tkt.stock) : tkt.stock), 0);
-  const activeTickets = tickets.filter((tkt) => tkt.isActive).length;
+  const formatSalesDates = (ticket: EventTicket) => {
+    if (!ticket.salesStartAt && !ticket.salesEndAt) return null;
 
+    const formatDate = (dateStr: string) => {
+      const date = new Date(dateStr);
+      return date.toLocaleDateString("es-PE", { day: "2-digit", month: "short" });
+    };
+
+    if (ticket.salesStartAt && ticket.salesEndAt) {
+      return `${formatDate(ticket.salesStartAt)} - ${formatDate(ticket.salesEndAt)}`;
+    }
+    if (ticket.salesStartAt) {
+      return t("event_management.tickets.table.from_date", { date: formatDate(ticket.salesStartAt) });
+    }
+    return t("event_management.tickets.table.until_date", { date: formatDate(ticket.salesEndAt!) });
+  };
+
+  // Loading state
   if (isLoading) {
     return (
-      <Card>
-        <CardContent className="flex items-center justify-center py-16">
-          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-        </CardContent>
-      </Card>
+      <div className="tickets-tab__loading">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="tickets-tab__loader">
+          <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+        </svg>
+      </div>
     );
   }
 
+  // Error state
   if (error) {
     return (
-      <Card>
-        <CardContent className="flex flex-col items-center justify-center py-16">
-          <AlertCircle className="h-8 w-8 text-destructive mb-4" />
-          <p className="text-sm text-muted-foreground">{t("event_management.tickets.loading_error")}</p>
-        </CardContent>
-      </Card>
+      <div className="tickets-tab__error">
+        <p>{t("event_management.tickets.loading_error")}</p>
+      </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header con estadísticas */}
-      <div className="grid gap-4 md:grid-cols-3">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">{t("event_management.tickets.stats.total")}</CardTitle>
-            <Ticket className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{tickets.length}</div>
-            <p className="text-xs text-muted-foreground">
-              {activeTickets} {t("event_management.tickets.stats.active")}
-            </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">{t("event_management.tickets.stats.total_stock")}</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{totalStock}</div>
-            <p className="text-xs text-muted-foreground">
-              {t("event_management.tickets.stats.available")}
-            </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">{t("event_management.tickets.stats.cip_validation")}</CardTitle>
-            <BadgeCheck className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {tickets.filter((tkt) => tkt.requiresCipValidation).length}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              {t("event_management.tickets.stats.requires_membership")}
-            </p>
-          </CardContent>
-        </Card>
+    <>
+      <div className="tickets-tab">
+        {/* Header */}
+        <div className="tickets-tab__header">
+          <h3 className="tickets-tab__title">
+            {t("event_management.tickets.table.title_count", { count: tickets.length })}
+          </h3>
+          <Button
+            variant="soft"
+            size="md"
+            icon={<IconAdd size={16} primary="currentColor" secondary="currentColor" />}
+            onClick={openCreateDrawer}
+          >
+            {t("event_management.tickets.actions.new")}
+          </Button>
+        </div>
+
+        {/* Content */}
+        {tickets.length === 0 ? (
+          <div className="tickets-tab__empty">
+            <EmptyState
+              icon={<IconTicket size={28} primary="var(--color-grey-400)" secondary="var(--color-grey-300)" />}
+              title={t("event_management.tickets.empty.title")}
+              description={t("event_management.tickets.empty.description")}
+              action={
+                <Button
+                  variant="soft"
+                  size="md"
+                  icon={<IconAdd size={16} primary="currentColor" secondary="currentColor" />}
+                  onClick={openCreateDrawer}
+                >
+                  {t("event_management.tickets.actions.new")}
+                </Button>
+              }
+            />
+          </div>
+        ) : (
+          <ul className="tickets-tab__list">
+            {tickets.map((ticket) => {
+              const stock = typeof ticket.stock === "string" ? parseInt(ticket.stock) : ticket.stock;
+              const maxPerOrder = typeof ticket.maxPerOrder === "string" ? parseInt(ticket.maxPerOrder) : ticket.maxPerOrder;
+              const salesDates = formatSalesDates(ticket);
+
+              return (
+                <li key={ticket.id} className="tickets-tab__item">
+                  {/* Icon */}
+                  <div className="tickets-tab__item-icon">
+                    <IconTicket size={20} primary="var(--color-yellow-700)" secondary="var(--color-yellow-400)" />
+                  </div>
+
+                  {/* Info */}
+                  <div className="tickets-tab__item-info">
+                    <div className="tickets-tab__item-header">
+                      <span className="tickets-tab__item-name">{ticket.name}</span>
+                      {!ticket.isVisible && (
+                        <span className="tickets-tab__badge tickets-tab__badge--gray">
+                          <EyeOff size={10} />
+                          {t("event_management.tickets.table.hidden")}
+                        </span>
+                      )}
+                      {ticket.requiresCipValidation && (
+                        <span className="tickets-tab__badge tickets-tab__badge--info">{t("event_management.tickets.table.cip_badge")}</span>
+                      )}
+                    </div>
+                    <div className="tickets-tab__item-meta">
+                      <span>{t("event_management.tickets.table.sold", { sold: 0, total: stock })}</span>
+                      {maxPerOrder && (
+                        <span>{t("event_management.tickets.table.max_per_order", { count: maxPerOrder })}</span>
+                      )}
+                      {salesDates && (
+                        <span className="tickets-tab__item-dates">
+                          <IconClock size={12} primary="currentColor" />
+                          {salesDates}
+                        </span>
+                      )}
+                    </div>
+                    {ticket.description && (
+                      <p className="tickets-tab__item-description">{ticket.description}</p>
+                    )}
+                  </div>
+
+                  {/* Price */}
+                  <span className="tickets-tab__item-price">
+                    {formatPrice(ticket.price)}
+                  </span>
+
+                  {/* Actions */}
+                  <div className="tickets-tab__item-actions">
+                    <button
+                      type="button"
+                      className="tickets-tab__action-btn tickets-tab__action-btn--edit"
+                      onClick={() => openEditDrawer(ticket)}
+                      aria-label="Editar ticket"
+                    >
+                      <IconEdit size={16} primary="currentColor" secondary="currentColor" />
+                    </button>
+                    <button
+                      type="button"
+                      className="tickets-tab__action-btn tickets-tab__action-btn--delete"
+                      onClick={() => openDeleteDialog(ticket)}
+                      aria-label="Eliminar ticket"
+                    >
+                      <IconTrash size={16} primary="currentColor" secondary="currentColor" />
+                    </button>
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        )}
       </div>
 
-      {/* Tabla de entradas */}
-      <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <div>
-              <CardTitle>{t("event_management.tickets.table.title")}</CardTitle>
-              <CardDescription>
-                {t("event_management.tickets.table.description")}
-              </CardDescription>
-            </div>
-            <Button onClick={openCreateDrawer}>
-              <Plus className="mr-2 h-4 w-4" />
-              {t("event_management.tickets.actions.new")}
-            </Button>
-          </div>
-        </CardHeader>
-        <CardContent>
-          {tickets.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-12 text-center">
-              <div className="rounded-full bg-muted p-4 mb-4">
-                <Ticket className="h-8 w-8 text-muted-foreground" />
-              </div>
-              <h3 className="text-lg font-semibold mb-2">{t("event_management.tickets.empty.title")}</h3>
-              <p className="text-sm text-muted-foreground max-w-md mb-4">
-                {t("event_management.tickets.empty.description")}
-              </p>
-              <Button onClick={openCreateDrawer}>
-                <Plus className="mr-2 h-4 w-4" />
-                {t("event_management.tickets.empty.create_first")}
-              </Button>
-            </div>
-          ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>{t("event_management.tickets.table.name")}</TableHead>
-                  <TableHead>{t("event_management.tickets.table.price")}</TableHead>
-                  <TableHead>{t("event_management.tickets.table.stock")}</TableHead>
-                  <TableHead>{t("event_management.tickets.table.cip_validation")}</TableHead>
-                  <TableHead>{t("event_management.tickets.table.status")}</TableHead>
-                  <TableHead className="text-right">{t("event_management.tickets.table.actions")}</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {tickets.map((ticket) => (
-                  <TableRow key={ticket.id} className={!ticket.isActive ? "opacity-50" : ""}>
-                    <TableCell className="font-medium">{ticket.name}</TableCell>
-                    <TableCell>
-                      <Badge variant={parseFloat(String(ticket.price)) === 0 ? "success" : "secondary"}>
-                        {formatPrice(ticket.price)}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>{ticket.stock}</TableCell>
-                    <TableCell>
-                      {ticket.requiresCipValidation ? (
-                        <Badge variant="info">{t("event_management.tickets.table.required")}</Badge>
-                      ) : (
-                        <span className="text-muted-foreground">-</span>
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant={ticket.isActive ? "success" : "gray"}>
-                        {ticket.isActive
-                          ? t("event_management.tickets.table.active")
-                          : t("event_management.tickets.table.inactive")}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon">
-                            <MoreHorizontal className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem onClick={() => openEditDrawer(ticket)}>
-                            <Pencil className="mr-2 h-4 w-4" />
-                            {t("event_management.tickets.actions.edit")}
-                          </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => handleToggleActive(ticket)}>
-                            {ticket.isActive
-                              ? t("event_management.tickets.actions.deactivate")
-                              : t("event_management.tickets.actions.activate")}
-                          </DropdownMenuItem>
-                          <DropdownMenuItem
-                            onClick={() => openDeleteDialog(ticket)}
-                            className="text-destructive focus:text-destructive"
-                          >
-                            <Trash2 className="mr-2 h-4 w-4" />
-                            {t("event_management.tickets.actions.delete")}
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          )}
-        </CardContent>
-      </Card>
-
-      {/* Drawer para crear/editar entrada */}
+      {/* Drawer para crear/editar */}
       <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
-        <DrawerContent>
-          <DrawerHeader className="border-b">
+        <DrawerContent width="lg">
+          <DrawerHeader>
             <DrawerTitle>
-              {editingTicket
-                ? t("event_management.tickets.dialog.edit_title")
-                : t("event_management.tickets.dialog.create_title")}
+              {editingTicket ? t("event_management.tickets.dialog.edit_title") : t("event_management.tickets.dialog.create_title")}
             </DrawerTitle>
             <DrawerDescription>
               {editingTicket
@@ -387,130 +391,179 @@ export const TicketsTab: React.FC<TicketsTabProps> = ({ eventId }) => {
                 : t("event_management.tickets.dialog.create_description")}
             </DrawerDescription>
           </DrawerHeader>
-          <form onSubmit={form.handleSubmit(handleSubmit)} className="flex flex-1 flex-col">
-            <div className="flex-1 overflow-y-auto p-4">
-              <div className="space-y-4">
-                {/* Nombre del ticket */}
-                <div className="space-y-2">
-                  <Label htmlFor="name">
-                    {t("event_management.tickets.dialog.name_label")}
-                  </Label>
-                  <Input
-                    id="name"
-                    placeholder={t("event_management.tickets.dialog.name_placeholder")}
-                    {...form.register("name")}
-                  />
-                  {form.formState.errors.name && (
-                    <p className="text-sm text-destructive">{form.formState.errors.name.message}</p>
-                  )}
-                </div>
 
-                {/* Precio y Stock en la misma línea */}
-                <div className="grid grid-cols-2 gap-4">
-                  {/* Precio */}
-                  <div className="space-y-2">
-                    <Label htmlFor="price">
-                      {t("event_management.tickets.dialog.pricing")}
-                    </Label>
-                    <div className="flex rounded-md shadow-sm">
-                      <span className="inline-flex items-center rounded-l-md border border-r-0 border-input bg-muted px-3 text-sm text-muted-foreground">
-                        S/
-                      </span>
-                      <Input
-                        id="price"
-                        type="number"
-                        step="0.01"
-                        min="0"
-                        placeholder="0"
-                        className="rounded-l-none border-l-0 focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-input"
-                        disabled={isFreeTicket}
-                        {...form.register("price")}
-                      />
-                    </div>
-                    {form.formState.errors.price && (
-                      <p className="text-sm text-destructive">{form.formState.errors.price.message}</p>
-                    )}
-                  </div>
+          <DrawerBody>
+            <form id="ticket-form" onSubmit={form.handleSubmit(handleSubmit)}>
+              {/* Nombre */}
+              <FormGroup>
+                <Input
+                  label={t("event_management.tickets.dialog.name_label")}
+                  placeholder={t("event_management.tickets.dialog.name_placeholder")}
+                  error={form.formState.errors.name?.message}
+                  {...form.register("name")}
+                />
+              </FormGroup>
 
-                  {/* Stock */}
-                  <div className="space-y-2">
-                    <Label htmlFor="stock">
-                      {t("event_management.tickets.dialog.stock_label")}
-                    </Label>
-                    <Input
-                      id="stock"
-                      type="number"
-                      min="0"
-                      placeholder="100"
-                      {...form.register("stock")}
+              {/* Descripción */}
+              <FormGroup>
+                <Controller
+                  name="description"
+                  control={form.control}
+                  render={({ field }) => (
+                    <FormTextarea
+                      label={t("event_management.tickets.dialog.description_label")}
+                      placeholder={t("event_management.tickets.dialog.description_placeholder")}
+                      hint={t("event_management.tickets.dialog.description_hint")}
+                      textareaSize="sm"
+                      value={field.value || ""}
+                      onChange={(e) => field.onChange(e.target.value)}
                     />
-                    {form.formState.errors.stock && (
-                      <p className="text-sm text-destructive">{form.formState.errors.stock.message}</p>
+                  )}
+                />
+              </FormGroup>
+
+              {/* Ticket gratuito */}
+              <FormGroup>
+                <ToggleSwitch
+                  id="free-ticket"
+                  checked={isFreeTicket}
+                  onChange={(checked) => {
+                    setIsFreeTicket(checked);
+                    if (checked) {
+                      form.setValue("price", 0);
+                    }
+                  }}
+                  label={t("event_management.tickets.dialog.free_ticket")}
+                  description={t("event_management.tickets.dialog.free_ticket_description")}
+                />
+              </FormGroup>
+
+              {/* Precio y Stock */}
+              <FormGroup>
+                <FormRow columns={2}>
+                  <Input
+                    label={t("event_management.tickets.dialog.price_label")}
+                    type="number"
+                    placeholder="0.00"
+                    disabled={isFreeTicket}
+                    leftIcon={<span style={{ fontSize: "14px", color: "var(--color-grey-500)" }}>S/</span>}
+                    error={form.formState.errors.price?.message}
+                    {...form.register("price")}
+                  />
+                  <Input
+                    label={t("event_management.tickets.dialog.stock_label")}
+                    type="number"
+                    placeholder="100"
+                    error={form.formState.errors.stock?.message}
+                    {...form.register("stock")}
+                  />
+                </FormRow>
+              </FormGroup>
+
+              {/* Máximo por orden */}
+              <FormGroup>
+                <Input
+                  label={t("event_management.tickets.dialog.max_per_order_label")}
+                  type="number"
+                  placeholder="10"
+                  hint={t("event_management.tickets.dialog.max_per_order_hint")}
+                  error={form.formState.errors.maxPerOrder?.message}
+                  {...form.register("maxPerOrder")}
+                />
+              </FormGroup>
+
+              {/* Periodo de venta */}
+              <FormGroup>
+                <FormRow columns={2}>
+                  <Controller
+                    name="salesStartAt"
+                    control={form.control}
+                    render={({ field }) => (
+                      <FormDateTimePicker
+                        label={t("event_management.tickets.dialog.sales_start")}
+                        value={field.value || ""}
+                        onChange={field.onChange}
+                      />
                     )}
-                  </div>
-                </div>
-
-                {/* Entrada gratuita */}
-                <div className="flex items-center justify-between rounded-lg border p-4">
-                  <div className="space-y-0.5">
-                    <Label htmlFor="isFree">{t("event_management.tickets.dialog.free_ticket")}</Label>
-                    <p className="text-sm text-muted-foreground">
-                      {t("event_management.tickets.dialog.free_ticket_description")}
-                    </p>
-                  </div>
-                  <Switch
-                    id="isFree"
-                    checked={isFreeTicket}
-                    onCheckedChange={(checked) => {
-                      setIsFreeTicket(checked);
-                      if (checked) {
-                        form.setValue("price", 0);
-                      }
-                    }}
                   />
-                </div>
-
-                {/* Validación CIP */}
-                <div className="flex items-center justify-between rounded-lg border p-4">
-                  <div className="space-y-0.5">
-                    <Label htmlFor="requiresCipValidation">{t("event_management.tickets.dialog.cip_validation_label")}</Label>
-                    <p className="text-sm text-muted-foreground">
-                      {t("event_management.tickets.dialog.cip_validation_description")}
-                    </p>
-                  </div>
-                  <Switch
-                    id="requiresCipValidation"
-                    checked={form.watch("requiresCipValidation")}
-                    onCheckedChange={(checked) => form.setValue("requiresCipValidation", checked)}
+                  <Controller
+                    name="salesEndAt"
+                    control={form.control}
+                    render={({ field }) => (
+                      <FormDateTimePicker
+                        label={t("event_management.tickets.dialog.sales_end")}
+                        value={field.value || ""}
+                        onChange={field.onChange}
+                      />
+                    )}
                   />
-                </div>
-              </div>
-            </div>
+                </FormRow>
+              </FormGroup>
 
-            <DrawerFooter className="border-t">
-              <Button type="submit" disabled={isCreating || isUpdating}>
-                {(isCreating || isUpdating) && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                {editingTicket
-                  ? t("event_management.tickets.dialog.save")
-                  : t("event_management.tickets.dialog.create")}
-              </Button>
-              <DrawerClose asChild>
-                <Button type="button" variant="outline">
-                  {t("event_management.tickets.dialog.cancel")}
-                </Button>
-              </DrawerClose>
-            </DrawerFooter>
-          </form>
+              {/* Validación CIP */}
+              <FormGroup>
+                <Controller
+                  name="requiresCipValidation"
+                  control={form.control}
+                  render={({ field }) => (
+                    <ToggleSwitch
+                      id="cip-validation"
+                      checked={field.value || false}
+                      onChange={field.onChange}
+                      label={t("event_management.tickets.dialog.cip_validation_label")}
+                      description={t("event_management.tickets.dialog.cip_validation_description")}
+                    />
+                  )}
+                />
+              </FormGroup>
+
+              {/* Visibilidad */}
+              <FormGroup marginBottom="0">
+                <Controller
+                  name="isVisible"
+                  control={form.control}
+                  render={({ field }) => (
+                    <ToggleSwitch
+                      id="is-visible"
+                      checked={field.value ?? true}
+                      onChange={field.onChange}
+                      label={t("event_management.tickets.dialog.visibility_label")}
+                      description={t("event_management.tickets.dialog.visibility_description")}
+                    />
+                  )}
+                />
+              </FormGroup>
+            </form>
+          </DrawerBody>
+
+          <DrawerFooter>
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={() => setIsDrawerOpen(false)}
+            >
+              {t("event_management.tickets.dialog.cancel")}
+            </Button>
+            <Button
+              type="submit"
+              form="ticket-form"
+              variant="primary"
+              isLoading={isCreating || isUpdating}
+              loadingText={editingTicket ? t("event_management.tickets.dialog.saving") : t("event_management.tickets.dialog.creating")}
+            >
+              {editingTicket ? t("event_management.tickets.dialog.save") : t("event_management.tickets.dialog.create")}
+            </Button>
+          </DrawerFooter>
         </DrawerContent>
       </Drawer>
 
-      {/* Dialog de confirmación de eliminación */}
+      {/* Delete Dialog */}
       <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>{t("event_management.tickets.delete.title")}</AlertDialogTitle>
             <AlertDialogDescription>
-              {t("event_management.tickets.delete.description", { name: deletingTicket?.name || "" })}
+              {t("event_management.tickets.delete.description", { name: deletingTicket?.name })}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -520,12 +573,11 @@ export const TicketsTab: React.FC<TicketsTabProps> = ({ eventId }) => {
               disabled={isDeleting}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
-              {isDeleting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              {t("event_management.tickets.delete.confirm")}
+              {isDeleting ? t("event_management.tickets.delete.deleting") : t("event_management.tickets.delete.confirm")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </div>
+    </>
   );
 };

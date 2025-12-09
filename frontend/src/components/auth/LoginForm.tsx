@@ -1,163 +1,195 @@
-import React, { useState } from "react";
-import { useForm } from "react-hook-form";
-import { useTranslation } from "react-i18next";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { AlertCircle, Loader2 } from "lucide-react";
+import { useTranslation } from 'react-i18next'
+import { Mail, Lock } from 'lucide-react'
 
-// UI Components - shadcn
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormMessage,
-} from "@/components/ui/form";
+import { Button } from '@/components/ui/rui-button'
+import { Input } from '@/components/ui/rui-input'
+import { Checkbox } from '@/components/ui/rui-checkbox'
+import { Link } from '@/components/ui/rui-link'
+import { I18nProvider } from '@/components/providers/I18nProvider'
 
-// Logic
-import axios from "axios";
-import api from "@/lib/api";
-import { useAuthStore } from "@/store/auth.store";
-import { AUTH_ROUTES } from "@/constants/auth";
-import { getCurrentLocale, routes } from "@/lib/routes";
-
-/**
- * Creates a login schema with translated validation messages
- */
-const createLoginSchema = (t: any) =>
-  z.object({
-    email: z
-      .string()
-      .min(1, { message: t("login.validation.email_required") })
-      .email({ message: t("login.validation.email_invalid") }),
-    password: z
-      .string()
-      .min(1, { message: t("login.validation.password_required") })
-      .min(6, { message: t("login.validation.password_min") }),
-  });
-
-type LoginFormValues = z.infer<ReturnType<typeof createLoginSchema>>;
+import { useAuthStore } from '@/store/auth.store'
+import { getCurrentLocale, routes } from '@/lib/routes'
+import { useLoginForm } from '@/hooks/useLoginForm'
 
 interface LoginFormProps {
-  onSuccess?: () => void;
+  onSuccess?: () => void
 }
 
-/**
- * LoginForm Component
- * Refactored following Refactoring UI principles
- */
-export const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
-  const { t } = useTranslation();
-  const [globalError, setGlobalError] = useState<string | null>(null);
-  const login = useAuthStore((state) => state.login);
+// Wrapper con I18nProvider para asegurar que i18n está listo
+export function LoginForm(props: LoginFormProps) {
+  return (
+    <I18nProvider>
+      <LoginFormContent {...props} />
+    </I18nProvider>
+  )
+}
 
-  const loginSchema = createLoginSchema(t);
+function LoginFormContent({ onSuccess }: LoginFormProps) {
+  const { t } = useTranslation()
+  const login = useAuthStore((state) => state.login)
 
-  const form = useForm<LoginFormValues>({
-    resolver: zodResolver(loginSchema),
-    defaultValues: { email: "", password: "" },
-  });
+  const {
+    email,
+    setEmail,
+    password,
+    setPassword,
+    rememberMe,
+    setRememberMe,
+    isLoading,
+    errors,
+    handleSubmit,
+  } = useLoginForm({ t, login, onSuccess })
 
-  const { isSubmitting } = form.formState;
+  const containerStyles: React.CSSProperties = {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 'var(--space-8)',
+    width: '100%',
+    maxWidth: '360px',
+  }
 
-  const onSubmit = async (data: LoginFormValues) => {
-    setGlobalError(null);
-    try {
-      const response = await api.post("/auth/login", data);
-      login(response.data.access_token, response.data.user);
+  const headerStyles: React.CSSProperties = {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 'var(--space-2)',
+  }
 
-      if (onSuccess) {
-        onSuccess();
-      } else {
-        const locale = getCurrentLocale();
-        window.location.href = routes[locale].home;
-      }
-    } catch (err) {
-      if (axios.isAxiosError(err)) {
-        const msg = err.response?.data?.message || t("errors.network");
-        setGlobalError(Array.isArray(msg) ? msg[0] : msg);
-      } else if (err instanceof Error) {
-        setGlobalError(err.message);
-      } else {
-        setGlobalError(t("errors.unknown"));
-      }
-    }
-  };
+  const titleStyles: React.CSSProperties = {
+    fontSize: '24px',
+    fontWeight: 600,
+    color: 'var(--color-text-primary)',
+    margin: 0,
+    lineHeight: 1.3,
+  }
 
-  const { errors } = form.formState;
+  const subtitleStyles: React.CSSProperties = {
+    fontSize: '0.875rem', // 14px - token: sm
+    color: 'var(--color-text-muted)',
+    margin: 0,
+    lineHeight: 1.5,
+  }
+
+  const formStyles: React.CSSProperties = {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 'var(--space-5)',
+  }
+
+  const rowStyles: React.CSSProperties = {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  }
+
+  const errorStyles: React.CSSProperties = {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 'var(--space-2)',
+    padding: 'var(--space-3)',
+    backgroundColor: 'var(--color-danger-light)',
+    color: 'var(--color-danger)',
+    borderRadius: 'var(--radius-md)',
+    fontSize: '0.875rem',
+  }
+
+  const footerStyles: React.CSSProperties = {
+    textAlign: 'center',
+    fontSize: '0.875rem',
+    color: 'var(--color-text-muted)',
+  }
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
-        {/* Email Field */}
-        <FormField
-          control={form.control}
+    <div style={containerStyles}>
+      {/* Header */}
+      <div style={headerStyles}>
+        <h1 style={titleStyles}>{t('login.title')}</h1>
+        <p style={subtitleStyles}>{t('login.subtitle')}</p>
+      </div>
+
+      {/* Form */}
+      <form onSubmit={handleSubmit} style={formStyles}>
+        <Input
+          label={t('login.email')}
+          type="email"
           name="email"
-          render={({ field, fieldState }) => (
-            <FormItem className="rui-form-group">
-              <label className="rui-label">{t("login.email")}</label>
-              <FormControl>
-                <input
-                  type="email"
-                  className={`rui-input ${fieldState.error ? 'rui-input-error' : ''}`}
-                  placeholder={t("login.email_placeholder")}
-                  autoComplete="email"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage className="rui-field-error" />
-            </FormItem>
-          )}
+          placeholder={t('login.email_placeholder')}
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          error={errors.email}
+          autoComplete="email"
+          inputSize="lg"
+          leftIcon={<Mail size={16} />}
         />
 
-        {/* Password Field */}
-        <FormField
-          control={form.control}
+        <Input
+          label={t('login.password')}
+          type="password"
           name="password"
-          render={({ field, fieldState }) => (
-            <FormItem className="rui-form-group">
-              <label className="rui-label">{t("login.password")}</label>
-              <FormControl>
-                <input
-                  type="password"
-                  className={`rui-input ${fieldState.error ? 'rui-input-error' : ''}`}
-                  placeholder={t("login.password_placeholder")}
-                  autoComplete="current-password"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage className="rui-field-error" />
-            </FormItem>
-          )}
+          placeholder={t('login.password_placeholder')}
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          error={errors.password}
+          autoComplete="current-password"
+          inputSize="lg"
+          leftIcon={<Lock size={16} />}
+          showPasswordToggle
+          showPasswordLabel={t('login.show_password')}
+          hidePasswordLabel={t('login.hide_password')}
         />
 
-        {/* Global Error Message */}
-        {globalError && (
-          <div className="rui-error-message animate-in fade-in slide-in-from-top-2">
-            <AlertCircle />
-            <span>{globalError}</span>
+        {/* Checkbox + Forgot password */}
+        <div style={rowStyles}>
+          <Checkbox
+            label={t('login.remember_me')}
+            checked={rememberMe}
+            onChange={(e) => setRememberMe(e.target.checked)}
+          />
+          <Link href={routes[getCurrentLocale()].forgotPassword} variant="muted">
+            {t('login.forgot_password')}
+          </Link>
+        </div>
+
+        {/* Global Error */}
+        {errors.global && (
+          <div style={errorStyles} role="alert">
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              aria-label="Error"
+            >
+              <circle cx="12" cy="12" r="10" />
+              <line x1="12" y1="8" x2="12" y2="12" />
+              <line x1="12" y1="16" x2="12.01" y2="16" />
+            </svg>
+            <span>{errors.global}</span>
           </div>
         )}
 
         {/* Submit Button */}
-        <div className="rui-form-actions">
-          <button
+        <div style={{ marginTop: 'var(--space-2)' }}>
+          <Button
             type="submit"
-            disabled={isSubmitting}
-            className="rui-btn-primary"
+            fullWidth
+            size="lg"
+            isLoading={isLoading}
+            loadingText={t('login.loading')}
+            loadingAriaLabel={t('login.loading_aria')}
           >
-            {isSubmitting ? (
-              <>
-                <Loader2 className="animate-spin" style={{ width: 16, height: 16 }} />
-                {t("login.btn_loading")}
-              </>
-            ) : (
-              t("login.btn")
-            )}
-          </button>
+            {t('login.btn')}
+          </Button>
         </div>
-
       </form>
-    </Form>
-  );
-};
+
+      {/* Footer */}
+      <div style={footerStyles}>
+        <p style={{ margin: 0 }}>
+          © {new Date().getFullYear()} <Link href="https://devcloud.pe" target="_blank" rel="noopener noreferrer">{t('login.footer.company')}</Link>
+        </p>
+      </div>
+    </div>
+  )
+}

@@ -1,0 +1,210 @@
+---
+import { Image } from 'astro:assets';
+import esTranslations from "@/i18n/locales/es.json";
+import enTranslations from "@/i18n/locales/en.json";
+import heroImage from "@/assets/images/hero.webp";
+
+// Detect current locale from Astro.currentLocale or URL path
+const currentLocale = Astro.currentLocale ||
+  (Astro.url.pathname.startsWith('/en') ? 'en' : 'es');
+
+// Select the appropriate translations based on locale
+const translations = currentLocale === 'en' ? enTranslations : esTranslations;
+const quotes = translations.login.brand.quotes;
+---
+
+<div class="login-hero">
+  <Image
+    src={heroImage}
+    alt="Vista panorámica de la ciudad de Iquitos, Loreto - Región amazónica del Perú con arquitectura urbana y vegetación tropical"
+    class="hero-image"
+    loading="eager"
+    decoding="async"
+    fetchpriority="high"
+  />
+  <div class="hero-overlay"></div>
+
+  <div class="hero-content">
+    <div class="quotes-section">
+      <div class="quote-container">
+        {quotes.map((quote, index) => (
+          <div class="quote" data-quote-index={index}>
+            <p class="quote-text">"{quote.text}"</p>
+            <p class="quote-author">— {quote.author}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .login-hero {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    background-color: var(--color-grey-100);
+    overflow: hidden;
+  }
+
+  .hero-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--color-red-700);
+    opacity: 0.85;
+    mix-blend-mode: multiply;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .hero-content {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 2rem;
+    z-index: 2;
+    pointer-events: none;
+  }
+
+  .quotes-section {
+    max-width: 600px;
+    width: 100%;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    align-self: center;
+    padding: 0 2rem;
+  }
+
+  .quote-container {
+    position: relative;
+    min-height: 150px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .quote {
+    position: absolute;
+    width: 100%;
+    opacity: 0;
+    animation: rotateQuotes 48s infinite;
+    text-align: center;
+  }
+
+  .quote[data-quote-index="0"] {
+    animation-delay: 0s;
+  }
+
+  .quote[data-quote-index="1"] {
+    animation-delay: 8s;
+  }
+
+  .quote[data-quote-index="2"] {
+    animation-delay: 16s;
+  }
+
+  .quote[data-quote-index="3"] {
+    animation-delay: 24s;
+  }
+
+  .quote[data-quote-index="4"] {
+    animation-delay: 32s;
+  }
+
+  .quote[data-quote-index="5"] {
+    animation-delay: 40s;
+  }
+
+  @keyframes rotateQuotes {
+    0% {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    2% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    14% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    16.67% {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+    100% {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+  }
+
+  .quote-text {
+    font-size: 1.125rem;
+    font-weight: 500;
+    color: white;
+    line-height: 1.6;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
+    margin-bottom: 0.75rem;
+    font-style: italic;
+  }
+
+  .quote-author {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.9);
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  @media (max-width: 768px) {
+    .council-name {
+      font-size: 0.75rem;
+    }
+
+    .quote-text {
+      font-size: 1rem;
+    }
+
+    .quote-author {
+      font-size: 0.75rem;
+    }
+
+    .quote-container {
+      min-height: 180px;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .cip-logo {
+      width: 40px;
+    }
+
+    .council-name {
+      font-size: 0.625rem;
+    }
+
+    .hero-content {
+      padding: 1rem;
+    }
+  }
+</style>

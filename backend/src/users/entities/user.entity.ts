@@ -46,6 +46,10 @@ export class User {
   @Column({ type: 'timestamp', nullable: true })
   verificationExpires: Date | null;
 
+  // Fecha del último envío de correo de verificación
+  @Column({ type: 'timestamptz', nullable: true })
+  verificationEmailSentAt: Date | null;
+
   @Exclude()
   @Column({ type: 'timestamp', nullable: true })
   resetPasswordExpires: Date | null;
@@ -60,6 +64,17 @@ export class User {
 
   @OneToOne(() => Profile, (profile) => profile.user)
   profile: Profile;
+
+  // Campos de eliminación de cuenta (soft delete)
+  @Column({ type: 'timestamptz', nullable: true })
+  deletedAt: Date | null;
+
+  @Column({ type: 'text', nullable: true })
+  deletionReason: string | null;
+
+  // Último acceso al sistema
+  @Column({ type: 'timestamptz', nullable: true })
+  lastLoginAt: Date | null;
 
   @CreateDateColumn()
   createdAt: Date;

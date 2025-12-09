@@ -1,4 +1,10 @@
-import { IsNotEmpty, IsOptional, IsString, IsUrl } from 'class-validator';
+import {
+  IsEmail,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  IsUrl,
+} from 'class-validator';
 
 export class CreateOrganizerDto {
   @IsString()
@@ -12,4 +18,8 @@ export class CreateOrganizerDto {
   @IsUrl()
   @IsOptional()
   website?: string;
+
+  @IsEmail()
+  @IsOptional()
+  email?: string;
 }

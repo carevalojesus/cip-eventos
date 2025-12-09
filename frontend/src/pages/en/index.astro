@@ -1,10 +1,11 @@
 ---
-import { DashboardApp } from "@/components/dashboard/DashboardApp";
+import { RuiDashboardApp } from "@/components/dashboard/RuiDashboardApp";
 import Layout from "@/layouts/Layout.astro";
 
+// Usa el nuevo layout con componentes Refactoring UI
 export const prerender = true;
 ---
 
 <Layout title="CIP Events - Admin Panel" lang="en">
-  <DashboardApp client:only="react" />
+  <RuiDashboardApp client:only="react" />
 </Layout>

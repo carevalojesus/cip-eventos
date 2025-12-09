@@ -4,6 +4,7 @@ import { Bell, Menu, LogOut, User as UserIcon, ArrowLeft } from "lucide-react";
 import { useAuthStore } from "@/store/auth.store";
 import api from "@/lib/api";
 import { ASSETS_URL } from "@/constants/auth";
+import { getCurrentLocale, routes } from "@/lib/routes";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -23,19 +24,16 @@ interface DashboardHeaderProps {
   onNavigate?: (path: string) => void;
 }
 
-// Helper function to format role names
-const formatRoleName = (role: string | undefined): string => {
-  if (!role) return "Rol Desconocido";
-  switch (role.toLowerCase()) {
-    case "super_admin":
-      return "Superadministrador";
-    case "admin":
-      return "Administrador";
-    case "user":
-      return "Usuario";
-    default:
-      return role.charAt(0).toUpperCase() + role.slice(1);
-  }
+// Helper function to format role names using i18n
+const formatRoleName = (role: string | undefined, t: (key: string) => string): string => {
+  if (!role) return t('roles.USER');
+
+  // El backend devuelve roles en mayúsculas (ADMIN, USER, SUPER_ADMIN)
+  const roleKey = `roles.${role}`;
+  const translatedRole = t(roleKey);
+
+  // Si la traducción existe (no devuelve la key), usarla; sino usar el rol original
+  return translatedRole !== roleKey ? translatedRole : role;
 };
 
 /**
@@ -53,6 +51,7 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
   const { user, logout } = useAuthStore();
   const [unreadCount, setUnreadCount] = useState(0);
   const [imageError, setImageError] = useState(false);
+  const locale = getCurrentLocale();
 
   // Fetch unread notifications count
   useEffect(() => {
@@ -78,9 +77,9 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
     setImageError(false);
   }, [user?.avatar]);
 
-  const handleLogout = () => {
-    logout();
-    window.location.href = "/login";
+  const handleLogout = async () => {
+    await logout();
+    window.location.href = routes[locale].login;
   };
 
   const getAvatarUrl = (avatar: string) => {
@@ -182,7 +181,7 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
               {/* User Info - visible en desktop */}
               <div className="rui-user-info hidden sm:flex">
                 <span className="rui-user-name">{getUserDisplayName()}</span>
-                <span className="rui-user-role">{formatRoleName(user?.role)}</span>
+                <span className="rui-user-role">{formatRoleName(user?.role, t)}</span>
               </div>
 
               {/* Avatar */}
@@ -209,7 +208,7 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
                   {getUserDisplayName()}
                 </span>
                 <span className="text-xs text-muted-foreground truncate">
-                  {formatRoleName(user?.role)}
+                  {formatRoleName(user?.role, t)}
                 </span>
               </div>
             </DropdownMenuLabel>

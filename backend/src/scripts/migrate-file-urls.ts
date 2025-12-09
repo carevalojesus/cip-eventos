@@ -12,12 +12,14 @@ async function bootstrap() {
   const userRepository = app.get<Repository<User>>(getRepositoryToken(User));
   const eventRepository = app.get<Repository<Event>>(getRepositoryToken(Event));
 
-  const minioEndpoint = configService.get<string>('MINIO_ENDPOINT') ?? 'http://localhost:9000';
+  const minioEndpoint =
+    configService.get<string>('MINIO_ENDPOINT') ?? 'http://localhost:9000';
   const bucket = configService.get<string>('MINIO_BUCKET') ?? 'avatars';
-  const apiUrl = configService.get<string>('API_URL') ?? 'http://localhost:3000';
+  const apiUrl =
+    configService.get<string>('API_URL') ?? 'http://localhost:3000';
 
   const oldUrlPrefix = `${minioEndpoint}/${bucket}`;
-  
+
   console.log(`Migrating URLs from ${oldUrlPrefix} to ${apiUrl}/uploads/...`);
 
   // 1. Migrate Users (Profile Photos) -> Private
@@ -27,8 +29,10 @@ async function bootstrap() {
     if (user.profile?.avatar && user.profile.avatar.startsWith(oldUrlPrefix)) {
       const relativePath = user.profile.avatar.replace(oldUrlPrefix, '');
       // Remove leading slash if present
-      const key = relativePath.startsWith('/') ? relativePath.substring(1) : relativePath;
-      
+      const key = relativePath.startsWith('/')
+        ? relativePath.substring(1)
+        : relativePath;
+
       const newUrl = `${apiUrl}/uploads/private/${key}`;
       user.profile.avatar = newUrl;
       await userRepository.save(user);
@@ -44,8 +48,10 @@ async function bootstrap() {
   for (const event of events) {
     if (event.imageUrl && event.imageUrl.startsWith(oldUrlPrefix)) {
       const relativePath = event.imageUrl.replace(oldUrlPrefix, '');
-      const key = relativePath.startsWith('/') ? relativePath.substring(1) : relativePath;
-      
+      const key = relativePath.startsWith('/')
+        ? relativePath.substring(1)
+        : relativePath;
+
       const newUrl = `${apiUrl}/uploads/public/${key}`;
       event.imageUrl = newUrl;
       await eventRepository.save(event);

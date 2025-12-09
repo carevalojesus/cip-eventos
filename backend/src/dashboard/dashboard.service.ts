@@ -6,7 +6,10 @@ import { RegistrationsService } from '../registrations/registrations.service';
 import { PaymentsService } from '../payments/payments.service';
 import { UsersService } from '../users/users.service';
 import { Event, EventStatus } from '../events/entities/event.entity';
-import { Registration, RegistrationStatus } from '../registrations/entities/registration.entity';
+import {
+  Registration,
+  RegistrationStatus,
+} from '../registrations/entities/registration.entity';
 import { Payment, PaymentStatus } from '../payments/entities/payment.entity';
 import { RedisService } from '../redis/redis.service';
 
@@ -36,7 +39,10 @@ export class DashboardService {
   async getStats() {
     // Intentar obtener del cache
     const cacheKey = 'dashboard:stats';
-    const cached = await this.redisService.get<ReturnType<typeof this.calculateStats>>(cacheKey);
+    const cached =
+      await this.redisService.get<ReturnType<typeof this.calculateStats>>(
+        cacheKey,
+      );
     if (cached) {
       return cached;
     }
@@ -49,77 +55,97 @@ export class DashboardService {
   private async calculateStats() {
     const now = new Date();
     const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-    const lastDayOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
-    const firstDayOfLastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-    const lastDayOfLastMonth = new Date(now.getFullYear(), now.getMonth(), 0, 23, 59, 59);
+    const lastDayOfMonth = new Date(
+      now.getFullYear(),
+      now.getMonth() + 1,
+      0,
+      23,
+      59,
+      59,
+    );
+    const firstDayOfLastMonth = new Date(
+      now.getFullYear(),
+      now.getMonth() - 1,
+      1,
+    );
+    const lastDayOfLastMonth = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      0,
+      23,
+      59,
+      59,
+    );
 
     // 1. Active Events (PUBLISHED status and upcoming or ongoing)
     const activeEvents = await this.eventRepository.count({
       where: {
         status: EventStatus.PUBLISHED,
-        endAt: MoreThan(now)
-      }
+        endAt: MoreThan(now),
+      },
     });
 
     // Active events from last month for trend calculation
     const lastMonthActiveEvents = await this.eventRepository.count({
       where: {
         status: EventStatus.PUBLISHED,
-        endAt: MoreThan(firstDayOfLastMonth)
-      }
+        endAt: MoreThan(firstDayOfLastMonth),
+      },
     });
 
     // 2. Total Registered (all confirmed registrations)
     const totalRegistered = await this.registrationRepository.count({
       where: {
-        status: RegistrationStatus.CONFIRMED
-      }
+        status: RegistrationStatus.CONFIRMED,
+      },
     });
 
     const lastMonthRegistered = await this.registrationRepository.count({
       where: {
         status: RegistrationStatus.CONFIRMED,
-        registeredAt: Between(firstDayOfLastMonth, lastDayOfLastMonth)
-      }
+        registeredAt: Between(firstDayOfLastMonth, lastDayOfLastMonth),
+      },
     });
 
     // 3. Monthly Income (current month completed payments)
     const monthlyPayments = await this.paymentRepository.find({
       where: {
         status: PaymentStatus.COMPLETED,
-        createdAt: Between(firstDayOfMonth, lastDayOfMonth)
+        createdAt: Between(firstDayOfMonth, lastDayOfMonth),
       },
-      select: ['amount']
+      select: ['amount'],
     });
-    const monthlyIncome = monthlyPayments.reduce((sum, payment) =>
-      sum + Number(payment.amount), 0
+    const monthlyIncome = monthlyPayments.reduce(
+      (sum, payment) => sum + Number(payment.amount),
+      0,
     );
 
     // Last month income for trend
     const lastMonthPayments = await this.paymentRepository.find({
       where: {
         status: PaymentStatus.COMPLETED,
-        createdAt: Between(firstDayOfLastMonth, lastDayOfLastMonth)
+        createdAt: Between(firstDayOfLastMonth, lastDayOfLastMonth),
       },
-      select: ['amount']
+      select: ['amount'],
     });
-    const lastMonthIncome = lastMonthPayments.reduce((sum, payment) =>
-      sum + Number(payment.amount), 0
+    const lastMonthIncome = lastMonthPayments.reduce(
+      (sum, payment) => sum + Number(payment.amount),
+      0,
     );
 
     // 4. Tickets Sold (current month)
     const ticketsSold = await this.registrationRepository.count({
       where: {
         status: RegistrationStatus.CONFIRMED,
-        registeredAt: Between(firstDayOfMonth, lastDayOfMonth)
-      }
+        registeredAt: Between(firstDayOfMonth, lastDayOfMonth),
+      },
     });
 
     const lastMonthTicketsSold = await this.registrationRepository.count({
       where: {
         status: RegistrationStatus.CONFIRMED,
-        registeredAt: Between(firstDayOfLastMonth, lastDayOfLastMonth)
-      }
+        registeredAt: Between(firstDayOfLastMonth, lastDayOfLastMonth),
+      },
     });
 
     // Calculate trends (percentage change from last month)
@@ -138,14 +164,17 @@ export class DashboardService {
         totalRegistered: calculateTrend(totalRegistered, lastMonthRegistered),
         monthlyIncome: calculateTrend(monthlyIncome, lastMonthIncome),
         ticketsSold: calculateTrend(ticketsSold, lastMonthTicketsSold),
-      }
+      },
     };
   }
 
   async getUpcomingEvents(limit: number) {
     // Intentar obtener del cache
     const cacheKey = `dashboard:upcoming:${limit}`;
-    const cached = await this.redisService.get<Awaited<ReturnType<typeof this.fetchUpcomingEvents>>>(cacheKey);
+    const cached =
+      await this.redisService.get<
+        Awaited<ReturnType<typeof this.fetchUpcomingEvents>>
+      >(cacheKey);
     if (cached) {
       return cached;
     }
@@ -161,13 +190,13 @@ export class DashboardService {
     const upcomingEvents = await this.eventRepository.find({
       where: {
         startAt: MoreThan(now),
-        status: EventStatus.PUBLISHED
+        status: EventStatus.PUBLISHED,
       },
       order: {
-        startAt: 'ASC'
+        startAt: 'ASC',
       },
       take: limit,
-      relations: ['tickets']
+      relations: ['tickets'],
     });
 
     // Transform events to match frontend interface
@@ -176,8 +205,8 @@ export class DashboardService {
         const attendeesCount = await this.registrationRepository.count({
           where: {
             event: { id: event.id },
-            status: RegistrationStatus.CONFIRMED
-          }
+            status: RegistrationStatus.CONFIRMED,
+          },
         });
 
         return {
@@ -187,7 +216,7 @@ export class DashboardService {
           attendees: attendeesCount,
           status: event.status.toLowerCase(),
         };
-      })
+      }),
     );
 
     return eventsWithAttendees;
@@ -196,13 +225,20 @@ export class DashboardService {
   async getRecentActivity(limit: number) {
     // Intentar obtener del cache
     const cacheKey = `dashboard:activity:${limit}`;
-    const cached = await this.redisService.get<Awaited<ReturnType<typeof this.fetchRecentActivity>>>(cacheKey);
+    const cached =
+      await this.redisService.get<
+        Awaited<ReturnType<typeof this.fetchRecentActivity>>
+      >(cacheKey);
     if (cached) {
       return cached;
     }
 
     const activities = await this.fetchRecentActivity(limit);
-    await this.redisService.set(cacheKey, activities, CACHE_TTL.RECENT_ACTIVITY);
+    await this.redisService.set(
+      cacheKey,
+      activities,
+      CACHE_TTL.RECENT_ACTIVITY,
+    );
     return activities;
   }
 
@@ -210,10 +246,10 @@ export class DashboardService {
     // Fetch recent registrations as activity
     const recentRegistrations = await this.registrationRepository.find({
       order: {
-        registeredAt: 'DESC'
+        registeredAt: 'DESC',
       },
       take: limit,
-      relations: ['attendee', 'event', 'payment']
+      relations: ['attendee', 'event', 'payment'],
     });
 
     // Transform registrations to activity format
@@ -228,9 +264,10 @@ export class DashboardService {
 
       return {
         id: registration.id,
-        user: registration.attendee?.firstName && registration.attendee?.lastName
-          ? `${registration.attendee.firstName} ${registration.attendee.lastName}`
-          : registration.attendee?.email || 'Usuario',
+        user:
+          registration.attendee?.firstName && registration.attendee?.lastName
+            ? `${registration.attendee.firstName} ${registration.attendee.lastName}`
+            : registration.attendee?.email || 'Usuario',
         action,
         target: registration.event?.title || 'Evento',
         timestamp: registration.registeredAt.toISOString(),

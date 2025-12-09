@@ -1,0 +1,26 @@
+{
+  "templates": {
+    "paymentReminder": "CIP Eventos: Tu reserva expira pronto. Completa tu pago en: {link}",
+    "eventReminder": "CIP Eventos: Mañana es {eventName}. No olvides asistir.",
+    "certificateReady": "CIP Eventos: Tu certificado está listo. Descárgalo en: {link}",
+    "paymentConfirmed": "CIP Eventos: Pago confirmado para {eventName}. Tu código: {ticketCode}",
+    "ticketTransfer": "CIP Eventos: Te han transferido un ticket para {eventName}. Código: {ticketCode}",
+    "verificationCode": "CIP Eventos: Tu código de verificación es: {code}. Válido por 5 minutos.",
+    "eventDateChange": "CAMBIO DE FECHA - {eventName}: Nueva fecha {newDate}",
+    "eventLocationChange": "CAMBIO DE UBICACIÓN - {eventName}: Nueva ubicación {newLocation}",
+    "eventCancellation": "EVENTO CANCELADO - {eventName}. Tu pago será reembolsado."
+  },
+  "errors": {
+    "smsDisabled": "El servicio de SMS está deshabilitado",
+    "whatsappDisabled": "El servicio de WhatsApp está deshabilitado",
+    "invalidPhone": "Número de teléfono inválido. Debe estar en formato E.164 (ej: +51999999999)",
+    "messageTooLong": "El mensaje es demasiado largo",
+    "sendFailed": "Error al enviar el mensaje",
+    "providerNotConfigured": "Proveedor de mensajería no configurado"
+  },
+  "success": {
+    "smsSent": "SMS enviado exitosamente",
+    "whatsappSent": "Mensaje de WhatsApp enviado exitosamente",
+    "templateSent": "Template enviado exitosamente"
+  }
+}

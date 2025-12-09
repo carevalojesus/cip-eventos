@@ -1,0 +1,19 @@
+{
+  "person_or_user_required": "Debe proporcionar personId o userId",
+  "not_found": "Registro de consentimiento no encontrado",
+  "already_revoked": "Este consentimiento ya ha sido revocado",
+  "recorded_successfully": "Consentimiento registrado exitosamente",
+  "bulk_recorded_successfully": "{{count}} consentimiento(s) registrado(s) exitosamente",
+  "revoked_successfully": "Consentimiento revocado exitosamente",
+  "bulk_revoked_successfully": "{{count}} consentimiento(s) revocado(s) exitosamente",
+  "all_required_present": "Todos los consentimientos requeridos están presentes",
+  "missing_required": "Faltan {{count}} consentimiento(s) requerido(s)",
+  "invalid_consent_type": "Tipo de consentimiento inválido",
+  "consent_already_exists": "Ya existe un consentimiento válido de este tipo",
+  "terms_and_conditions": "Términos y Condiciones",
+  "privacy_policy": "Política de Privacidad",
+  "marketing": "Comunicaciones de Marketing",
+  "data_processing": "Procesamiento de Datos",
+  "version_mismatch": "La versión aceptada ({{acceptedVersion}}) difiere de la versión actual ({{currentVersion}}). Por favor revise y acepte los términos actualizados.",
+  "required_for_registration": "La aceptación de los Términos y Condiciones y la Política de Privacidad es requerida para el registro"
+}

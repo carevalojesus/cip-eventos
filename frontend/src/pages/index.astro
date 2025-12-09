@@ -1,12 +1,13 @@
 ---
-import { DashboardApp } from "@/components/dashboard/DashboardApp";
+import { RuiDashboardApp } from "@/components/dashboard/RuiDashboardApp";
 import Layout from "@/layouts/Layout.astro";
 
 // Esta página sirve como home para usuarios logueados
-// Si no está logueado, el DashboardApp redirigirá a /iniciar-sesion
+// Si no está logueado, el RuiDashboardApp redirigirá a /iniciar-sesion
+// Usa el nuevo layout con componentes Refactoring UI
 export const prerender = true;
 ---
 
 <Layout title="CIP Eventos - Panel de Administración">
-  <DashboardApp client:only="react" />
+  <RuiDashboardApp client:only="react" />
 </Layout>

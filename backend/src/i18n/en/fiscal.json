@@ -1,0 +1,12 @@
+{
+  "payment_not_found": "Payment not found",
+  "payment_not_completed": "Payment is not completed",
+  "document_already_exists": "A fiscal document already exists for this payment",
+  "document_not_found": "Fiscal document not found",
+  "ruc_required": "RUC is required for invoices",
+  "dni_required": "DNI is required for receipts",
+  "address_required": "Address is required for invoices",
+  "already_voided": "This document is already voided",
+  "void_period_exceeded": "The period to void this document has expired (maximum 7 days)",
+  "invalid_document_for_credit_note": "Cannot issue credit note for this document"
+}

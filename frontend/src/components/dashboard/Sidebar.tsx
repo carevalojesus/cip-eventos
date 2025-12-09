@@ -167,8 +167,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
       ? currentPath ?? window.location.pathname
       : currentPath ?? "";
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await logout();
     window.location.href = routes[locale].login;
   };
 

@@ -10,15 +10,19 @@ async function bootstrap() {
   const configService = app.get(ConfigService);
   const eventRepository = app.get<Repository<Event>>(getRepositoryToken(Event));
 
-  const minioEndpoint = configService.get<string>('MINIO_ENDPOINT') ?? 'http://localhost:9000';
+  const minioEndpoint =
+    configService.get<string>('MINIO_ENDPOINT') ?? 'http://localhost:9000';
   const bucket = configService.get<string>('MINIO_BUCKET') ?? 'avatars';
-  const apiUrl = configService.get<string>('API_URL') ?? 'http://localhost:3000';
+  const apiUrl =
+    configService.get<string>('API_URL') ?? 'http://localhost:3000';
 
   // Patrón de URLs del backend que necesitan ser migradas a MinIO directo
   const backendUrlPattern = `${apiUrl}/uploads/public/`;
   const minioDirectUrl = `${minioEndpoint}/${bucket}/`;
 
-  console.log(`Migrating event image URLs from backend proxy to MinIO direct...`);
+  console.log(
+    `Migrating event image URLs from backend proxy to MinIO direct...`,
+  );
   console.log(`From: ${backendUrlPattern}`);
   console.log(`To: ${minioDirectUrl}`);
 

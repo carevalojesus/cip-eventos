@@ -53,7 +53,9 @@ export class EmailProcessor extends WorkerHost {
           if (registration) {
             await this.mailService.sendTicket(registration);
           } else {
-            throw new Error(`Registration ${job.data.data.registrationId} not found`);
+            throw new Error(
+              `Registration ${job.data.data.registrationId} not found`,
+            );
           }
           break;
 
@@ -75,7 +77,9 @@ export class EmailProcessor extends WorkerHost {
 
   @OnWorkerEvent('failed')
   onFailed(job: Job, error: Error) {
-    this.logger.error(`Job ${job.id} failed after ${job.attemptsMade} attempts: ${error.message}`);
+    this.logger.error(
+      `Job ${job.id} failed after ${job.attemptsMade} attempts: ${error.message}`,
+    );
   }
 
   @OnWorkerEvent('stalled')

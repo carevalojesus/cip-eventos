@@ -24,12 +24,14 @@ import { Organizer } from '../../organizers/entities/organizer.entity';
 import { EventTicket } from './event-ticket.entity';
 import { EventSession } from './event-session.entity';
 import { Signer } from '../../signers/entities/signer.entity';
+import { EventCoorganizer } from '../../organizers/entities/event-coorganizer.entity';
 
 export enum EventStatus {
-  DRAFT = 'DRAFT',
-  PUBLISHED = 'PUBLISHED',
-  COMPLETED = 'COMPLETED',
-  CANCELLED = 'CANCELLED',
+  DRAFT = 'DRAFT', // Borrador, no visible al público
+  PUBLISHED = 'PUBLISHED', // Publicado, visible y abierto a inscripciones
+  COMPLETED = 'COMPLETED', // Evento finalizado
+  CANCELLED = 'CANCELLED', // Evento cancelado
+  ARCHIVED = 'ARCHIVED', // Archivado, oculto pero preservado
 }
 
 @Entity('events')
@@ -62,6 +64,9 @@ export class Event {
   @Column({ type: 'text', default: 'America/Lima' })
   timezone: string;
 
+  @Column({ type: 'timestamptz', nullable: true })
+  checkInStartAt: Date; // Hora de inicio del check-in/admisión
+
   @Column({ nullable: true })
   imageUrl: string;
 
@@ -83,7 +88,8 @@ export class Event {
   type: EventType;
 
   @ManyToOne(() => EventCategory, (category) => category.events, {
-    eager: true,
+    eager: false, // Removed eager to improve performance - load via QueryBuilder when needed
+    nullable: true,
   })
   @JoinColumn({ name: 'categoryId' })
   category: EventCategory;
@@ -96,7 +102,7 @@ export class Event {
 
   @ManyToOne(() => EventLocation, (loc) => loc.events, {
     cascade: ['insert', 'update'],
-    eager: true,
+    eager: false, // Removed eager to improve performance - load via QueryBuilder when needed
     nullable: true,
   })
   @JoinColumn()
@@ -125,7 +131,7 @@ export class Event {
 
   @OneToMany(() => EventTicket, (ticket) => ticket.event, {
     cascade: true,
-    eager: true,
+    eager: false, // Removed eager - major performance issue when loading event lists
   })
   tickets: EventTicket[];
 
@@ -142,13 +148,20 @@ export class Event {
 
   @OneToMany(() => EventSession, (session) => session.event, {
     cascade: true,
-    eager: true,
+    eager: false, // Removed eager - major performance issue when loading event lists
   })
   sessions: EventSession[];
 
   @ManyToMany(() => Signer)
   @JoinTable({ name: 'event_signers' })
   signers: Signer[];
+
+  // 👇 Coorganizadores con roles
+  @OneToMany(() => EventCoorganizer, (coorg) => coorg.event, {
+    cascade: true,
+    eager: false,
+  })
+  coorganizers: EventCoorganizer[];
 
   // 👇 Configuración del Certificado
   @Column({ type: 'boolean', default: false })
@@ -157,13 +170,19 @@ export class Event {
   @Column({ type: 'int', default: 0 })
   certificateHours: number;
 
+  @Column({ type: 'boolean', default: false })
+  allowsSessionCertificates: boolean; // Permite certificados por sesión individual
+
+  @Column({ type: 'int', default: 70 })
+  minAttendancePercentage: number; // % mínimo de asistencia para certificado
+
   // -------------------------
   // Auditoría y soft delete
 
   @Column({ type: 'boolean', default: true })
   isActive: boolean;
 
-  @ManyToOne(() => User, { eager: true })
+  @ManyToOne(() => User, { eager: false }) // Removed eager - load only when needed
   @JoinColumn({ name: 'createdById' })
   createdBy: User;
 

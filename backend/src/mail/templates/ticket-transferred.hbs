@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+    .header { background: linear-gradient(135deg, #00bcd4 0%, #0097a7 100%); color: white; padding: 30px; text-align: center; border-radius: 8px 8px 0 0; }
+    .content { background: #fff; padding: 30px; border: 1px solid #e0e0e0; border-top: none; }
+    .transfer-info { background: #e0f7fa; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #00bcd4; }
+    .event-info { background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0; }
+    .btn { display: inline-block; background: #00bcd4; color: white; padding: 15px 40px; text-decoration: none; border-radius: 8px; margin: 20px 0; font-weight: bold; }
+    .footer { text-align: center; padding: 20px; color: #666; font-size: 12px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🔄 Transferencia de Ticket</h1>
+    </div>
+    <div class="content">
+      <p>Hola <strong>{{name}}</strong>,</p>
+
+      {{#if isNewOwner}}
+      <div class="transfer-info">
+        <h2 style="color: #00bcd4; margin: 0;">¡Has recibido un ticket!</h2>
+        <p>{{previousOwnerName}} te ha transferido su entrada para el siguiente evento.</p>
+      </div>
+
+      <div class="event-info">
+        <h3>{{eventTitle}}</h3>
+        <p><strong>Fecha:</strong> {{eventDate}}</p>
+        <p><strong>Ubicación:</strong> {{eventLocation}}</p>
+        <p><strong>Tipo de entrada:</strong> {{ticketType}}</p>
+        <p><strong>Código de ticket:</strong> <span style="font-weight: bold; color: #00bcd4;">{{ticketCode}}</span></p>
+      </div>
+
+      <p>Tu ticket ya está activo y listo para usar. Puedes descargarlo usando el botón de abajo.</p>
+
+      <div style="text-align: center;">
+        <a href="{{ticketUrl}}" class="btn">Descargar Mi Ticket</a>
+      </div>
+
+      <p>¡Nos vemos en el evento!</p>
+
+      {{else}}
+      <div class="transfer-info">
+        <h2 style="color: #00bcd4; margin: 0;">Transferencia Confirmada</h2>
+        <p>Has transferido exitosamente tu entrada a <strong>{{newOwnerName}}</strong>.</p>
+      </div>
+
+      <div class="event-info">
+        <h3>{{eventTitle}}</h3>
+        <p><strong>Fecha:</strong> {{eventDate}}</p>
+        <p><strong>Transferido a:</strong> {{newOwnerName}} ({{newOwnerEmail}})</p>
+        <p><strong>Fecha de transferencia:</strong> {{transferDate}}</p>
+      </div>
+
+      <p>Tu ticket ha sido desactivado y ya no podrás usarlo. El nuevo titular tiene acceso completo al evento.</p>
+
+      <p>Si tienes alguna pregunta, no dudes en contactarnos.</p>
+      {{/if}}
+
+      <p>Saludos,<br>
+      <strong>Equipo CIP Eventos</strong></p>
+    </div>
+    <div class="footer">
+      <p>Este es un correo automático, por favor no responder.</p>
+    </div>
+  </div>
+</body>
+</html>

@@ -20,6 +20,15 @@ interface CertificateData {
   validationCode: string;
   qrCode?: string;
   signers: { fullName: string; title: string; signatureUrl: string }[];
+  version?: number; // Versión del certificado (para reemisiones)
+  // Información adicional para certificados de aprobación
+  additionalInfo?: {
+    blockType?: string;
+    finalGrade?: number | null;
+    attendancePercentage?: number;
+    instructors?: string[];
+    [key: string]: any;
+  };
 }
 
 @Injectable()

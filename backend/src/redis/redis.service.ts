@@ -79,7 +79,11 @@ export class RedisService {
    * Invalidar todas las sesiones de un usuario
    */
   async invalidateUserSessions(userId: string): Promise<void> {
-    await this.set(`user:${userId}:invalidated`, Date.now(), 7 * 24 * 60 * 60 * 1000);
+    await this.set(
+      `user:${userId}:invalidated`,
+      Date.now(),
+      7 * 24 * 60 * 60 * 1000,
+    );
   }
 
   /**
@@ -110,7 +114,8 @@ export class RedisService {
     },
   ): Promise<void> {
     const sessionsKey = `user:${userId}:active_sessions`;
-    const sessions = await this.get<Record<string, typeof metadata>>(sessionsKey) || {};
+    const sessions =
+      (await this.get<Record<string, typeof metadata>>(sessionsKey)) || {};
 
     sessions[sessionId] = metadata;
 
@@ -121,23 +126,28 @@ export class RedisService {
   /**
    * Obtener todas las sesiones activas de un usuario
    */
-  async getActiveSessions(
-    userId: string,
-  ): Promise<Array<{
-    sessionId: string;
-    userAgent?: string;
-    ip?: string;
-    createdAt: number;
-    expiresAt: number;
-    isCurrent?: boolean;
-  }>> {
-    const sessionsKey = `user:${userId}:active_sessions`;
-    const sessions = await this.get<Record<string, {
+  async getActiveSessions(userId: string): Promise<
+    Array<{
+      sessionId: string;
       userAgent?: string;
       ip?: string;
       createdAt: number;
       expiresAt: number;
-    }>>(sessionsKey);
+      isCurrent?: boolean;
+    }>
+  > {
+    const sessionsKey = `user:${userId}:active_sessions`;
+    const sessions = await this.get<
+      Record<
+        string,
+        {
+          userAgent?: string;
+          ip?: string;
+          createdAt: number;
+          expiresAt: number;
+        }
+      >
+    >(sessionsKey);
 
     if (!sessions) return [];
 
@@ -168,19 +178,28 @@ export class RedisService {
   /**
    * Eliminar todas las sesiones de un usuario excepto la actual
    */
-  async removeOtherSessions(userId: string, currentSessionId: string): Promise<number> {
+  async removeOtherSessions(
+    userId: string,
+    currentSessionId: string,
+  ): Promise<number> {
     const sessionsKey = `user:${userId}:active_sessions`;
     const sessions = await this.get<Record<string, unknown>>(sessionsKey);
 
     if (!sessions) return 0;
 
-    const sessionIds = Object.keys(sessions).filter(id => id !== currentSessionId);
+    const sessionIds = Object.keys(sessions).filter(
+      (id) => id !== currentSessionId,
+    );
     const removedCount = sessionIds.length;
 
     // Mantener solo la sesión actual
     const currentSession = sessions[currentSessionId];
     if (currentSession) {
-      await this.set(sessionsKey, { [currentSessionId]: currentSession }, 7 * 24 * 60 * 60 * 1000);
+      await this.set(
+        sessionsKey,
+        { [currentSessionId]: currentSession },
+        7 * 24 * 60 * 60 * 1000,
+      );
     } else {
       await this.del(sessionsKey);
     }

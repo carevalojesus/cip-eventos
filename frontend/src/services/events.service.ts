@@ -88,23 +88,7 @@ export const eventsService = {
   },
 
   async getUniqueLocations(): Promise<EventLocation[]> {
-    const events = await this.findAll();
-    const locationsMap = new Map<string, EventLocation>();
-
-    events.forEach(event => {
-      if (event.location) {
-        // Manejar ubicaciones antiguas sin campo name
-        const locationWithName = {
-          ...event.location,
-          name: event.location.name || event.location.address.split('-')[0].trim(),
-        };
-        const key = locationWithName.address.toLowerCase();
-        if (!locationsMap.has(key)) {
-          locationsMap.set(key, locationWithName);
-        }
-      }
-    });
-
-    return Array.from(locationsMap.values());
+    const response = await api.get<EventLocation[]>("/events/locations");
+    return response.data;
   },
 };

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+    .header { background: linear-gradient(135deg, #e91e63 0%, #f06292 100%); color: white; padding: 30px; text-align: center; border-radius: 8px 8px 0 0; }
+    .content { background: #fff; padding: 30px; border: 1px solid #e0e0e0; border-top: none; }
+    .courtesy-badge { background: #fce4ec; padding: 20px; border-radius: 8px; margin: 20px 0; text-align: center; border: 2px dashed #e91e63; }
+    .event-info { background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0; }
+    .btn { display: inline-block; background: #e91e63; color: white; padding: 15px 40px; text-decoration: none; border-radius: 8px; margin: 20px 0; font-weight: bold; }
+    .footer { text-align: center; padding: 20px; color: #666; font-size: 12px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🎁 ¡Cortesía Especial!</h1>
+    </div>
+    <div class="content">
+      <p>Hola <strong>{{name}}</strong>,</p>
+
+      <div class="courtesy-badge">
+        <h2 style="color: #e91e63; margin: 0;">Has recibido una cortesía</h2>
+        <p style="font-size: 16px; margin: 15px 0;">Tienes acceso gratuito al siguiente evento</p>
+      </div>
+
+      <div class="event-info">
+        <h3>{{eventTitle}}</h3>
+        <p><strong>Fecha:</strong> {{eventDate}}</p>
+        <p><strong>Ubicación:</strong> {{eventLocation}}</p>
+        <p><strong>Tipo de entrada:</strong> {{ticketType}}</p>
+        {{#if grantedBy}}
+        <p><strong>Otorgado por:</strong> {{grantedBy}}</p>
+        {{/if}}
+        {{#if reason}}
+        <p><strong>Motivo:</strong> {{reason}}</p>
+        {{/if}}
+      </div>
+
+      <p>Tu inscripción ha sido confirmada automáticamente. No necesitas realizar ningún pago.</p>
+
+      <div style="text-align: center;">
+        <a href="{{ticketUrl}}" class="btn">Ver Mi Ticket</a>
+      </div>
+
+      <p>¡Esperamos verte en el evento!</p>
+
+      <p>Saludos,<br>
+      <strong>Equipo CIP Eventos</strong></p>
+    </div>
+    <div class="footer">
+      <p>Este es un correo automático, por favor no responder.</p>
+    </div>
+  </div>
+</body>
+</html>

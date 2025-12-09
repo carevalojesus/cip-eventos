@@ -98,7 +98,8 @@ export class CipIntegrationService {
       total,
       habilitados,
       noHabilitados,
-      percentageHabilitados: total > 0 ? ((habilitados / total) * 100).toFixed(2) : 0,
+      percentageHabilitados:
+        total > 0 ? ((habilitados / total) * 100).toFixed(2) : 0,
       lastImportDate: lastImport?.lastImport || null,
       topChapters: byChapter.map((ch) => ({
         chapter: ch.chapter,

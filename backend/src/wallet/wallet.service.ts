@@ -1,4 +1,9 @@
-import { Injectable, Logger, BadRequestException, InternalServerErrorException } from '@nestjs/common';
+import {
+  Injectable,
+  Logger,
+  BadRequestException,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { GoogleAuth } from 'google-auth-library';
 import * as jwt from 'jsonwebtoken'; // Para Google Wallet
@@ -31,26 +36,38 @@ export class WalletService {
     // Validar configuración requerida
     const issuerId = this.configService.get<string>('GOOGLE_WALLET_ISSUER_ID');
     if (!issuerId) {
-      throw new Error('GOOGLE_WALLET_ISSUER_ID is not defined in the configuration');
+      throw new Error(
+        'GOOGLE_WALLET_ISSUER_ID is not defined in the configuration',
+      );
     }
     this.issuerId = issuerId;
 
     // Configuración de valores
-    this.issuerName = this.configService.get<string>('GOOGLE_WALLET_ISSUER_NAME') || 'Colegio de Ingenieros del Perú';
+    this.issuerName =
+      this.configService.get<string>('GOOGLE_WALLET_ISSUER_NAME') ||
+      'Colegio de Ingenieros del Perú';
     const nodeEnv = this.configService.get<string>('NODE_ENV');
     this.reviewStatus = nodeEnv === 'production' ? 'UNDER_REVIEW' : 'DRAFT';
 
     // Carga segura de credenciales usando GoogleAuth
-    const keyPath = this.configService.get<string>('GOOGLE_APPLICATION_CREDENTIALS');
+    const keyPath = this.configService.get<string>(
+      'GOOGLE_APPLICATION_CREDENTIALS',
+    );
     if (!keyPath) {
-      this.logger.error('GOOGLE_APPLICATION_CREDENTIALS is not defined. Wallet features will not work.');
-      throw new Error('GOOGLE_APPLICATION_CREDENTIALS is required for Google Wallet integration');
+      this.logger.error(
+        'GOOGLE_APPLICATION_CREDENTIALS is not defined. Wallet features will not work.',
+      );
+      throw new Error(
+        'GOOGLE_APPLICATION_CREDENTIALS is required for Google Wallet integration',
+      );
     }
 
     try {
       // Verificar que el archivo existe
       if (!fs.existsSync(keyPath)) {
-        throw new Error(`Google credentials file not found at path: ${keyPath}`);
+        throw new Error(
+          `Google credentials file not found at path: ${keyPath}`,
+        );
       }
 
       // Cargar credenciales de forma segura
@@ -59,18 +76,23 @@ export class WalletService {
 
       // Validar estructura de credenciales
       if (!this.credentials.client_email || !this.credentials.private_key) {
-        throw new Error('Invalid Google credentials file: missing required fields');
+        throw new Error(
+          'Invalid Google credentials file: missing required fields',
+        );
       }
 
       // Inicializar GoogleAuth
       this.googleAuth = new GoogleAuth({
         keyFilename: keyPath,
-        scopes: ['https://www.googleapis.com/auth/wallet_object.issuer']
+        scopes: ['https://www.googleapis.com/auth/wallet_object.issuer'],
       });
 
       this.logger.log('Google Wallet service initialized successfully');
     } catch (error) {
-      this.logger.error(`Failed to initialize Google Wallet credentials: ${error.message}`, error.stack);
+      this.logger.error(
+        `Failed to initialize Google Wallet credentials: ${error.message}`,
+        error.stack,
+      );
       throw new Error(`Google Wallet initialization failed: ${error.message}`);
     }
   }
@@ -121,24 +143,27 @@ export class WalletService {
         iat: Math.floor(Date.now() / 1000),
         origins: [],
         payload: {
-          eventTicketClasses: [
-            this.buildEventClass(event, classId)
-          ],
+          eventTicketClasses: [this.buildEventClass(event, classId)],
           eventTicketObjects: [
-            this.buildTicketObject(registration, classId, objectId)
-          ]
-        }
+            this.buildTicketObject(registration, classId, objectId),
+          ],
+        },
       };
 
       // Firmamos el token con la llave privada de Google Service Account
       const token = jwt.sign(payload, this.credentials.private_key, {
-        algorithm: 'RS256'
+        algorithm: 'RS256',
       });
 
-      this.logger.log(`Generated wallet link for registration ${registration.id}`);
+      this.logger.log(
+        `Generated wallet link for registration ${registration.id}`,
+      );
       return `https://pay.google.com/gp/v/save/${token}`;
     } catch (error) {
-      this.logger.error(`Failed to create wallet link for registration ${registration.id}: ${error.message}`, error.stack);
+      this.logger.error(
+        `Failed to create wallet link for registration ${registration.id}: ${error.message}`,
+        error.stack,
+      );
 
       if (error instanceof BadRequestException) {
         throw error;
@@ -190,44 +215,49 @@ export class WalletService {
 
   private buildEventClass(event: Event, classId: string) {
     // Obtener URL del logo por defecto desde configuración
-    const defaultLogoUrl = this.configService.get<string>('GOOGLE_WALLET_DEFAULT_LOGO') ||
+    const defaultLogoUrl =
+      this.configService.get<string>('GOOGLE_WALLET_DEFAULT_LOGO') ||
       'https://storage.googleapis.com/cip-eventos/logo-cip-default.png';
 
     return {
       id: classId,
       issuerName: this.issuerName,
       eventName: {
-        defaultValue: { language: "es-PE", value: event.title }
+        defaultValue: { language: 'es-PE', value: event.title },
       },
       // Logo del evento (debe ser HTTPS público)
       logo: {
-        sourceUri: { uri: event.imageUrl || defaultLogoUrl }
+        sourceUri: { uri: event.imageUrl || defaultLogoUrl },
       },
       // Fecha y Hora
       dateTime: {
         start: event.startAt.toISOString(),
-        end: event.endAt.toISOString()
+        end: event.endAt.toISOString(),
       },
-      reviewStatus: this.reviewStatus
+      reviewStatus: this.reviewStatus,
     };
   }
 
-  private buildTicketObject(registration: Registration, classId: string, objectId: string) {
+  private buildTicketObject(
+    registration: Registration,
+    classId: string,
+    objectId: string,
+  ) {
     return {
       id: objectId,
       classId: classId,
-      state: "ACTIVE",
+      state: 'ACTIVE',
       barcode: {
-        type: "QR_CODE",
+        type: 'QR_CODE',
         value: registration.ticketCode,
-        alternateText: registration.ticketCode
+        alternateText: registration.ticketCode,
       },
       ticketHolderName: `${registration.attendee.firstName} ${registration.attendee.lastName}`,
       seatInfo: {
         seat: {
-          defaultValue: { language: "es-PE", value: "General" }
-        }
-      }
+          defaultValue: { language: 'es-PE', value: 'General' },
+        },
+      },
     };
   }
 
@@ -238,7 +268,8 @@ export class WalletService {
     const token = this.jwtService.sign(payload, { expiresIn: '24h' }); // Link válido por 24h
 
     // Construir URL completa
-    const apiUrl = this.configService.get<string>('API_URL') || 'http://localhost:3000';
+    const apiUrl =
+      this.configService.get<string>('API_URL') || 'http://localhost:3000';
     return `${apiUrl}/wallet/${registrationId}?token=${token}`;
   }
 
@@ -249,7 +280,9 @@ export class WalletService {
         throw new BadRequestException('Invalid token for this registration');
       }
     } catch (error) {
-      this.logger.warn(`Invalid signed token for registration ${registrationId}: ${error.message}`);
+      this.logger.warn(
+        `Invalid signed token for registration ${registrationId}: ${error.message}`,
+      );
       throw new BadRequestException('Invalid or expired token');
     }
   }

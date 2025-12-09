@@ -2,6 +2,7 @@ import { Module, forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { EventsService } from './events.service';
 import { EventsController } from './events.controller';
+import { EventsCronService } from './events-cron.service';
 import { Event } from './entities/event.entity';
 import { EventCategory } from './entities/event-category.entity';
 import { EventModality } from './entities/event-modality.entity';
@@ -18,6 +19,7 @@ import { EventSession } from './entities/event-session.entity';
 import { Signer } from '../signers/entities/signer.entity';
 import { RegistrationsModule } from '../registrations/registrations.module';
 import { UploadsModule } from '../uploads/uploads.module';
+import { Registration } from '../registrations/entities/registration.entity';
 
 @Module({
   imports: [
@@ -34,13 +36,14 @@ import { UploadsModule } from '../uploads/uploads.module';
       EventTicket,
       EventSession,
       Signer,
+      Registration,
     ]),
     AuthModule,
     forwardRef(() => RegistrationsModule),
     UploadsModule,
   ],
   controllers: [EventsController],
-  providers: [EventsService, EventOwnershipGuard],
+  providers: [EventsService, EventsCronService, EventOwnershipGuard],
   exports: [EventsService, TypeOrmModule],
 })
 export class EventsModule {}

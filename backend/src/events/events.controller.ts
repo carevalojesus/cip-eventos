@@ -33,6 +33,8 @@ import { UpdateSessionDto } from './dto/update-session.dto';
 import { CreateTicketDto } from './dto/create-ticket.dto';
 import { UpdateTicketDto } from './dto/update-ticket.dto';
 import { PaginationDto } from '../common/dto/pagination.dto';
+import { FileValidationPipe } from '../common/pipes/file-validation.pipe';
+import { FindEventsDto } from './dto/find-events.dto';
 
 @Controller('events')
 export class EventsController {
@@ -56,7 +58,8 @@ export class EventsController {
   @Post('with-image')
   @UseInterceptors(FileInterceptor('coverImage', { storage: memoryStorage() }))
   async createWithImage(
-    @UploadedFile() file: Express.Multer.File,
+    @UploadedFile(new FileValidationPipe({ required: false }))
+    file: Express.Multer.File,
     @Body('data') dataString: string,
     @CurrentUser() user: { userId: string; email: string; role: string },
   ) {
@@ -77,15 +80,6 @@ export class EventsController {
 
     // Si hay archivo, subirlo a S3/MinIO
     if (file) {
-      const allowedMimeTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/webp'];
-      if (!allowedMimeTypes.includes(file.mimetype)) {
-        throw new BadRequestException('Invalid image type. Allowed: PNG, JPG, WebP');
-      }
-
-      if (file.size > 5 * 1024 * 1024) {
-        throw new BadRequestException('Image size exceeds 5MB limit');
-      }
-
       const imageUrl = await this.uploadsService.uploadEventImage(
         file.buffer,
         file.originalname,
@@ -116,9 +110,15 @@ export class EventsController {
   }
 
   @Public()
+  @Get('locations')
+  getLocations() {
+    return this.eventsService.getLocations();
+  }
+
+  @Public()
   @Get()
-  findAll(@Query() paginationDto: PaginationDto) {
-    return this.eventsService.findAll(paginationDto);
+  findAll(@Query() filters: FindEventsDto) {
+    return this.eventsService.findAll(filters);
   }
 
   @Public()
@@ -146,7 +146,8 @@ export class EventsController {
   @UseInterceptors(FileInterceptor('coverImage', { storage: memoryStorage() }))
   async updateWithImage(
     @Param('id') id: string,
-    @UploadedFile() file: Express.Multer.File,
+    @UploadedFile(new FileValidationPipe({ required: false }))
+    file: Express.Multer.File,
     @Body('data') dataString: string,
   ) {
     if (!dataString) {
@@ -162,15 +163,6 @@ export class EventsController {
 
     // Si hay archivo, subirlo a S3/MinIO
     if (file) {
-      const allowedMimeTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/webp'];
-      if (!allowedMimeTypes.includes(file.mimetype)) {
-        throw new BadRequestException('Invalid image type. Allowed: PNG, JPG, WebP');
-      }
-
-      if (file.size > 5 * 1024 * 1024) {
-        throw new BadRequestException('Image size exceeds 5MB limit');
-      }
-
       const imageUrl = await this.uploadsService.uploadEventImage(
         file.buffer,
         file.originalname,
@@ -186,6 +178,12 @@ export class EventsController {
   @Patch(':id/publish')
   publish(@Param('id') id: string) {
     return this.eventsService.publish(id);
+  }
+
+  @UseGuards(EmailVerifiedGuard, EventOwnershipGuard)
+  @Get(':id/metrics')
+  getMetrics(@Param('id') id: string) {
+    return this.eventsService.getMetrics(id);
   }
 
   @UseGuards(EmailVerifiedGuard, EventOwnershipGuard)
@@ -286,7 +284,9 @@ export class EventsController {
     const attendees = await this.registrationsService.getEventAttendees(id);
 
     // Helper para escapar valores CSV y prevenir inyección
-    const escapeCsvValue = (value: string | number | null | undefined): string => {
+    const escapeCsvValue = (
+      value: string | number | null | undefined,
+    ): string => {
       if (value === null || value === undefined) return '';
       const stringValue = String(value);
       // Si contiene comas, comillas, saltos de línea o empieza con caracteres peligrosos

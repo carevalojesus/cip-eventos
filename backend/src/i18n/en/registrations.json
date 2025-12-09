@@ -11,5 +11,20 @@
   "registration_not_found": "Registration not found",
   "ticket_not_found_code": "Ticket not found",
   "already_checked_in": "Attendee {{name}} already checked in at {{time}}",
-  "check_in_success": "Check-in successful"
+  "check_in_success": "Check-in successful",
+  "invalid_coupon": "The coupon entered is not valid",
+  "reservation_expired": "Your reservation has expired. Please register again.",
+  "ticket_inactive": "Ticket is not active or has been cancelled",
+  "ticket_not_confirmed": "Ticket has not been confirmed. Current status: {{status}}",
+  "session_not_found": "Session not found",
+  "session_not_for_event": "Session does not belong to the ticket's event",
+  "session_not_started": "Session has not started yet. Starts at {{time}}",
+  "session_already_ended": "Session already ended at {{time}}",
+  "already_checked_in_session": "Already checked in to this session at {{time}}",
+  "check_in_session_success": "Check-in registered successfully",
+  "check_out_success": "Check-out registered successfully",
+  "not_checked_in": "No check-in recorded for this ticket",
+  "not_checked_in_session": "No check-in recorded for this session",
+  "already_checked_out": "Already checked out of this session at {{time}}",
+  "reentry_detected": "Reentry detected. Last entry: {{time}}"
 }

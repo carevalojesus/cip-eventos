@@ -20,6 +20,6 @@ import { WalletController } from './wallet.controller';
   ],
   providers: [WalletService],
   controllers: [WalletController],
-  exports: [WalletService] // Exportar para uso en otros módulos (ej: MailService)
+  exports: [WalletService], // Exportar para uso en otros módulos (ej: MailService)
 })
 export class WalletModule {}

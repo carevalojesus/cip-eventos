@@ -1,0 +1,119 @@
+{
+  "columns": {
+    "ticketCode": "Código de Ticket",
+    "attendeeName": "Nombre",
+    "attendeeEmail": "Email",
+    "attendeeDocument": "Documento",
+    "ticketType": "Tipo de Entrada",
+    "status": "Estado",
+    "origin": "Origen",
+    "finalPrice": "Precio Final",
+    "discountAmount": "Descuento",
+    "originalPrice": "Precio Original",
+    "attended": "Asistió",
+    "attendedAt": "Fecha de Asistencia",
+    "registeredAt": "Fecha de Registro",
+    "paymentStatus": "Estado de Pago",
+    "paymentProvider": "Método de Pago",
+    "sessionName": "Sesión",
+    "sessionDate": "Fecha de Sesión",
+    "totalRegistered": "Total Inscritos",
+    "present": "Presentes",
+    "absent": "Ausentes",
+    "partial": "Parciales",
+    "late": "Tardanzas",
+    "excused": "Justificados",
+    "inPerson": "Presencial",
+    "virtual": "Virtual",
+    "attendanceRate": "Tasa de Asistencia",
+    "provider": "Proveedor",
+    "count": "Cantidad",
+    "amount": "Monto",
+    "percentage": "Porcentaje",
+    "avgAmount": "Monto Promedio",
+    "revenue": "Recaudación",
+    "quantity": "Cantidad",
+    "finalGrade": "Nota Final",
+    "attendancePercentage": "Asistencia %",
+    "meetsAttendanceRequirement": "Cumple Asistencia",
+    "passed": "Aprobado",
+    "certificateIssued": "Certificado Emitido",
+    "enrolledAt": "Fecha de Inscripción",
+    "gradedAt": "Fecha de Calificación",
+    "modality": "Modalidad",
+    "checkInAt": "Hora de Entrada",
+    "checkOutAt": "Hora de Salida",
+    "minutesAttended": "Minutos Asistidos"
+  },
+  "messages": {
+    "report_generated": "Reporte generado exitosamente",
+    "export_completed": "Exportación completada",
+    "no_data_found": "No se encontraron datos para el reporte",
+    "error_generating_report": "Error al generar el reporte"
+  },
+  "statuses": {
+    "PENDING": "Pendiente",
+    "CONFIRMED": "Confirmado",
+    "CANCELLED": "Cancelado",
+    "ATTENDED": "Asistió",
+    "EXPIRED": "Expirado",
+    "ENROLLED": "Inscrito",
+    "IN_PROGRESS": "En Progreso",
+    "APPROVED": "Aprobado",
+    "FAILED": "Reprobado",
+    "WITHDRAWN": "Retirado",
+    "PRESENT": "Presente",
+    "ABSENT": "Ausente",
+    "PARTIAL": "Parcial",
+    "LATE": "Tarde",
+    "EXCUSED": "Justificado"
+  },
+  "origins": {
+    "PURCHASE": "Compra",
+    "COURTESY": "Cortesía",
+    "TRANSFER": "Transferencia"
+  },
+  "paymentProviders": {
+    "STRIPE": "Stripe",
+    "NIUBIZ": "Niubiz",
+    "PAYPAL": "PayPal",
+    "YAPE": "Yape",
+    "PLIN": "Plin",
+    "BANK_TRANSFER": "Transferencia Bancaria",
+    "CASH": "Efectivo",
+    "SIMULATED": "Simulado"
+  },
+  "scheduled": {
+    "types": {
+      "DAILY_REGISTRATIONS": "Inscripciones Diarias",
+      "DAILY_ATTENDANCE": "Asistencia Diaria",
+      "DAILY_REVENUE": "Ingresos Diarios",
+      "WEEKLY_SUMMARY": "Resumen Semanal",
+      "MONTHLY_SUMMARY": "Resumen Mensual",
+      "FINANCIAL_SUMMARY": "Resumen Financiero",
+      "CERTIFICATE_SUMMARY": "Resumen de Certificados",
+      "EVENT_FINAL_REPORT": "Reporte Final del Evento"
+    },
+    "frequencies": {
+      "DAILY": "Diario",
+      "WEEKLY": "Semanal",
+      "MONTHLY": "Mensual",
+      "ON_EVENT_END": "Al Finalizar Evento"
+    },
+    "formats": {
+      "CSV": "CSV",
+      "EXCEL": "Excel",
+      "PDF": "PDF"
+    },
+    "messages": {
+      "created": "Reporte programado creado exitosamente",
+      "updated": "Reporte programado actualizado exitosamente",
+      "deleted": "Reporte programado eliminado exitosamente",
+      "executed": "Reporte ejecutado y enviado exitosamente",
+      "not_found": "Reporte programado no encontrado",
+      "execution_failed": "Error al ejecutar el reporte programado",
+      "invalid_config": "Configuración inválida para la frecuencia seleccionada",
+      "deactivated_due_to_failures": "Reporte desactivado debido a múltiples fallos"
+    }
+  }
+}

@@ -1,5 +1,6 @@
 import {
   IsBoolean,
+  IsDateString,
   IsNotEmpty,
   IsNumber,
   IsOptional,
@@ -23,4 +24,25 @@ export class CreateTicketDto {
   @IsBoolean()
   @IsOptional()
   requiresCipValidation?: boolean;
+
+  @IsString()
+  @IsOptional()
+  description?: string;
+
+  @IsDateString()
+  @IsOptional()
+  salesStartAt?: Date;
+
+  @IsDateString()
+  @IsOptional()
+  salesEndAt?: Date;
+
+  @IsNumber()
+  @IsOptional()
+  @Min(1)
+  maxPerOrder?: number;
+
+  @IsBoolean()
+  @IsOptional()
+  isVisible?: boolean;
 }

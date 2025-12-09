@@ -139,9 +139,44 @@ CREATE USER cip_eventos_user WITH PASSWORD 'CipEv3nt0s_2025!S3cur3';
 GRANT ALL PRIVILEGES ON DATABASE cip_eventos TO cip_eventos_user;
 ```
 
-2. TypeORM creará automáticamente las tablas al iniciar la aplicación.
+2. TypeORM creará automáticamente las tablas al iniciar la aplicación (si `DB_SYNC=true`).
 
-### 5. Ejecutar la aplicación
+### 5. Gestionar migraciones de base de datos
+
+Las migraciones son la forma recomendada de gestionar cambios en el esquema de la base de datos en producción.
+
+#### Ver el estado de las migraciones
+
+```bash
+npm run migration:show
+```
+
+#### Generar una nueva migración (detecta cambios automáticamente)
+
+```bash
+npm run migration:generate -- -n NombreDeLaMigracion
+```
+
+Ejemplo:
+```bash
+npm run migration:generate -- -n AddEmailToUser
+```
+
+#### Ejecutar migraciones pendientes
+
+```bash
+npm run migration:run
+```
+
+#### Revertir la última migración
+
+```bash
+npm run migration:revert
+```
+
+Para más detalles sobre migraciones, consulta la [documentación completa de migraciones](src/database/migrations/README.md).
+
+### 6. Ejecutar la aplicación
 
 ```bash
 # Modo desarrollo

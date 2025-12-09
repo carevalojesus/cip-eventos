@@ -1,10 +1,10 @@
 ---
-import { LoginPage } from "@/components/auth/LoginPage";
-import Layout from "@/layouts/Layout.astro";
+import AuthLayout from '@/layouts/AuthLayout.astro'
+import LoginContainer from '@/components/auth/LoginContainer.astro'
 
 export const prerender = true;
 ---
 
-<Layout title="Iniciar Sesión - CIP Eventos">
-  <LoginPage client:only="react" />
-</Layout>
+<AuthLayout title="Iniciar Sesión - CIP Eventos">
+  <LoginContainer lang="es" />
+</AuthLayout>

@@ -16,7 +16,7 @@ import { Payment } from '../payments/entities/payment.entity';
     EventsModule,
     RegistrationsModule,
     PaymentsModule,
-    UsersModule
+    UsersModule,
   ],
   controllers: [DashboardController],
   providers: [DashboardService],

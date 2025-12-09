@@ -1,0 +1,19 @@
+{
+  "person_or_user_required": "Either personId or userId must be provided",
+  "not_found": "Consent record not found",
+  "already_revoked": "This consent has already been revoked",
+  "recorded_successfully": "Consent recorded successfully",
+  "bulk_recorded_successfully": "{{count}} consent(s) recorded successfully",
+  "revoked_successfully": "Consent revoked successfully",
+  "bulk_revoked_successfully": "{{count}} consent(s) revoked successfully",
+  "all_required_present": "All required consents are present",
+  "missing_required": "{{count}} required consent(s) are missing",
+  "invalid_consent_type": "Invalid consent type",
+  "consent_already_exists": "A valid consent of this type already exists",
+  "terms_and_conditions": "Terms and Conditions",
+  "privacy_policy": "Privacy Policy",
+  "marketing": "Marketing Communications",
+  "data_processing": "Data Processing",
+  "version_mismatch": "The accepted version ({{acceptedVersion}}) differs from the current version ({{currentVersion}}). Please review and accept the updated terms.",
+  "required_for_registration": "Acceptance of Terms and Conditions and Privacy Policy is required for registration"
+}

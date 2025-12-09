@@ -18,6 +18,8 @@ import { v4 as uuidv4 } from 'uuid';
 import { MailService } from 'src/mail/mail.service';
 import { User } from 'src/users/entities/user.entity';
 import { RedisService } from 'src/redis/redis.service';
+import { ConsentService } from 'src/common/services/consent.service';
+import { ConsentType } from 'src/common/enums/consent-type.enum';
 
 @Injectable()
 export class AuthService {
@@ -28,9 +30,13 @@ export class AuthService {
     private readonly mailService: MailService,
     private readonly i18n: I18nService,
     private readonly redisService: RedisService,
+    private readonly consentService: ConsentService,
   ) {}
 
-  async login(loginDto: LoginAuthDto, metadata?: { userAgent?: string; ip?: string }) {
+  async login(
+    loginDto: LoginAuthDto,
+    metadata?: { userAgent?: string; ip?: string },
+  ) {
     const { email, password } = loginDto;
     const user = await this.usersService.findOneByEmail(email);
 
@@ -64,8 +70,12 @@ export class AuthService {
     );
     await this.updateRefreshToken(user.id, tokens.refresh_token);
 
+    // Actualizar último acceso
+    await this.usersService.updateLastLogin(user.id);
+
     // Registrar sesión activa
-    const refreshExpires = this.configService.get<string>('JWT_REFRESH_EXPIRES_IN') ?? '7d';
+    const refreshExpires =
+      this.configService.get<string>('JWT_REFRESH_EXPIRES_IN') ?? '7d';
     const expiresMs = this.parseExpiresIn(refreshExpires);
     await this.redisService.registerActiveSession(user.id, tokens.sessionId, {
       userAgent: metadata?.userAgent,
@@ -94,15 +104,32 @@ export class AuthService {
     const unit = match[2];
 
     switch (unit) {
-      case 's': return value * 1000;
-      case 'm': return value * 60 * 1000;
-      case 'h': return value * 60 * 60 * 1000;
-      case 'd': return value * 24 * 60 * 60 * 1000;
-      default: return 7 * 24 * 60 * 60 * 1000;
+      case 's':
+        return value * 1000;
+      case 'm':
+        return value * 60 * 1000;
+      case 'h':
+        return value * 60 * 60 * 1000;
+      case 'd':
+        return value * 24 * 60 * 60 * 1000;
+      default:
+        return 7 * 24 * 60 * 60 * 1000;
     }
   }
 
-  async register(registerDto: RegisterAuthDto) {
+  async register(
+    registerDto: RegisterAuthDto,
+    metadata?: { userAgent?: string; ip?: string },
+  ) {
+    // Validar que los consentimientos obligatorios estén aceptados
+    if (!registerDto.acceptTerms || !registerDto.acceptPrivacy) {
+      throw new BadRequestException(
+        this.i18n.t('consent.required_for_registration', {
+          lang: I18nContext.current()?.lang,
+        }),
+      );
+    }
+
     const role = await this.usersService.findRoleByName('USER');
     if (!role)
       throw new BadRequestException(
@@ -112,7 +139,8 @@ export class AuthService {
       );
 
     const newUser = await this.usersService.create({
-      ...registerDto,
+      email: registerDto.email,
+      password: registerDto.password,
       roleId: role.id,
     });
 
@@ -127,6 +155,76 @@ export class AuthService {
       hashedVerificationToken,
       expires,
     );
+
+    // Registrar consentimientos
+    const consents: Array<{
+      consentType: ConsentType;
+      documentVersion: string;
+      metadata?: Record<string, any>;
+    }> = [];
+
+    // Términos y Condiciones (obligatorio)
+    if (registerDto.acceptTerms) {
+      consents.push({
+        consentType: ConsentType.TERMS_AND_CONDITIONS,
+        documentVersion:
+          registerDto.termsVersion ||
+          this.consentService.getCurrentDocumentVersion(
+            ConsentType.TERMS_AND_CONDITIONS,
+          ),
+        metadata: { source: 'registration', userId: newUser.id },
+      });
+    }
+
+    // Política de Privacidad (obligatorio)
+    if (registerDto.acceptPrivacy) {
+      consents.push({
+        consentType: ConsentType.PRIVACY_POLICY,
+        documentVersion:
+          registerDto.privacyVersion ||
+          this.consentService.getCurrentDocumentVersion(
+            ConsentType.PRIVACY_POLICY,
+          ),
+        metadata: { source: 'registration', userId: newUser.id },
+      });
+    }
+
+    // Marketing (opcional)
+    if (registerDto.acceptMarketing) {
+      consents.push({
+        consentType: ConsentType.MARKETING,
+        documentVersion:
+          this.consentService.getCurrentDocumentVersion(ConsentType.MARKETING),
+        metadata: { source: 'registration', userId: newUser.id },
+      });
+    }
+
+    // Procesamiento de Datos (opcional)
+    if (registerDto.acceptDataProcessing) {
+      consents.push({
+        consentType: ConsentType.DATA_PROCESSING,
+        documentVersion: this.consentService.getCurrentDocumentVersion(
+          ConsentType.DATA_PROCESSING,
+        ),
+        metadata: { source: 'registration', userId: newUser.id },
+      });
+    }
+
+    // Registrar todos los consentimientos en bulk
+    if (consents.length > 0) {
+      try {
+        await this.consentService.recordBulkConsents(
+          undefined, // personId
+          newUser.id, // userId
+          consents,
+          metadata?.ip,
+          metadata?.userAgent,
+        );
+      } catch (error) {
+        // Log error pero no fallar el registro
+        console.error('Error recording consents during registration:', error);
+      }
+    }
 
     await this.mailService.sendUserWelcome(
       newUser.email,
@@ -246,7 +344,11 @@ export class AuthService {
     await this.redisService.invalidateUserSessions(userId);
   }
 
-  async refreshTokens(userId: string, refreshToken: string) {
+  async refreshTokens(
+    userId: string,
+    refreshToken: string,
+    metadata?: { userAgent?: string; ip?: string },
+  ) {
     let user: User | null = null;
     try {
       user = await this.usersService.findOne(userId);
@@ -300,6 +402,17 @@ export class AuthService {
     );
     await this.updateRefreshToken(user.id, tokens.refresh_token);
 
+    // Registrar nueva sesión (refresh también emite sid nuevo)
+    const refreshExpires =
+      this.configService.get<string>('JWT_REFRESH_EXPIRES_IN') ?? '7d';
+    const expiresMs = this.parseExpiresIn(refreshExpires);
+    await this.redisService.registerActiveSession(user.id, tokens.sessionId, {
+      userAgent: metadata?.userAgent,
+      ip: metadata?.ip,
+      createdAt: Date.now(),
+      expiresAt: Date.now() + expiresMs,
+    });
+
     return tokens;
   }
 
@@ -322,8 +435,22 @@ export class AuthService {
     const accessJti = uuidv4();
     const refreshJti = uuidv4();
 
-    const accessPayload = { sub: userId, email, role, isVerified, jti: accessJti, sid: sessionId };
-    const refreshPayload = { sub: userId, email, role, isVerified, jti: refreshJti, sid: sessionId };
+    const accessPayload = {
+      sub: userId,
+      email,
+      role,
+      isVerified,
+      jti: accessJti,
+      sid: sessionId,
+    };
+    const refreshPayload = {
+      sub: userId,
+      email,
+      role,
+      isVerified,
+      jti: refreshJti,
+      sid: sessionId,
+    };
 
     const accessSecret = this.configService.get<string>('JWT_SECRET');
     const accessExpires =
@@ -356,7 +483,7 @@ export class AuthService {
    */
   async getActiveSessions(userId: string, currentSessionId?: string) {
     const sessions = await this.redisService.getActiveSessions(userId);
-    return sessions.map(session => ({
+    return sessions.map((session) => ({
       ...session,
       isCurrent: session.sessionId === currentSessionId,
     }));
@@ -373,9 +500,10 @@ export class AuthService {
    * Revocar todas las demás sesiones
    */
   async revokeOtherSessions(userId: string, currentSessionId: string) {
-    const removedCount = await this.redisService.removeOtherSessions(userId, currentSessionId);
-    // Invalidar todas las sesiones para forzar re-login
-    await this.redisService.invalidateUserSessions(userId);
+    const removedCount = await this.redisService.removeOtherSessions(
+      userId,
+      currentSessionId,
+    );
     return { removedCount };
   }
 
@@ -427,11 +555,77 @@ export class AuthService {
       );
     }
 
+    // Consumir el token inmediatamente para evitar reuso concurrente
     const hashedPassword = await bcrypt.hash(newPassword, 10);
     await this.usersService.updatePassword(user.id, hashedPassword);
+    // Garantizar que el token quede invalidado (en caso de que updatePassword se modifique a futuro)
+    await this.usersService.consumeResetPasswordToken(user.id);
 
     return {
       message: this.i18n.t('auth.password_updated_success', {
+        lang: I18nContext.current()?.lang,
+      }),
+    };
+  }
+
+  /**
+   * Admin-initiated password reset - sends a reset email to the user
+   */
+  async adminInitiatedPasswordReset(email: string) {
+    const user = await this.usersService.findOneByEmail(email);
+
+    if (!user) {
+      throw new NotFoundException(
+        this.i18n.t('users.user_not_found_email', {
+          lang: I18nContext.current()?.lang,
+          args: { email },
+        }),
+      );
+    }
+
+    const token = uuidv4();
+    const hashedToken = this.hashToken(token);
+    const expires = new Date();
+    expires.setHours(expires.getHours() + 24); // 24 hours for admin-initiated
+    await this.usersService.setResetPasswordData(user.id, hashedToken, expires);
+
+    await this.mailService.sendPasswordReset(user.email, user.email, token);
+
+    return {
+      message: this.i18n.t('auth.password_reset_email_sent', {
+        lang: I18nContext.current()?.lang,
+      }),
+    };
+  }
+
+  /**
+   * Admin sets a new password for a user directly
+   */
+  async adminSetPassword(email: string, newPassword: string) {
+    const user = await this.usersService.findOneByEmail(email);
+
+    if (!user) {
+      throw new NotFoundException(
+        this.i18n.t('users.user_not_found_email', {
+          lang: I18nContext.current()?.lang,
+          args: { email },
+        }),
+      );
+    }
+
+    // Hash and update password
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    await this.usersService.updatePassword(user.id, hashedPassword);
+
+    // Clear any existing reset tokens
+    await this.usersService.consumeResetPasswordToken(user.id);
+
+    // Send email with new password
+    const userName = user.profile?.firstName || user.email;
+    await this.mailService.sendAdminResetPassword(user.email, userName, newPassword);
+
+    return {
+      message: this.i18n.t('auth.password_set_success', {
         lang: I18nContext.current()?.lang,
       }),
     };

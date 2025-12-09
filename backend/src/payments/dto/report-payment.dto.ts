@@ -16,9 +16,12 @@ export class ReportPaymentDto {
 
   @IsString()
   @IsNotEmpty()
-  @Length(4, 30, { message: 'El código de operación debe tener entre 4 y 30 caracteres' })
+  @Length(4, 30, {
+    message: 'El código de operación debe tener entre 4 y 30 caracteres',
+  })
   @Matches(/^[A-Za-z0-9\-_]+$/, {
-    message: 'El código de operación solo puede contener letras, números, guiones y guiones bajos',
+    message:
+      'El código de operación solo puede contener letras, números, guiones y guiones bajos',
   })
   operationCode: string; // "123456"
 

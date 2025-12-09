@@ -8,15 +8,13 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   Index,
+  ManyToOne,
 } from 'typeorm';
 import { Registration } from '../../registrations/entities/registration.entity';
 import { User } from '../../users/entities/user.entity';
-
-export enum DocumentType {
-  DNI = 'DNI',
-  CE = 'CE', // Carné de Extranjería
-  PASSPORT = 'PASSPORT', // Pasaporte
-}
+import { Person } from '../../persons/entities/person.entity';
+import { DocumentType } from '../../common/enums/document-type.enum';
+export { DocumentType };
 
 @Entity('attendees')
 @Index(['documentType', 'documentNumber'], { unique: true })
@@ -36,6 +34,7 @@ export class Attendee {
   @Column({
     type: 'enum',
     enum: DocumentType,
+    enumName: 'document_type_enum',
     default: DocumentType.DNI,
   })
   documentType: DocumentType;
@@ -48,6 +47,12 @@ export class Attendee {
 
   @Column({ type: 'text', nullable: true })
   phone: string;
+
+  // Vinculación con la entidad Persona (modelo unificado de identidad)
+  // Cada attendee DEBE tener una persona asociada
+  @ManyToOne(() => Person, { nullable: false })
+  @JoinColumn({ name: 'personId' })
+  person: Person;
 
   @OneToOne(() => User, { nullable: true })
   @JoinColumn()

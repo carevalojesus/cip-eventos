@@ -1,0 +1,14 @@
+{
+  "event_not_found": "Evento no encontrado",
+  "event_cancelled": "No se puede otorgar cortesía a un evento cancelado",
+  "person_required": "Debe proporcionar un ID de persona o datos para crear una nueva persona",
+  "already_granted": "Ya existe una cortesía activa para esta persona en este evento",
+  "blocks_required": "Debe especificar al menos un bloque para cortesías de bloques específicos",
+  "invalid_blocks": "Uno o más bloques especificados no son válidos o no pertenecen al evento",
+  "speaker_not_found": "Ponente no encontrado",
+  "not_found": "Cortesía no encontrada",
+  "not_active": "La cortesía no está activa",
+  "no_speakers": "El evento no tiene ponentes registrados",
+  "granted_successfully": "Cortesía otorgada exitosamente",
+  "cancelled_successfully": "Cortesía cancelada exitosamente"
+}

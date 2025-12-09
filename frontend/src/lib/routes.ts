@@ -8,6 +8,9 @@ export const routes = {
   es: {
     home: '/',
     login: '/iniciar-sesion',
+    forgotPassword: '/recuperar-contrasena',
+    confirmEmail: '/auth/confirm',
+    resetPassword: '/auth/restablecer-contrasena',
     events: '/eventos',
     eventsNew: '/eventos/nuevo',
     eventsManage: (id: string) => `/eventos/${id}`,
@@ -16,6 +19,9 @@ export const routes = {
   en: {
     home: '/en',
     login: '/en/login',
+    forgotPassword: '/en/forgot-password',
+    confirmEmail: '/en/auth/confirm',
+    resetPassword: '/en/auth/reset-password',
     events: '/en/events',
     eventsNew: '/en/events/new',
     eventsManage: (id: string) => `/en/events/${id}`,

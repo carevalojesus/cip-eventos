@@ -74,6 +74,14 @@ class EnvironmentVariables {
   @IsString()
   FRONTEND_RESET_PATH?: string;
 
+  @IsOptional()
+  @IsString()
+  COOKIE_DOMAIN?: string;
+
+  @IsOptional()
+  @IsString()
+  COOKIE_SAMESITE?: string;
+
   // --- Mail Configuration ---
   @IsString()
   @IsNotEmpty()

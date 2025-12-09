@@ -34,6 +34,20 @@ import { DashboardModule } from './dashboard/dashboard.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { RedisModule } from './redis/redis.module';
 import { QueueModule } from './queue/queue.module';
+import { SeedModule } from './database/seeds/seed.module';
+import { CouponsModule } from './coupons/coupons.module';
+import { FiscalDocumentsModule } from './fiscal-documents/fiscal-documents.module';
+import { RefundsModule } from './refunds/refunds.module';
+import { EvaluationsModule } from './evaluations/evaluations.module';
+import { PersonsModule } from './persons/persons.module';
+import { WaitlistModule } from './waitlist/waitlist.module';
+import { TicketTransfersModule } from './ticket-transfers/ticket-transfers.module';
+import { PurchaseOrdersModule } from './purchase-orders/purchase-orders.module';
+import { AuditModule } from './audit/audit.module';
+import { CourtesiesModule } from './courtesies/courtesies.module';
+import { MessagingModule } from './messaging/messaging.module';
+import { ReniecModule } from './reniec/reniec.module';
+import { ReportsModule } from './reports/reports.module';
 
 @Module({
   imports: [
@@ -45,10 +59,6 @@ import { QueueModule } from './queue/queue.module';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => {
-        const isProd = configService.get<string>('NODE_ENV') === 'production';
-        const synchronize =
-          !isProd && (configService.get<boolean>('DB_SYNC') ?? false);
-
         return {
           type: 'postgres',
           host: configService.get<string>('DB_HOST'),
@@ -57,7 +67,7 @@ import { QueueModule } from './queue/queue.module';
           password: configService.get<string>('DB_PASSWORD'),
           database: configService.get<string>('DB_NAME'),
           autoLoadEntities: true,
-          synchronize,
+          synchronize: false, // Desactivado - usar migraciones en su lugar
         };
       },
     }),
@@ -100,12 +110,24 @@ import { QueueModule } from './queue/queue.module';
         };
       },
     }),
+    // Módulos de infraestructura (primero)
     RolesModule,
     UsersModule,
     AuthModule,
     MailModule,
+    MessagingModule,
     ProfilesModule,
     UploadsModule,
+    CommonModule,
+    ScheduleModule.forRoot(),
+    RedisModule,
+    QueueModule,
+    SeedModule,
+
+    // Módulo de Auditoría (Global - debe estar antes de módulos que lo usen)
+    AuditModule,
+
+    // Módulos de negocio
     EventsModule,
     SpeakersModule,
     OrganizersModule,
@@ -115,14 +137,21 @@ import { QueueModule } from './queue/queue.module';
     SignersModule,
     CertificatesModule,
     PdfModule,
-    CommonModule,
-    ScheduleModule.forRoot(),
     WalletModule,
     CipIntegrationModule,
     DashboardModule,
     NotificationsModule,
-    RedisModule,
-    QueueModule,
+    CouponsModule,
+    FiscalDocumentsModule,
+    RefundsModule,
+    EvaluationsModule,
+    PersonsModule,
+    WaitlistModule,
+    TicketTransfersModule,
+    PurchaseOrdersModule,
+    CourtesiesModule,
+    ReniecModule,
+    ReportsModule,
 
     I18nModule.forRoot({
       fallbackLanguage: 'es',

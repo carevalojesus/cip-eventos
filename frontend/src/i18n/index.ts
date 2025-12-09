@@ -15,6 +15,7 @@ const resources = {
   },
 };
 
+// Inicialización síncrona para evitar race conditions con React
 i18n
   .use(LanguageDetector) // Detecta idioma del navegador
   .use(initReactI18next) // Pasa la instancia a React
@@ -28,6 +29,11 @@ i18n
     },
     interpolation: {
       escapeValue: false, // React ya protege contra XSS
+    },
+    // Configuración para inicialización síncrona
+    initImmediate: false, // No usar setTimeout para init
+    react: {
+      useSuspense: false, // Desactivar Suspense para evitar flash de claves
     },
   });
 

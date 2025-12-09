@@ -1,0 +1,22 @@
+{
+  "buyer_not_found": "Comprador no encontrado",
+  "ticket_not_found": "Entrada {ticketId} no encontrada",
+  "event_not_available": "El evento no está disponible para inscripciones",
+  "exceeds_max_per_order": "La cantidad excede el máximo permitido por pedido ({max})",
+  "insufficient_stock": "Stock insuficiente. Solo hay {available} entradas disponibles",
+  "attendee_count_mismatch": "El número de asistentes debe coincidir con la cantidad",
+  "already_registered": "{name} ya está registrado para este evento",
+  "invalid_cip_code": "Código CIP inválido",
+  "cip_required": "Se requiere código CIP para este tipo de entrada",
+  "not_habilitated": "El colegiado no está habilitado",
+  "invalid_coupon": "Cupón inválido o expirado",
+  "created": "Pedido de compra creado exitosamente",
+  "not_found": "Pedido de compra no encontrado",
+  "cannot_expire": "No se puede expirar un pedido que no está pendiente",
+  "cannot_cancel": "No se puede cancelar un pedido que no está pendiente",
+  "expired": "El pedido de compra ha expirado",
+  "cancelled": "El pedido de compra ha sido cancelado",
+  "attempt_not_found": "Intento de pago no encontrado",
+  "ip_limit_exceeded": "Has excedido el límite de {limit} pedidos pendientes por IP. Por favor, completa o cancela tus pedidos existentes antes de crear uno nuevo.",
+  "person_limit_exceeded": "Has excedido el límite de {limit} pedidos pendientes. Por favor, completa o cancela tus pedidos existentes antes de crear uno nuevo."
+}

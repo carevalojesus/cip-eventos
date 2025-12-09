@@ -1,0 +1,16 @@
+{
+  "not_found": "Cupón no encontrado",
+  "code_already_exists": "Ya existe un cupón con ese código",
+  "event_not_found": "Evento no encontrado",
+  "ticket_not_found": "Tipo de entrada no encontrado",
+  "inactive": "Este cupón está inactivo",
+  "not_yet_valid": "Este cupón aún no está vigente",
+  "expired": "Este cupón ha expirado",
+  "wrong_event": "Este cupón no es válido para este evento",
+  "wrong_ticket": "Este cupón no es válido para este tipo de entrada",
+  "min_purchase_not_met": "El monto mínimo de compra para este cupón es S/ {amount}",
+  "max_uses_reached": "Este cupón ha alcanzado su límite de usos",
+  "max_uses_per_person": "Ya has usado este cupón el máximo de veces permitido",
+  "cip_required": "Este cupón requiere código CIP válido",
+  "cip_not_valid": "Tu código CIP no es válido o no estás habilitado"
+}

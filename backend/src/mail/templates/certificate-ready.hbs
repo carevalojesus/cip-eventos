@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+    .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center; border-radius: 8px 8px 0 0; }
+    .content { background: #fff; padding: 30px; border: 1px solid #e0e0e0; border-top: none; }
+    .certificate-box { background: #f8f9fa; padding: 30px; border-radius: 8px; margin: 20px 0; text-align: center; border: 2px dashed #667eea; }
+    .validation-code { font-size: 20px; font-weight: bold; color: #667eea; letter-spacing: 3px; margin: 20px 0; }
+    .btn { display: inline-block; background: #667eea; color: white; padding: 15px 40px; text-decoration: none; border-radius: 8px; margin: 20px 0; font-weight: bold; }
+    .info { background: #e7f3ff; padding: 15px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #667eea; }
+    .footer { text-align: center; padding: 20px; color: #666; font-size: 12px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🎓 ¡Tu Certificado Está Listo!</h1>
+    </div>
+    <div class="content">
+      <p>Hola <strong>{{name}}</strong>,</p>
+
+      <p>¡Felicitaciones! Tu certificado de {{certificateType}} para el evento <strong>{{eventTitle}}</strong> ha sido generado y está disponible para descarga.</p>
+
+      <div class="certificate-box">
+        <h3>Detalles del Certificado</h3>
+        <p><strong>Evento:</strong> {{eventTitle}}</p>
+        <p><strong>Tipo:</strong> {{certificateType}}</p>
+        {{#if hours}}
+        <p><strong>Horas académicas:</strong> {{hours}}</p>
+        {{/if}}
+        <p><strong>Fecha de emisión:</strong> {{issuedAt}}</p>
+
+        <div class="validation-code">
+          Código de validación:<br>
+          {{validationCode}}
+        </div>
+
+        <a href="{{downloadUrl}}" class="btn">Descargar Certificado</a>
+      </div>
+
+      <div class="info">
+        <p><strong>💡 Información importante:</strong></p>
+        <ul style="text-align: left; margin: 10px 0;">
+          <li>El certificado está en formato PDF</li>
+          <li>Puedes verificar su autenticidad usando el código de validación</li>
+          <li>El certificado tiene validez permanente</li>
+          <li>Puedes descargarlo cuantas veces necesites</li>
+        </ul>
+      </div>
+
+      <p>¡Gracias por participar en nuestro evento!</p>
+
+      <p>Saludos,<br>
+      <strong>Equipo CIP Eventos</strong></p>
+    </div>
+    <div class="footer">
+      <p>Este es un correo automático, por favor no responder.</p>
+      <p>&copy; 2024 CIP Eventos. Todos los derechos reservados.</p>
+    </div>
+  </div>
+</body>
+</html>
