@@ -19,11 +19,11 @@ export const ActivityItem = React.memo<ActivityItemProps>(({
 }) => {
   return (
     <div className="flex flex-col space-y-1 py-3">
-      <p className="text-sm text-gray-900">
+      <p className="text-sm text-grey-900">
         <span className="font-medium">{user}</span> {action}{" "}
         {target && <span className="font-medium">{target}</span>}
       </p>
-      <p className="text-xs text-gray-500">{timestamp}</p>
+      <p className="text-xs text-grey-500">{timestamp}</p>
     </div>
   );
 });

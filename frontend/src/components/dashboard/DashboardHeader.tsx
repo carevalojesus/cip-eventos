@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { Bell, Menu, LogOut, User as UserIcon, ArrowLeft } from "lucide-react";
+import { Bell, List, SignOut, User as UserIcon, ArrowLeft } from "@phosphor-icons/react";
 import { useAuthStore } from "@/store/auth.store";
 import api from "@/lib/api";
 import { ASSETS_URL } from "@/constants/auth";
@@ -126,7 +126,7 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
             className="rui-menu-toggle"
             aria-label="Open menu"
           >
-            <Menu className="h-5 w-5" />
+            <List size={20} />
           </Button>
         )}
 
@@ -143,7 +143,7 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
                     onClick={() => onNavigate?.(crumb.href!)}
                     className="flex items-center gap-1 hover:text-foreground transition-colors"
                   >
-                    {index === 0 && <ArrowLeft className="h-4 w-4" />}
+                    {index === 0 && <ArrowLeft size={16} />}
                     {crumb.label}
                   </button>
                 ) : (
@@ -167,7 +167,7 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
       <div className="rui-navbar-content">
         {/* Notifications Button */}
         <button className="rui-notification-button" aria-label="Notificaciones">
-          <Bell className="h-5 w-5" />
+          <Bell size={20} />
           {hasNotifications && <span className="rui-notification-badge" />}
         </button>
 
@@ -216,7 +216,7 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
 
             <DropdownMenuItem asChild>
               <a href="/dashboard/profile" className="cursor-pointer">
-                <UserIcon className="mr-2 h-4 w-4" />
+                <UserIcon size={16} className="mr-2" />
                 Mi Perfil
               </a>
             </DropdownMenuItem>
@@ -227,7 +227,7 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
               onClick={handleLogout}
               className="text-destructive focus:text-destructive cursor-pointer"
             >
-              <LogOut className="mr-2 h-4 w-4" />
+              <SignOut size={16} className="mr-2" />
               Cerrar Sesión
             </DropdownMenuItem>
           </DropdownMenuContent>

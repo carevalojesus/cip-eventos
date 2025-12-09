@@ -1,5 +1,5 @@
 export { Button } from "../rui-button";
-export { Checkbox } from "./Checkbox";
+export { Checkbox } from "../rui-checkbox";
 export { EmptyState } from "./EmptyState";
 export { PageHeader } from "./PageHeader";
 export { Pagination } from "./Pagination";

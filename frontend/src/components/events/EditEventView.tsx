@@ -53,7 +53,7 @@ import { logger } from "@/utils/logger";
 import { requiresLocation, requiresVirtualAccess } from "@/constants/modalities";
 import { getCurrentLocale, routes } from "@/lib/routes";
 import { createEventSchema, type CreateEventFormValues } from "@/hooks/useCreateEvent";
-import type { Breadcrumb } from "@/components/dashboard/DashboardApp";
+import type { Breadcrumb } from "@/types/breadcrumb";
 import type { Event, EventType, EventCategory, EventModality } from "@/types/event";
 
 interface EditEventViewProps {

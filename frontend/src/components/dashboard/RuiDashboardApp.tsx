@@ -13,7 +13,7 @@ import { queryClient } from "@/lib/queryClient";
 import { getCurrentLocale, routes } from "@/lib/routes";
 import { Toaster } from "@/components/ui/sonner";
 import { AppLayout } from "@/components/layout";
-import type { Breadcrumb } from "./DashboardApp";
+import type { Breadcrumb } from "@/types/breadcrumb";
 import { useTranslation } from "react-i18next";
 import { UserRole } from "@/constants/roles";
 import { getDefaultNavForRole, canAccessNav } from "@/config/navigation";
@@ -23,9 +23,9 @@ const SectionPlaceholder: React.FC<{ title: string; description?: string; defaul
   description,
   defaultDescription = "Próximamente podrás gestionar esta sección desde aquí.",
 }) => (
-  <div className="rounded-xl border border-dashed border-gray-200 bg-white p-8 text-center shadow-sm">
-    <h2 className="text-xl font-semibold text-gray-900">{title}</h2>
-    <p className="mt-2 text-sm text-gray-500">{description || defaultDescription}</p>
+  <div className="rounded-xl border border-dashed border-grey-200 bg-white p-8 text-center shadow-sm">
+    <h2 className="text-xl font-semibold text-grey-900">{title}</h2>
+    <p className="mt-2 text-sm text-grey-500">{description || defaultDescription}</p>
   </div>
 );
 
