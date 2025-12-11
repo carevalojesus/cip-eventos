@@ -422,8 +422,8 @@ export const RuiDashboardApp: React.FC<RuiDashboardAppProps> = ({
                 />
             );
         }
-        // Mi Perfil
-        if (matchesRoute(["/mi-perfil", "/en/my-profile"])) {
+        // Perfil
+        if (matchesRoute(["/perfil", "/en/profile"])) {
             return <ProfileView />;
         }
         return (
