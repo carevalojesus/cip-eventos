@@ -530,3 +530,16 @@ input, textarea, select {
   font-family: inherit;
 }
 
+
+/* ============================================
+   FORM SELECT DROPDOWN - Fix z-index for modals/drawers
+   ============================================ */
+.form-select-dropdown {
+  z-index: 99999 !important;
+}
+
+[data-headlessui-state] .form-select-dropdown,
+[data-headlessui-portal] .form-select-dropdown {
+  z-index: 99999 !important;
+}
+

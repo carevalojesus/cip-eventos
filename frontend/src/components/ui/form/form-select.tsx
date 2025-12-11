@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect, useCallback } from "react";
 import {
   Listbox,
   ListboxButton,
@@ -23,6 +23,119 @@ interface FormSelectProps {
   disabled?: boolean;
 }
 
+// Componente interno para manejar el dropdown con position tracking
+const DropdownOptions: React.FC<{
+  options: FormSelectOption[];
+  containerRef: React.RefObject<HTMLDivElement>;
+  isOpen: boolean;
+}> = ({ options, containerRef, isOpen }) => {
+  const [position, setPosition] = useState({ top: 0, left: 0, width: 0 });
+
+  const updatePosition = useCallback(() => {
+    if (containerRef.current) {
+      const rect = containerRef.current.getBoundingClientRect();
+      setPosition({
+        top: rect.bottom + 4,
+        left: rect.left,
+        width: rect.width,
+      });
+    }
+  }, [containerRef]);
+
+  useEffect(() => {
+    if (isOpen) {
+      updatePosition();
+      window.addEventListener("scroll", updatePosition, true);
+      window.addEventListener("resize", updatePosition);
+      return () => {
+        window.removeEventListener("scroll", updatePosition, true);
+        window.removeEventListener("resize", updatePosition);
+      };
+    }
+  }, [isOpen, updatePosition]);
+
+  const dropdownStyle: React.CSSProperties = {
+    position: "fixed",
+    top: position.top,
+    left: position.left,
+    width: position.width || 200,
+    maxHeight: "240px",
+    overflowY: "auto",
+    backgroundColor: "var(--color-white)",
+    border: "1px solid var(--color-grey-300)",
+    borderRadius: "var(--radius-md)",
+    boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
+    padding: "var(--space-1)",
+    outline: "none",
+  };
+
+  const getOptionStyle = (
+    isSelected: boolean,
+    isFocused: boolean
+  ): React.CSSProperties => ({
+    padding: "10px var(--space-3)",
+    fontSize: "var(--font-size-sm)",
+    color: isSelected ? "var(--color-grey-900)" : "var(--color-grey-700)",
+    fontWeight: isSelected ? 500 : 400,
+    borderRadius: "var(--radius-sm)",
+    cursor: "pointer",
+    display: "flex",
+    alignItems: "center",
+    gap: "var(--space-2)",
+    backgroundColor: isFocused ? "var(--color-grey-100)" : "transparent",
+    transition: "background-color 100ms ease",
+    listStyle: "none",
+  });
+
+  return (
+    <ListboxOptions
+      modal={false}
+      className="form-select-dropdown"
+      style={dropdownStyle}
+    >
+      {options.map((option) => (
+        <ListboxOption
+          key={option.value}
+          value={option.value}
+          as={React.Fragment}
+        >
+          {({ selected, focus }) => (
+            <li style={getOptionStyle(selected, focus)}>
+              <span
+                style={{
+                  width: "16px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  flexShrink: 0,
+                }}
+              >
+                {selected && (
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="var(--color-red-600)"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                )}
+              </span>
+              <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                {option.label}
+              </span>
+            </li>
+          )}
+        </ListboxOption>
+      ))}
+    </ListboxOptions>
+  );
+};
+
 export const FormSelect: React.FC<FormSelectProps> = ({
   label,
   value,
@@ -34,7 +147,7 @@ export const FormSelect: React.FC<FormSelectProps> = ({
   required,
   disabled = false,
 }) => {
-  const buttonRef = useRef<HTMLButtonElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const [isHovered, setIsHovered] = useState(false);
 
   const selectedOption = options.find((opt) => opt.value === value);
@@ -100,24 +213,6 @@ export const FormSelect: React.FC<FormSelectProps> = ({
     flexShrink: 0,
   };
 
-  const getOptionStyle = (
-    isSelected: boolean,
-    isFocused: boolean
-  ): React.CSSProperties => ({
-    padding: "10px var(--space-3)",
-    fontSize: "var(--font-size-sm)",
-    color: isSelected ? "var(--color-grey-900)" : "var(--color-grey-700)",
-    fontWeight: isSelected ? 500 : 400,
-    borderRadius: "var(--radius-sm)",
-    cursor: "pointer",
-    display: "flex",
-    alignItems: "center",
-    gap: "var(--space-2)",
-    backgroundColor: isFocused ? "var(--color-grey-100)" : "transparent",
-    transition: "background-color 100ms ease",
-    listStyle: "none",
-  });
-
   const hintStyle: React.CSSProperties = {
     fontSize: "var(--font-size-xs)",
     color: error ? "var(--color-red-600)" : "var(--color-grey-500)",
@@ -135,11 +230,12 @@ export const FormSelect: React.FC<FormSelectProps> = ({
       <Listbox value={value} onChange={onChange} disabled={disabled}>
         {({ open }) => (
           <div
+            ref={containerRef}
             style={{ position: "relative" }}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
           >
-            <ListboxButton ref={buttonRef} style={getButtonStyle(open)}>
+            <ListboxButton style={getButtonStyle(open)}>
               <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                 {displayLabel}
               </span>
@@ -163,64 +259,11 @@ export const FormSelect: React.FC<FormSelectProps> = ({
               </span>
             </ListboxButton>
 
-            <ListboxOptions
-              modal={false}
-              anchor="bottom start"
-              className="form-select-dropdown"
-              style={{
-                zIndex: 99999,
-                width: "var(--button-width)",
-                maxHeight: "240px",
-                overflowY: "auto",
-                backgroundColor: "var(--color-white)",
-                border: "1px solid var(--color-grey-300)",
-                borderRadius: "var(--radius-md)",
-                boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
-                padding: "var(--space-1)",
-                outline: "none",
-                marginTop: "4px",
-              }}
-            >
-              {options.map((option) => (
-                <ListboxOption
-                  key={option.value}
-                  value={option.value}
-                  as={React.Fragment}
-                >
-                  {({ selected, focus }) => (
-                    <li style={getOptionStyle(selected, focus)}>
-                      <span
-                        style={{
-                          width: "16px",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          flexShrink: 0,
-                        }}
-                      >
-                        {selected && (
-                          <svg
-                            width="16"
-                            height="16"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="var(--color-red-600)"
-                            strokeWidth="2.5"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          >
-                            <polyline points="20 6 9 17 4 12" />
-                          </svg>
-                        )}
-                      </span>
-                      <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                        {option.label}
-                      </span>
-                    </li>
-                  )}
-                </ListboxOption>
-              ))}
-            </ListboxOptions>
+            <DropdownOptions
+              options={options}
+              containerRef={containerRef}
+              isOpen={open}
+            />
           </div>
         )}
       </Listbox>
