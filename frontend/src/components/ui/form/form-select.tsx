@@ -1,11 +1,5 @@
 import React, { useRef, useState, useEffect, useCallback } from "react";
 import { createPortal } from "react-dom";
-import {
-  Listbox,
-  ListboxButton,
-  ListboxOption,
-  ListboxOptions,
-} from "@headlessui/react";
 
 interface FormSelectOption {
   value: string;
@@ -36,16 +30,17 @@ export const FormSelect: React.FC<FormSelectProps> = ({
   disabled = false,
 }) => {
   const buttonRef = useRef<HTMLButtonElement>(null);
+  const dropdownRef = useRef<HTMLUListElement>(null);
   const [isOpen, setIsOpen] = useState(false);
-  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0, width: 0 });
+  const [focusedIndex, setFocusedIndex] = useState(-1);
+  const [dropdownPosition, setDropdownPosition] = useState({
+    top: 0,
+    left: 0,
+    width: 0,
+  });
 
   const selectedOption = options.find((opt) => opt.value === value);
   const displayLabel = selectedOption?.label || placeholder;
-
-  const longestLabel = options.reduce(
-    (longest, opt) => (opt.label.length > longest.length ? opt.label : longest),
-    placeholder
-  );
 
   // Calcular posición del dropdown
   const updatePosition = useCallback(() => {
@@ -74,42 +69,83 @@ export const FormSelect: React.FC<FormSelectProps> = ({
 
   // Cerrar dropdown al hacer clic fuera
   useEffect(() => {
-    if (isOpen) {
-      const handleClickOutside = (e: MouseEvent) => {
-        const target = e.target as HTMLElement;
-        // Si el click es fuera del botón y fuera del dropdown, cerrar
-        if (
-          buttonRef.current && 
-          !buttonRef.current.contains(target) &&
-          !target.closest('.form-select-options')
-        ) {
-          setIsOpen(false);
-        }
-      };
-      
-      // Usar timeout para evitar que el click que abrió el dropdown lo cierre
-      const timeoutId = setTimeout(() => {
-        document.addEventListener("mousedown", handleClickOutside);
-      }, 0);
-      
-      return () => {
-        clearTimeout(timeoutId);
-        document.removeEventListener("mousedown", handleClickOutside);
-      };
-    }
+    if (!isOpen) return;
+
+    const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target as Node;
+      if (
+        buttonRef.current &&
+        !buttonRef.current.contains(target) &&
+        dropdownRef.current &&
+        !dropdownRef.current.contains(target)
+      ) {
+        setIsOpen(false);
+      }
+    };
+
+    // Pequeño delay para evitar cerrar inmediatamente
+    const timeoutId = setTimeout(() => {
+      document.addEventListener("mousedown", handleClickOutside);
+    }, 10);
+
+    return () => {
+      clearTimeout(timeoutId);
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
   }, [isOpen]);
+
+  // Keyboard navigation
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      switch (e.key) {
+        case "ArrowDown":
+          e.preventDefault();
+          setFocusedIndex((prev) =>
+            prev < options.length - 1 ? prev + 1 : prev
+          );
+          break;
+        case "ArrowUp":
+          e.preventDefault();
+          setFocusedIndex((prev) => (prev > 0 ? prev - 1 : prev));
+          break;
+        case "Enter":
+          e.preventDefault();
+          if (focusedIndex >= 0 && focusedIndex < options.length) {
+            handleOptionClick(options[focusedIndex].value);
+          }
+          break;
+        case "Escape":
+          e.preventDefault();
+          setIsOpen(false);
+          buttonRef.current?.focus();
+          break;
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen, focusedIndex, options]);
 
   const handleButtonClick = () => {
     if (!disabled) {
       setIsOpen(!isOpen);
+      if (!isOpen) {
+        // Establecer foco inicial en la opción seleccionada
+        const selectedIndex = options.findIndex((opt) => opt.value === value);
+        setFocusedIndex(selectedIndex >= 0 ? selectedIndex : 0);
+      }
     }
   };
 
-  const handleSelect = (newValue: string) => {
-    onChange(newValue);
+  const handleOptionClick = (optionValue: string) => {
+    onChange(optionValue);
     setIsOpen(false);
+    buttonRef.current?.focus();
   };
 
+  // Styles
   const containerStyle: React.CSSProperties = {
     display: "flex",
     flexDirection: "column",
@@ -131,11 +167,12 @@ export const FormSelect: React.FC<FormSelectProps> = ({
 
   const buttonStyle: React.CSSProperties = {
     position: "relative",
-    display: "inline-grid",
+    display: "flex",
     alignItems: "center",
+    justifyContent: "space-between",
     width: "100%",
     height: "var(--button-height-md)",
-    padding: "0 var(--space-10) 0 var(--space-4)",
+    padding: "0 var(--space-3) 0 var(--space-4)",
     fontSize: "var(--font-size-sm)",
     fontWeight: 400,
     textAlign: "left",
@@ -143,9 +180,14 @@ export const FormSelect: React.FC<FormSelectProps> = ({
     backgroundColor: disabled ? "var(--color-grey-50)" : "var(--color-white)",
     cursor: disabled ? "not-allowed" : "pointer",
     outline: "none",
-    whiteSpace: "nowrap",
     opacity: disabled ? 0.7 : 1,
-    border: `1px solid ${error ? "var(--color-red-600)" : isOpen ? "var(--color-grey-400)" : "var(--color-grey-300)"}`,
+    border: `1px solid ${
+      error
+        ? "var(--color-red-600)"
+        : isOpen
+          ? "var(--color-grey-400)"
+          : "var(--color-grey-300)"
+    }`,
     color: selectedOption ? "var(--color-grey-900)" : "var(--color-grey-500)",
     boxShadow: isOpen
       ? "0 0 0 3px rgba(184, 178, 167, 0.25)"
@@ -153,35 +195,22 @@ export const FormSelect: React.FC<FormSelectProps> = ({
     transition: "border-color 150ms ease, box-shadow 150ms ease",
   };
 
-  const chevronStyle: React.CSSProperties = {
-    position: "absolute",
-    right: "var(--space-3)",
-    top: "50%",
-    transform: "translateY(-50%)",
-    pointerEvents: "none",
-    color: "var(--color-grey-500)",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-  };
-
-  const optionsStyle: React.CSSProperties = {
+  const dropdownStyle: React.CSSProperties = {
     position: "fixed",
     top: dropdownPosition.top,
     left: dropdownPosition.left,
-    width: dropdownPosition.width || "auto",
-    minWidth: "200px",
+    width: dropdownPosition.width || 200,
     zIndex: 99999,
     maxHeight: "240px",
     overflowY: "auto",
     backgroundColor: "var(--color-white)",
     border: "1px solid var(--color-grey-300)",
     borderRadius: "var(--radius-md)",
-    boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
+    boxShadow:
+      "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
     padding: "var(--space-1)",
-    outline: "none",
-    listStyle: "none",
     margin: 0,
+    listStyle: "none",
   };
 
   const getOptionStyle = (
@@ -197,7 +226,7 @@ export const FormSelect: React.FC<FormSelectProps> = ({
     display: "flex",
     alignItems: "center",
     gap: "var(--space-2)",
-    backgroundColor: isFocused ? "var(--color-grey-50)" : "transparent",
+    backgroundColor: isFocused ? "var(--color-grey-100)" : "transparent",
     transition: "background-color 100ms ease",
     listStyle: "none",
   });
@@ -207,93 +236,99 @@ export const FormSelect: React.FC<FormSelectProps> = ({
     color: error ? "var(--color-red-600)" : "var(--color-grey-500)",
   };
 
+  const dropdown = isOpen ? (
+    <ul
+      ref={dropdownRef}
+      role="listbox"
+      aria-labelledby="form-select-label"
+      style={dropdownStyle}
+    >
+      {options.map((option, index) => {
+        const isSelected = option.value === value;
+        const isFocused = index === focusedIndex;
+
+        return (
+          <li
+            key={option.value}
+            role="option"
+            aria-selected={isSelected}
+            style={getOptionStyle(isSelected, isFocused)}
+            onClick={() => handleOptionClick(option.value)}
+            onMouseEnter={() => setFocusedIndex(index)}
+          >
+            <span
+              style={{
+                width: "16px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                flexShrink: 0,
+              }}
+            >
+              {isSelected && (
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="var(--color-red-600)"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+              )}
+            </span>
+            <span>{option.label}</span>
+          </li>
+        );
+      })}
+    </ul>
+  ) : null;
+
   return (
     <div style={containerStyle}>
       {label && (
-        <label style={labelStyle}>
+        <label id="form-select-label" style={labelStyle}>
           {label}
           {required && <span style={requiredStyle}>*</span>}
         </label>
       )}
 
-      <Listbox value={value} onChange={handleSelect} disabled={disabled}>
-        <div style={{ position: "relative" }}>
-          <ListboxButton 
-            ref={buttonRef} 
-            style={buttonStyle}
-            onClick={handleButtonClick}
-          >
-            <span style={{ visibility: "hidden", gridArea: "1 / 1" }}>
-              {longestLabel}
-            </span>
-            <span style={{ gridArea: "1 / 1" }}>{displayLabel}</span>
-            <span style={chevronStyle}>
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                style={{
-                  transform: isOpen ? "rotate(180deg)" : "rotate(0deg)",
-                  transition: "transform 150ms ease",
-                }}
-              >
-                <path d="m6 9 6 6 6-6" />
-              </svg>
-            </span>
-          </ListboxButton>
+      <button
+        ref={buttonRef}
+        type="button"
+        role="combobox"
+        aria-expanded={isOpen}
+        aria-haspopup="listbox"
+        aria-labelledby={label ? "form-select-label" : undefined}
+        style={buttonStyle}
+        onClick={handleButtonClick}
+        disabled={disabled}
+      >
+        <span>{displayLabel}</span>
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          style={{
+            transform: isOpen ? "rotate(180deg)" : "rotate(0deg)",
+            transition: "transform 150ms ease",
+            color: "var(--color-grey-500)",
+            flexShrink: 0,
+          }}
+        >
+          <path d="m6 9 6 6 6-6" />
+        </svg>
+      </button>
 
-          {isOpen && createPortal(
-            <ListboxOptions 
-              static 
-              className="form-select-options" 
-              style={optionsStyle}
-            >
-              {options.map((option) => (
-                <ListboxOption
-                  key={option.value}
-                  value={option.value}
-                  as={React.Fragment}
-                >
-                  {({ selected, focus }) => (
-                    <li style={getOptionStyle(selected, focus)}>
-                      <span
-                        style={{
-                          width: "var(--space-4)",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                        }}
-                      >
-                        {selected && (
-                          <svg
-                            width="16"
-                            height="16"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="var(--color-red-600)"
-                            strokeWidth="2.5"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          >
-                            <polyline points="20 6 9 17 4 12" />
-                          </svg>
-                        )}
-                      </span>
-                      <span>{option.label}</span>
-                    </li>
-                  )}
-                </ListboxOption>
-              ))}
-            </ListboxOptions>,
-            document.body
-          )}
-        </div>
-      </Listbox>
+      {createPortal(dropdown, document.body)}
 
       {(error || hint) && <span style={hintStyle}>{error || hint}</span>}
     </div>
