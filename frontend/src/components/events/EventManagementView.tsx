@@ -11,7 +11,7 @@ import {
   IconAlertCircle,
   type DuotoneIconProps,
 } from "@/components/icons/DuotoneIcons";
-import { Button } from "@/components/ui/rui";
+import { Button } from "@/components/ui/button";
 import { GeneralTab } from "./tabs/GeneralTab";
 import { TicketsTab } from "./tabs/TicketsTab";
 import { SessionsTab } from "./tabs/SessionsTab";

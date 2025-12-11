@@ -29,7 +29,7 @@ import {
 
 // Components
 import { Button } from "@/components/ui/button";
-import { FormSelect } from "@/components/ui/rui/form";
+import { FormSelect } from "@/components/ui/form/form-select";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { Skeleton, SkeletonCircle } from "@/components/ui/skeleton";

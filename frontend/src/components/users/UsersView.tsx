@@ -8,7 +8,8 @@ import { usePagination } from "@/hooks/usePagination";
 
 // Components
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
-import { TablePagination, PageContainer } from "@/components/ui/rui";
+import { TablePagination } from "@/components/ui/table-pagination";
+import { PageContainer } from "@/components/ui/page-container";
 import { Skeleton, SkeletonCircle } from "@/components/ui/skeleton";
 import { ResetPasswordModal } from "./ResetPasswordModal";
 import { CreateUserDrawer } from "./CreateUserDrawer";

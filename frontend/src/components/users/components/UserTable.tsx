@@ -14,7 +14,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import type { User } from "@/services/users.service";
-import { Checkbox } from "@/components/ui/rui";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Skeleton, SkeletonCircle } from "@/components/ui/skeleton";
 import { UserAvatar } from "./UserAvatar";
 import { UserStatusBadge } from "./UserStatusBadge";

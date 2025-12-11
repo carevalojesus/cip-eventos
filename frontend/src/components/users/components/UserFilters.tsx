@@ -13,7 +13,8 @@
 import React, { useState, useMemo, useRef, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { SlidersHorizontal, X, Export } from "@phosphor-icons/react";
-import { SearchInput, Select } from "@/components/ui/rui";
+import { SearchInput } from "@/components/ui/search-input";
+import { Select } from "@/components/ui/select";
 import type { Role } from "@/services/users.service";
 import { getRoleDisplayName } from "@/lib/userUtils";
 

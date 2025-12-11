@@ -11,7 +11,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Plus } from "@phosphor-icons/react";
-import { PageHeader } from "@/components/ui/rui";
+import { PageHeader } from "@/components/ui/page-header";
 import { Button } from "@/components/ui/button";
 
 interface UserPageHeaderProps {

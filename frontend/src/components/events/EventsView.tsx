@@ -5,14 +5,12 @@ import { getCurrentLocale, routes } from "@/lib/routes";
 import type { Event } from "@/types/event";
 import { EventCard } from "./EventCard";
 import { IconAdd } from "@/components/icons/DuotoneIcons";
-import {
-  Button,
-  SearchInput,
-  Select,
-  Pagination,
-  EmptyState,
-  PageHeader,
-} from "@/components/ui/rui";
+import { Button } from "@/components/ui/button";
+import { SearchInput } from "@/components/ui/search-input";
+import { Select } from "@/components/ui/select";
+import { Pagination } from "@/components/ui/pagination";
+import { EmptyState } from "@/components/ui/empty-state";
+import { PageHeader } from "@/components/ui/page-header";
 
 const ITEMS_PER_PAGE = 9; // 3x3 grid
 
