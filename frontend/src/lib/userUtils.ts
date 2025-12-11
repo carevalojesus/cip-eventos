@@ -15,6 +15,7 @@ export interface UserLike {
   profile?: {
     firstName?: string | null;
     lastName?: string | null;
+    avatar?: string | null;
   } | null;
 }
 

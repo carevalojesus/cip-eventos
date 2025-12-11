@@ -29,6 +29,7 @@ import {
     X,
     SealCheck,
     Clock,
+    PencilSimple,
 } from "@phosphor-icons/react";
 
 // Components
@@ -53,6 +54,7 @@ import {
     type Person,
     type UpdateProfileDto,
     type CreatePersonDto,
+    type UpdatePersonDto,
     DocumentType,
 } from "@/services/profile.service";
 import { getRoleDisplayName } from "@/lib/userUtils";
@@ -742,8 +744,11 @@ interface NominalTabProps {
     hasData: boolean;
     isLoading: boolean;
     onSave: (data: CreatePersonDto) => void;
+    onUpdate: (data: UpdatePersonDto) => void;
     isSaving: boolean;
     userEmail: string;
+    onRevalidate: () => void;
+    isRevalidating: boolean;
 }
 
 const NominalTab: React.FC<NominalTabProps> = ({
@@ -751,10 +756,14 @@ const NominalTab: React.FC<NominalTabProps> = ({
     hasData,
     isLoading,
     onSave,
+    onUpdate,
     isSaving,
     userEmail,
+    onRevalidate,
+    isRevalidating,
 }) => {
     const { t } = useTranslation();
+    const [isEditing, setIsEditing] = useState(false);
 
     const [formData, setFormData] = useState<CreatePersonDto>({
         firstName: "",
@@ -767,13 +776,60 @@ const NominalTab: React.FC<NominalTabProps> = ({
         birthDate: "",
     });
 
+    const [editData, setEditData] = useState<UpdatePersonDto>({});
+
+    // Inicializar editData cuando hay person
+    React.useEffect(() => {
+        if (person) {
+            // Extraer solo la parte de fecha (YYYY-MM-DD) para el input type="date"
+            const birthDateForInput = person.birthDate
+                ? person.birthDate.split("T")[0]
+                : "";
+            setEditData({
+                firstName: person.firstName,
+                lastName: person.lastName,
+                documentType: person.documentType,
+                documentNumber: person.documentNumber,
+                country: person.country || "Perú",
+                birthDate: birthDateForInput,
+            });
+        }
+    }, [person]);
+
     const handleChange = (field: keyof CreatePersonDto, value: string) => {
         setFormData((prev) => ({ ...prev, [field]: value }));
+    };
+
+    const handleEditChange = (field: keyof UpdatePersonDto, value: string) => {
+        setEditData((prev) => ({ ...prev, [field]: value }));
     };
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         onSave(formData);
+    };
+
+    const handleUpdateSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        onUpdate(editData);
+        setIsEditing(false);
+    };
+
+    const handleCancelEdit = () => {
+        if (person) {
+            const birthDateForInput = person.birthDate
+                ? person.birthDate.split("T")[0]
+                : "";
+            setEditData({
+                firstName: person.firstName,
+                lastName: person.lastName,
+                documentType: person.documentType,
+                documentNumber: person.documentNumber,
+                country: person.country || "Perú",
+                birthDate: birthDateForInput,
+            });
+        }
+        setIsEditing(false);
     };
 
     const documentTypeOptions = [
@@ -797,12 +853,105 @@ const NominalTab: React.FC<NominalTabProps> = ({
         );
     }
 
-    // Si ya tiene Person, mostrar en modo lectura
+    // Si ya tiene Person, mostrar en modo lectura o edición
     if (hasData && person) {
         const isValidated =
             person.reniecValidationScore !== null &&
             person.reniecValidationScore >= 80;
 
+        // Modo edición
+        if (isEditing) {
+            return (
+                <form onSubmit={handleUpdateSubmit} className="profile__form">
+                    <div className="profile__alert profile__alert--info">
+                        <PencilSimple
+                            size={20}
+                            weight="duotone"
+                            className="profile__alert-icon"
+                            style={{ color: "var(--color-cyan-600)" }}
+                        />
+                        <div className="profile__alert-content">
+                            <p className="profile__alert-title">
+                                {t("profile.editing_nominal", "Editando datos nominales")}
+                            </p>
+                            <p className="profile__alert-text">
+                                {t("profile.editing_nominal_notice", "Al guardar, se revalidará automáticamente con RENIEC si es DNI.")}
+                            </p>
+                        </div>
+                    </div>
+
+                    <section className="profile__section">
+                        <div className="profile__section-header">
+                            <div className="profile__section-icon profile__section-icon--nominal">
+                                <IdentificationCard size={18} weight="duotone" />
+                            </div>
+                            <div className="profile__section-title-group">
+                                <h3 className="profile__section-title">
+                                    {t("profile.section.nominal", "Datos Nominales")}
+                                </h3>
+                                <p className="profile__section-subtitle">
+                                    {t("profile.section.nominal_desc", "Información oficial para certificados")}
+                                </p>
+                            </div>
+                        </div>
+
+                        <div className="profile__form-grid">
+                            <Input
+                                label={t("profile.first_name", "Nombre")}
+                                value={editData.firstName || ""}
+                                onChange={(e) => handleEditChange("firstName", e.target.value)}
+                                placeholder={t("profile.legal_name_placeholder", "Como aparece en tu documento")}
+                                required
+                            />
+                            <Input
+                                label={t("profile.last_name", "Apellido")}
+                                value={editData.lastName || ""}
+                                onChange={(e) => handleEditChange("lastName", e.target.value)}
+                                placeholder={t("profile.legal_lastname_placeholder", "Como aparece en tu documento")}
+                                required
+                            />
+                            <FormSelect
+                                label={t("profile.document_type", "Tipo de documento")}
+                                value={editData.documentType || DocumentType.DNI}
+                                onChange={(value) => handleEditChange("documentType", value)}
+                                options={documentTypeOptions}
+                                required
+                            />
+                            <Input
+                                label={t("profile.document_number", "Número de documento")}
+                                value={editData.documentNumber || ""}
+                                onChange={(e) => handleEditChange("documentNumber", e.target.value)}
+                                placeholder={t("profile.document_number_placeholder", "12345678")}
+                                required
+                            />
+                            <Input
+                                label={t("profile.country", "País")}
+                                value={editData.country || ""}
+                                onChange={(e) => handleEditChange("country", e.target.value)}
+                                placeholder="Perú"
+                            />
+                            <Input
+                                label={t("profile.birth_date", "Fecha de nacimiento")}
+                                type="date"
+                                value={editData.birthDate || ""}
+                                onChange={(e) => handleEditChange("birthDate", e.target.value)}
+                            />
+                        </div>
+                    </section>
+
+                    <div className="profile__form-actions" style={{ display: "flex", gap: "var(--space-3)", justifyContent: "flex-end" }}>
+                        <Button type="button" variant="secondary" onClick={handleCancelEdit}>
+                            {t("common.cancel", "Cancelar")}
+                        </Button>
+                        <Button type="submit" variant="primary" isLoading={isSaving}>
+                            {t("profile.save_and_revalidate", "Guardar y revalidar")}
+                        </Button>
+                    </div>
+                </form>
+            );
+        }
+
+        // Modo lectura
         return (
             <div className="profile__form">
                 {/* Badge de validación */}
@@ -840,6 +989,26 @@ const NominalTab: React.FC<NominalTabProps> = ({
                                       "Datos pendientes de verificación"
                                   )}
                         </p>
+                    </div>
+                    <div style={{ marginLeft: "auto", display: "flex", gap: "var(--space-2)" }}>
+                        {!isValidated && person.documentType === DocumentType.DNI && (
+                            <Button
+                                variant="secondary"
+                                size="sm"
+                                onClick={onRevalidate}
+                                isLoading={isRevalidating}
+                            >
+                                {t("profile.revalidate", "Revalidar")}
+                            </Button>
+                        )}
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setIsEditing(true)}
+                        >
+                            <PencilSimple size={16} />
+                            {t("profile.edit_nominal", "Editar")}
+                        </Button>
                     </div>
                 </div>
 
@@ -899,9 +1068,11 @@ const NominalTab: React.FC<NominalTabProps> = ({
                             )}
                             value={
                                 person.birthDate
-                                    ? new Date(
-                                          person.birthDate
-                                      ).toLocaleDateString("es-PE")
+                                    ? (() => {
+                                          // Parsear fecha sin conversión de zona horaria
+                                          const [year, month, day] = person.birthDate.split("T")[0].split("-");
+                                          return `${day}/${month}/${year}`;
+                                      })()
                                     : "-"
                             }
                         />
@@ -918,8 +1089,8 @@ const NominalTab: React.FC<NominalTabProps> = ({
                     <div className="profile__alert-content">
                         <p className="profile__alert-text">
                             {t(
-                                "profile.person_readonly_notice",
-                                "Los datos nominales se utilizan para emitir certificados oficiales. Si necesitas corregirlos, contacta a soporte."
+                                "profile.person_edit_notice",
+                                "Puedes editar tus datos nominales si necesitas corregirlos. Al guardar se revalidará con RENIEC."
                             )}
                         </p>
                     </div>
@@ -1135,6 +1306,76 @@ export const ProfileView: React.FC = () => {
         },
     });
 
+    // Mutation: Update Person
+    const updatePersonMutation = useMutation({
+        mutationFn: personService.updateMyPerson,
+        onSuccess: (data) => {
+            queryClient.invalidateQueries({ queryKey: ["person", "me"] });
+            const isValidated =
+                data.reniecValidationScore !== null &&
+                data.reniecValidationScore >= 80;
+            if (isValidated) {
+                toast.success(
+                    t(
+                        "profile.nominal_update_success",
+                        "Datos actualizados y verificados con RENIEC"
+                    )
+                );
+            } else {
+                toast.warning(
+                    t(
+                        "profile.nominal_update_partial",
+                        "Datos actualizados pero no coinciden completamente con RENIEC"
+                    )
+                );
+            }
+        },
+        onError: (error: any) => {
+            const message =
+                error?.response?.data?.message ||
+                t(
+                    "profile.nominal_update_error",
+                    "Error al actualizar los datos nominales"
+                );
+            toast.error(message);
+        },
+    });
+
+    // Mutation: Revalidate Person with RENIEC
+    const revalidatePersonMutation = useMutation({
+        mutationFn: personService.revalidateMyPerson,
+        onSuccess: (data) => {
+            queryClient.invalidateQueries({ queryKey: ["person", "me"] });
+            const isValidated =
+                data.reniecValidationScore !== null &&
+                data.reniecValidationScore >= 80;
+            if (isValidated) {
+                toast.success(
+                    t(
+                        "profile.revalidate_success",
+                        "Datos verificados correctamente con RENIEC"
+                    )
+                );
+            } else {
+                toast.warning(
+                    t(
+                        "profile.revalidate_partial",
+                        "Los datos no coinciden completamente con RENIEC"
+                    )
+                );
+            }
+        },
+        onError: (error: any) => {
+            const message =
+                error?.response?.data?.message ||
+                t(
+                    "profile.revalidate_error",
+                    "Error al revalidar con RENIEC"
+                );
+            toast.error(message);
+        },
+    });
+
     // Avatar handlers
     const handleAvatarChange = async (file: File) => {
         setIsUploadingAvatar(true);
@@ -1343,8 +1584,11 @@ export const ProfileView: React.FC = () => {
                             hasData={personResponse?.hasData || false}
                             isLoading={isLoadingPerson}
                             onSave={(data) => createPersonMutation.mutate(data)}
-                            isSaving={createPersonMutation.isPending}
+                            onUpdate={(data) => updatePersonMutation.mutate(data)}
+                            isSaving={createPersonMutation.isPending || updatePersonMutation.isPending}
                             userEmail={user?.email || ""}
+                            onRevalidate={() => revalidatePersonMutation.mutate()}
+                            isRevalidating={revalidatePersonMutation.isPending}
                         />
                     )}
                 </div>

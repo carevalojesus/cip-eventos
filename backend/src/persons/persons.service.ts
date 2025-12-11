@@ -254,6 +254,74 @@ export class PersonsService {
   }
 
   /**
+   * Actualiza los datos de una persona por userId y revalida con RENIEC si es DNI
+   */
+  async updateByUserId(
+    userId: string,
+    updatePersonDto: UpdatePersonDto,
+  ): Promise<Person> {
+    const person = await this.findByUserId(userId);
+
+    if (!person) {
+      throw new NotFoundException(
+        'No tienes datos nominales registrados para actualizar',
+      );
+    }
+
+    // Actualizar los campos
+    this.personRepository.merge(person, updatePersonDto);
+    await this.personRepository.save(person);
+
+    // Revalidar con RENIEC si es DNI peruano
+    const docType = updatePersonDto.documentType || person.documentType;
+    const docNumber = updatePersonDto.documentNumber || person.documentNumber;
+
+    if (docType === DocumentType.DNI && docNumber.length === 8) {
+      await this.validateWithReniec(person);
+    }
+
+    // Retornar la persona actualizada
+    const updatedPerson = await this.findByUserId(userId);
+    if (!updatedPerson) {
+      throw new NotFoundException('Error al obtener datos actualizados');
+    }
+    return updatedPerson;
+  }
+
+  /**
+   * Re-valida una persona con RENIEC por userId
+   */
+  async revalidateByUserId(userId: string): Promise<Person> {
+    const person = await this.findByUserId(userId);
+
+    if (!person) {
+      throw new NotFoundException(
+        'No tienes datos nominales registrados para revalidar',
+      );
+    }
+
+    // Solo revalidar si es DNI peruano
+    if (
+      person.documentType !== DocumentType.DNI ||
+      person.documentNumber.length !== 8
+    ) {
+      throw new BadRequestException(
+        'La validación RENIEC solo aplica para DNI peruano de 8 dígitos',
+      );
+    }
+
+    // Ejecutar validación con RENIEC
+    await this.validateWithReniec(person);
+
+    // Retornar la persona actualizada
+    const updatedPerson = await this.findByUserId(userId);
+    if (!updatedPerson) {
+      throw new NotFoundException('Error al obtener datos actualizados');
+    }
+    return updatedPerson;
+  }
+
+  /**
    * Busca una persona por ID
    */
   async findOne(id: string): Promise<Person> {

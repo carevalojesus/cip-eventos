@@ -918,7 +918,19 @@
         },
         "doc_ce": "Foreigner ID",
         "doc_passport": "Passport",
-        "doc_other": "Other"
+        "doc_other": "Other",
+        "revalidate": "Revalidate",
+        "revalidate_success": "Data successfully verified with RENIEC",
+        "revalidate_partial": "Data does not fully match RENIEC records",
+        "revalidate_error": "Error revalidating with RENIEC",
+        "edit_nominal": "Edit",
+        "editing_nominal": "Editing nominal data",
+        "editing_nominal_notice": "When saving, it will automatically revalidate with RENIEC if it's a DNI.",
+        "save_and_revalidate": "Save and revalidate",
+        "person_edit_notice": "You can edit your nominal data if you need to correct them. Saving will revalidate with RENIEC.",
+        "nominal_update_success": "Data updated and verified with RENIEC",
+        "nominal_update_partial": "Data updated but does not fully match RENIEC records",
+        "nominal_update_error": "Error updating nominal data"
     },
     "organizers": {
         "list": {

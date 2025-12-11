@@ -70,6 +70,16 @@ export interface CreatePersonDto {
   birthDate?: string;
 }
 
+export interface UpdatePersonDto {
+  firstName?: string;
+  lastName?: string;
+  documentType?: DocumentType;
+  documentNumber?: string;
+  phone?: string;
+  country?: string;
+  birthDate?: string;
+}
+
 export interface PersonResponse {
   data: Person | null;
   hasData: boolean;
@@ -106,6 +116,16 @@ export const personService = {
 
   async createMyPerson(data: CreatePersonDto): Promise<Person> {
     const response = await api.post<Person>("/persons/me", data);
+    return response.data;
+  },
+
+  async updateMyPerson(data: UpdatePersonDto): Promise<Person> {
+    const response = await api.patch<Person>("/persons/me", data);
+    return response.data;
+  },
+
+  async revalidateMyPerson(): Promise<Person> {
+    const response = await api.post<Person>("/persons/me/revalidate");
     return response.data;
   },
 };

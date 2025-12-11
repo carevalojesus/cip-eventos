@@ -910,7 +910,19 @@
         },
         "doc_ce": "Carné de Extranjería",
         "doc_passport": "Pasaporte",
-        "doc_other": "Otro"
+        "doc_other": "Otro",
+        "revalidate": "Revalidar",
+        "revalidate_success": "Datos verificados correctamente con RENIEC",
+        "revalidate_partial": "Los datos no coinciden completamente con RENIEC",
+        "revalidate_error": "Error al revalidar con RENIEC",
+        "edit_nominal": "Editar",
+        "editing_nominal": "Editando datos nominales",
+        "editing_nominal_notice": "Al guardar, se revalidará automáticamente con RENIEC si es DNI.",
+        "save_and_revalidate": "Guardar y revalidar",
+        "person_edit_notice": "Puedes editar tus datos nominales si necesitas corregirlos. Al guardar se revalidará con RENIEC.",
+        "nominal_update_success": "Datos actualizados y verificados con RENIEC",
+        "nominal_update_partial": "Datos actualizados pero no coinciden completamente con RENIEC",
+        "nominal_update_error": "Error al actualizar los datos nominales"
     },
     "organizers": {
         "list": {
