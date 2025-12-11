@@ -10,6 +10,7 @@ interface AppLayoutProps {
   user: { name: string; role: UserRole; avatar?: string }
   activeNav: string
   onNavChange: (navId: string) => void
+  onNavigate?: (path: string) => void
   onLogout?: () => void | Promise<void>
 }
 
@@ -18,6 +19,7 @@ export function AppLayout({
   user,
   activeNav,
   onNavChange,
+  onNavigate,
   onLogout,
 }: AppLayoutProps) {
   const { i18n } = useTranslation()
@@ -75,6 +77,7 @@ export function AppLayout({
       <Header
         user={{ name: user.name, avatar: user.avatar, role: roleLabel }}
         onMenuToggle={handleMenuToggle}
+        onNavigate={onNavigate}
         onLogout={onLogout}
         notificationCount={3}
       />

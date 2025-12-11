@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { CheckCircle, XCircle } from "@phosphor-icons/react";
+import { CheckCircle, Clock } from "@phosphor-icons/react";
 
 interface UserVerificationBadgeProps {
   isVerified: boolean;
@@ -8,6 +8,11 @@ interface UserVerificationBadgeProps {
   size?: "sm" | "md";
 }
 
+/**
+ * Badge consistente para mostrar el estado de verificación del usuario.
+ * - Verificado: verde (success)
+ * - No verificado: amarillo (warning/pending) - representa un estado pendiente, no un error
+ */
 export const UserVerificationBadge: React.FC<UserVerificationBadgeProps> = ({
   isVerified,
   showLabel = false,
@@ -16,11 +21,15 @@ export const UserVerificationBadge: React.FC<UserVerificationBadgeProps> = ({
   const { t } = useTranslation();
   const iconSize = size === "sm" ? 18 : 24;
 
+  // Colores consistentes: verde para verificado, amarillo para pendiente
+  const verifiedColor = "var(--color-green-600)";
+  const pendingColor = "var(--color-yellow-600)";
+
   if (!showLabel) {
     return isVerified ? (
-      <CheckCircle size={iconSize} weight="fill" color="var(--color-success)" />
+      <CheckCircle size={iconSize} weight="fill" color={verifiedColor} />
     ) : (
-      <XCircle size={iconSize} weight="fill" color="var(--color-danger)" />
+      <Clock size={iconSize} weight="fill" color={pendingColor} />
     );
   }
 
@@ -41,7 +50,7 @@ export const UserVerificationBadge: React.FC<UserVerificationBadgeProps> = ({
       {isVerified ? (
         <CheckCircle size={14} weight="fill" />
       ) : (
-        <XCircle size={14} weight="fill" />
+        <Clock size={14} weight="fill" />
       )}
       {isVerified
         ? t("users.detail.verified", "Verificado")

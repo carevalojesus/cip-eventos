@@ -6,6 +6,7 @@ interface HeaderProps {
   user: { name: string; avatar?: string; role?: string }
   onMenuToggle?: () => void
   onLogout?: () => void | Promise<void>
+  onNavigate?: (path: string) => void
   notificationCount?: number
 }
 
@@ -13,6 +14,7 @@ export function Header({
   user,
   onMenuToggle,
   onLogout,
+  onNavigate,
   notificationCount = 0,
 }: HeaderProps) {
   const { t } = useTranslation()
@@ -226,16 +228,26 @@ export function Header({
 
   const handleProfileClick = () => {
     setIsDropdownOpen(false)
-    // Navegar a perfil
+    // Navegar a perfil usando SPA navigation
     const isEnglish = window.location.pathname.startsWith('/en')
-    window.location.href = isEnglish ? '/en/profile' : '/perfil'
+    const path = isEnglish ? '/en/profile' : '/perfil'
+    if (onNavigate) {
+      onNavigate(path)
+    } else {
+      window.location.href = path
+    }
   }
 
   const handleSettingsClick = () => {
     setIsDropdownOpen(false)
-    // Navegar a configuración
+    // Navegar a configuración usando SPA navigation
     const isEnglish = window.location.pathname.startsWith('/en')
-    window.location.href = isEnglish ? '/en/settings' : '/configuracion'
+    const path = isEnglish ? '/en/settings' : '/configuracion'
+    if (onNavigate) {
+      onNavigate(path)
+    } else {
+      window.location.href = path
+    }
   }
 
   const handleLogoutClick = async () => {

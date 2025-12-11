@@ -1,7 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Check, Prohibit, ShieldCheck, Trash } from "@phosphor-icons/react";
-import { Button } from "@/components/ui/rui";
+import { Button } from "@/components/ui/button";
 
 export type BulkAction = "delete" | "activate" | "deactivate" | "resendVerification";
 

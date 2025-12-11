@@ -214,13 +214,25 @@ export class ReniecService {
 
   /**
    * Mapea la respuesta de la API externa al formato interno
+   * Soporta múltiples proveedores: APIs Perú y DeColecta
    */
   private mapResponse(data: any): ReniecPerson | null {
     try {
-      // Adaptar según el formato de respuesta de la API utilizada
-      // Este es un ejemplo para APIs Perú
+      // Detectar formato DeColecta (tiene first_name, first_last_name, second_last_name)
+      if (data.first_name !== undefined || data.first_last_name !== undefined) {
+        return {
+          dni: data.document_number || '',
+          nombres: data.first_name || '',
+          apellidoPaterno: data.first_last_name || '',
+          apellidoMaterno: data.second_last_name || '',
+          nombreCompleto: data.full_name ||
+            `${data.first_name} ${data.first_last_name} ${data.second_last_name}`.trim(),
+        };
+      }
+
+      // Formato APIs Perú (tiene nombres, apellidoPaterno, apellidoMaterno)
       return {
-        dni: data.numeroDocumento || data.dni,
+        dni: data.numeroDocumento || data.dni || '',
         nombres: data.nombres || data.primerNombre || '',
         apellidoPaterno: data.apellidoPaterno || '',
         apellidoMaterno: data.apellidoMaterno || '',

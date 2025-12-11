@@ -1,0 +1,101 @@
+/* ============================================
+   UserActions Styles
+   Sistema de diseño RUI
+   ============================================ */
+
+/* Trigger Button */
+.user-actions__trigger {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-md);
+  color: var(--color-grey-500);
+  cursor: pointer;
+  transition: background-color 150ms ease, color 150ms ease;
+}
+
+.user-actions__trigger:hover {
+  background-color: var(--color-grey-100);
+  color: var(--color-grey-700);
+}
+
+.user-actions__trigger:focus-visible {
+  outline: 2px solid var(--color-cyan-500);
+  outline-offset: 2px;
+}
+
+/* Dropdown Content */
+.user-actions__content {
+  min-width: 200px;
+  background-color: var(--color-bg-primary);
+  border: 1px solid var(--color-grey-200);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  padding: var(--space-1);
+  overflow: hidden;
+}
+
+/* Dropdown Item */
+.user-actions__item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  width: 100%;
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-primary);
+  background: none;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  text-align: left;
+  transition: background-color 150ms ease;
+}
+
+.user-actions__item:hover,
+.user-actions__item:focus {
+  background-color: var(--color-grey-050);
+  outline: none;
+}
+
+.user-actions__item--disabled {
+  color: var(--color-grey-400);
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.user-actions__item--disabled:hover {
+  background-color: transparent;
+}
+
+/* Danger Item */
+.user-actions__item--danger {
+  color: var(--color-danger);
+}
+
+.user-actions__item--danger:hover,
+.user-actions__item--danger:focus {
+  background-color: var(--color-red-050);
+}
+
+/* Success Item (Activate) */
+.user-actions__item--success {
+  color: var(--color-success);
+}
+
+.user-actions__item--success:hover,
+.user-actions__item--success:focus {
+  background-color: var(--color-green-050);
+}
+
+/* Separator */
+.user-actions__separator {
+  height: 1px;
+  background-color: var(--color-grey-100);
+  margin: var(--space-1) 0;
+}

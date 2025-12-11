@@ -120,8 +120,8 @@ export const CreateUserDrawer: React.FC<CreateUserDrawerProps> = ({
           <DrawerTitle>{t("users.create_title", "Crear Usuario")}</DrawerTitle>
           <DrawerDescription>
             {t(
-              "users.create_drawer_subtitle",
-              "Registrar un nuevo usuario en el sistema."
+              "users.create_subtitle",
+              "Complete la información para registrar un nuevo usuario en el sistema."
             )}
           </DrawerDescription>
         </DrawerHeader>
@@ -174,8 +174,8 @@ export const CreateUserDrawer: React.FC<CreateUserDrawerProps> = ({
                   required
                   leftIcon={<Lock size={16} />}
                   showPasswordToggle
-                  showPasswordLabel={t("login.show_password", "Mostrar")}
-                  hidePasswordLabel={t("login.hide_password", "Ocultar")}
+                  showPasswordLabel={t("common.show", "Mostrar")}
+                  hidePasswordLabel={t("common.hide", "Ocultar")}
                   autoComplete="new-password"
                 />
               )}
@@ -199,8 +199,8 @@ export const CreateUserDrawer: React.FC<CreateUserDrawerProps> = ({
                   required
                   leftIcon={<Lock size={16} />}
                   showPasswordToggle
-                  showPasswordLabel={t("login.show_password", "Mostrar")}
-                  hidePasswordLabel={t("login.hide_password", "Ocultar")}
+                  showPasswordLabel={t("common.show", "Mostrar")}
+                  hidePasswordLabel={t("common.hide", "Ocultar")}
                   autoComplete="new-password"
                 />
               )}

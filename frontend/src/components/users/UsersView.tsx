@@ -8,7 +8,8 @@ import { usePagination } from "@/hooks/usePagination";
 
 // Components
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
-import { TablePagination } from "@/components/ui/rui";
+import { TablePagination } from "@/components/ui/table-pagination";
+import { PageContainer } from "@/components/ui/page-container";
 import { Skeleton, SkeletonCircle } from "@/components/ui/skeleton";
 import { ResetPasswordModal } from "./ResetPasswordModal";
 import { CreateUserDrawer } from "./CreateUserDrawer";
@@ -57,6 +58,7 @@ export const UsersView: React.FC<UsersViewProps> = ({ onNavigate }) => {
   // Filter state
   const [searchQuery, setSearchQuery] = React.useState("");
   const [selectedRole, setSelectedRole] = React.useState("all");
+  const [selectedStatus, setSelectedStatus] = React.useState("all");
   const [selectedVerification, setSelectedVerification] = React.useState("all");
 
   // Selection state
@@ -107,14 +109,19 @@ export const UsersView: React.FC<UsersViewProps> = ({ onNavigate }) => {
       const matchesRole =
         selectedRole === "all" || user.role?.id?.toString() === selectedRole;
 
+      const matchesStatus =
+        selectedStatus === "all" ||
+        (selectedStatus === "active" && user.isActive) ||
+        (selectedStatus === "inactive" && !user.isActive);
+
       const matchesVerification =
         selectedVerification === "all" ||
         (selectedVerification === "verified" && user.isVerified) ||
         (selectedVerification === "unverified" && !user.isVerified);
 
-      return matchesSearch && matchesRole && matchesVerification;
+      return matchesSearch && matchesRole && matchesStatus && matchesVerification;
     });
-  }, [users, searchQuery, selectedRole, selectedVerification]);
+  }, [users, searchQuery, selectedRole, selectedStatus, selectedVerification]);
 
   // Pagination
   const pagination = usePagination({
@@ -125,15 +132,16 @@ export const UsersView: React.FC<UsersViewProps> = ({ onNavigate }) => {
   // Reset page when filters change
   useEffect(() => {
     pagination.setCurrentPage(1);
-  }, [searchQuery, selectedRole, selectedVerification]);
+  }, [searchQuery, selectedRole, selectedStatus, selectedVerification]);
 
   // Check if filters are active
-  const hasActiveFilters = searchQuery !== "" || selectedRole !== "all" || selectedVerification !== "all";
+  const hasActiveFilters = searchQuery !== "" || selectedRole !== "all" || selectedStatus !== "all" || selectedVerification !== "all";
 
   // Clear filters
   const handleClearFilters = useCallback(() => {
     setSearchQuery("");
     setSelectedRole("all");
+    setSelectedStatus("all");
     setSelectedVerification("all");
   }, []);
 
@@ -456,7 +464,7 @@ export const UsersView: React.FC<UsersViewProps> = ({ onNavigate }) => {
   // Loading state - Skeleton
   if (loading) {
     return (
-      <div style={{ padding: "var(--space-6)", maxWidth: "1200px", margin: "0 auto" }}>
+      <PageContainer maxWidth="lg" padding="md">
         {/* Skeleton Header */}
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "var(--space-6)" }}>
           <Skeleton width={160} height={32} />
@@ -541,18 +549,12 @@ export const UsersView: React.FC<UsersViewProps> = ({ onNavigate }) => {
             <Skeleton width={36} height={36} style={{ borderRadius: "var(--radius-md)" }} />
           </div>
         </div>
-      </div>
+      </PageContainer>
     );
   }
 
-  const containerStyle: React.CSSProperties = {
-    padding: "var(--space-6)",
-    maxWidth: "1200px",
-    margin: "0 auto",
-  };
-
   return (
-    <div style={containerStyle}>
+    <PageContainer maxWidth="lg" padding="md">
       {/* Header */}
       <UserPageHeader onCreateUser={handleCreateUser} showCreateButton={users.length > 0} />
 
@@ -562,6 +564,8 @@ export const UsersView: React.FC<UsersViewProps> = ({ onNavigate }) => {
         onSearchChange={setSearchQuery}
         selectedRole={selectedRole}
         onRoleChange={setSelectedRole}
+        selectedStatus={selectedStatus}
+        onStatusChange={setSelectedStatus}
         selectedVerification={selectedVerification}
         onVerificationChange={setSelectedVerification}
         roles={roles}
@@ -704,7 +708,7 @@ export const UsersView: React.FC<UsersViewProps> = ({ onNavigate }) => {
         onClose={() => setIsCreateDrawerOpen(false)}
         onSuccess={handleUserCreated}
       />
-    </div>
+    </PageContainer>
   );
 };
 

@@ -191,7 +191,10 @@ const getActivityDescription = (
     return descriptions.join(". ");
   }
 
-  return t("audit.generic_action", { action, entity: entityType, defaultValue: `${action} en ${entityType}` });
+  // Traducir acción y entidad
+  const translatedAction = t(`audit.actions.${action}`, action);
+  const translatedEntity = t(`audit.entities.${entityType}`, entityType);
+  return t("audit.generic_action", { action: translatedAction, entity: translatedEntity, defaultValue: `${translatedAction} en ${translatedEntity}` });
 };
 
 export function UserActivityTab({ userId }: UserActivityTabProps) {

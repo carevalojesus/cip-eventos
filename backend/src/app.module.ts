@@ -48,6 +48,7 @@ import { CourtesiesModule } from './courtesies/courtesies.module';
 import { MessagingModule } from './messaging/messaging.module';
 import { ReniecModule } from './reniec/reniec.module';
 import { ReportsModule } from './reports/reports.module';
+import { SettingsModule } from './settings/settings.module';
 
 @Module({
   imports: [
@@ -152,6 +153,7 @@ import { ReportsModule } from './reports/reports.module';
     CourtesiesModule,
     ReniecModule,
     ReportsModule,
+    SettingsModule,
 
     I18nModule.forRoot({
       fallbackLanguage: 'es',

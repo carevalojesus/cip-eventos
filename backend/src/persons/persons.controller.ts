@@ -79,6 +79,45 @@ export class PersonsController {
     return this.personsService.createAndLinkToUser(user.userId, createPersonDto);
   }
 
+  @Post('me/revalidate')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Revalidate current user nominal data with RENIEC',
+    description: 'Triggers a new RENIEC validation for the current user Person record',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Person data revalidated successfully',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'No Person linked to this user',
+  })
+  async revalidateMyPerson(@CurrentUser() user: { userId: string }) {
+    return this.personsService.revalidateByUserId(user.userId);
+  }
+
+  @Patch('me')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Update current user nominal data',
+    description: 'Updates the Person record linked to the current authenticated user and revalidates with RENIEC if DNI',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Person data updated successfully',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'No Person linked to this user',
+  })
+  async updateMyPerson(
+    @CurrentUser() user: { userId: string },
+    @Body() updatePersonDto: UpdatePersonDto,
+  ) {
+    return this.personsService.updateByUserId(user.userId, updatePersonDto);
+  }
+
   @Post()
   create(@Body() createPersonDto: CreatePersonDto) {
     return this.personsService.create(createPersonDto);

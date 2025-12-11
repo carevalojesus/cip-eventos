@@ -1,7 +1,7 @@
 /* UserDetailView Styles */
 
 .user-detail {
-  max-width: 1100px;
+  max-width: 1200px;
   margin: 0 auto;
   padding: var(--space-6);
 }
@@ -23,7 +23,7 @@
 }
 
 .user-detail__back:hover {
-  color: var(--color-red-500);
+  color: var(--color-primary);
 }
 
 /* Header */
@@ -87,8 +87,8 @@
 }
 
 .user-detail__tab--active {
-  color: var(--color-red-600);
-  border-bottom-color: var(--color-red-500);
+  color: var(--color-primary-dark);
+  border-bottom-color: var(--color-primary);
 }
 
 /* User Card - Inside tab content */
@@ -238,12 +238,13 @@
   gap: var(--space-2);
   padding: var(--space-2) var(--space-3);
   border-radius: var(--radius-lg);
-  border: none;
-  background-color: var(--color-grey-100);
+  border: 1px solid var(--color-grey-200);
+  background-color: var(--color-grey-050);
 }
 
 .user-detail__role-card--active {
-  background-color: var(--color-red-050);
+  background-color: var(--color-grey-050);
+  border-color: var(--color-grey-200);
 }
 
 .user-detail__role-icon {
@@ -254,7 +255,7 @@
 }
 
 .user-detail__role-icon--active {
-  color: var(--color-red-400);
+  color: var(--color-grey-500);
 }
 
 .user-detail__role-info {
@@ -280,7 +281,7 @@
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background-color: var(--color-red-400);
+  background-color: var(--color-green-500);
 }
 
 /* Metadata */
@@ -365,7 +366,7 @@
 .user-detail__danger-title {
   font-size: var(--font-size-sm);
   font-weight: 600;
-  color: var(--color-red-600);
+  color: var(--color-danger);
   margin: 0 0 var(--space-3) 0;
 }
 
