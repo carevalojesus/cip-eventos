@@ -1,157 +1,218 @@
-import * as React from "react"
-import * as SelectPrimitive from "@radix-ui/react-select"
-import { Check, ChevronDown, ChevronUp } from "lucide-react"
+import React, { useState } from "react";
+import {
+  Listbox,
+  ListboxButton,
+  ListboxOption,
+  ListboxOptions,
+} from "@headlessui/react";
 
-import { cn } from "@/lib/utils"
-
-const Select = SelectPrimitive.Root
-
-const SelectGroup = SelectPrimitive.Group
-
-const SelectValue = SelectPrimitive.Value
-
-const SelectTrigger = React.forwardRef<
-  React.ElementRef<typeof SelectPrimitive.Trigger>,
-  React.ComponentPropsWithoutRef<typeof SelectPrimitive.Trigger>
->(({ className, children, ...props }, ref) => (
-  <SelectPrimitive.Trigger
-    ref={ref}
-    className={cn(
-      "flex h-9 w-full items-center justify-between whitespace-nowrap rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1",
-      className
-    )}
-    {...props}
-  >
-    {children}
-    <SelectPrimitive.Icon asChild>
-      <ChevronDown className="h-4 w-4 opacity-50" />
-    </SelectPrimitive.Icon>
-  </SelectPrimitive.Trigger>
-))
-SelectTrigger.displayName = SelectPrimitive.Trigger.displayName
-
-const SelectScrollUpButton = React.forwardRef<
-  React.ElementRef<typeof SelectPrimitive.ScrollUpButton>,
-  React.ComponentPropsWithoutRef<typeof SelectPrimitive.ScrollUpButton>
->(({ className, ...props }, ref) => (
-  <SelectPrimitive.ScrollUpButton
-    ref={ref}
-    className={cn(
-      "flex cursor-default items-center justify-center py-1",
-      className
-    )}
-    {...props}
-  >
-    <ChevronUp className="h-4 w-4" />
-  </SelectPrimitive.ScrollUpButton>
-))
-SelectScrollUpButton.displayName = SelectPrimitive.ScrollUpButton.displayName
-
-const SelectScrollDownButton = React.forwardRef<
-  React.ElementRef<typeof SelectPrimitive.ScrollDownButton>,
-  React.ComponentPropsWithoutRef<typeof SelectPrimitive.ScrollDownButton>
->(({ className, ...props }, ref) => (
-  <SelectPrimitive.ScrollDownButton
-    ref={ref}
-    className={cn(
-      "flex cursor-default items-center justify-center py-1",
-      className
-    )}
-    {...props}
-  >
-    <ChevronDown className="h-4 w-4" />
-  </SelectPrimitive.ScrollDownButton>
-))
-SelectScrollDownButton.displayName =
-  SelectPrimitive.ScrollDownButton.displayName
-
-const SelectContent = React.forwardRef<
-  React.ElementRef<typeof SelectPrimitive.Content>,
-  React.ComponentPropsWithoutRef<typeof SelectPrimitive.Content>
->(({ className, children, position = "popper", ...props }, ref) => (
-  <SelectPrimitive.Portal>
-    <SelectPrimitive.Content
-      ref={ref}
-      className={cn(
-        "relative z-50 max-h-96 min-w-[8rem] overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
-        position === "popper" &&
-          "data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1",
-        className
-      )}
-      position={position}
-      {...props}
-    >
-      <SelectScrollUpButton />
-      <SelectPrimitive.Viewport
-        className={cn(
-          "p-1",
-          position === "popper" &&
-            "h-[var(--radix-select-trigger-height)] w-full min-w-[var(--radix-select-trigger-width)]"
-        )}
-      >
-        {children}
-      </SelectPrimitive.Viewport>
-      <SelectScrollDownButton />
-    </SelectPrimitive.Content>
-  </SelectPrimitive.Portal>
-))
-SelectContent.displayName = SelectPrimitive.Content.displayName
-
-const SelectLabel = React.forwardRef<
-  React.ElementRef<typeof SelectPrimitive.Label>,
-  React.ComponentPropsWithoutRef<typeof SelectPrimitive.Label>
->(({ className, ...props }, ref) => (
-  <SelectPrimitive.Label
-    ref={ref}
-    className={cn("px-2 py-1.5 text-sm font-semibold", className)}
-    {...props}
-  />
-))
-SelectLabel.displayName = SelectPrimitive.Label.displayName
-
-const SelectItem = React.forwardRef<
-  React.ElementRef<typeof SelectPrimitive.Item>,
-  React.ComponentPropsWithoutRef<typeof SelectPrimitive.Item>
->(({ className, children, ...props }, ref) => (
-  <SelectPrimitive.Item
-    ref={ref}
-    className={cn(
-      "relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-2 pr-8 text-sm outline-none focus:bg-muted focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
-      className
-    )}
-    {...props}
-  >
-    <span className="absolute right-2 flex h-3.5 w-3.5 items-center justify-center">
-      <SelectPrimitive.ItemIndicator>
-        <Check className="h-4 w-4" />
-      </SelectPrimitive.ItemIndicator>
-    </span>
-    <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
-  </SelectPrimitive.Item>
-))
-SelectItem.displayName = SelectPrimitive.Item.displayName
-
-const SelectSeparator = React.forwardRef<
-  React.ElementRef<typeof SelectPrimitive.Separator>,
-  React.ComponentPropsWithoutRef<typeof SelectPrimitive.Separator>
->(({ className, ...props }, ref) => (
-  <SelectPrimitive.Separator
-    ref={ref}
-    className={cn("-mx-1 my-1 h-px bg-muted", className)}
-    {...props}
-  />
-))
-SelectSeparator.displayName = SelectPrimitive.Separator.displayName
-
-export {
-  Select,
-  SelectGroup,
-  SelectValue,
-  SelectTrigger,
-  SelectContent,
-  SelectLabel,
-  SelectItem,
-  SelectSeparator,
-  SelectScrollUpButton,
-  SelectScrollDownButton,
+interface SelectOption {
+  value: string;
+  label: string;
 }
+
+interface SimpleSelectProps {
+  value: string;
+  onChange: (value: string) => void;
+  options: SelectOption[];
+  placeholder?: string;
+  fullWidth?: boolean;
+  maxLabelLength?: number;
+}
+
+export const SimpleSelect: React.FC<SimpleSelectProps> = ({
+  value,
+  onChange,
+  options,
+  placeholder = "Seleccionar...",
+  fullWidth = false,
+  maxLabelLength,
+}) => {
+  const [isHovered, setIsHovered] = useState(false);
+  const selectedOption = options.find((opt) => opt.value === value);
+
+  // Función para truncar texto
+  const truncateText = (text: string, maxLength?: number) => {
+    if (!maxLength || text.length <= maxLength) return text;
+    return text.substring(0, maxLength) + "...";
+  };
+
+  const displayLabel = truncateText(selectedOption?.label || placeholder, maxLabelLength);
+
+  // Encontrar el texto más largo para mantener ancho fijo (solo si no es fullWidth)
+  const longestLabel = fullWidth
+    ? placeholder
+    : options.reduce(
+        (longest, opt) => (opt.label.length > longest.length ? opt.label : longest),
+        placeholder
+      );
+
+  const buttonStyle: React.CSSProperties = {
+    position: "relative",
+    display: fullWidth ? "flex" : "inline-grid",
+    alignItems: "center",
+    height: "var(--button-height-lg)",
+    padding: "0 var(--space-8) 0 var(--space-3)",
+    fontSize: "var(--font-size-sm)",
+    fontWeight: 400,
+    textAlign: "left",
+    borderRadius: "var(--radius-md)",
+    backgroundColor: "var(--color-bg-primary)",
+    cursor: "pointer",
+    outline: "none",
+    whiteSpace: "nowrap",
+    width: fullWidth ? "100%" : "auto",
+    overflow: "hidden",
+  };
+
+  const getButtonStyle = (isOpen: boolean): React.CSSProperties => ({
+    ...buttonStyle,
+    border: `1px solid ${isOpen ? "var(--color-grey-300)" : isHovered ? "var(--color-grey-300)" : "var(--color-grey-200)"}`,
+    color: selectedOption ? "var(--color-grey-900)" : "var(--color-grey-500)",
+    backgroundColor: isHovered && !isOpen ? "var(--color-grey-050)" : "var(--color-bg-primary)",
+    boxShadow: isOpen
+      ? "var(--ring-neutral)"
+      : "inset 0 2px 4px rgba(39, 36, 29, 0.06)",
+    transition: "all 150ms ease",
+  });
+
+  const chevronStyle: React.CSSProperties = {
+    position: "absolute",
+    right: "var(--space-3)",
+    top: "50%",
+    transform: "translateY(-50%)",
+    pointerEvents: "none",
+    color: "var(--color-grey-500)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  };
+
+  const optionsStyle: React.CSSProperties = {
+    position: "absolute",
+    zIndex: 50,
+    marginTop: "var(--space-1)",
+    minWidth: "100%",
+    maxHeight: "240px",
+    overflowY: "auto",
+    backgroundColor: "var(--color-bg-primary)",
+    border: "1px solid var(--color-grey-200)",
+    borderRadius: "var(--radius-md)",
+    boxShadow: "var(--shadow-dropdown)",
+    padding: "var(--space-1)",
+    outline: "none",
+  };
+
+  const getOptionStyle = (isSelected: boolean, isFocused: boolean): React.CSSProperties => ({
+    padding: "var(--space-2) var(--space-3)",
+    fontSize: "var(--font-size-sm)",
+    color: isSelected ? "var(--color-grey-900)" : "var(--color-grey-700)",
+    fontWeight: isSelected ? 500 : 400,
+    borderRadius: "var(--radius-sm)",
+    cursor: "pointer",
+    display: "flex",
+    alignItems: "center",
+    gap: "var(--space-2)",
+    backgroundColor: isFocused ? "var(--color-grey-050)" : "transparent",
+    transition: "background-color 100ms ease",
+    listStyle: "none",
+  });
+
+  const optionTextStyle: React.CSSProperties = {
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    whiteSpace: "nowrap",
+  };
+
+  return (
+    <Listbox value={value} onChange={onChange}>
+      {({ open }) => (
+        <div
+          style={{ position: "relative", display: fullWidth ? "block" : "inline-block", width: fullWidth ? "100%" : "auto" }}
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+        >
+          <ListboxButton style={getButtonStyle(open)}>
+            {/* Texto invisible para mantener ancho fijo (solo si no es fullWidth) */}
+            {!fullWidth && (
+              <span style={{ visibility: "hidden", gridArea: "1 / 1" }}>
+                {longestLabel}
+              </span>
+            )}
+            {/* Texto visible */}
+            <span style={{
+              gridArea: fullWidth ? undefined : "1 / 1",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              flex: fullWidth ? 1 : undefined,
+            }}>
+              {displayLabel}
+            </span>
+            <span style={chevronStyle}>
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                style={{
+                  transform: open ? "rotate(180deg)" : "rotate(0deg)",
+                  transition: "transform 150ms ease",
+                }}
+              >
+                <path d="m6 9 6 6 6-6" />
+              </svg>
+            </span>
+          </ListboxButton>
+
+          <ListboxOptions style={optionsStyle}>
+            {options.map((option) => (
+              <ListboxOption
+                key={option.value}
+                value={option.value}
+                as={React.Fragment}
+              >
+                {({ selected, focus }) => (
+                  <li style={getOptionStyle(selected, focus)}>
+                    <span
+                      style={{
+                        width: "14px",
+                        height: "14px",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        flexShrink: 0,
+                      }}
+                    >
+                      {selected && (
+                        <svg
+                          width="14"
+                          height="14"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="var(--color-action)"
+                          strokeWidth="2.5"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <polyline points="20 6 9 17 4 12" />
+                        </svg>
+                      )}
+                    </span>
+                    <span style={optionTextStyle} title={option.label}>{option.label}</span>
+                  </li>
+                )}
+              </ListboxOption>
+            ))}
+          </ListboxOptions>
+        </div>
+      )}
+    </Listbox>
+  );
+};
+
+// Alias for backward compatibility
+export const Select = SimpleSelect;

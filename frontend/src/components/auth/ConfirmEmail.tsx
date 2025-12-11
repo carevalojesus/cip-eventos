@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 
 import api from '@/lib/api';
-import { Button } from '@/components/ui/rui-button';
+import { Button } from '@/components/ui/button';
 import { I18nProvider } from '@/components/providers/I18nProvider';
 import { getCurrentLocale, routes } from '@/lib/routes';
 

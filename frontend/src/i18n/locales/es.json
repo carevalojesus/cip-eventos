@@ -365,7 +365,7 @@
         "loading": "Cargando..."
     },
     "roles": {
-        "SUPER_ADMIN": "Acceso Total",
+        "SUPER_ADMIN": "Superadministrador",
         "ORG_ADMIN": "Administrador",
         "ORG_STAFF_ACCESO": "Staff de Acceso",
         "ORG_STAFF_ACADEMICO": "Staff Académico",

@@ -32,7 +32,7 @@ export function SidebarItem({
     backgroundColor: isActive
       ? 'var(--color-red-050)'
       : isHovered
-        ? 'var(--color-grey-100)'
+        ? 'var(--color-grey-050)'
         : 'transparent',
     position: 'relative',
     textDecoration: 'none',

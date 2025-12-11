@@ -17,10 +17,10 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
 }
 
 const sizeConfig: Record<InputSize, { height: string; fontSize: string }> = {
-  sm: { height: 'var(--button-height-sm)', fontSize: '13px' },
-  md: { height: 'var(--button-height-md)', fontSize: '14px' },
-  lg: { height: 'var(--button-height-lg)', fontSize: '14px' },
-  xl: { height: 'var(--button-height-xl)', fontSize: '15px' },
+  sm: { height: 'var(--button-height-sm)', fontSize: 'var(--font-size-xs)' },
+  md: { height: 'var(--button-height-md)', fontSize: 'var(--font-size-sm)' },
+  lg: { height: 'var(--button-height-lg)', fontSize: 'var(--font-size-sm)' },
+  xl: { height: 'var(--button-height-xl)', fontSize: 'var(--font-size-base)' },
 }
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(({
@@ -56,7 +56,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(({
   }
 
   const labelStyles: React.CSSProperties = {
-    fontSize: '14px',
+    fontSize: 'var(--font-size-sm)',
     fontWeight: 500,
     color: 'var(--color-grey-700)',
     lineHeight: 1.5,
@@ -78,7 +78,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(({
     color: 'var(--color-grey-900)',
     backgroundColor: colors.white,
     border: `1px solid ${error ? 'var(--color-danger)' : 'var(--color-grey-200)'}`,
-    borderRadius: '6px',
+    borderRadius: 'var(--radius-md)',
     outline: 'none',
     transition: 'border-color 150ms ease, box-shadow 150ms ease',
     boxShadow: shadows.inputInset,
@@ -108,7 +108,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(({
   }
 
   const hintStyles: React.CSSProperties = {
-    fontSize: '0.75rem',
+    fontSize: 'var(--font-size-xs)',
     color: error ? 'var(--color-danger)' : 'var(--color-grey-500)',
   }
 

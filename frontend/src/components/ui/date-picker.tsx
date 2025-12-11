@@ -97,7 +97,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
           cursor: "pointer",
           outline: "none",
           transition: "border-color 150ms ease, box-shadow 150ms ease",
-          boxShadow: isOpen ? "0 0 0 3px rgba(184, 178, 167, 0.2)" : "none",
+          boxShadow: isOpen ? "var(--shadow-focus)" : "none",
         }}
       >
         <Calendar size={16} style={{ color: "var(--color-grey-400)", flexShrink: 0 }} />
@@ -251,7 +251,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
                     fontSize: "var(--font-size-sm)",
                     fontWeight: isSelected ? 600 : 400,
                     color: isSelected
-                      ? "white"
+                      ? "var(--color-bg-primary)"
                       : isTodayDate
                         ? "var(--color-primary)"
                         : "var(--color-text-primary)",

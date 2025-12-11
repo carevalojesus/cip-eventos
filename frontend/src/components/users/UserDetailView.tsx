@@ -2,8 +2,10 @@
  * UserDetailView Component
  *
  * Vista de detalle de usuario con:
- * - Header con avatar, nombre, estado y verificación
- * - Layout de 2 columnas (contenido principal + sidebar)
+ * - Header con título y acciones (editar, activar/desactivar)
+ * - Tabs de navegación a ancho completo
+ * - Layout de 2 columnas debajo de tabs (contenido principal + sidebar)
+ * - User Card con avatar, nombre, estado y verificación
  * - Tabs: Información Personal, Seguridad y Permisos, Historial de Actividad
  * - Sidebar con Rol del Sistema y Metadatos
  * - Zona de peligro para acciones destructivas
@@ -19,18 +21,20 @@ import {
   EnvelopeSimple,
   Shield,
   ShieldCheck,
-  Buildings,
+  Briefcase,
   FloppyDisk,
   PencilSimple,
   X,
 } from "@phosphor-icons/react";
 
 // Components
-import { Button } from "@/components/ui/rui-button";
+import { Button } from "@/components/ui/button";
 import { FormSelect } from "@/components/ui/rui/form";
-import { ConfirmDialog } from "@/components/ui/rui-confirm-dialog";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { Breadcrumbs } from "@/components/ui/breadcrumbs";
+import { Skeleton, SkeletonCircle } from "@/components/ui/skeleton";
 import { ResetPasswordModal } from "./ResetPasswordModal";
-import { UserStatusBadge, UserVerificationBadge, UserAvatar } from "./components";
+import { UserStatusBadge, UserVerificationBadge, UserAvatar, AvatarEditor } from "./components";
 import { UserPersonalTab, UserSecurityTab, UserActivityTab } from "./tabs";
 
 // Hooks
@@ -41,11 +45,12 @@ import {
   usersService,
   rolesService,
   adminProfileService,
+  uploadService,
 } from "@/services/users.service";
 import { useAuthStore } from "@/store/auth.store";
 import { UserRole } from "@/constants/roles";
-import { getDisplayName } from "@/lib/userUtils";
-import { formatDateTimeLong, getRelativeTime, getLocaleFromLang } from "@/lib/dateUtils";
+import { getDisplayName, getRoleDisplayName } from "@/lib/userUtils";
+import { formatEventDate, getRelativeTime, getLocaleFromLang } from "@/lib/dateUtils";
 
 // Styles
 import "./UserDetailView.css";
@@ -72,6 +77,7 @@ export const UserDetailView: React.FC<UserDetailViewProps> = ({ userId, onNaviga
   const queryClient = useQueryClient();
   const currentUser = useAuthStore((state) => state.user);
   const isSuperAdmin = currentUser?.role === UserRole.SUPER_ADMIN;
+  const isOwnProfile = currentUser?.id === userId;
 
   // ============================================
   // STATE
@@ -81,6 +87,7 @@ export const UserDetailView: React.FC<UserDetailViewProps> = ({ userId, onNaviga
   const [isEditing, setIsEditing] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
   const [forcePasswordReset, setForcePasswordReset] = useState(false);
+  const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
 
   // Form data
   const [formData, setFormData] = useState({
@@ -90,14 +97,19 @@ export const UserDetailView: React.FC<UserDetailViewProps> = ({ userId, onNaviga
     lastName: "",
     phoneNumber: "",
     designation: "",
+    description: "",
     address: "",
-    organization: "",
   });
 
   // Dialogs
   const resetPasswordDialog = useDialog();
   const toggleStatusDialog = useDialog();
   const deleteDialog = useDialog();
+  const changeRoleDialog = useDialog();
+  const verifyEmailDialog = useDialog();
+
+  // Change role state
+  const [selectedRoleId, setSelectedRoleId] = useState("");
 
   // ============================================
   // QUERIES
@@ -113,7 +125,7 @@ export const UserDetailView: React.FC<UserDetailViewProps> = ({ userId, onNaviga
     queryFn: rolesService.findAll,
   });
 
-  // Initialize form data
+  // Initialize form data and forcePasswordReset
   useEffect(() => {
     if (user) {
       setFormData({
@@ -123,16 +135,17 @@ export const UserDetailView: React.FC<UserDetailViewProps> = ({ userId, onNaviga
         lastName: user.profile?.lastName || "",
         phoneNumber: user.profile?.phoneNumber || "",
         designation: user.profile?.designation || "",
+        description: user.profile?.description || "",
         address: user.profile?.address || "",
-        organization: user.profile?.organization || "",
       });
+      setForcePasswordReset(user.forcePasswordReset || false);
     }
   }, [user]);
 
   // Role options
   const roleOptions = (roles || []).filter((r) => r.isActive).map((role) => ({
     value: role.id.toString(),
-    label: role.description || role.name,
+    label: getRoleDisplayName(role.name),
   }));
 
   // ============================================
@@ -150,8 +163,8 @@ export const UserDetailView: React.FC<UserDetailViewProps> = ({ userId, onNaviga
         lastName: formData.lastName,
         phoneNumber: formData.phoneNumber,
         designation: formData.designation,
+        description: formData.description,
         address: formData.address,
-        organization: formData.organization,
       });
     },
     onSuccess: () => {
@@ -183,11 +196,57 @@ export const UserDetailView: React.FC<UserDetailViewProps> = ({ userId, onNaviga
     },
   });
 
+  const forcePasswordResetMutation = useMutation({
+    mutationFn: (value: boolean) => usersService.update(userId, { forcePasswordReset: value }),
+    onSuccess: (_, value) => {
+      queryClient.invalidateQueries({ queryKey: ["user", userId] });
+      toast.success(value
+        ? t("users.detail.force_reset_enabled", "Se forzará cambio de contraseña en próximo inicio")
+        : t("users.detail.force_reset_disabled", "Forzar cambio de contraseña desactivado"));
+    },
+    onError: () => {
+      // Revertir el estado local si falla
+      setForcePasswordReset(!forcePasswordReset);
+      toast.error(t("users.detail.force_reset_error", "Error al actualizar configuración"));
+    },
+  });
+
+  const changeRoleMutation = useMutation({
+    mutationFn: (roleId: number) => usersService.changeRole(userId, roleId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["user", userId] });
+      toast.success(t("users.detail.role_changed", "Rol actualizado correctamente"));
+      changeRoleDialog.reset();
+    },
+    onError: () => {
+      toast.error(t("users.detail.role_change_error", "Error al cambiar el rol"));
+      changeRoleDialog.setLoading(false);
+    },
+  });
+
+  const verifyEmailMutation = useMutation({
+    mutationFn: () => usersService.verifyEmailManually(userId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["user", userId] });
+      toast.success(t("users.detail.email_verified", "Correo verificado correctamente"));
+      verifyEmailDialog.reset();
+    },
+    onError: () => {
+      toast.error(t("users.detail.verify_error", "Error al verificar el correo"));
+      verifyEmailDialog.setLoading(false);
+    },
+  });
+
   // ============================================
   // HANDLERS
   // ============================================
 
   const handleBack = () => onNavigate(isEnglish ? "/en/users" : "/usuarios");
+
+  const handleForcePasswordResetChange = (value: boolean) => {
+    setForcePasswordReset(value);
+    forcePasswordResetMutation.mutate(value);
+  };
 
   const handleFormChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -205,8 +264,8 @@ export const UserDetailView: React.FC<UserDetailViewProps> = ({ userId, onNaviga
         lastName: user.profile?.lastName || "",
         phoneNumber: user.profile?.phoneNumber || "",
         designation: user.profile?.designation || "",
+        description: user.profile?.description || "",
         address: user.profile?.address || "",
-        organization: user.profile?.organization || "",
       });
     }
   };
@@ -249,14 +308,165 @@ export const UserDetailView: React.FC<UserDetailViewProps> = ({ userId, onNaviga
     }
   };
 
+  const handleAvatarChange = async (file: File) => {
+    setIsUploadingAvatar(true);
+    try {
+      // Get presigned URL
+      const { uploadUrl, publicUrl } = await uploadService.getAvatarUploadUrl(
+        file.type,
+        file.size
+      );
+
+      console.log("Avatar upload - publicUrl:", publicUrl);
+      console.log("Avatar upload - uploadUrl:", uploadUrl);
+
+      // Upload to S3/MinIO
+      const uploadResponse = await fetch(uploadUrl, {
+        method: "PUT",
+        body: file,
+        headers: {
+          "Content-Type": file.type,
+        },
+      });
+
+      if (!uploadResponse.ok) {
+        throw new Error(`Upload to storage failed: ${uploadResponse.status}`);
+      }
+
+      console.log("Avatar upload - File uploaded to storage successfully");
+
+      // Update profile with new avatar URL
+      await adminProfileService.updateByUserId(userId, { avatar: publicUrl });
+      // Refresh user data
+      queryClient.invalidateQueries({ queryKey: ["user", userId] });
+      toast.success(t("users.avatar.upload_success", "Avatar actualizado"));
+    } catch (err: unknown) {
+      console.error("Avatar upload error:", err);
+      // Show more details if available
+      if (err && typeof err === 'object' && 'response' in err) {
+        const axiosErr = err as { response?: { data?: unknown } };
+        console.error("Error response data:", axiosErr.response?.data);
+      }
+      toast.error(t("users.avatar.upload_error", "Error al subir el avatar"));
+    } finally {
+      setIsUploadingAvatar(false);
+    }
+  };
+
+  const handleAvatarRemove = async () => {
+    setIsUploadingAvatar(true);
+    try {
+      await adminProfileService.updateByUserId(userId, { avatar: "" });
+      queryClient.invalidateQueries({ queryKey: ["user", userId] });
+      toast.success(t("users.avatar.remove_success", "Avatar eliminado"));
+    } catch {
+      toast.error(t("users.avatar.remove_error", "Error al eliminar el avatar"));
+    } finally {
+      setIsUploadingAvatar(false);
+    }
+  };
+
   // ============================================
   // LOADING & ERROR
   // ============================================
 
   if (isLoading) {
     return (
-      <div className="user-detail__loading">
-        <SpinnerGap size={32} className="animate-spin" style={{ color: "var(--color-grey-400)" }} />
+      <div className="user-detail">
+        {/* Skeleton Breadcrumbs */}
+        <div style={{ marginBottom: "var(--space-4)" }}>
+          <Skeleton width={200} height={16} />
+        </div>
+
+        {/* Skeleton Back Button */}
+        <div style={{ marginBottom: "var(--space-6)" }}>
+          <Skeleton width={140} height={36} style={{ borderRadius: "var(--radius-md)" }} />
+        </div>
+
+        {/* Skeleton Header */}
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "var(--space-6)" }}>
+          <Skeleton width={180} height={28} />
+          <div style={{ display: "flex", gap: "var(--space-3)" }}>
+            <Skeleton width={100} height={36} style={{ borderRadius: "var(--radius-md)" }} />
+            <Skeleton width={80} height={36} style={{ borderRadius: "var(--radius-md)" }} />
+          </div>
+        </div>
+
+        {/* Skeleton User Card */}
+        <div style={{
+          backgroundColor: "var(--color-bg-primary)",
+          border: "1px solid var(--color-grey-200)",
+          borderRadius: "var(--radius-lg)",
+          padding: "var(--space-6)",
+          marginBottom: "var(--space-6)"
+        }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "var(--space-4)" }}>
+            <SkeletonCircle size={80} />
+            <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-2)" }}>
+              <Skeleton width={200} height={24} />
+              <Skeleton width={180} height={16} />
+              <div style={{ display: "flex", gap: "var(--space-2)", marginTop: "var(--space-1)" }}>
+                <Skeleton width={70} height={24} style={{ borderRadius: "var(--radius-full)" }} />
+                <Skeleton width={90} height={24} style={{ borderRadius: "var(--radius-full)" }} />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Skeleton Tabs */}
+        <div style={{ display: "flex", gap: "var(--space-4)", marginBottom: "var(--space-6)", borderBottom: "1px solid var(--color-grey-200)", paddingBottom: "var(--space-3)" }}>
+          <Skeleton width={140} height={20} />
+          <Skeleton width={160} height={20} />
+          <Skeleton width={150} height={20} />
+        </div>
+
+        {/* Skeleton Content */}
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 300px", gap: "var(--space-6)" }}>
+          {/* Main content */}
+          <div style={{
+            backgroundColor: "var(--color-bg-primary)",
+            border: "1px solid var(--color-grey-200)",
+            borderRadius: "var(--radius-lg)",
+            padding: "var(--space-6)"
+          }}>
+            <Skeleton width={120} height={20} style={{ marginBottom: "var(--space-4)" }} />
+            <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-4)" }}>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "var(--space-4)" }}>
+                <div><Skeleton width="40%" height={14} style={{ marginBottom: "var(--space-2)" }} /><Skeleton width="100%" height={40} style={{ borderRadius: "var(--radius-md)" }} /></div>
+                <div><Skeleton width="40%" height={14} style={{ marginBottom: "var(--space-2)" }} /><Skeleton width="100%" height={40} style={{ borderRadius: "var(--radius-md)" }} /></div>
+              </div>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "var(--space-4)" }}>
+                <div><Skeleton width="50%" height={14} style={{ marginBottom: "var(--space-2)" }} /><Skeleton width="100%" height={40} style={{ borderRadius: "var(--radius-md)" }} /></div>
+                <div><Skeleton width="35%" height={14} style={{ marginBottom: "var(--space-2)" }} /><Skeleton width="100%" height={40} style={{ borderRadius: "var(--radius-md)" }} /></div>
+              </div>
+            </div>
+          </div>
+          {/* Sidebar */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-4)" }}>
+            <div style={{
+              backgroundColor: "var(--color-bg-primary)",
+              border: "1px solid var(--color-grey-200)",
+              borderRadius: "var(--radius-lg)",
+              padding: "var(--space-4)"
+            }}>
+              <Skeleton width={100} height={16} style={{ marginBottom: "var(--space-3)" }} />
+              <Skeleton width="100%" height={36} style={{ borderRadius: "var(--radius-md)" }} />
+            </div>
+            <div style={{
+              backgroundColor: "var(--color-bg-primary)",
+              border: "1px solid var(--color-grey-200)",
+              borderRadius: "var(--radius-lg)",
+              padding: "var(--space-4)"
+            }}>
+              <Skeleton width={80} height={16} style={{ marginBottom: "var(--space-3)" }} />
+              <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-2)" }}>
+                <Skeleton width="100%" height={14} />
+                <Skeleton width="100%" height={14} />
+                <Skeleton width="80%" height={14} />
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
@@ -283,6 +493,14 @@ export const UserDetailView: React.FC<UserDetailViewProps> = ({ userId, onNaviga
 
   return (
     <div className="user-detail">
+      {/* Breadcrumbs */}
+      <Breadcrumbs
+        items={[
+          { label: t("users.list.title", "Usuarios"), href: isEnglish ? "/en/users" : "/usuarios" },
+          { label: fullName }
+        ]}
+      />
+
       {/* Back button */}
       <button type="button" className="user-detail__back" onClick={handleBack}>
         <ArrowLeft size={16} />
@@ -320,35 +538,46 @@ export const UserDetailView: React.FC<UserDetailViewProps> = ({ userId, onNaviga
                   </Button>
                 </>
               ) : (
-                <>
-                  <Button
-                    variant="secondary"
-                    size="md"
-                    onClick={() => toggleStatusDialog.open()}
-                  >
-                    {user.isActive
-                      ? t("users.detail.deactivate_account", "Desactivar")
-                      : t("users.detail.activate_account", "Activar")}
-                  </Button>
-                  <Button
-                    variant="primary"
-                    size="md"
-                    onClick={() => setIsEditing(true)}
-                  >
-                    <PencilSimple size={18} />
-                    {t("common.edit", "Editar")}
-                  </Button>
-                </>
+                !isOwnProfile && (
+                  <>
+                    <Button
+                      variant="secondary"
+                      size="md"
+                      onClick={() => toggleStatusDialog.open()}
+                    >
+                      {user.isActive
+                        ? t("users.detail.deactivate_account", "Desactivar")
+                        : t("users.detail.activate_account", "Activar")}
+                    </Button>
+                    <Button
+                      variant="primary"
+                      size="md"
+                      onClick={() => setIsEditing(true)}
+                    >
+                      <PencilSimple size={18} />
+                      {t("common.edit", "Editar")}
+                    </Button>
+                  </>
+                )
               )}
             </>
           )}
         </div>
       </div>
 
-      {/* User Card */}
+      {/* User Card - Full width above tabs */}
       <div className="user-detail__user-card">
         <div className="user-detail__user-info">
-          <UserAvatar user={user} size="xl" />
+          {isEditing ? (
+            <AvatarEditor
+              user={user}
+              onAvatarChange={handleAvatarChange}
+              onAvatarRemove={handleAvatarRemove}
+              isUploading={isUploadingAvatar}
+            />
+          ) : (
+            <UserAvatar user={user} size="xl" />
+          )}
           <div className="user-detail__user-details">
             <div className="user-detail__user-name">
               <span className="user-detail__user-name-text">{fullName}</span>
@@ -359,10 +588,10 @@ export const UserDetailView: React.FC<UserDetailViewProps> = ({ userId, onNaviga
                 <EnvelopeSimple size={14} />
                 {user.email}
               </div>
-              {user.profile?.organization && (
+              {user.profile?.designation && (
                 <div className="user-detail__user-meta-item">
-                  <Buildings size={14} />
-                  {user.profile.organization}
+                  <Briefcase size={14} />
+                  {user.profile.designation}
                 </div>
               )}
               <div className="user-detail__user-meta-item">
@@ -373,59 +602,61 @@ export const UserDetailView: React.FC<UserDetailViewProps> = ({ userId, onNaviga
           </div>
         </div>
         <div className="user-detail__verification">
-          <span className="user-detail__verification-label">
-            {t("users.detail.verified_label", "Verificado")}
-          </span>
-          <UserVerificationBadge isVerified={user.isVerified} showLabel={false} size="md" />
-          <div className="user-detail__last-access">
+          <div className="user-detail__verification-item">
+            <span className="user-detail__verification-label">
+              {t("users.detail.verified_label", "Verificado")}
+            </span>
+            <UserVerificationBadge isVerified={user.isVerified} showLabel={false} size="md" />
+          </div>
+          <div className="user-detail__verification-item">
             <span className="user-detail__verification-label">
               {t("users.detail.last_access_label", "Último Acceso")}
             </span>
-            <div className="user-detail__last-access-value">
+            <span className="user-detail__verification-value">
               {user.lastLoginAt ? getRelativeTime(user.lastLoginAt, locale) : t("users.detail.never", "Nunca")}
-            </div>
+            </span>
           </div>
         </div>
       </div>
 
+      {/* Tabs - Full width */}
+      <div className="user-detail__tabs" role="tablist" aria-label={t("users.detail.tabs", "Secciones del usuario")}>
+        <button
+          type="button"
+          role="tab"
+          aria-selected={activeTab === "personal"}
+          aria-controls="panel-personal"
+          className={`user-detail__tab ${activeTab === "personal" ? "user-detail__tab--active" : ""}`}
+          onClick={() => setActiveTab("personal")}
+        >
+          {t("users.detail.tab_personal", "Información Personal")}
+        </button>
+        <button
+          type="button"
+          role="tab"
+          aria-selected={activeTab === "security"}
+          aria-controls="panel-security"
+          className={`user-detail__tab ${activeTab === "security" ? "user-detail__tab--active" : ""}`}
+          onClick={() => setActiveTab("security")}
+        >
+          {t("users.detail.tab_security", "Seguridad y Permisos")}
+        </button>
+        <button
+          type="button"
+          role="tab"
+          aria-selected={activeTab === "activity"}
+          aria-controls="panel-activity"
+          className={`user-detail__tab ${activeTab === "activity" ? "user-detail__tab--active" : ""}`}
+          onClick={() => setActiveTab("activity")}
+        >
+          {t("users.detail.tab_activity", "Historial de Actividad")}
+        </button>
+      </div>
+
       {/* Main Layout */}
       <div className="user-detail__layout">
-        {/* Left: Content with tabs */}
+        {/* Left: Tab Content */}
         <div className="user-detail__main">
-          {/* Tabs */}
-          <div className="user-detail__tabs" role="tablist" aria-label={t("users.detail.tabs", "Secciones del usuario")}>
-            <button
-              type="button"
-              role="tab"
-              aria-selected={activeTab === "personal"}
-              aria-controls="panel-personal"
-              className={`user-detail__tab ${activeTab === "personal" ? "user-detail__tab--active" : ""}`}
-              onClick={() => setActiveTab("personal")}
-            >
-              {t("users.detail.tab_personal", "Información Personal")}
-            </button>
-            <button
-              type="button"
-              role="tab"
-              aria-selected={activeTab === "security"}
-              aria-controls="panel-security"
-              className={`user-detail__tab ${activeTab === "security" ? "user-detail__tab--active" : ""}`}
-              onClick={() => setActiveTab("security")}
-            >
-              {t("users.detail.tab_security", "Seguridad y Permisos")}
-            </button>
-            <button
-              type="button"
-              role="tab"
-              aria-selected={activeTab === "activity"}
-              aria-controls="panel-activity"
-              className={`user-detail__tab ${activeTab === "activity" ? "user-detail__tab--active" : ""}`}
-              onClick={() => setActiveTab("activity")}
-            >
-              {t("users.detail.tab_activity", "Historial de Actividad")}
-            </button>
-          </div>
-
           {/* Tab Content */}
           <div role="tabpanel" id="panel-personal" hidden={activeTab !== "personal"}>
             {activeTab === "personal" && (
@@ -441,20 +672,25 @@ export const UserDetailView: React.FC<UserDetailViewProps> = ({ userId, onNaviga
             {activeTab === "security" && (
               <UserSecurityTab
                 isSuperAdmin={isSuperAdmin}
+                isOwnProfile={isOwnProfile}
                 forcePasswordReset={forcePasswordReset}
-                onForcePasswordResetChange={setForcePasswordReset}
+                onForcePasswordResetChange={handleForcePasswordResetChange}
                 onResetPassword={() => resetPasswordDialog.open()}
                 onDeleteUser={() => deleteDialog.open()}
+                onVerifyEmail={() => verifyEmailDialog.open()}
+                onChangeRole={() => {
+                  setSelectedRoleId(user.role?.id?.toString() || "");
+                  changeRoleDialog.open();
+                }}
+                isVerified={user.isVerified}
+                currentRoleName={user.role?.name}
               />
             )}
           </div>
 
           <div role="tabpanel" id="panel-activity" hidden={activeTab !== "activity"}>
             {activeTab === "activity" && (
-              <UserActivityTab
-                userId={userId}
-                activityLogs={[]} // TODO: Connect to real API
-              />
+              <UserActivityTab userId={userId} />
             )}
           </div>
         </div>
@@ -482,10 +718,7 @@ export const UserDetailView: React.FC<UserDetailViewProps> = ({ userId, onNaviga
                 </div>
                 <div className="user-detail__role-info">
                   <div className="user-detail__role-name user-detail__role-name--active">
-                    {user.role?.description || user.role?.name || t("users.no_role", "Sin rol")}
-                  </div>
-                  <div className="user-detail__role-desc">
-                    {t("users.detail.current_role_desc", "Rol asignado actualmente")}
+                    {getRoleDisplayName(user.role?.name) || t("users.no_role", "Sin rol")}
                   </div>
                 </div>
                 <div className="user-detail__role-indicator" />
@@ -511,15 +744,7 @@ export const UserDetailView: React.FC<UserDetailViewProps> = ({ userId, onNaviga
                 {t("users.detail.registered", "Registrado")}
               </span>
               <span className="user-detail__metadata-value">
-                {formatDateTimeLong(user.createdAt, locale)}
-              </span>
-            </div>
-            <div className="user-detail__metadata-row">
-              <span className="user-detail__metadata-label">
-                {t("users.detail.last_ip", "Última IP")}
-              </span>
-              <span className="user-detail__metadata-value user-detail__metadata-value--mono">
-                {user.lastLoginIp || "—"}
+                {formatEventDate(user.createdAt, locale)}
               </span>
             </div>
           </div>
@@ -545,8 +770,8 @@ export const UserDetailView: React.FC<UserDetailViewProps> = ({ userId, onNaviga
           ? t("users.detail.deactivate_title", "Desactivar usuario")
           : t("users.detail.activate_title", "Activar usuario")}
         description={user.isActive
-          ? t("users.detail.deactivate_desc", `¿Desactivar a ${fullName}? No podrá acceder al sistema.`)
-          : t("users.detail.activate_desc", `¿Activar a ${fullName}? Podrá acceder al sistema.`)}
+          ? t("users.detail.deactivate_desc", { name: fullName, defaultValue: `¿Desactivar a ${fullName}? No podrá acceder al sistema.` })
+          : t("users.detail.activate_desc", { name: fullName, defaultValue: `¿Activar a ${fullName}? Podrá acceder al sistema.` })}
         confirmText={user.isActive
           ? t("users.detail.deactivate", "Desactivar")
           : t("users.detail.activate", "Activar")}
@@ -560,12 +785,51 @@ export const UserDetailView: React.FC<UserDetailViewProps> = ({ userId, onNaviga
         onClose={deleteDialog.close}
         onConfirm={handleDelete}
         title={t("users.detail.delete_title", "Eliminar usuario")}
-        description={t("users.detail.delete_desc", `¿Estás seguro de eliminar a ${fullName}? Esta acción no se puede deshacer.`)}
+        description={t("users.detail.delete_desc", { name: fullName, defaultValue: `¿Estás seguro de eliminar a ${fullName}? Esta acción no se puede deshacer.` })}
         confirmText={t("common.delete", "Eliminar")}
         cancelText={t("common.cancel", "Cancelar")}
         variant="danger"
         isLoading={deleteDialog.isLoading}
       />
+
+      <ConfirmDialog
+        isOpen={verifyEmailDialog.isOpen}
+        onClose={verifyEmailDialog.close}
+        onConfirm={() => { verifyEmailDialog.setLoading(true); verifyEmailMutation.mutate(); }}
+        title={t("users.detail.verify_email_title", "Verificar correo")}
+        description={t("users.detail.verify_email_desc", { name: fullName, defaultValue: `¿Verificar manualmente el correo de ${fullName}? Esta acción quedará registrada en el historial.` })}
+        confirmText={t("users.detail.verify_confirm", "Verificar")}
+        cancelText={t("common.cancel", "Cancelar")}
+        variant="info"
+        isLoading={verifyEmailDialog.isLoading}
+      />
+
+      <ConfirmDialog
+        isOpen={changeRoleDialog.isOpen}
+        onClose={() => { changeRoleDialog.close(); setSelectedRoleId(""); }}
+        onConfirm={() => {
+          if (selectedRoleId && selectedRoleId !== user.role?.id?.toString()) {
+            changeRoleDialog.setLoading(true);
+            changeRoleMutation.mutate(parseInt(selectedRoleId));
+          }
+        }}
+        title={t("users.detail.change_role_title", "Cambiar rol")}
+        description={t("users.detail.change_role_desc", { name: fullName, defaultValue: `Selecciona el nuevo rol para ${fullName}. Esta acción quedará registrada en el historial.` })}
+        confirmText={t("users.detail.change_role_confirm", "Cambiar")}
+        cancelText={t("common.cancel", "Cancelar")}
+        variant="warning"
+        isLoading={changeRoleDialog.isLoading}
+      >
+        <div style={{ marginTop: "var(--space-4)" }}>
+          <FormSelect
+            label={t("users.detail.new_role", "Nuevo rol")}
+            value={selectedRoleId}
+            onChange={setSelectedRoleId}
+            options={roleOptions}
+            placeholder={t("users.select_role", "Seleccionar rol")}
+          />
+        </div>
+      </ConfirmDialog>
     </div>
   );
 };

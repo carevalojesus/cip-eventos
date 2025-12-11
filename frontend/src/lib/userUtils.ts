@@ -120,7 +120,7 @@ export const getVerificationCooldownRemaining = (
  * For i18n support, use t(`roles.${roleName}`) in components
  */
 const ROLE_DISPLAY_NAMES: Record<string, string> = {
-  SUPER_ADMIN: "Acceso Total",
+  SUPER_ADMIN: "Superadministrador",
   ORG_ADMIN: "Administrador",
   ORG_STAFF_ACCESO: "Staff de Acceso",
   ORG_STAFF_ACADEMICO: "Staff Académico",
@@ -166,6 +166,43 @@ export const getAvatarColor = (email: string): string => {
   return colors[Math.abs(hash) % colors.length];
 };
 
+/**
+ * Genera una contraseña segura aleatoria
+ * @param length - Longitud de la contraseña (default: 12)
+ * @param options - Opciones de caracteres a incluir
+ * @returns Contraseña generada
+ */
+export const generatePassword = (
+  length: number = 12,
+  options: {
+    uppercase?: boolean;
+    lowercase?: boolean;
+    numbers?: boolean;
+    symbols?: boolean;
+  } = {}
+): string => {
+  const {
+    uppercase = true,
+    lowercase = true,
+    numbers = true,
+    symbols = true,
+  } = options;
+
+  let chars = "";
+  if (uppercase) chars += "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  if (lowercase) chars += "abcdefghijklmnopqrstuvwxyz";
+  if (numbers) chars += "0123456789";
+  if (symbols) chars += "!@#$%^&*()_+-=[]{}|;:,.<>?";
+
+  if (!chars) chars = "abcdefghijklmnopqrstuvwxyz0123456789";
+
+  let password = "";
+  for (let i = 0; i < length; i++) {
+    password += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return password;
+};
+
 export default {
   getFullName,
   getDisplayName,
@@ -175,4 +212,5 @@ export default {
   getVerificationCooldownRemaining,
   getRoleDisplayName,
   getAvatarColor,
+  generatePassword,
 };

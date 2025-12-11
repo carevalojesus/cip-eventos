@@ -22,8 +22,6 @@ interface UserFiltersProps {
   onSearchChange: (query: string) => void;
   selectedRole: string;
   onRoleChange: (roleId: string) => void;
-  selectedStatus: string;
-  onStatusChange: (status: string) => void;
   selectedVerification: string;
   onVerificationChange: (verification: string) => void;
   roles: Role[];
@@ -37,8 +35,6 @@ export const UserFilters: React.FC<UserFiltersProps> = ({
   onSearchChange,
   selectedRole,
   onRoleChange,
-  selectedStatus,
-  onStatusChange,
   selectedVerification,
   onVerificationChange,
   roles,
@@ -81,12 +77,6 @@ export const UserFilters: React.FC<UserFiltersProps> = ({
   }, [isPopoverOpen]);
 
   // Opciones para los filtros
-  const statusOptions = useMemo(() => [
-    { value: "all", label: t("users.list.filter.all", "Todos") },
-    { value: "active", label: t("users.list.status.active", "Activo") },
-    { value: "inactive", label: t("users.list.status.inactive", "Inactivo") },
-  ], [t]);
-
   const roleOptions = useMemo(() => [
     { value: "all", label: t("users.list.filter.all_roles", "Todos los roles") },
     ...roles.map((role) => ({
@@ -247,14 +237,6 @@ export const UserFilters: React.FC<UserFiltersProps> = ({
 
       {/* Filtros a la derecha */}
       <div style={filtersGroupStyle}>
-        {/* Select de estado */}
-        <Select
-          value={selectedStatus}
-          onChange={onStatusChange}
-          options={statusOptions}
-          placeholder={t("users.list.filter.status_label", "Estado")}
-        />
-
         {/* Botón Exportar */}
         {onExport && (
           <button

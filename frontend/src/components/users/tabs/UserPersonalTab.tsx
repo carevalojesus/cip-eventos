@@ -1,11 +1,12 @@
 import { useTranslation } from "react-i18next";
 import {
-  User,
   Phone,
   EnvelopeSimple,
-  Buildings,
+  Briefcase,
+  MapPin,
 } from "@phosphor-icons/react";
-import { Input } from "@/components/ui/rui-input";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 
 interface UserPersonalTabProps {
   formData: {
@@ -13,7 +14,9 @@ interface UserPersonalTabProps {
     lastName: string;
     email: string;
     phoneNumber: string;
-    organization: string;
+    designation: string;
+    description: string;
+    address: string;
   };
   isEditing: boolean;
   onFormChange: (field: string, value: string) => void;
@@ -37,7 +40,6 @@ export function UserPersonalTab({
           value={formData.firstName}
           onChange={(e) => onFormChange("firstName", e.target.value)}
           placeholder={t("users.placeholder.firstName", "Nombre")}
-          leftIcon={<User size={16} />}
           disabled={!isEditing}
         />
         <Input
@@ -45,7 +47,6 @@ export function UserPersonalTab({
           value={formData.lastName}
           onChange={(e) => onFormChange("lastName", e.target.value)}
           placeholder={t("users.placeholder.lastName", "Apellido")}
-          leftIcon={<User size={16} />}
           disabled={!isEditing}
         />
         <Input
@@ -65,14 +66,30 @@ export function UserPersonalTab({
           leftIcon={<Phone size={16} />}
           disabled={!isEditing}
         />
+        <Input
+          label={t("users.field.designation", "Cargo / Título")}
+          value={formData.designation}
+          onChange={(e) => onFormChange("designation", e.target.value)}
+          placeholder={t("users.placeholder.designation", "Ingeniero Civil Senior")}
+          leftIcon={<Briefcase size={16} />}
+          disabled={!isEditing}
+        />
+        <Input
+          label={t("users.field.address", "Dirección")}
+          value={formData.address}
+          onChange={(e) => onFormChange("address", e.target.value)}
+          placeholder={t("users.placeholder.address", "Av. Principal 123, Lima")}
+          leftIcon={<MapPin size={16} />}
+          disabled={!isEditing}
+        />
         <div className="user-detail__form-grid--full">
-          <Input
-            label={t("users.field.organization", "Organización / Colegio")}
-            value={formData.organization}
-            onChange={(e) => onFormChange("organization", e.target.value)}
-            placeholder={t("users.placeholder.organization", "CIP Lima")}
-            leftIcon={<Buildings size={16} />}
+          <Textarea
+            label={t("users.field.description", "Descripción Profesional")}
+            value={formData.description}
+            onChange={(e) => onFormChange("description", e.target.value)}
+            placeholder={t("users.placeholder.description", "Breve descripción profesional...")}
             disabled={!isEditing}
+            rows={3}
           />
         </div>
       </div>

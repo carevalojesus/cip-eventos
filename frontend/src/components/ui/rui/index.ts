@@ -1,12 +1,15 @@
-export { Button } from "../rui-button";
-export { Checkbox } from "../rui-checkbox";
-export { EmptyState } from "./EmptyState";
-export { PageHeader } from "./PageHeader";
-export { Pagination } from "./Pagination";
-export { TablePagination } from "./TablePagination";
-export { SearchInput } from "./SearchInput";
-export { Select } from "./Select";
-export { FilterCombobox } from "./FilterCombobox";
-export { DatePicker } from "./DatePicker";
-export { TimePicker } from "./TimePicker";
-export { ModalitySelector } from "./ModalitySelector";
+// Re-exports from new locations for backward compatibility
+// TODO: Update all imports to use new paths directly, then delete this file
+
+export { Button } from "../button";
+export { Checkbox } from "../checkbox";
+export { EmptyState } from "../empty-state";
+export { PageHeader } from "../page-header";
+export { Pagination } from "../pagination";
+export { TablePagination } from "../table-pagination";
+export { SearchInput } from "../search-input";
+export { Select } from "../select";
+export { FilterCombobox } from "../filter-combobox";
+export { DatePicker } from "../date-picker";
+export { TimePicker } from "../time-picker";
+export { ModalitySelector } from "../modality-selector";

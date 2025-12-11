@@ -115,7 +115,7 @@ export const TimePicker: React.FC<TimePickerProps> = ({
           cursor: "pointer",
           outline: "none",
           transition: "border-color 150ms ease, box-shadow 150ms ease",
-          boxShadow: isOpen ? "0 0 0 3px rgba(184, 178, 167, 0.2)" : "none",
+          boxShadow: isOpen ? "var(--shadow-focus)" : "none",
         }}
       >
         <Clock size={16} style={{ color: "var(--color-grey-400)", flexShrink: 0 }} />

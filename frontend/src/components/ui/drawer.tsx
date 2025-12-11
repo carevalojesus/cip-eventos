@@ -59,7 +59,7 @@ export const DrawerContent: React.FC<DrawerContentProps> = ({
   const overlayStyle: React.CSSProperties = {
     position: "fixed",
     inset: 0,
-    backgroundColor: "rgba(39, 36, 29, 0.6)",
+    backgroundColor: "var(--color-overlay-dark)",
     zIndex: 9998,
     animation: "fadeIn 150ms ease-out",
   };

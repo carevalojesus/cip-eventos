@@ -76,6 +76,10 @@ export class User {
   @Column({ type: 'timestamptz', nullable: true })
   lastLoginAt: Date | null;
 
+  // Forzar cambio de contraseña en próximo login
+  @Column({ type: 'boolean', default: false })
+  forcePasswordReset: boolean;
+
   @CreateDateColumn()
   createdAt: Date;
 

@@ -38,19 +38,19 @@ export const Pagination: React.FC<PaginationProps> = ({
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-    marginTop: "2rem",
-    padding: "1rem 0",
+    marginTop: "var(--space-8)",
+    padding: "var(--space-4) 0",
   };
 
   const infoStyle: React.CSSProperties = {
-    fontSize: "0.875rem",
+    fontSize: "var(--font-size-sm)",
     color: "var(--color-grey-500)",
     margin: 0,
   };
 
   const controlsStyle: React.CSSProperties = {
     display: "flex",
-    gap: "0.25rem",
+    gap: "var(--space-1)",
   };
 
   const PageButton: React.FC<{
@@ -64,8 +64,8 @@ export const Pagination: React.FC<PaginationProps> = ({
     const buttonStyle: React.CSSProperties = {
       height: "var(--button-height-sm)",
       minWidth: "var(--button-height-sm)",
-      padding: "0 0.5rem",
-      fontSize: "0.875rem",
+      padding: "0 var(--space-2)",
+      fontSize: "var(--font-size-sm)",
       fontWeight: isActive ? 600 : 400,
       color: isActive
         ? "var(--color-primary)"

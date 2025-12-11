@@ -39,7 +39,7 @@ export enum UserRole {
 }
 
 export const ROLE_LABELS: Record<UserRole, string> = {
-  [UserRole.SUPER_ADMIN]: 'Acceso Total',
+  [UserRole.SUPER_ADMIN]: 'Superadministrador',
   [UserRole.ORG_ADMIN]: 'Administrador',
   [UserRole.ORG_STAFF_ACCESO]: 'Staff de Acceso',
   [UserRole.ORG_STAFF_ACADEMICO]: 'Staff Académico',

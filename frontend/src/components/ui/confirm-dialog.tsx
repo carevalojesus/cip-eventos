@@ -5,7 +5,7 @@ import {
     Info,
     CheckCircle,
 } from "@phosphor-icons/react";
-import { Button } from "@/components/ui/rui-button";
+import { Button } from "@/components/ui/button";
 
 export interface ConfirmDialogProps {
     isOpen: boolean;
@@ -17,6 +17,7 @@ export interface ConfirmDialogProps {
     cancelText?: string;
     variant?: "danger" | "warning" | "info" | "success";
     isLoading?: boolean;
+    children?: React.ReactNode;
 }
 
 export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
@@ -29,6 +30,7 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
     cancelText = "Cancelar",
     variant = "danger",
     isLoading = false,
+    children,
 }) => {
     const dialogRef = useRef<HTMLDivElement>(null);
     const [isClosing, setIsClosing] = useState(false);
@@ -251,6 +253,7 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
                                 >
                                     {description}
                                 </p>
+                                {children}
                             </div>
                         </div>
                     </div>

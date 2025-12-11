@@ -23,13 +23,13 @@ import {
   DrawerDescription,
   DrawerBody,
   DrawerFooter,
-} from "@/components/ui/rui/Drawer";
-import { EmptyState } from "@/components/ui/rui/EmptyState";
-import { Input } from "@/components/ui/rui-input";
-import { FormTextarea } from "@/components/ui/rui/form/FormTextarea";
-import { FormDateTimePicker } from "@/components/ui/rui/form/FormDateTimePicker";
-import { FormRow } from "@/components/ui/rui/form/FormRow";
-import { FormGroup } from "@/components/ui/rui/form/FormGroup";
+} from "@/components/ui/drawer";
+import { EmptyState } from "@/components/ui/empty-state";
+import { Input } from "@/components/ui/input";
+import { FormTextarea } from "@/components/ui/form/form-textarea";
+import { FormDateTimePicker } from "@/components/ui/form/form-datetime-picker";
+import { FormRow } from "@/components/ui/form/form-row";
+import { FormGroup } from "@/components/ui/form/form-group";
 import {
   IconCalendar,
   IconAdd,

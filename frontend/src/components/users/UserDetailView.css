@@ -10,7 +10,7 @@
 .user-detail__back {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: var(--space-2);
   padding: 0;
   margin-bottom: var(--space-4);
   font-size: var(--font-size-sm);
@@ -61,7 +61,37 @@
   gap: var(--space-3);
 }
 
-/* User Card */
+/* Tabs - Full width above layout */
+.user-detail__tabs {
+  display: flex;
+  gap: var(--space-1);
+  border-bottom: 1px solid var(--color-grey-200);
+  margin-bottom: var(--space-6);
+}
+
+.user-detail__tab {
+  padding: var(--space-3) var(--space-4);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-text-muted);
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  cursor: pointer;
+  transition: all 150ms ease;
+}
+
+.user-detail__tab:hover {
+  color: var(--color-grey-700);
+}
+
+.user-detail__tab--active {
+  color: var(--color-red-600);
+  border-bottom-color: var(--color-red-500);
+}
+
+/* User Card - Inside tab content */
 .user-detail__user-card {
   display: flex;
   align-items: center;
@@ -70,7 +100,7 @@
   background-color: var(--color-bg-primary);
   border: 1px solid var(--color-grey-200);
   border-radius: var(--radius-lg);
-  margin-bottom: var(--space-6);
+  margin-bottom: var(--space-5);
 }
 
 .user-detail__user-info {
@@ -114,10 +144,16 @@
 
 .user-detail__verification {
   display: flex;
+  align-items: flex-start;
+  gap: var(--space-8);
+}
+
+.user-detail__verification-item {
+  display: flex;
   flex-direction: column;
-  align-items: flex-end;
+  align-items: center;
   gap: var(--space-1);
-  text-align: right;
+  text-align: center;
 }
 
 .user-detail__verification-label {
@@ -128,14 +164,10 @@
   letter-spacing: 0.05em;
 }
 
-.user-detail__last-access {
-  margin-top: var(--space-2);
-}
-
-.user-detail__last-access-value {
+.user-detail__verification-value {
+  font-size: var(--font-size-sm);
   font-weight: 500;
   color: var(--color-text-primary);
-  font-size: var(--font-size-sm);
 }
 
 /* Main Layout */
@@ -153,36 +185,6 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
-}
-
-/* Tabs */
-.user-detail__tabs {
-  display: flex;
-  gap: var(--space-1);
-  border-bottom: 1px solid var(--color-grey-200);
-  margin-bottom: var(--space-6);
-}
-
-.user-detail__tab {
-  padding: var(--space-3) var(--space-4);
-  font-size: var(--font-size-sm);
-  font-weight: 500;
-  color: var(--color-text-muted);
-  background: none;
-  border: none;
-  border-bottom: 2px solid transparent;
-  margin-bottom: -1px;
-  cursor: pointer;
-  transition: all 150ms ease;
-}
-
-.user-detail__tab:hover {
-  color: var(--color-grey-700);
-}
-
-.user-detail__tab--active {
-  color: var(--color-red-600);
-  border-bottom-color: var(--color-red-500);
 }
 
 /* Cards */
@@ -233,24 +235,18 @@
 .user-detail__role-card {
   display: flex;
   align-items: center;
-  gap: var(--space-3);
-  padding: var(--space-3);
-  border-radius: var(--radius-md);
-  border: 1px solid var(--color-grey-200);
-  background-color: var(--color-bg-primary);
-  margin-bottom: var(--space-2);
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-lg);
+  border: none;
+  background-color: var(--color-grey-100);
 }
 
 .user-detail__role-card--active {
-  border-color: var(--color-red-200);
   background-color: var(--color-red-050);
 }
 
 .user-detail__role-icon {
-  width: 32px;
-  height: 32px;
-  border-radius: var(--radius-md);
-  background-color: var(--color-grey-100);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -258,8 +254,7 @@
 }
 
 .user-detail__role-icon--active {
-  background-color: var(--color-red-100);
-  color: var(--color-red-600);
+  color: var(--color-red-400);
 }
 
 .user-detail__role-info {
@@ -273,7 +268,7 @@
 }
 
 .user-detail__role-name--active {
-  color: var(--color-red-700);
+  color: var(--color-text-primary);
 }
 
 .user-detail__role-desc {
@@ -285,7 +280,7 @@
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background-color: var(--color-red-500);
+  background-color: var(--color-red-400);
 }
 
 /* Metadata */
@@ -352,7 +347,7 @@
 .user-detail__security-title {
   font-weight: 500;
   color: var(--color-text-primary);
-  margin-bottom: 2px;
+  margin-bottom: var(--space-1);
 }
 
 .user-detail__security-desc {
@@ -391,7 +386,7 @@
 .user-detail__danger-item-title {
   font-weight: 500;
   color: var(--color-text-primary);
-  margin-bottom: 2px;
+  margin-bottom: var(--space-1);
 }
 
 .user-detail__danger-item-desc {
@@ -431,7 +426,7 @@
 .user-detail__activity-title {
   font-weight: 500;
   color: var(--color-text-primary);
-  margin-bottom: 2px;
+  margin-bottom: var(--space-1);
 }
 
 .user-detail__activity-meta {
@@ -457,7 +452,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 4rem;
+  padding: var(--space-16);
   gap: var(--space-4);
 }
 

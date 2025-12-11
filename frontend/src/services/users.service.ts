@@ -24,6 +24,7 @@ export interface User {
   name?: string; // computed field for backwards compatibility
   isActive: boolean;
   isVerified: boolean;
+  forcePasswordReset: boolean;
   role: Role;
   profile?: Profile;
   lastLoginAt: string | null;
@@ -43,6 +44,7 @@ export interface UpdateUserDto {
   password?: string;
   roleId?: number;
   isActive?: boolean;
+  forcePasswordReset?: boolean;
 }
 
 export const usersService = {
@@ -52,8 +54,9 @@ export const usersService = {
     return response.data;
   },
 
-  async findById(id: string): Promise<User> {
-    const response = await api.get<User>(`/users/${id}`);
+  async findById(id: string, includeInactive: boolean = true): Promise<User> {
+    const params = includeInactive ? { includeInactive: 'true' } : {};
+    const response = await api.get<User>(`/users/${id}`, { params });
     return response.data;
   },
 
@@ -91,6 +94,16 @@ export const usersService = {
     const response = await api.post<{ message: string }>("/auth/admin-set-password", { email, password });
     return response.data;
   },
+
+  async verifyEmailManually(userId: string): Promise<User> {
+    const response = await api.patch<User>(`/users/${userId}/verify-email`);
+    return response.data;
+  },
+
+  async changeRole(userId: string, roleId: number): Promise<User> {
+    const response = await api.patch<User>(`/users/${userId}/change-role`, { roleId });
+    return response.data;
+  },
 };
 
 export const rolesService = {
@@ -119,6 +132,23 @@ export const adminProfileService = {
 
   async createForUser(userId: string, data: Partial<Profile>): Promise<Profile> {
     const response = await api.post<Profile>(`/profiles/user/${userId}`, data);
+    return response.data;
+  },
+};
+
+// Avatar upload service
+export interface AvatarUploadUrlResponse {
+  uploadUrl: string;
+  publicUrl: string;
+  key: string;
+}
+
+export const uploadService = {
+  async getAvatarUploadUrl(contentType: string, contentLength?: number): Promise<AvatarUploadUrlResponse> {
+    const response = await api.post<AvatarUploadUrlResponse>("/uploads/avatar-url", {
+      contentType,
+      contentLength,
+    });
     return response.data;
   },
 };

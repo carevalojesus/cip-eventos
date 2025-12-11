@@ -1,5 +1,6 @@
 // User components barrel export
 export { UserAvatar } from "./UserAvatar";
+export { AvatarEditor } from "./AvatarEditor";
 export { UserStatusBadge } from "./UserStatusBadge";
 export { UserVerificationBadge } from "./UserVerificationBadge";
 export { UserFilters } from "./UserFilters";

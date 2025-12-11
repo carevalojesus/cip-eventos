@@ -20,6 +20,7 @@ import { User } from 'src/users/entities/user.entity';
 import { RedisService } from 'src/redis/redis.service';
 import { ConsentService } from 'src/common/services/consent.service';
 import { ConsentType } from 'src/common/enums/consent-type.enum';
+import { AuditService } from '../audit/audit.service';
 
 @Injectable()
 export class AuthService {
@@ -31,6 +32,7 @@ export class AuthService {
     private readonly i18n: I18nService,
     private readonly redisService: RedisService,
     private readonly consentService: ConsentService,
+    private readonly auditService: AuditService,
   ) {}
 
   async login(
@@ -84,6 +86,20 @@ export class AuthService {
       expiresAt: Date.now() + expiresMs,
     });
 
+    // Registrar auditoría de login
+    await this.auditService.log({
+      entityType: 'User',
+      entityId: user.id,
+      action: 'LOGIN' as any,
+      previousValues: null,
+      newValues: null,
+      performedBy: user,
+      performedByEmail: user.email,
+      ipAddress: metadata?.ip || null,
+      userAgent: metadata?.userAgent || null,
+      metadata: { method: 'credentials' },
+    });
+
     return {
       ...tokens,
       user: {
@@ -92,6 +108,7 @@ export class AuthService {
         firstName: user.profile?.firstName || null,
         lastName: user.profile?.lastName || null,
         avatar: user.profile?.avatar || null,
+        forcePasswordReset: user.forcePasswordReset || false,
       },
     };
   }
@@ -323,7 +340,12 @@ export class AuthService {
     };
   }
 
-  async logout(userId: string, jti?: string, exp?: number) {
+  async logout(
+    userId: string,
+    jti?: string,
+    exp?: number,
+    metadata?: { userAgent?: string; ip?: string },
+  ) {
     // Invalidar refresh token en la base de datos
     await this.updateRefreshToken(userId, null);
 
@@ -335,6 +357,21 @@ export class AuthService {
         await this.redisService.blacklistToken(jti, ttlSeconds * 1000);
       }
     }
+
+    // Registrar auditoría de logout
+    const user = await this.usersService.findOne(userId);
+    await this.auditService.log({
+      entityType: 'User',
+      entityId: userId,
+      action: 'LOGOUT' as any,
+      previousValues: null,
+      newValues: null,
+      performedBy: user,
+      performedByEmail: user.email,
+      ipAddress: metadata?.ip || null,
+      userAgent: metadata?.userAgent || null,
+      metadata: null,
+    });
   }
 
   async logoutAllSessions(userId: string) {
@@ -571,7 +608,11 @@ export class AuthService {
   /**
    * Admin-initiated password reset - sends a reset email to the user
    */
-  async adminInitiatedPasswordReset(email: string) {
+  async adminInitiatedPasswordReset(
+    email: string,
+    adminUser?: User,
+    metadata?: { userAgent?: string; ip?: string },
+  ) {
     const user = await this.usersService.findOneByEmail(email);
 
     if (!user) {
@@ -591,6 +632,22 @@ export class AuthService {
 
     await this.mailService.sendPasswordReset(user.email, user.email, token);
 
+    // Registrar auditoría de reset de contraseña por admin
+    if (adminUser) {
+      await this.auditService.log({
+        entityType: 'User',
+        entityId: user.id,
+        action: 'UPDATE' as any,
+        previousValues: null,
+        newValues: null,
+        performedBy: adminUser,
+        performedByEmail: adminUser.email,
+        ipAddress: metadata?.ip || null,
+        userAgent: metadata?.userAgent || null,
+        metadata: { action: 'admin_password_reset_email_sent' },
+      });
+    }
+
     return {
       message: this.i18n.t('auth.password_reset_email_sent', {
         lang: I18nContext.current()?.lang,
@@ -601,7 +658,12 @@ export class AuthService {
   /**
    * Admin sets a new password for a user directly
    */
-  async adminSetPassword(email: string, newPassword: string) {
+  async adminSetPassword(
+    email: string,
+    newPassword: string,
+    adminUser?: User,
+    metadata?: { userAgent?: string; ip?: string },
+  ) {
     const user = await this.usersService.findOneByEmail(email);
 
     if (!user) {
@@ -624,8 +686,78 @@ export class AuthService {
     const userName = user.profile?.firstName || user.email;
     await this.mailService.sendAdminResetPassword(user.email, userName, newPassword);
 
+    // Registrar auditoría de establecimiento de contraseña por admin
+    if (adminUser) {
+      await this.auditService.log({
+        entityType: 'User',
+        entityId: user.id,
+        action: 'UPDATE' as any,
+        previousValues: null,
+        newValues: null,
+        performedBy: adminUser,
+        performedByEmail: adminUser.email,
+        ipAddress: metadata?.ip || null,
+        userAgent: metadata?.userAgent || null,
+        metadata: { action: 'admin_set_password' },
+      });
+    }
+
     return {
       message: this.i18n.t('auth.password_set_success', {
+        lang: I18nContext.current()?.lang,
+      }),
+    };
+  }
+
+  /**
+   * Change password for authenticated user
+   */
+  async changePassword(
+    userId: string,
+    currentPassword: string,
+    newPassword: string,
+    metadata?: { userAgent?: string; ip?: string },
+  ) {
+    const user = await this.usersService.findOne(userId, true);
+
+    if (!user) {
+      throw new NotFoundException(
+        this.i18n.t('users.user_not_found', {
+          lang: I18nContext.current()?.lang,
+        }),
+      );
+    }
+
+    // Verify current password
+    const isPasswordValid = await bcrypt.compare(currentPassword, user.password);
+    if (!isPasswordValid) {
+      throw new BadRequestException(
+        this.i18n.t('auth.invalid_current_password', {
+          lang: I18nContext.current()?.lang,
+        }),
+      );
+    }
+
+    // Hash and update password (this also clears forcePasswordReset)
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    await this.usersService.updatePassword(user.id, hashedPassword);
+
+    // Audit log
+    await this.auditService.log({
+      entityType: 'User',
+      entityId: user.id,
+      action: 'UPDATE' as any,
+      previousValues: null,
+      newValues: null,
+      performedBy: user,
+      performedByEmail: user.email,
+      ipAddress: metadata?.ip || null,
+      userAgent: metadata?.userAgent || null,
+      metadata: { action: 'change_password' },
+    });
+
+    return {
+      message: this.i18n.t('auth.password_changed', {
         lang: I18nContext.current()?.lang,
       }),
     };

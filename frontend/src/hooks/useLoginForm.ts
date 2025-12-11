@@ -90,6 +90,13 @@ export function useLoginForm({ t, login, onSuccess }: UseLoginFormParams): UseLo
       const response = await api.post('/auth/login', { email, password })
       login(response.data.access_token, response.data.user, rememberMe)
 
+      // Si el usuario debe cambiar su contraseña, redirigir a página de cambio
+      if (response.data.user?.forcePasswordReset) {
+        const locale = getCurrentLocale()
+        window.location.href = locale === 'en' ? '/en/change-password' : '/cambiar-contrasena'
+        return
+      }
+
       if (onSuccess) {
         onSuccess()
       } else {

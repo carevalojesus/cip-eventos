@@ -1,27 +1,83 @@
-import * as React from "react";
-import * as SwitchPrimitives from "@radix-ui/react-switch";
+import { useState } from 'react'
 
-import { cn } from "@/lib/utils";
+interface SwitchProps {
+  checked: boolean
+  onChange: (checked: boolean) => void
+  disabled?: boolean
+  size?: 'sm' | 'md'
+  ariaLabel?: string
+}
 
-const Switch = React.forwardRef<
-  React.ComponentRef<typeof SwitchPrimitives.Root>,
-  React.ComponentPropsWithoutRef<typeof SwitchPrimitives.Root>
->(({ className, ...props }, ref) => (
-  <SwitchPrimitives.Root
-    className={cn(
-      "peer inline-flex h-5 w-9 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=unchecked]:bg-input",
-      className
-    )}
-    {...props}
-    ref={ref}
-  >
-    <SwitchPrimitives.Thumb
-      className={cn(
-        "pointer-events-none block h-4 w-4 rounded-full bg-background shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-4 data-[state=unchecked]:translate-x-0"
-      )}
-    />
-  </SwitchPrimitives.Root>
-));
-Switch.displayName = SwitchPrimitives.Root.displayName;
+export function Switch({
+  checked,
+  onChange,
+  disabled = false,
+  size = 'md',
+  ariaLabel,
+}: SwitchProps) {
+  const [isFocused, setIsFocused] = useState(false)
 
-export { Switch };
+  const sizeConfig = {
+    sm: { track: { width: 36, height: 20 }, thumb: 16, translate: 16 },
+    md: { track: { width: 44, height: 24 }, thumb: 20, translate: 20 },
+  }
+
+  const config = sizeConfig[size]
+
+  const handleToggle = () => {
+    if (disabled) return
+    onChange(!checked)
+  }
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === ' ' || e.key === 'Enter') {
+      e.preventDefault()
+      handleToggle()
+    }
+  }
+
+  const trackStyle: React.CSSProperties = {
+    position: 'relative',
+    width: `${config.track.width}px`,
+    height: `${config.track.height}px`,
+    borderRadius: `${config.track.height / 2}px`,
+    backgroundColor: checked ? 'var(--color-red-500)' : 'var(--color-grey-300)',
+    cursor: disabled ? 'not-allowed' : 'pointer',
+    transition: 'background-color 0.2s ease',
+    opacity: disabled ? 0.5 : 1,
+    outline: isFocused ? '2px solid var(--color-red-200)' : 'none',
+    outlineOffset: '2px',
+  }
+
+  const thumbStyle: React.CSSProperties = {
+    position: 'absolute',
+    top: '50%',
+    left: checked ? `${config.translate}px` : '2px',
+    transform: 'translateY(-50%)',
+    width: `${config.thumb}px`,
+    height: `${config.thumb}px`,
+    borderRadius: '50%',
+    backgroundColor: 'var(--color-bg-primary)',
+    boxShadow: 'var(--shadow-button)',
+    transition: 'left 0.2s ease',
+  }
+
+  return (
+    <div
+      role="switch"
+      aria-checked={checked}
+      aria-label={ariaLabel}
+      aria-disabled={disabled}
+      tabIndex={disabled ? -1 : 0}
+      style={trackStyle}
+      onClick={handleToggle}
+      onKeyDown={handleKeyDown}
+      onFocus={() => setIsFocused(true)}
+      onBlur={() => setIsFocused(false)}
+    >
+      <div style={thumbStyle} />
+    </div>
+  )
+}
+
+export default Switch

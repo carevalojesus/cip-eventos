@@ -132,7 +132,7 @@ export const FormImageUpload: React.FC<FormImageUploadProps> = ({
   const labelStyle: React.CSSProperties = {
     fontSize: "var(--font-size-sm)",
     fontWeight: 500,
-    color: "#504A40",
+    color: "var(--color-grey-700)",
     lineHeight: 1.5,
   };
 
@@ -141,36 +141,36 @@ export const FormImageUpload: React.FC<FormImageUploadProps> = ({
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
-    padding: "32px 24px",
-    backgroundColor: isDragging ? "#FFEEEE" : "#FAF9F7",
-    border: `2px dashed ${isDragging ? "#BA2525" : displayError ? "#BA2525" : "#D3CEC4"}`,
-    borderRadius: "8px",
+    padding: "var(--space-8) var(--space-6)",
+    backgroundColor: isDragging ? "var(--color-red-050)" : "var(--color-grey-050)",
+    border: `2px dashed ${isDragging ? "var(--color-red-500)" : displayError ? "var(--color-red-500)" : "var(--color-grey-300)"}`,
+    borderRadius: "var(--radius-lg)",
     cursor: "pointer",
     transition: "all 150ms ease",
   };
 
   const iconStyle: React.CSSProperties = {
-    width: "48px",
-    height: "48px",
+    width: "var(--size-icon-3xl)",
+    height: "var(--size-icon-3xl)",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#FFFFFF",
-    borderRadius: "50%",
-    marginBottom: "12px",
-    border: "1px solid #E8E6E1",
+    backgroundColor: "var(--color-bg-primary)",
+    borderRadius: "var(--radius-full)",
+    marginBottom: "var(--space-3)",
+    border: "1px solid var(--color-grey-200)",
   };
 
   const textStyle: React.CSSProperties = {
     fontSize: "var(--font-size-sm)",
-    color: "#504A40",
+    color: "var(--color-grey-700)",
     textAlign: "center",
-    marginBottom: "4px",
+    marginBottom: "var(--space-1)",
   };
 
   const hintTextStyle: React.CSSProperties = {
     fontSize: "var(--font-size-sm)",
-    color: "#857F72",
+    color: "var(--color-grey-500)",
     textAlign: "center",
   };
 
@@ -178,9 +178,9 @@ export const FormImageUpload: React.FC<FormImageUploadProps> = ({
     position: "relative",
     width: "100%",
     aspectRatio: "16 / 9",
-    borderRadius: "8px",
+    borderRadius: "var(--radius-lg)",
     overflow: "hidden",
-    backgroundColor: "#FAF9F7",
+    backgroundColor: "var(--color-grey-050)",
   };
 
   const previewImageStyle: React.CSSProperties = {
@@ -194,7 +194,7 @@ export const FormImageUpload: React.FC<FormImageUploadProps> = ({
     bottom: 0,
     left: 0,
     right: 0,
-    padding: "12px",
+    padding: "var(--space-3)",
     background: "linear-gradient(transparent, rgba(0,0,0,0.6))",
     display: "flex",
     alignItems: "center",
@@ -203,7 +203,7 @@ export const FormImageUpload: React.FC<FormImageUploadProps> = ({
 
   const previewInfoStyle: React.CSSProperties = {
     fontSize: "var(--font-size-sm)",
-    color: "#FFFFFF",
+    color: "var(--color-bg-primary)",
     fontWeight: 500,
   };
 
@@ -211,24 +211,24 @@ export const FormImageUpload: React.FC<FormImageUploadProps> = ({
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    width: "28px",
-    height: "28px",
-    backgroundColor: "rgba(255, 255, 255, 0.9)",
+    width: "var(--size-icon-lg)",
+    height: "var(--size-icon-lg)",
+    backgroundColor: "var(--color-white-90)",
     border: "none",
-    borderRadius: "50%",
+    borderRadius: "var(--radius-full)",
     cursor: "pointer",
-    color: "#BA2525",
+    color: "var(--color-red-500)",
     transition: "background-color 150ms ease",
   };
 
   const errorStyle: React.CSSProperties = {
     fontSize: "var(--font-size-sm)",
-    color: "#BA2525",
+    color: "var(--color-red-500)",
   };
 
   const hintStyle: React.CSSProperties = {
     fontSize: "var(--font-size-sm)",
-    color: "#857F72",
+    color: "var(--color-grey-500)",
   };
 
   return (
@@ -259,10 +259,10 @@ export const FormImageUpload: React.FC<FormImageUploadProps> = ({
               style={removeButtonStyle}
               onClick={handleRemoveExisting}
               onMouseEnter={(e) =>
-                (e.currentTarget.style.backgroundColor = "#FFFFFF")
+                (e.currentTarget.style.backgroundColor = "var(--color-bg-primary)")
               }
               onMouseLeave={(e) =>
-                (e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.9)")
+                (e.currentTarget.style.backgroundColor = "var(--color-white-90)")
               }
             >
               <svg
@@ -290,10 +290,10 @@ export const FormImageUpload: React.FC<FormImageUploadProps> = ({
               style={removeButtonStyle}
               onClick={handleRemove}
               onMouseEnter={(e) =>
-                (e.currentTarget.style.backgroundColor = "#FFFFFF")
+                (e.currentTarget.style.backgroundColor = "var(--color-bg-primary)")
               }
               onMouseLeave={(e) =>
-                (e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.9)")
+                (e.currentTarget.style.backgroundColor = "var(--color-white-90)")
               }
             >
               <svg
@@ -350,7 +350,7 @@ export const FormImageUpload: React.FC<FormImageUploadProps> = ({
           </div>
           <p style={textStyle}>
             {t("form.image.drag", "Arrastra una imagen o")}{" "}
-            <strong style={{ color: "#BA2525" }}>
+            <strong style={{ color: "var(--color-red-500)" }}>
               {t("form.image.click", "haz clic para subir")}
             </strong>
           </p>

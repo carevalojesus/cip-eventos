@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Sidebar } from './rui-sidebar'
-import { Header } from './rui-header'
+import { Sidebar } from './sidebar'
+import { Header } from './header'
 import { UserRole } from '@/constants/roles'
 import { getRoleLabel } from '@/store/auth.store'
 

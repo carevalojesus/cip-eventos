@@ -1,0 +1,12 @@
+---
+import { RuiDashboardApp } from "@/components/dashboard/RuiDashboardApp";
+import Layout from "@/layouts/Layout.astro";
+
+export const prerender = false;
+
+const { id } = Astro.params;
+---
+
+<Layout title="Detalle de Usuario - CIP Eventos">
+  <RuiDashboardApp client:only="react" initialPath={`/usuarios/${id}`} />
+</Layout>

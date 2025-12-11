@@ -102,10 +102,8 @@ export const FormSelect: React.FC<FormSelectProps> = ({
   };
 
   const optionsStyle: React.CSSProperties = {
-    position: "absolute",
-    zIndex: 50,
-    marginTop: "var(--space-1)",
-    width: "100%",
+    zIndex: 99999,
+    width: "var(--button-width, 100%)",
     maxHeight: "240px",
     overflowY: "auto",
     backgroundColor: "var(--color-white)",
@@ -177,7 +175,7 @@ export const FormSelect: React.FC<FormSelectProps> = ({
               </span>
             </ListboxButton>
 
-            <ListboxOptions style={optionsStyle}>
+            <ListboxOptions anchor={{ to: "bottom", gap: "4px" }} className="form-select-options" style={optionsStyle}>
               {options.map((option) => (
                 <ListboxOption
                   key={option.value}

@@ -1,8 +1,6 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { useCreateUser } from "@/hooks/useCreateUser";
-import { CreateUserFormRui } from "./rui/CreateUserFormRui";
-import { LoadingState } from "@/components/dashboard/LoadingState";
+import { CreateUserDrawer } from "./CreateUserDrawer";
 
 interface CreateUserViewProps {
   onNavigate: (path: string) => void;
@@ -11,33 +9,23 @@ interface CreateUserViewProps {
 export const CreateUserView: React.FC<CreateUserViewProps> = ({ onNavigate }) => {
   const { i18n } = useTranslation();
   const isEnglish = i18n.language?.startsWith("en");
-  const { form, roles, loading, submitting, onSubmit } = useCreateUser();
 
-  const handleCancel = () => {
+  const handleClose = () => {
     const path = isEnglish ? "/en/users" : "/usuarios";
     onNavigate(path);
   };
 
-  const handleSubmit = async (data: Parameters<typeof onSubmit>[0]) => {
-    const success = await onSubmit(data);
-    if (success) {
-      const path = isEnglish ? "/en/users" : "/usuarios";
-      onNavigate(path);
-    }
-    return success;
+  const handleSuccess = () => {
+    const path = isEnglish ? "/en/users" : "/usuarios";
+    onNavigate(path);
   };
 
-  if (loading) {
-    return <LoadingState message="Cargando roles..." />;
-  }
-
+  // Auto-open drawer when view mounts
   return (
-    <CreateUserFormRui
-      form={form}
-      roles={roles}
-      onSubmit={handleSubmit}
-      submitting={submitting}
-      onCancel={handleCancel}
+    <CreateUserDrawer
+      isOpen={true}
+      onClose={handleClose}
+      onSuccess={handleSuccess}
     />
   );
 };

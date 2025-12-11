@@ -33,12 +33,20 @@ export class AuditController {
   }
 
   /**
-   * GET /audit/:id
-   * Obtiene un log específico por ID
+   * GET /audit/user/:userId
+   * Obtiene todas las acciones realizadas por un usuario
    */
-  @Get(':id')
-  async findOne(@Param('id', ParseUUIDPipe) id: string) {
-    return this.auditService.findOne(id);
+  @Get('user/:userId')
+  async findByUser(
+    @Param('userId', ParseUUIDPipe) userId: string,
+    @Query('page') page?: number,
+    @Query('limit') limit?: number,
+  ) {
+    return this.auditService.findByUser(
+      userId,
+      page ? Number(page) : 1,
+      limit ? Number(limit) : 20,
+    );
   }
 
   /**
@@ -59,19 +67,11 @@ export class AuditController {
   }
 
   /**
-   * GET /audit/user/:userId
-   * Obtiene todas las acciones realizadas por un usuario
+   * GET /audit/:id
+   * Obtiene un log específico por ID
    */
-  @Get('user/:userId')
-  async findByUser(
-    @Param('userId', ParseUUIDPipe) userId: string,
-    @Query('page') page?: number,
-    @Query('limit') limit?: number,
-  ) {
-    return this.auditService.findByUser(
-      userId,
-      page ? Number(page) : 1,
-      limit ? Number(limit) : 20,
-    );
+  @Get(':id')
+  async findOne(@Param('id', ParseUUIDPipe) id: string) {
+    return this.auditService.findOne(id);
   }
 }

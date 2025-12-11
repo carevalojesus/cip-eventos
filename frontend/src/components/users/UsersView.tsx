@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useCallback } from "react";
+import React, { useEffect, useMemo, useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 
@@ -7,10 +7,11 @@ import { useDialog } from "@/hooks/useDialog";
 import { usePagination } from "@/hooks/usePagination";
 
 // Components
-import { ConfirmDialog } from "@/components/ui/rui-confirm-dialog";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { TablePagination } from "@/components/ui/rui";
-import { LoadingState } from "@/components/dashboard/LoadingState";
+import { Skeleton, SkeletonCircle } from "@/components/ui/skeleton";
 import { ResetPasswordModal } from "./ResetPasswordModal";
+import { CreateUserDrawer } from "./CreateUserDrawer";
 import {
   UserPageHeader,
   UserFilters,
@@ -56,7 +57,6 @@ export const UsersView: React.FC<UsersViewProps> = ({ onNavigate }) => {
   // Filter state
   const [searchQuery, setSearchQuery] = React.useState("");
   const [selectedRole, setSelectedRole] = React.useState("all");
-  const [selectedStatus, setSelectedStatus] = React.useState("all");
   const [selectedVerification, setSelectedVerification] = React.useState("all");
 
   // Selection state
@@ -70,6 +70,9 @@ export const UsersView: React.FC<UsersViewProps> = ({ onNavigate }) => {
 
   // Bulk action dialog
   const bulkActionDialog = useDialog<{ action: BulkAction; userIds: string[] }>();
+
+  // Create user drawer state
+  const [isCreateDrawerOpen, setIsCreateDrawerOpen] = useState(false);
 
   // Fetch data
   useEffect(() => {
@@ -104,19 +107,14 @@ export const UsersView: React.FC<UsersViewProps> = ({ onNavigate }) => {
       const matchesRole =
         selectedRole === "all" || user.role?.id?.toString() === selectedRole;
 
-      const matchesStatus =
-        selectedStatus === "all" ||
-        (selectedStatus === "active" && user.isActive) ||
-        (selectedStatus === "inactive" && !user.isActive);
-
       const matchesVerification =
         selectedVerification === "all" ||
         (selectedVerification === "verified" && user.isVerified) ||
         (selectedVerification === "unverified" && !user.isVerified);
 
-      return matchesSearch && matchesRole && matchesStatus && matchesVerification;
+      return matchesSearch && matchesRole && matchesVerification;
     });
-  }, [users, searchQuery, selectedRole, selectedStatus, selectedVerification]);
+  }, [users, searchQuery, selectedRole, selectedVerification]);
 
   // Pagination
   const pagination = usePagination({
@@ -127,28 +125,34 @@ export const UsersView: React.FC<UsersViewProps> = ({ onNavigate }) => {
   // Reset page when filters change
   useEffect(() => {
     pagination.setCurrentPage(1);
-  }, [searchQuery, selectedRole, selectedStatus, selectedVerification]);
+  }, [searchQuery, selectedRole, selectedVerification]);
 
   // Check if filters are active
-  const hasActiveFilters = searchQuery !== "" || selectedRole !== "all" || selectedStatus !== "all" || selectedVerification !== "all";
+  const hasActiveFilters = searchQuery !== "" || selectedRole !== "all" || selectedVerification !== "all";
 
   // Clear filters
   const handleClearFilters = useCallback(() => {
     setSearchQuery("");
     setSelectedRole("all");
-    setSelectedStatus("all");
     setSelectedVerification("all");
   }, []);
 
   // Export users to CSV
   const handleExportUsers = useCallback(() => {
-    const headers = ["Nombre", "Email", "Rol", "Estado", "Verificado", "Último acceso"];
+    const headers = [
+      t("users.export.name", "Nombre"),
+      t("users.export.email", "Email"),
+      t("users.export.role", "Rol"),
+      t("users.export.status", "Estado"),
+      t("users.export.verified", "Verificado"),
+      t("users.export.last_access", "Último acceso"),
+    ];
     const rows = filteredUsers.map((user) => [
       getFullName(user) || "-",
       user.email,
       user.role?.name || "-",
-      user.isActive ? "Activo" : "Inactivo",
-      user.isVerified ? "Sí" : "No",
+      user.isActive ? t("users.list.status.active", "Activo") : t("users.list.status.inactive", "Inactivo"),
+      user.isVerified ? t("common.yes", "Sí") : t("common.no", "No"),
       user.lastLoginAt ? new Date(user.lastLoginAt).toLocaleDateString() : "-",
     ]);
 
@@ -170,9 +174,18 @@ export const UsersView: React.FC<UsersViewProps> = ({ onNavigate }) => {
 
   // Navigation handlers
   const handleCreateUser = useCallback(() => {
-    const path = isEnglish ? "/en/users/new" : "/usuarios/nuevo";
-    onNavigate(path);
-  }, [isEnglish, onNavigate]);
+    setIsCreateDrawerOpen(true);
+  }, []);
+
+  // Refetch users when user is created
+  const handleUserCreated = useCallback(async () => {
+    try {
+      const usersData = await usersService.findAll(isSuperAdmin);
+      setUsers(sortUsersByStatus(usersData));
+    } catch (err) {
+      console.error("Error refetching users:", err);
+    }
+  }, [isSuperAdmin]);
 
   const handleViewUser = useCallback((userId: string) => {
     const path = isEnglish ? `/en/users/${userId}` : `/usuarios/${userId}`;
@@ -184,7 +197,7 @@ export const UsersView: React.FC<UsersViewProps> = ({ onNavigate }) => {
     switch (action) {
       case "edit":
       case "changeRole":
-        toast.info(t("sections.coming_soon", "Próximamente"));
+        // These actions are disabled with tooltip
         break;
       case "delete":
         deleteDialog.open(user);
@@ -199,7 +212,7 @@ export const UsersView: React.FC<UsersViewProps> = ({ onNavigate }) => {
         resetPasswordDialog.open(user);
         break;
     }
-  }, [deleteDialog, activateDialog, resendVerificationDialog, resetPasswordDialog, t]);
+  }, [deleteDialog, activateDialog, resendVerificationDialog, resetPasswordDialog]);
 
   // Bulk action handler
   const handleBulkAction = useCallback((action: BulkAction) => {
@@ -440,9 +453,96 @@ export const UsersView: React.FC<UsersViewProps> = ({ onNavigate }) => {
     }
   };
 
-  // Loading state
+  // Loading state - Skeleton
   if (loading) {
-    return <LoadingState message={t("common.loading", "Cargando...")} />;
+    return (
+      <div style={{ padding: "var(--space-6)", maxWidth: "1200px", margin: "0 auto" }}>
+        {/* Skeleton Header */}
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "var(--space-6)" }}>
+          <Skeleton width={160} height={32} />
+          <Skeleton width={140} height={40} style={{ borderRadius: "var(--radius-md)" }} />
+        </div>
+
+        {/* Skeleton Filters */}
+        <div style={{
+          display: "flex",
+          gap: "var(--space-4)",
+          marginBottom: "var(--space-6)",
+          flexWrap: "wrap"
+        }}>
+          <Skeleton width={280} height={40} style={{ borderRadius: "var(--radius-md)" }} />
+          <Skeleton width={150} height={40} style={{ borderRadius: "var(--radius-md)" }} />
+          <Skeleton width={150} height={40} style={{ borderRadius: "var(--radius-md)" }} />
+        </div>
+
+        {/* Skeleton Table */}
+        <div style={{
+          backgroundColor: "var(--color-bg-primary)",
+          border: "1px solid var(--color-grey-200)",
+          borderRadius: "var(--radius-lg)",
+          overflow: "hidden"
+        }}>
+          {/* Table Header */}
+          <div style={{
+            display: "grid",
+            gridTemplateColumns: "48px 2fr 1fr 100px 140px 60px",
+            gap: "var(--space-4)",
+            padding: "var(--space-3) var(--space-4)",
+            backgroundColor: "var(--color-grey-050)",
+            borderBottom: "1px solid var(--color-grey-200)"
+          }}>
+            <Skeleton width={18} height={18} style={{ borderRadius: "var(--radius-sm)" }} />
+            <Skeleton width="50%" height={12} />
+            <Skeleton width="60%" height={12} />
+            <Skeleton width="70%" height={12} />
+            <Skeleton width="80%" height={12} />
+            <div />
+          </div>
+
+          {/* Table Rows */}
+          {Array.from({ length: 8 }).map((_, index) => (
+            <div
+              key={index}
+              style={{
+                display: "grid",
+                gridTemplateColumns: "48px 2fr 1fr 100px 140px 60px",
+                gap: "var(--space-4)",
+                padding: "var(--space-4)",
+                alignItems: "center",
+                borderBottom: index < 7 ? "1px solid var(--color-grey-100)" : "none"
+              }}
+            >
+              <Skeleton width={18} height={18} style={{ borderRadius: "var(--radius-sm)" }} />
+              <div style={{ display: "flex", alignItems: "center", gap: "var(--space-3)" }}>
+                <SkeletonCircle size="2xl" />
+                <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-1)" }}>
+                  <Skeleton width={120 + Math.random() * 60} height={14} />
+                  <Skeleton width={150 + Math.random() * 50} height={12} />
+                </div>
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-1)" }}>
+                <Skeleton width={80 + Math.random() * 40} height={14} />
+                <Skeleton width={100 + Math.random() * 30} height={12} />
+              </div>
+              <Skeleton width={70} height={24} style={{ borderRadius: "var(--radius-full)" }} />
+              <Skeleton width={100 + Math.random() * 30} height={14} />
+              <Skeleton width={28} height={28} style={{ borderRadius: "var(--radius-md)", marginLeft: "auto" }} />
+            </div>
+          ))}
+        </div>
+
+        {/* Skeleton Pagination */}
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "var(--space-4)" }}>
+          <Skeleton width={180} height={16} />
+          <div style={{ display: "flex", gap: "var(--space-2)" }}>
+            <Skeleton width={36} height={36} style={{ borderRadius: "var(--radius-md)" }} />
+            <Skeleton width={36} height={36} style={{ borderRadius: "var(--radius-md)" }} />
+            <Skeleton width={36} height={36} style={{ borderRadius: "var(--radius-md)" }} />
+            <Skeleton width={36} height={36} style={{ borderRadius: "var(--radius-md)" }} />
+          </div>
+        </div>
+      </div>
+    );
   }
 
   const containerStyle: React.CSSProperties = {
@@ -454,7 +554,7 @@ export const UsersView: React.FC<UsersViewProps> = ({ onNavigate }) => {
   return (
     <div style={containerStyle}>
       {/* Header */}
-      <UserPageHeader onCreateUser={handleCreateUser} />
+      <UserPageHeader onCreateUser={handleCreateUser} showCreateButton={users.length > 0} />
 
       {/* Filters */}
       <UserFilters
@@ -462,8 +562,6 @@ export const UsersView: React.FC<UsersViewProps> = ({ onNavigate }) => {
         onSearchChange={setSearchQuery}
         selectedRole={selectedRole}
         onRoleChange={setSelectedRole}
-        selectedStatus={selectedStatus}
-        onStatusChange={setSelectedStatus}
         selectedVerification={selectedVerification}
         onVerificationChange={setSelectedVerification}
         roles={roles}
@@ -490,6 +588,7 @@ export const UsersView: React.FC<UsersViewProps> = ({ onNavigate }) => {
             onSelectionChange={setSelectedUsers}
             onUserClick={handleViewUser}
             onAction={handleAction}
+            disabledActions={["edit", "changeRole"]}
           />
           <TablePagination
             currentPage={pagination.currentPage}
@@ -598,6 +697,13 @@ export const UsersView: React.FC<UsersViewProps> = ({ onNavigate }) => {
           />
         );
       })()}
+
+      {/* Create User Drawer */}
+      <CreateUserDrawer
+        isOpen={isCreateDrawerOpen}
+        onClose={() => setIsCreateDrawerOpen(false)}
+        onSuccess={handleUserCreated}
+      />
     </div>
   );
 };

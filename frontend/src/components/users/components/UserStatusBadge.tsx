@@ -58,19 +58,19 @@ export const UserStatusBadge: React.FC<UserStatusBadgeProps> = ({
   const badgeStyle: React.CSSProperties = {
     display: "inline-flex",
     alignItems: "center",
-    gap: "6px",
-    padding: size === "sm" ? "4px 10px" : "6px 12px",
+    gap: "var(--space-2)",
+    padding: size === "sm" ? "var(--space-1) var(--space-3)" : "var(--space-2) var(--space-3)",
     fontSize: size === "sm" ? "var(--font-size-xs)" : "var(--font-size-sm)",
     fontWeight: 500,
-    borderRadius: "9999px",
+    borderRadius: "var(--radius-full)",
     backgroundColor: config.backgroundColor,
     color: config.color,
   };
 
   const dotStyle: React.CSSProperties = {
-    width: "6px",
-    height: "6px",
-    borderRadius: "50%",
+    width: "var(--space-2)",
+    height: "var(--space-2)",
+    borderRadius: "var(--radius-full)",
     backgroundColor: config.dotColor,
     flexShrink: 0,
   };

@@ -35,6 +35,9 @@ export class CreateProfileDto {
 
   @IsString()
   @IsOptional()
-  @IsUrl()
+  @IsUrl(
+    { require_tld: false }, // Allow localhost URLs without TLD
+    { message: 'avatar debe ser una URL válida' },
+  )
   avatar?: string;
 }

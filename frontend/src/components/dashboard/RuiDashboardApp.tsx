@@ -3,7 +3,6 @@ import { useAuthStore } from "@/store/auth.store";
 import { LoadingState } from "./LoadingState";
 import { DashboardContent } from "./DashboardContent";
 import { EventsView } from "@/components/events/EventsView";
-import { CreateEventViewRui } from "@/components/events/rui";
 import { EventManagementView } from "@/components/events/EventManagementView";
 import { EditEventView } from "@/components/events/EditEventView";
 import { UsersView, CreateUserView, UserDetailView } from "@/components/users";
@@ -241,7 +240,7 @@ export const RuiDashboardApp: React.FC<RuiDashboardAppProps> = ({ initialPath })
     }
     // Crear evento
     if (matchesRoute(["/eventos/nuevo", "/en/events/new"])) {
-      return <CreateEventViewRui onNavigate={handleNavigate} />;
+      return <SectionPlaceholder title={t("sections.create_event", "Crear Evento")} description={t("sections.coming_soon")} />;
     }
     // Editar evento (debe ir antes de gestión)
     const editEventId = getEventIdFromEditPath(activePath);

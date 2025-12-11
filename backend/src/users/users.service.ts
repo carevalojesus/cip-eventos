@@ -17,6 +17,7 @@ import { User } from './entities/user.entity';
 import { Role } from '../roles/entities/role.entity';
 import { DataDeletionService } from '../persons/services/data-deletion.service';
 import { MailService } from '../mail/mail.service';
+import { AuditService } from '../audit/audit.service';
 
 @Injectable()
 export class UsersService {
@@ -29,6 +30,7 @@ export class UsersService {
     @Inject(forwardRef(() => DataDeletionService))
     private readonly dataDeletionService: DataDeletionService,
     private readonly mailService: MailService,
+    private readonly auditService: AuditService,
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
@@ -77,6 +79,16 @@ export class UsersService {
 
     const savedUser = await this.userRepository.save(newUser);
 
+    // Registrar auditoría de creación
+    await this.auditService.logCreate(
+      'User',
+      savedUser.id,
+      { email: savedUser.email, roleId: savedUser.role?.id },
+      undefined,
+      undefined,
+      undefined,
+    );
+
     // Enviar correo de bienvenida con credenciales
     try {
       await this.mailService.sendAdminCreatedUser(
@@ -106,9 +118,10 @@ export class UsersService {
     });
   }
 
-  async findOne(id: string): Promise<User> {
+  async findOne(id: string, includeInactive: boolean = false): Promise<User> {
+    const whereCondition = includeInactive ? { id } : { id, isActive: true };
     const user = await this.userRepository.findOne({
-      where: { id, isActive: true },
+      where: whereCondition,
       relations: ['role', 'profile'],
     });
 
@@ -137,6 +150,27 @@ export class UsersService {
   }
 
   async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {
+    // Obtener valores anteriores para auditoría
+    const previousUser = await this.userRepository.findOne({
+      where: { id },
+      relations: ['role'],
+    });
+
+    if (!previousUser)
+      throw new NotFoundException(
+        this.i18n.t('users.user_not_found_id', {
+          lang: I18nContext.current()?.lang,
+          args: { id },
+        }),
+      );
+
+    const previousValues = {
+      email: previousUser.email,
+      roleId: previousUser.role?.id,
+      isActive: previousUser.isActive,
+      isVerified: previousUser.isVerified,
+    };
+
     // Logica normal de actualización de datos de usuario
     const dataToUpdate = { ...updateUserDto };
 
@@ -157,11 +191,34 @@ export class UsersService {
         }),
       );
 
-    return await this.userRepository.save(user);
+    const updatedUser = await this.userRepository.save(user);
+
+    // Registrar auditoría de actualización
+    const newValues = {
+      email: updatedUser.email,
+      roleId: updateUserDto.roleId !== undefined ? updateUserDto.roleId : previousUser.role?.id,
+      isActive: updatedUser.isActive,
+      isVerified: updatedUser.isVerified,
+    };
+
+    await this.auditService.logUpdate(
+      'User',
+      updatedUser.id,
+      previousValues,
+      newValues,
+      undefined,
+      undefined,
+      undefined,
+    );
+
+    return updatedUser;
   }
 
   async remove(id: string): Promise<User> {
-    const userEntity = await this.userRepository.findOneBy({ id });
+    const userEntity = await this.userRepository.findOne({
+      where: { id },
+      relations: ['role'],
+    });
 
     if (!userEntity) {
       throw new NotFoundException(
@@ -172,8 +229,27 @@ export class UsersService {
       );
     }
 
+    // Capturar valores anteriores para auditoría
+    const previousValues = {
+      email: userEntity.email,
+      roleId: userEntity.role?.id,
+      isActive: userEntity.isActive,
+    };
+
     userEntity.isActive = false;
-    return await this.userRepository.save(userEntity);
+    const deletedUser = await this.userRepository.save(userEntity);
+
+    // Registrar auditoría de eliminación (soft delete)
+    await this.auditService.logDelete(
+      'User',
+      deletedUser.id,
+      previousValues,
+      undefined,
+      undefined,
+      undefined,
+    );
+
+    return deletedUser;
   }
 
   async updateRefreshToken(
@@ -212,6 +288,7 @@ export class UsersService {
       password: newPasswordHash,
       resetPasswordToken: null,
       resetPasswordExpires: null,
+      forcePasswordReset: false, // Limpiar flag después de cambiar contraseña
     });
   }
 
@@ -247,5 +324,109 @@ export class UsersService {
 
   async requestDeletion(userId: string, reason?: string): Promise<void> {
     return this.dataDeletionService.requestDeletion(userId, reason);
+  }
+
+  /**
+   * Verificar correo manualmente (solo SUPER_ADMIN)
+   */
+  async verifyEmailManually(userId: string, adminId: string): Promise<User> {
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+      relations: ['role', 'profile'],
+    });
+
+    if (!user) {
+      throw new NotFoundException(
+        this.i18n.t('users.user_not_found_id', {
+          lang: I18nContext.current()?.lang,
+          args: { id: userId },
+        }),
+      );
+    }
+
+    if (user.isVerified) {
+      throw new BadRequestException(
+        this.i18n.t('users.already_verified', {
+          lang: I18nContext.current()?.lang,
+          defaultValue: 'El usuario ya está verificado',
+        }),
+      );
+    }
+
+    const previousValues = { isVerified: false };
+
+    user.isVerified = true;
+    user.verificationToken = null;
+    user.verificationExpires = null;
+
+    const updatedUser = await this.userRepository.save(user);
+
+    // Registrar auditoría
+    const admin = await this.userRepository.findOne({ where: { id: adminId } });
+    await this.auditService.logUpdate(
+      'User',
+      updatedUser.id,
+      previousValues,
+      { isVerified: true },
+      admin || undefined,
+      undefined,
+      undefined,
+      'Verificación manual de correo por administrador',
+    );
+
+    return updatedUser;
+  }
+
+  /**
+   * Cambiar rol de usuario (solo SUPER_ADMIN)
+   */
+  async changeRole(userId: string, roleId: number, adminId: string): Promise<User> {
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+      relations: ['role', 'profile'],
+    });
+
+    if (!user) {
+      throw new NotFoundException(
+        this.i18n.t('users.user_not_found_id', {
+          lang: I18nContext.current()?.lang,
+          args: { id: userId },
+        }),
+      );
+    }
+
+    const newRole = await this.roleRepository.findOneBy({ id: roleId });
+
+    if (!newRole) {
+      throw new NotFoundException(
+        this.i18n.t('users.role_not_found', {
+          lang: I18nContext.current()?.lang,
+          args: { roleId },
+        }),
+      );
+    }
+
+    const previousValues = {
+      roleId: user.role?.id,
+      roleName: user.role?.name,
+    };
+
+    user.role = newRole;
+    const updatedUser = await this.userRepository.save(user);
+
+    // Registrar auditoría
+    const admin = await this.userRepository.findOne({ where: { id: adminId } });
+    await this.auditService.logUpdate(
+      'User',
+      updatedUser.id,
+      previousValues,
+      { roleId: newRole.id, roleName: newRole.name },
+      admin || undefined,
+      undefined,
+      undefined,
+      'Cambio de rol por administrador',
+    );
+
+    return updatedUser;
   }
 }
