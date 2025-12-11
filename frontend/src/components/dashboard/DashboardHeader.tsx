@@ -214,11 +214,12 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
             </DropdownMenuLabel>
             <DropdownMenuSeparator className="sm:hidden" />
 
-            <DropdownMenuItem asChild>
-              <a href="/dashboard/profile" className="cursor-pointer">
-                <UserIcon size={16} className="mr-2" />
-                Mi Perfil
-              </a>
+            <DropdownMenuItem 
+              onClick={() => onNavigate?.(locale === 'en' ? '/en/profile' : '/perfil')}
+              className="cursor-pointer"
+            >
+              <UserIcon size={16} className="mr-2" />
+              {t('nav.profile', 'Mi Perfil')}
             </DropdownMenuItem>
 
             <DropdownMenuSeparator />

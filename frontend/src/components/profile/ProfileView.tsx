@@ -37,7 +37,11 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { FormSelect } from "@/components/ui/form/index";
 import { Skeleton, SkeletonCircle } from "@/components/ui/skeleton";
-import { AvatarEditor, UserAvatar, UserVerificationBadge } from "@/components/users/components";
+import {
+    AvatarEditor,
+    UserAvatar,
+    UserVerificationBadge,
+} from "@/components/users/components";
 
 // Store & Services
 import { useAuthStore } from "@/store/auth.store";
@@ -52,7 +56,11 @@ import {
     DocumentType,
 } from "@/services/profile.service";
 import { getRoleDisplayName } from "@/lib/userUtils";
-import { formatEventDate, getRelativeTime, getLocaleFromLang } from "@/lib/dateUtils";
+import {
+    formatEventDate,
+    getRelativeTime,
+    getLocaleFromLang,
+} from "@/lib/dateUtils";
 import api from "@/lib/api";
 
 // Styles
@@ -74,7 +82,11 @@ const LoadingSkeleton: React.FC = () => (
         <div className="profile__header">
             <div className="profile__header-title">
                 <Skeleton width={200} height={28} />
-                <Skeleton width={300} height={16} style={{ marginTop: "var(--space-2)" }} />
+                <Skeleton
+                    width={300}
+                    height={16}
+                    style={{ marginTop: "var(--space-2)" }}
+                />
             </div>
         </div>
 
@@ -84,13 +96,25 @@ const LoadingSkeleton: React.FC = () => (
                 <SkeletonCircle size={80} />
                 <div className="profile__user-details">
                     <Skeleton width={180} height={24} />
-                    <Skeleton width={200} height={16} style={{ marginTop: "var(--space-2)" }} />
+                    <Skeleton
+                        width={200}
+                        height={16}
+                        style={{ marginTop: "var(--space-2)" }}
+                    />
                 </div>
             </div>
         </div>
 
         {/* Tabs Skeleton */}
-        <div style={{ display: "flex", gap: "var(--space-4)", marginBottom: "var(--space-6)", borderBottom: "1px solid var(--color-grey-200)", paddingBottom: "var(--space-3)" }}>
+        <div
+            style={{
+                display: "flex",
+                gap: "var(--space-4)",
+                marginBottom: "var(--space-6)",
+                borderBottom: "1px solid var(--color-grey-200)",
+                paddingBottom: "var(--space-3)",
+            }}
+        >
             <Skeleton width={140} height={20} />
             <Skeleton width={100} height={20} />
             <Skeleton width={130} height={20} />
@@ -100,23 +124,51 @@ const LoadingSkeleton: React.FC = () => (
         <div className="profile__layout">
             <div className="profile__main">
                 <div className="profile__card">
-                    <Skeleton width={120} height={20} style={{ marginBottom: "var(--space-4)" }} />
+                    <Skeleton
+                        width={120}
+                        height={20}
+                        style={{ marginBottom: "var(--space-4)" }}
+                    />
                     <div className="profile__form-grid">
                         <div>
-                            <Skeleton width="40%" height={14} style={{ marginBottom: "var(--space-2)" }} />
-                            <Skeleton width="100%" height={40} style={{ borderRadius: "var(--radius-md)" }} />
+                            <Skeleton
+                                width="40%"
+                                height={14}
+                                style={{ marginBottom: "var(--space-2)" }}
+                            />
+                            <Skeleton
+                                width="100%"
+                                height={40}
+                                style={{ borderRadius: "var(--radius-md)" }}
+                            />
                         </div>
                         <div>
-                            <Skeleton width="40%" height={14} style={{ marginBottom: "var(--space-2)" }} />
-                            <Skeleton width="100%" height={40} style={{ borderRadius: "var(--radius-md)" }} />
+                            <Skeleton
+                                width="40%"
+                                height={14}
+                                style={{ marginBottom: "var(--space-2)" }}
+                            />
+                            <Skeleton
+                                width="100%"
+                                height={40}
+                                style={{ borderRadius: "var(--radius-md)" }}
+                            />
                         </div>
                     </div>
                 </div>
             </div>
             <div className="profile__sidebar">
                 <div className="profile__sidebar-card">
-                    <Skeleton width={100} height={16} style={{ marginBottom: "var(--space-3)" }} />
-                    <Skeleton width="100%" height={36} style={{ borderRadius: "var(--radius-md)" }} />
+                    <Skeleton
+                        width={100}
+                        height={16}
+                        style={{ marginBottom: "var(--space-3)" }}
+                    />
+                    <Skeleton
+                        width="100%"
+                        height={36}
+                        style={{ borderRadius: "var(--radius-md)" }}
+                    />
                 </div>
             </div>
         </div>
@@ -148,7 +200,10 @@ interface ChangePasswordModalProps {
     onClose: () => void;
 }
 
-const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({ isOpen, onClose }) => {
+const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
+    isOpen,
+    onClose,
+}) => {
     const { t } = useTranslation();
     const [currentPassword, setCurrentPassword] = useState("");
     const [newPassword, setNewPassword] = useState("");
@@ -170,22 +225,40 @@ const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({ isOpen, onClo
 
     const validate = (): string | null => {
         if (!currentPassword) {
-            return t("change_password.validation.current_required", "Ingresa tu contraseña actual");
+            return t(
+                "change_password.validation.current_required",
+                "Ingresa tu contraseña actual"
+            );
         }
         if (!newPassword) {
-            return t("change_password.validation.new_required", "Ingresa la nueva contraseña");
+            return t(
+                "change_password.validation.new_required",
+                "Ingresa la nueva contraseña"
+            );
         }
         if (newPassword.length < 8) {
-            return t("change_password.validation.min_length", "La contraseña debe tener al menos 8 caracteres");
+            return t(
+                "change_password.validation.min_length",
+                "La contraseña debe tener al menos 8 caracteres"
+            );
         }
         if (!/[A-Z]/.test(newPassword)) {
-            return t("change_password.validation.uppercase", "La contraseña debe contener al menos una mayúscula");
+            return t(
+                "change_password.validation.uppercase",
+                "La contraseña debe contener al menos una mayúscula"
+            );
         }
         if (!/[0-9]/.test(newPassword)) {
-            return t("change_password.validation.number", "La contraseña debe contener al menos un número");
+            return t(
+                "change_password.validation.number",
+                "La contraseña debe contener al menos un número"
+            );
         }
         if (newPassword !== confirmPassword) {
-            return t("change_password.validation.mismatch", "Las contraseñas no coinciden");
+            return t(
+                "change_password.validation.mismatch",
+                "Las contraseñas no coinciden"
+            );
         }
         return null;
     };
@@ -206,10 +279,17 @@ const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({ isOpen, onClo
                 currentPassword,
                 newPassword,
             });
-            toast.success(t("profile.password_changed", "Contraseña cambiada exitosamente"));
+            toast.success(
+                t(
+                    "profile.password_changed",
+                    "Contraseña cambiada exitosamente"
+                )
+            );
             handleClose();
         } catch (err: any) {
-            const msg = err?.response?.data?.message || t("errors.unknown", "Error desconocido");
+            const msg =
+                err?.response?.data?.message ||
+                t("errors.unknown", "Error desconocido");
             setError(Array.isArray(msg) ? msg[0] : msg);
         } finally {
             setIsLoading(false);
@@ -220,7 +300,10 @@ const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({ isOpen, onClo
 
     return (
         <div className="profile__modal-overlay" onClick={handleClose}>
-            <div className="profile__modal" onClick={(e) => e.stopPropagation()}>
+            <div
+                className="profile__modal"
+                onClick={(e) => e.stopPropagation()}
+            >
                 <div className="profile__modal-header">
                     <div className="profile__modal-icon">
                         <Key size={20} weight="duotone" />
@@ -242,31 +325,53 @@ const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({ isOpen, onClo
                     <div className="profile__modal-content">
                         <div className="profile__modal-form">
                             <Input
-                                label={t("change_password.current", "Contraseña actual")}
+                                label={t(
+                                    "change_password.current",
+                                    "Contraseña actual"
+                                )}
                                 type="password"
                                 value={currentPassword}
-                                onChange={(e) => setCurrentPassword(e.target.value)}
-                                placeholder={t("change_password.current_placeholder", "Ingresa tu contraseña actual")}
+                                onChange={(e) =>
+                                    setCurrentPassword(e.target.value)
+                                }
+                                placeholder={t(
+                                    "change_password.current_placeholder",
+                                    "Ingresa tu contraseña actual"
+                                )}
                                 leftIcon={<Lock size={16} />}
                                 showPasswordToggle
                             />
 
                             <Input
-                                label={t("change_password.new", "Nueva contraseña")}
+                                label={t(
+                                    "change_password.new",
+                                    "Nueva contraseña"
+                                )}
                                 type="password"
                                 value={newPassword}
                                 onChange={(e) => setNewPassword(e.target.value)}
-                                placeholder={t("change_password.new_placeholder", "Ingresa la nueva contraseña")}
+                                placeholder={t(
+                                    "change_password.new_placeholder",
+                                    "Ingresa la nueva contraseña"
+                                )}
                                 leftIcon={<Lock size={16} />}
                                 showPasswordToggle
                             />
 
                             <Input
-                                label={t("change_password.confirm", "Confirmar contraseña")}
+                                label={t(
+                                    "change_password.confirm",
+                                    "Confirmar contraseña"
+                                )}
                                 type="password"
                                 value={confirmPassword}
-                                onChange={(e) => setConfirmPassword(e.target.value)}
-                                placeholder={t("change_password.confirm_placeholder", "Confirma la nueva contraseña")}
+                                onChange={(e) =>
+                                    setConfirmPassword(e.target.value)
+                                }
+                                placeholder={t(
+                                    "change_password.confirm_placeholder",
+                                    "Confirma la nueva contraseña"
+                                )}
                                 leftIcon={<Lock size={16} />}
                                 showPasswordToggle
                             />
@@ -281,11 +386,23 @@ const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({ isOpen, onClo
                     </div>
 
                     <div className="profile__modal-footer">
-                        <Button type="button" variant="ghost" onClick={handleClose} disabled={isLoading}>
+                        <Button
+                            type="button"
+                            variant="ghost"
+                            onClick={handleClose}
+                            disabled={isLoading}
+                        >
                             {t("common.cancel", "Cancelar")}
                         </Button>
-                        <Button type="submit" variant="primary" isLoading={isLoading}>
-                            {t("profile.change_password_submit", "Cambiar Contraseña")}
+                        <Button
+                            type="submit"
+                            variant="primary"
+                            isLoading={isLoading}
+                        >
+                            {t(
+                                "profile.change_password_submit",
+                                "Cambiar Contraseña"
+                            )}
                         </Button>
                     </div>
                 </form>
@@ -364,10 +481,16 @@ const PersonalTab: React.FC<PersonalTabProps> = ({
                     </div>
                     <div className="profile__section-title-group">
                         <h3 className="profile__section-title">
-                            {t("profile.section.account", "Información de Cuenta")}
+                            {t(
+                                "profile.section.account",
+                                "Información de Cuenta"
+                            )}
                         </h3>
                         <p className="profile__section-subtitle">
-                            {t("profile.section.account_desc", "Tu información básica de usuario")}
+                            {t(
+                                "profile.section.account_desc",
+                                "Tu información básica de usuario"
+                            )}
                         </p>
                     </div>
                 </div>
@@ -381,22 +504,35 @@ const PersonalTab: React.FC<PersonalTabProps> = ({
                             leftIcon={<Envelope size={16} />}
                         />
                         <p className="profile__email-note">
-                            {t("profile.email_readonly", "El correo no puede ser modificado")}
+                            {t(
+                                "profile.email_readonly",
+                                "El correo no puede ser modificado"
+                            )}
                         </p>
                     </div>
 
                     <Input
                         label={t("profile.first_name", "Nombre")}
                         value={formData.firstName}
-                        onChange={(e) => handleChange("firstName", e.target.value)}
-                        placeholder={t("profile.first_name_placeholder", "Tu nombre")}
+                        onChange={(e) =>
+                            handleChange("firstName", e.target.value)
+                        }
+                        placeholder={t(
+                            "profile.first_name_placeholder",
+                            "Tu nombre"
+                        )}
                     />
 
                     <Input
                         label={t("profile.last_name", "Apellido")}
                         value={formData.lastName}
-                        onChange={(e) => handleChange("lastName", e.target.value)}
-                        placeholder={t("profile.last_name_placeholder", "Tu apellido")}
+                        onChange={(e) =>
+                            handleChange("lastName", e.target.value)
+                        }
+                        placeholder={t(
+                            "profile.last_name_placeholder",
+                            "Tu apellido"
+                        )}
                     />
                 </div>
             </section>
@@ -412,7 +548,10 @@ const PersonalTab: React.FC<PersonalTabProps> = ({
                             {t("profile.section.contact", "Contacto")}
                         </h3>
                         <p className="profile__section-subtitle">
-                            {t("profile.section.contact_desc", "Información de contacto y ubicación")}
+                            {t(
+                                "profile.section.contact_desc",
+                                "Información de contacto y ubicación"
+                            )}
                         </p>
                     </div>
                 </div>
@@ -421,16 +560,26 @@ const PersonalTab: React.FC<PersonalTabProps> = ({
                     <Input
                         label={t("profile.phone", "Teléfono")}
                         value={formData.phoneNumber}
-                        onChange={(e) => handleChange("phoneNumber", e.target.value)}
-                        placeholder={t("profile.phone_placeholder", "+51 999 999 999")}
+                        onChange={(e) =>
+                            handleChange("phoneNumber", e.target.value)
+                        }
+                        placeholder={t(
+                            "profile.phone_placeholder",
+                            "+51 999 999 999"
+                        )}
                         leftIcon={<Phone size={16} />}
                     />
 
                     <Input
                         label={t("profile.designation", "Cargo / Profesión")}
                         value={formData.designation}
-                        onChange={(e) => handleChange("designation", e.target.value)}
-                        placeholder={t("profile.designation_placeholder", "Ej: Ingeniero Civil")}
+                        onChange={(e) =>
+                            handleChange("designation", e.target.value)
+                        }
+                        placeholder={t(
+                            "profile.designation_placeholder",
+                            "Ej: Ingeniero Civil"
+                        )}
                         leftIcon={<Briefcase size={16} />}
                     />
 
@@ -438,8 +587,13 @@ const PersonalTab: React.FC<PersonalTabProps> = ({
                         <Input
                             label={t("profile.address", "Dirección")}
                             value={formData.address}
-                            onChange={(e) => handleChange("address", e.target.value)}
-                            placeholder={t("profile.address_placeholder", "Tu dirección")}
+                            onChange={(e) =>
+                                handleChange("address", e.target.value)
+                            }
+                            placeholder={t(
+                                "profile.address_placeholder",
+                                "Tu dirección"
+                            )}
                             leftIcon={<MapPin size={16} />}
                         />
                     </div>
@@ -448,8 +602,13 @@ const PersonalTab: React.FC<PersonalTabProps> = ({
                         <Textarea
                             label={t("profile.description", "Acerca de ti")}
                             value={formData.description}
-                            onChange={(e) => handleChange("description", e.target.value)}
-                            placeholder={t("profile.description_placeholder", "Una breve descripción sobre ti...")}
+                            onChange={(e) =>
+                                handleChange("description", e.target.value)
+                            }
+                            placeholder={t(
+                                "profile.description_placeholder",
+                                "Una breve descripción sobre ti..."
+                            )}
                             rows={3}
                         />
                     </div>
@@ -474,7 +633,10 @@ interface SecurityTabProps {
     isVerified: boolean;
 }
 
-const SecurityTab: React.FC<SecurityTabProps> = ({ onChangePassword, isVerified }) => {
+const SecurityTab: React.FC<SecurityTabProps> = ({
+    onChangePassword,
+    isVerified,
+}) => {
     const { t } = useTranslation();
 
     return (
@@ -494,13 +656,16 @@ const SecurityTab: React.FC<SecurityTabProps> = ({ onChangePassword, isVerified 
                             {t("profile.password", "Contraseña")}
                         </div>
                         <div className="profile__security-desc">
-                            {t("profile.password_desc", "Cambia tu contraseña regularmente para mayor seguridad")}
+                            {t(
+                                "profile.password_desc",
+                                "Cambia tu contraseña regularmente para mayor seguridad"
+                            )}
                         </div>
                     </div>
                 </div>
-                <Button 
-                    variant="ghost" 
-                    size="sm" 
+                <Button
+                    variant="ghost"
+                    size="sm"
                     onClick={onChangePassword}
                     style={{ color: "var(--color-red-600)" }}
                 >
@@ -516,36 +681,49 @@ const SecurityTab: React.FC<SecurityTabProps> = ({ onChangePassword, isVerified 
                     </div>
                     <div>
                         <div className="profile__security-title">
-                            {t("profile.email_verification", "Verificación de Correo")}
+                            {t(
+                                "profile.email_verification",
+                                "Verificación de Correo"
+                            )}
                         </div>
                         <div className="profile__security-desc">
                             {isVerified
-                                ? t("profile.email_verified_status", "Tu correo electrónico está verificado")
-                                : t("profile.email_not_verified", "Tu correo electrónico no ha sido verificado")}
+                                ? t(
+                                      "profile.email_verified_status",
+                                      "Tu correo electrónico está verificado"
+                                  )
+                                : t(
+                                      "profile.email_not_verified",
+                                      "Tu correo electrónico no ha sido verificado"
+                                  )}
                         </div>
                     </div>
                 </div>
                 {isVerified ? (
-                    <span style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "var(--space-1)",
-                        fontSize: "var(--font-size-sm)",
-                        color: "var(--color-green-600)",
-                        fontWeight: 500
-                    }}>
+                    <span
+                        style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "var(--space-1)",
+                            fontSize: "var(--font-size-sm)",
+                            color: "var(--color-green-600)",
+                            fontWeight: 500,
+                        }}
+                    >
                         <SealCheck size={16} weight="fill" />
                         {t("profile.verified", "Verificado")}
                     </span>
                 ) : (
-                    <span style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "var(--space-1)",
-                        fontSize: "var(--font-size-sm)",
-                        color: "var(--color-yellow-600)",
-                        fontWeight: 500
-                    }}>
+                    <span
+                        style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "var(--space-1)",
+                            fontSize: "var(--font-size-sm)",
+                            color: "var(--color-yellow-600)",
+                            fontWeight: 500,
+                        }}
+                    >
                         <Clock size={16} />
                         {t("profile.pending", "Pendiente")}
                     </span>
@@ -600,8 +778,14 @@ const NominalTab: React.FC<NominalTabProps> = ({
 
     const documentTypeOptions = [
         { value: DocumentType.DNI, label: "DNI" },
-        { value: DocumentType.CE, label: t("profile.doc_ce", "Carné de Extranjería") },
-        { value: DocumentType.PASSPORT, label: t("profile.doc_passport", "Pasaporte") },
+        {
+            value: DocumentType.CE,
+            label: t("profile.doc_ce", "Carné de Extranjería"),
+        },
+        {
+            value: DocumentType.PASSPORT,
+            label: t("profile.doc_passport", "Pasaporte"),
+        },
         { value: DocumentType.OTHER, label: t("profile.doc_other", "Otro") },
     ];
 
@@ -622,7 +806,13 @@ const NominalTab: React.FC<NominalTabProps> = ({
         return (
             <div className="profile__form">
                 {/* Badge de validación */}
-                <div className={`profile__alert ${isValidated ? "profile__alert--success" : "profile__alert--warning"}`}>
+                <div
+                    className={`profile__alert ${
+                        isValidated
+                            ? "profile__alert--success"
+                            : "profile__alert--warning"
+                    }`}
+                >
                     {isValidated ? (
                         <CheckCircle
                             size={20}
@@ -641,8 +831,14 @@ const NominalTab: React.FC<NominalTabProps> = ({
                     <div className="profile__alert-content">
                         <p className="profile__alert-title">
                             {isValidated
-                                ? t("profile.person_verified", "Datos verificados con RENIEC")
-                                : t("profile.person_pending", "Datos pendientes de verificación")}
+                                ? t(
+                                      "profile.person_verified",
+                                      "Datos verificados con RENIEC"
+                                  )
+                                : t(
+                                      "profile.person_pending",
+                                      "Datos pendientes de verificación"
+                                  )}
                         </p>
                     </div>
                 </div>
@@ -655,10 +851,16 @@ const NominalTab: React.FC<NominalTabProps> = ({
                         </div>
                         <div className="profile__section-title-group">
                             <h3 className="profile__section-title">
-                                {t("profile.section.nominal", "Datos Nominales")}
+                                {t(
+                                    "profile.section.nominal",
+                                    "Datos Nominales"
+                                )}
                             </h3>
                             <p className="profile__section-subtitle">
-                                {t("profile.section.nominal_desc", "Información oficial para certificados")}
+                                {t(
+                                    "profile.section.nominal_desc",
+                                    "Información oficial para certificados"
+                                )}
                             </p>
                         </div>
                     </div>
@@ -673,11 +875,17 @@ const NominalTab: React.FC<NominalTabProps> = ({
                             value={person.lastName}
                         />
                         <ReadOnlyField
-                            label={t("profile.document_type", "Tipo de documento")}
+                            label={t(
+                                "profile.document_type",
+                                "Tipo de documento"
+                            )}
                             value={person.documentType}
                         />
                         <ReadOnlyField
-                            label={t("profile.document_number", "Número de documento")}
+                            label={t(
+                                "profile.document_number",
+                                "Número de documento"
+                            )}
                             value={person.documentNumber}
                         />
                         <ReadOnlyField
@@ -685,10 +893,17 @@ const NominalTab: React.FC<NominalTabProps> = ({
                             value={person.country || "-"}
                         />
                         <ReadOnlyField
-                            label={t("profile.birth_date", "Fecha de nacimiento")}
-                            value={person.birthDate
-                                ? new Date(person.birthDate).toLocaleDateString("es-PE")
-                                : "-"}
+                            label={t(
+                                "profile.birth_date",
+                                "Fecha de nacimiento"
+                            )}
+                            value={
+                                person.birthDate
+                                    ? new Date(
+                                          person.birthDate
+                                      ).toLocaleDateString("es-PE")
+                                    : "-"
+                            }
                         />
                     </div>
                 </section>
@@ -702,7 +917,10 @@ const NominalTab: React.FC<NominalTabProps> = ({
                     />
                     <div className="profile__alert-content">
                         <p className="profile__alert-text">
-                            {t("profile.person_readonly_notice", "Los datos nominales se utilizan para emitir certificados oficiales. Si necesitas corregirlos, contacta a soporte.")}
+                            {t(
+                                "profile.person_readonly_notice",
+                                "Los datos nominales se utilizan para emitir certificados oficiales. Si necesitas corregirlos, contacta a soporte."
+                            )}
                         </p>
                     </div>
                 </div>
@@ -723,10 +941,16 @@ const NominalTab: React.FC<NominalTabProps> = ({
                 />
                 <div className="profile__alert-content">
                     <p className="profile__alert-title">
-                        {t("profile.complete_nominal_data", "Completa tus datos nominales")}
+                        {t(
+                            "profile.complete_nominal_data",
+                            "Completa tus datos nominales"
+                        )}
                     </p>
                     <p className="profile__alert-text">
-                        {t("profile.nominal_data_notice", "Estos datos se usarán para emitir certificados oficiales. Asegúrate de que coincidan con tu documento de identidad.")}
+                        {t(
+                            "profile.nominal_data_notice",
+                            "Estos datos se usarán para emitir certificados oficiales. Asegúrate de que coincidan con tu documento de identidad."
+                        )}
                     </p>
                 </div>
             </div>
@@ -742,7 +966,10 @@ const NominalTab: React.FC<NominalTabProps> = ({
                             {t("profile.section.nominal", "Datos Nominales")}
                         </h3>
                         <p className="profile__section-subtitle">
-                            {t("profile.section.nominal_desc", "Información oficial para certificados")}
+                            {t(
+                                "profile.section.nominal_desc",
+                                "Información oficial para certificados"
+                            )}
                         </p>
                     </div>
                 </div>
@@ -751,39 +978,61 @@ const NominalTab: React.FC<NominalTabProps> = ({
                     <Input
                         label={t("profile.first_name", "Nombre")}
                         value={formData.firstName}
-                        onChange={(e) => handleChange("firstName", e.target.value)}
-                        placeholder={t("profile.legal_name_placeholder", "Como aparece en tu documento")}
+                        onChange={(e) =>
+                            handleChange("firstName", e.target.value)
+                        }
+                        placeholder={t(
+                            "profile.legal_name_placeholder",
+                            "Como aparece en tu documento"
+                        )}
                         required
                     />
 
                     <Input
                         label={t("profile.last_name", "Apellido")}
                         value={formData.lastName}
-                        onChange={(e) => handleChange("lastName", e.target.value)}
-                        placeholder={t("profile.legal_lastname_placeholder", "Como aparece en tu documento")}
+                        onChange={(e) =>
+                            handleChange("lastName", e.target.value)
+                        }
+                        placeholder={t(
+                            "profile.legal_lastname_placeholder",
+                            "Como aparece en tu documento"
+                        )}
                         required
                     />
 
                     <FormSelect
                         label={t("profile.document_type", "Tipo de documento")}
                         value={formData.documentType}
-                        onChange={(value) => handleChange("documentType", value)}
+                        onChange={(value) =>
+                            handleChange("documentType", value)
+                        }
                         options={documentTypeOptions}
                         required
                     />
 
                     <Input
-                        label={t("profile.document_number", "Número de documento")}
+                        label={t(
+                            "profile.document_number",
+                            "Número de documento"
+                        )}
                         value={formData.documentNumber}
-                        onChange={(e) => handleChange("documentNumber", e.target.value)}
-                        placeholder={t("profile.document_number_placeholder", "12345678")}
+                        onChange={(e) =>
+                            handleChange("documentNumber", e.target.value)
+                        }
+                        placeholder={t(
+                            "profile.document_number_placeholder",
+                            "12345678"
+                        )}
                         required
                     />
 
                     <Input
                         label={t("profile.country", "País")}
                         value={formData.country}
-                        onChange={(e) => handleChange("country", e.target.value)}
+                        onChange={(e) =>
+                            handleChange("country", e.target.value)
+                        }
                         placeholder="Perú"
                     />
 
@@ -791,7 +1040,9 @@ const NominalTab: React.FC<NominalTabProps> = ({
                         label={t("profile.birth_date", "Fecha de nacimiento")}
                         type="date"
                         value={formData.birthDate}
-                        onChange={(e) => handleChange("birthDate", e.target.value)}
+                        onChange={(e) =>
+                            handleChange("birthDate", e.target.value)
+                        }
                     />
                 </div>
             </section>
@@ -815,7 +1066,7 @@ export const ProfileView: React.FC = () => {
     const locale = getLocaleFromLang(isEnglish ? "en" : "es");
     const { user, updateUser } = useAuthStore();
     const queryClient = useQueryClient();
-    
+
     const [activeTab, setActiveTab] = useState<TabId>("personal");
     const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
     const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
@@ -850,10 +1101,14 @@ export const ProfileView: React.FC = () => {
                 lastName: updatedProfile.lastName,
                 avatar: updatedProfile.avatar,
             });
-            toast.success(t("profile.save_success", "Perfil actualizado correctamente"));
+            toast.success(
+                t("profile.save_success", "Perfil actualizado correctamente")
+            );
         },
         onError: () => {
-            toast.error(t("profile.save_error", "Error al actualizar el perfil"));
+            toast.error(
+                t("profile.save_error", "Error al actualizar el perfil")
+            );
         },
     });
 
@@ -862,12 +1117,20 @@ export const ProfileView: React.FC = () => {
         mutationFn: personService.createMyPerson,
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["person", "me"] });
-            toast.success(t("profile.nominal_save_success", "Datos nominales guardados correctamente"));
+            toast.success(
+                t(
+                    "profile.nominal_save_success",
+                    "Datos nominales guardados correctamente"
+                )
+            );
         },
         onError: (error: any) => {
             const message =
                 error?.response?.data?.message ||
-                t("profile.nominal_save_error", "Error al guardar los datos nominales");
+                t(
+                    "profile.nominal_save_error",
+                    "Error al guardar los datos nominales"
+                );
             toast.error(message);
         },
     });
@@ -876,10 +1139,8 @@ export const ProfileView: React.FC = () => {
     const handleAvatarChange = async (file: File) => {
         setIsUploadingAvatar(true);
         try {
-            const { uploadUrl, publicUrl } = await uploadService.getAvatarUploadUrl(
-                file.type,
-                file.size
-            );
+            const { uploadUrl, publicUrl } =
+                await uploadService.getAvatarUploadUrl(file.type, file.size);
 
             await fetch(uploadUrl, {
                 method: "PUT",
@@ -891,10 +1152,14 @@ export const ProfileView: React.FC = () => {
             queryClient.invalidateQueries({ queryKey: ["profile", "me"] });
             queryClient.invalidateQueries({ queryKey: ["user", "profile"] });
             updateUser({ avatar: publicUrl });
-            toast.success(t("users.avatar.upload_success", "Avatar actualizado"));
+            toast.success(
+                t("users.avatar.upload_success", "Avatar actualizado")
+            );
         } catch (err) {
             console.error("Avatar upload error:", err);
-            toast.error(t("users.avatar.upload_error", "Error al subir el avatar"));
+            toast.error(
+                t("users.avatar.upload_error", "Error al subir el avatar")
+            );
         } finally {
             setIsUploadingAvatar(false);
         }
@@ -909,7 +1174,9 @@ export const ProfileView: React.FC = () => {
             updateUser({ avatar: undefined });
             toast.success(t("users.avatar.remove_success", "Avatar eliminado"));
         } catch {
-            toast.error(t("users.avatar.remove_error", "Error al eliminar el avatar"));
+            toast.error(
+                t("users.avatar.remove_error", "Error al eliminar el avatar")
+            );
         } finally {
             setIsUploadingAvatar(false);
         }
@@ -920,9 +1187,10 @@ export const ProfileView: React.FC = () => {
         return <LoadingSkeleton />;
     }
 
-    const displayName = profile?.firstName && profile?.lastName
-        ? `${profile.firstName} ${profile.lastName}`
-        : user?.email || "";
+    const displayName =
+        profile?.firstName && profile?.lastName
+            ? `${profile.firstName} ${profile.lastName}`
+            : user?.email || "";
 
     // Create a UserLike object for components that need it
     const userLike = {
@@ -939,9 +1207,14 @@ export const ProfileView: React.FC = () => {
             {/* Header */}
             <div className="profile__header">
                 <div className="profile__header-title">
-                    <h1 className="profile__title">{t("profile.title", "Mi Perfil")}</h1>
+                    <h1 className="profile__title">
+                        {t("profile.title", "Mi Perfil")}
+                    </h1>
                     <p className="profile__subtitle">
-                        {t("profile.subtitle", "Administra tu información personal, seguridad y datos nominales")}
+                        {t(
+                            "profile.subtitle",
+                            "Administra tu información personal, seguridad y datos nominales"
+                        )}
                     </p>
                 </div>
             </div>
@@ -957,7 +1230,9 @@ export const ProfileView: React.FC = () => {
                     />
                     <div className="profile__user-details">
                         <div className="profile__user-name">
-                            <span className="profile__user-name-text">{displayName}</span>
+                            <span className="profile__user-name-text">
+                                {displayName}
+                            </span>
                         </div>
                         <div className="profile__user-meta">
                             <div className="profile__user-meta-item">
@@ -978,10 +1253,10 @@ export const ProfileView: React.FC = () => {
                         <span className="profile__verification-label">
                             {t("profile.verified_label", "Verificado")}
                         </span>
-                        <UserVerificationBadge 
-                            isVerified={fullUser?.isVerified || false} 
-                            showLabel={false} 
-                            size="md" 
+                        <UserVerificationBadge
+                            isVerified={fullUser?.isVerified || false}
+                            showLabel={false}
+                            size="md"
                         />
                     </div>
                     <div className="profile__verification-item">
@@ -989,8 +1264,8 @@ export const ProfileView: React.FC = () => {
                             {t("profile.last_access_label", "Último Acceso")}
                         </span>
                         <span className="profile__verification-value">
-                            {fullUser?.lastLoginAt 
-                                ? getRelativeTime(fullUser.lastLoginAt, locale) 
+                            {fullUser?.lastLoginAt
+                                ? getRelativeTime(fullUser.lastLoginAt, locale)
                                 : t("profile.now", "Ahora")}
                         </span>
                     </div>
@@ -1003,7 +1278,9 @@ export const ProfileView: React.FC = () => {
                     type="button"
                     role="tab"
                     aria-selected={activeTab === "personal"}
-                    className={`profile__tab ${activeTab === "personal" ? "profile__tab--active" : ""}`}
+                    className={`profile__tab ${
+                        activeTab === "personal" ? "profile__tab--active" : ""
+                    }`}
                     onClick={() => setActiveTab("personal")}
                 >
                     <User size={18} />
@@ -1013,7 +1290,9 @@ export const ProfileView: React.FC = () => {
                     type="button"
                     role="tab"
                     aria-selected={activeTab === "security"}
-                    className={`profile__tab ${activeTab === "security" ? "profile__tab--active" : ""}`}
+                    className={`profile__tab ${
+                        activeTab === "security" ? "profile__tab--active" : ""
+                    }`}
                     onClick={() => setActiveTab("security")}
                 >
                     <Key size={18} />
@@ -1023,7 +1302,9 @@ export const ProfileView: React.FC = () => {
                     type="button"
                     role="tab"
                     aria-selected={activeTab === "nominal"}
-                    className={`profile__tab ${activeTab === "nominal" ? "profile__tab--active" : ""}`}
+                    className={`profile__tab ${
+                        activeTab === "nominal" ? "profile__tab--active" : ""
+                    }`}
                     onClick={() => setActiveTab("nominal")}
                 >
                     <IdentificationCard size={18} />
@@ -1039,7 +1320,9 @@ export const ProfileView: React.FC = () => {
                         <PersonalTab
                             profile={profile || null}
                             isLoading={isLoadingProfile}
-                            onSave={(data) => updateProfileMutation.mutate(data)}
+                            onSave={(data) =>
+                                updateProfileMutation.mutate(data)
+                            }
                             isSaving={updateProfileMutation.isPending}
                             userEmail={user?.email || ""}
                         />
@@ -1047,7 +1330,9 @@ export const ProfileView: React.FC = () => {
 
                     {activeTab === "security" && (
                         <SecurityTab
-                            onChangePassword={() => setIsPasswordModalOpen(true)}
+                            onChangePassword={() =>
+                                setIsPasswordModalOpen(true)
+                            }
                             isVerified={fullUser?.isVerified || false}
                         />
                     )}
@@ -1103,7 +1388,10 @@ export const ProfileView: React.FC = () => {
                                     {t("profile.registered", "Registrado")}
                                 </span>
                                 <span className="profile__metadata-value">
-                                    {formatEventDate(fullUser.createdAt, locale)}
+                                    {formatEventDate(
+                                        fullUser.createdAt,
+                                        locale
+                                    )}
                                 </span>
                             </div>
                         )}
