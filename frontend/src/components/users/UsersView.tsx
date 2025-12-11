@@ -57,6 +57,7 @@ export const UsersView: React.FC<UsersViewProps> = ({ onNavigate }) => {
   // Filter state
   const [searchQuery, setSearchQuery] = React.useState("");
   const [selectedRole, setSelectedRole] = React.useState("all");
+  const [selectedStatus, setSelectedStatus] = React.useState("all");
   const [selectedVerification, setSelectedVerification] = React.useState("all");
 
   // Selection state
@@ -107,14 +108,19 @@ export const UsersView: React.FC<UsersViewProps> = ({ onNavigate }) => {
       const matchesRole =
         selectedRole === "all" || user.role?.id?.toString() === selectedRole;
 
+      const matchesStatus =
+        selectedStatus === "all" ||
+        (selectedStatus === "active" && user.isActive) ||
+        (selectedStatus === "inactive" && !user.isActive);
+
       const matchesVerification =
         selectedVerification === "all" ||
         (selectedVerification === "verified" && user.isVerified) ||
         (selectedVerification === "unverified" && !user.isVerified);
 
-      return matchesSearch && matchesRole && matchesVerification;
+      return matchesSearch && matchesRole && matchesStatus && matchesVerification;
     });
-  }, [users, searchQuery, selectedRole, selectedVerification]);
+  }, [users, searchQuery, selectedRole, selectedStatus, selectedVerification]);
 
   // Pagination
   const pagination = usePagination({
@@ -125,15 +131,16 @@ export const UsersView: React.FC<UsersViewProps> = ({ onNavigate }) => {
   // Reset page when filters change
   useEffect(() => {
     pagination.setCurrentPage(1);
-  }, [searchQuery, selectedRole, selectedVerification]);
+  }, [searchQuery, selectedRole, selectedStatus, selectedVerification]);
 
   // Check if filters are active
-  const hasActiveFilters = searchQuery !== "" || selectedRole !== "all" || selectedVerification !== "all";
+  const hasActiveFilters = searchQuery !== "" || selectedRole !== "all" || selectedStatus !== "all" || selectedVerification !== "all";
 
   // Clear filters
   const handleClearFilters = useCallback(() => {
     setSearchQuery("");
     setSelectedRole("all");
+    setSelectedStatus("all");
     setSelectedVerification("all");
   }, []);
 
@@ -556,6 +563,8 @@ export const UsersView: React.FC<UsersViewProps> = ({ onNavigate }) => {
         onSearchChange={setSearchQuery}
         selectedRole={selectedRole}
         onRoleChange={setSelectedRole}
+        selectedStatus={selectedStatus}
+        onStatusChange={setSelectedStatus}
         selectedVerification={selectedVerification}
         onVerificationChange={setSelectedVerification}
         roles={roles}

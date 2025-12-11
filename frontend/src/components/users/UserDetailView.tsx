@@ -101,6 +101,9 @@ export const UserDetailView: React.FC<UserDetailViewProps> = ({ userId, onNaviga
     address: "",
   });
 
+  // Form errors
+  const [formErrors, setFormErrors] = useState<Record<string, string>>({});
+
   // Dialogs
   const resetPasswordDialog = useDialog();
   const toggleStatusDialog = useDialog();
@@ -147,6 +150,54 @@ export const UserDetailView: React.FC<UserDetailViewProps> = ({ userId, onNaviga
     value: role.id.toString(),
     label: getRoleDisplayName(role.name),
   }));
+
+  // ============================================
+  // VALIDATION
+  // ============================================
+
+  const validateForm = (): boolean => {
+    const errors: Record<string, string> = {};
+
+    // Email validation
+    if (!formData.email.trim()) {
+      errors.email = t("validation.email_required", "El email es requerido");
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      errors.email = t("validation.email_invalid", "Email inválido");
+    }
+
+    // First name validation (min 2 chars)
+    if (!formData.firstName.trim()) {
+      errors.firstName = t("validation.first_name_required", "El nombre es requerido");
+    } else if (formData.firstName.trim().length < 2) {
+      errors.firstName = t("validation.min_length", { count: 2, defaultValue: "Mínimo 2 caracteres" });
+    }
+
+    // Last name validation (min 2 chars)
+    if (!formData.lastName.trim()) {
+      errors.lastName = t("validation.last_name_required", "El apellido es requerido");
+    } else if (formData.lastName.trim().length < 2) {
+      errors.lastName = t("validation.min_length", { count: 2, defaultValue: "Mínimo 2 caracteres" });
+    }
+
+    // Role validation
+    if (!formData.roleId) {
+      errors.roleId = t("validation.role_required", "El rol es requerido");
+    }
+
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+  // Clear error when field changes
+  const clearFieldError = (field: string) => {
+    if (formErrors[field]) {
+      setFormErrors((prev) => {
+        const newErrors = { ...prev };
+        delete newErrors[field];
+        return newErrors;
+      });
+    }
+  };
 
   // ============================================
   // MUTATIONS
@@ -251,11 +302,13 @@ export const UserDetailView: React.FC<UserDetailViewProps> = ({ userId, onNaviga
   const handleFormChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
     setHasChanges(true);
+    clearFieldError(field);
   };
 
   const handleCancelEdit = () => {
     setIsEditing(false);
     setHasChanges(false);
+    setFormErrors({});
     if (user) {
       setFormData({
         email: user.email,
@@ -529,7 +582,11 @@ export const UserDetailView: React.FC<UserDetailViewProps> = ({ userId, onNaviga
                   <Button
                     variant="primary"
                     size="md"
-                    onClick={() => updateMutation.mutate()}
+                    onClick={() => {
+                      if (validateForm()) {
+                        updateMutation.mutate();
+                      }
+                    }}
                     isLoading={updateMutation.isPending}
                     disabled={!hasChanges}
                   >
@@ -664,6 +721,7 @@ export const UserDetailView: React.FC<UserDetailViewProps> = ({ userId, onNaviga
                 formData={formData}
                 isEditing={isEditing}
                 onFormChange={handleFormChange}
+                errors={formErrors}
               />
             )}
           </div>

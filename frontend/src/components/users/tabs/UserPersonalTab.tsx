@@ -33,6 +33,7 @@ interface UserPersonalTabProps {
   };
   isEditing: boolean;
   onFormChange: (field: string, value: string) => void;
+  errors?: Record<string, string>;
 }
 
 const MAX_DESCRIPTION_LENGTH = 500;
@@ -41,13 +42,14 @@ export function UserPersonalTab({
   formData,
   isEditing,
   onFormChange,
+  errors = {},
 }: UserPersonalTabProps) {
   const { t } = useTranslation();
 
   // Calcular caracteres restantes para descripción
   const descriptionLength = formData.description?.length || 0;
   const remainingChars = MAX_DESCRIPTION_LENGTH - descriptionLength;
-  
+
   const getCharCounterClass = () => {
     if (remainingChars < 0) return "user-personal__char-counter user-personal__char-counter--error";
     if (remainingChars < 50) return "user-personal__char-counter user-personal__char-counter--warning";
@@ -82,6 +84,7 @@ export function UserPersonalTab({
             placeholder={t("users.placeholder.firstName", "Nombre")}
             disabled={!isEditing}
             required={isEditing}
+            error={errors.firstName}
           />
           <Input
             label={t("users.field.lastName", "Apellidos")}
@@ -90,6 +93,7 @@ export function UserPersonalTab({
             placeholder={t("users.placeholder.lastName", "Apellido")}
             disabled={!isEditing}
             required={isEditing}
+            error={errors.lastName}
           />
         </div>
       </section>
@@ -122,6 +126,7 @@ export function UserPersonalTab({
             leftIcon={<EnvelopeSimple size={16} />}
             disabled={!isEditing}
             required={isEditing}
+            error={errors.email}
           />
           <Input
             label={t("users.field.phone", "Teléfono")}

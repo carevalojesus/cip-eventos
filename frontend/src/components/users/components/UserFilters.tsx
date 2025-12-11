@@ -24,6 +24,8 @@ interface UserFiltersProps {
   onSearchChange: (query: string) => void;
   selectedRole: string;
   onRoleChange: (roleId: string) => void;
+  selectedStatus: string;
+  onStatusChange: (status: string) => void;
   selectedVerification: string;
   onVerificationChange: (verification: string) => void;
   roles: Role[];
@@ -37,6 +39,8 @@ export const UserFilters: React.FC<UserFiltersProps> = ({
   onSearchChange,
   selectedRole,
   onRoleChange,
+  selectedStatus,
+  onStatusChange,
   selectedVerification,
   onVerificationChange,
   roles,
@@ -49,13 +53,14 @@ export const UserFilters: React.FC<UserFiltersProps> = ({
   const popoverRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
 
-  // Contar filtros activos en el popover (excluyendo estado que está afuera)
+  // Contar filtros activos en el popover
   const advancedFiltersCount = useMemo(() => {
     let count = 0;
     if (selectedRole !== "all") count++;
+    if (selectedStatus !== "all") count++;
     if (selectedVerification !== "all") count++;
     return count;
-  }, [selectedRole, selectedVerification]);
+  }, [selectedRole, selectedStatus, selectedVerification]);
 
   // Cerrar popover al hacer clic fuera
   useEffect(() => {
@@ -86,6 +91,12 @@ export const UserFilters: React.FC<UserFiltersProps> = ({
       label: t(`roles.${role.name}`, getRoleDisplayName(role.name)),
     })),
   ], [roles, t]);
+
+  const statusOptions = useMemo(() => [
+    { value: "all", label: t("users.list.filter.all_status", "Todos los estados") },
+    { value: "active", label: t("users.list.status.active", "Activo") },
+    { value: "inactive", label: t("users.list.status.inactive", "Inactivo") },
+  ], [t]);
 
   const verificationOptions = useMemo(() => [
     { value: "all", label: t("users.list.filter.all", "Todos") },
@@ -165,6 +176,22 @@ export const UserFilters: React.FC<UserFiltersProps> = ({
                     onChange={onRoleChange}
                     options={roleOptions}
                     placeholder={t("users.list.filter.all_roles", "Todos los roles")}
+                    fullWidth
+                  />
+                </div>
+              </div>
+
+              {/* Filtro de Estado */}
+              <div className="user-filters__filter-group">
+                <label className="user-filters__filter-label">
+                  {t("users.list.filter.status_label", "Estado")}
+                </label>
+                <div className="user-filters__select-container">
+                  <Select
+                    value={selectedStatus}
+                    onChange={onStatusChange}
+                    options={statusOptions}
+                    placeholder={t("users.list.filter.all_status", "Todos los estados")}
                     fullWidth
                   />
                 </div>
