@@ -1166,6 +1166,24 @@
             "password_title": "Password",
             "password_desc": "Reset or generate a new password for the user"
         },
-        "no_role": "No role"
+        "no_role": "No role",
+        "avatar": {
+            "change": "Change avatar",
+            "change_photo": "Change photo",
+            "add_photo": "Add photo",
+            "remove": "Remove avatar",
+            "remove_title": "Remove photo?",
+            "remove_description": "The profile photo will be removed. This action cannot be undone.",
+            "remove_confirm": "Remove",
+            "preview": "Preview",
+            "confirm": "Apply",
+            "uploading": "Uploading...",
+            "upload_success": "Avatar updated",
+            "upload_error": "Error uploading avatar",
+            "remove_success": "Avatar removed",
+            "remove_error": "Error removing avatar",
+            "invalid_type": "Invalid format. Use PNG, JPG or WebP.",
+            "too_large": "File exceeds 5MB."
+        }
     }
 }

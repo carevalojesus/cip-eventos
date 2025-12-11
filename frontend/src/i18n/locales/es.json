@@ -1183,6 +1183,24 @@
             "password_title": "Contraseña",
             "password_desc": "Restablecer o generar una nueva contraseña para el usuario"
         },
-        "no_role": "Sin rol"
+        "no_role": "Sin rol",
+        "avatar": {
+            "change": "Cambiar avatar",
+            "change_photo": "Cambiar foto",
+            "add_photo": "Añadir foto",
+            "remove": "Eliminar avatar",
+            "remove_title": "¿Eliminar foto?",
+            "remove_description": "La foto de perfil será eliminada. Esta acción no se puede deshacer.",
+            "remove_confirm": "Eliminar",
+            "preview": "Vista previa",
+            "confirm": "Aplicar",
+            "uploading": "Subiendo...",
+            "upload_success": "Avatar actualizado",
+            "upload_error": "Error al subir el avatar",
+            "remove_success": "Avatar eliminado",
+            "remove_error": "Error al eliminar el avatar",
+            "invalid_type": "Formato no válido. Use PNG, JPG o WebP.",
+            "too_large": "El archivo excede 5MB."
+        }
     }
 }
