@@ -457,6 +457,7 @@ export const RuiDashboardApp: React.FC<RuiDashboardAppProps> = ({
                 user={layoutUser}
                 activeNav={getNavIdFromPath(activePath)}
                 onNavChange={handleNavChange}
+                onNavigate={handleNavigate}
                 onLogout={handleLogout}
             >
                 {renderContent()}
