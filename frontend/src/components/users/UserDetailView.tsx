@@ -2,13 +2,13 @@
  * UserDetailView Component
  *
  * Vista de detalle de usuario con:
- * - Header con avatar, nombre, estado y verificación
- * - Layout de 2 columnas (contenido principal + sidebar)
+ * - Header con título y acciones (editar, activar/desactivar)
+ * - Tabs de navegación a ancho completo
+ * - Layout de 2 columnas debajo de tabs (contenido principal + sidebar)
+ * - User Card con avatar, nombre, estado y verificación
  * - Tabs: Información Personal, Seguridad y Permisos, Historial de Actividad
  * - Sidebar con Rol del Sistema y Metadatos
  * - Zona de peligro para acciones destructivas
- *
- * Siguiendo el diseño de las capturas de referencia.
  */
 import React, { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -16,34 +16,26 @@ import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import {
   ArrowLeft,
-  Key,
-  Power,
-  User,
-  Phone,
-  MapPin,
-  Briefcase,
-  At,
-  Shield,
-  ShieldCheck,
   SpinnerGap,
   ShieldWarning,
   EnvelopeSimple,
-  CheckCircle,
-  Clock,
-  Trash,
+  Shield,
+  ShieldCheck,
+  Briefcase,
   FloppyDisk,
-  Buildings,
-  Globe,
-  ArrowClockwise,
+  PencilSimple,
+  X,
 } from "@phosphor-icons/react";
 
 // Components
-import { Input } from "@/components/ui/rui-input";
+import { Button } from "@/components/ui/button";
 import { FormSelect } from "@/components/ui/rui/form";
-import { Button } from "@/components/ui/rui-button";
-import { ConfirmDialog } from "@/components/ui/rui-confirm-dialog";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { Breadcrumbs } from "@/components/ui/breadcrumbs";
+import { Skeleton, SkeletonCircle } from "@/components/ui/skeleton";
 import { ResetPasswordModal } from "./ResetPasswordModal";
-import { UserStatusBadge, UserVerificationBadge, UserAvatar } from "./components";
+import { UserStatusBadge, UserVerificationBadge, UserAvatar, AvatarEditor } from "./components";
+import { UserPersonalTab, UserSecurityTab, UserActivityTab } from "./tabs";
 
 // Hooks
 import { useDialog } from "@/hooks/useDialog";
@@ -53,11 +45,15 @@ import {
   usersService,
   rolesService,
   adminProfileService,
+  uploadService,
 } from "@/services/users.service";
 import { useAuthStore } from "@/store/auth.store";
 import { UserRole } from "@/constants/roles";
-import { getDisplayName } from "@/lib/userUtils";
-import { formatDateTimeLong, getRelativeTime, getLocaleFromLang } from "@/lib/dateUtils";
+import { getDisplayName, getRoleDisplayName } from "@/lib/userUtils";
+import { formatEventDate, getRelativeTime, getLocaleFromLang } from "@/lib/dateUtils";
+
+// Styles
+import "./UserDetailView.css";
 
 // ============================================
 // TYPES
@@ -81,6 +77,7 @@ export const UserDetailView: React.FC<UserDetailViewProps> = ({ userId, onNaviga
   const queryClient = useQueryClient();
   const currentUser = useAuthStore((state) => state.user);
   const isSuperAdmin = currentUser?.role === UserRole.SUPER_ADMIN;
+  const isOwnProfile = currentUser?.id === userId;
 
   // ============================================
   // STATE
@@ -89,6 +86,8 @@ export const UserDetailView: React.FC<UserDetailViewProps> = ({ userId, onNaviga
   const [activeTab, setActiveTab] = useState<TabId>("personal");
   const [isEditing, setIsEditing] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
+  const [forcePasswordReset, setForcePasswordReset] = useState(false);
+  const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
 
   // Form data
   const [formData, setFormData] = useState({
@@ -98,14 +97,19 @@ export const UserDetailView: React.FC<UserDetailViewProps> = ({ userId, onNaviga
     lastName: "",
     phoneNumber: "",
     designation: "",
+    description: "",
     address: "",
-    organization: "",
   });
 
   // Dialogs
   const resetPasswordDialog = useDialog();
   const toggleStatusDialog = useDialog();
   const deleteDialog = useDialog();
+  const changeRoleDialog = useDialog();
+  const verifyEmailDialog = useDialog();
+
+  // Change role state
+  const [selectedRoleId, setSelectedRoleId] = useState("");
 
   // ============================================
   // QUERIES
@@ -121,7 +125,7 @@ export const UserDetailView: React.FC<UserDetailViewProps> = ({ userId, onNaviga
     queryFn: rolesService.findAll,
   });
 
-  // Initialize form data
+  // Initialize form data and forcePasswordReset
   useEffect(() => {
     if (user) {
       setFormData({
@@ -131,16 +135,17 @@ export const UserDetailView: React.FC<UserDetailViewProps> = ({ userId, onNaviga
         lastName: user.profile?.lastName || "",
         phoneNumber: user.profile?.phoneNumber || "",
         designation: user.profile?.designation || "",
+        description: user.profile?.description || "",
         address: user.profile?.address || "",
-        organization: user.profile?.organization || "",
       });
+      setForcePasswordReset(user.forcePasswordReset || false);
     }
   }, [user]);
 
   // Role options
   const roleOptions = (roles || []).filter((r) => r.isActive).map((role) => ({
     value: role.id.toString(),
-    label: role.description || role.name,
+    label: getRoleDisplayName(role.name),
   }));
 
   // ============================================
@@ -158,8 +163,8 @@ export const UserDetailView: React.FC<UserDetailViewProps> = ({ userId, onNaviga
         lastName: formData.lastName,
         phoneNumber: formData.phoneNumber,
         designation: formData.designation,
+        description: formData.description,
         address: formData.address,
-        organization: formData.organization,
       });
     },
     onSuccess: () => {
@@ -191,11 +196,57 @@ export const UserDetailView: React.FC<UserDetailViewProps> = ({ userId, onNaviga
     },
   });
 
+  const forcePasswordResetMutation = useMutation({
+    mutationFn: (value: boolean) => usersService.update(userId, { forcePasswordReset: value }),
+    onSuccess: (_, value) => {
+      queryClient.invalidateQueries({ queryKey: ["user", userId] });
+      toast.success(value
+        ? t("users.detail.force_reset_enabled", "Se forzará cambio de contraseña en próximo inicio")
+        : t("users.detail.force_reset_disabled", "Forzar cambio de contraseña desactivado"));
+    },
+    onError: () => {
+      // Revertir el estado local si falla
+      setForcePasswordReset(!forcePasswordReset);
+      toast.error(t("users.detail.force_reset_error", "Error al actualizar configuración"));
+    },
+  });
+
+  const changeRoleMutation = useMutation({
+    mutationFn: (roleId: number) => usersService.changeRole(userId, roleId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["user", userId] });
+      toast.success(t("users.detail.role_changed", "Rol actualizado correctamente"));
+      changeRoleDialog.reset();
+    },
+    onError: () => {
+      toast.error(t("users.detail.role_change_error", "Error al cambiar el rol"));
+      changeRoleDialog.setLoading(false);
+    },
+  });
+
+  const verifyEmailMutation = useMutation({
+    mutationFn: () => usersService.verifyEmailManually(userId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["user", userId] });
+      toast.success(t("users.detail.email_verified", "Correo verificado correctamente"));
+      verifyEmailDialog.reset();
+    },
+    onError: () => {
+      toast.error(t("users.detail.verify_error", "Error al verificar el correo"));
+      verifyEmailDialog.setLoading(false);
+    },
+  });
+
   // ============================================
   // HANDLERS
   // ============================================
 
   const handleBack = () => onNavigate(isEnglish ? "/en/users" : "/usuarios");
+
+  const handleForcePasswordResetChange = (value: boolean) => {
+    setForcePasswordReset(value);
+    forcePasswordResetMutation.mutate(value);
+  };
 
   const handleFormChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -213,8 +264,8 @@ export const UserDetailView: React.FC<UserDetailViewProps> = ({ userId, onNaviga
         lastName: user.profile?.lastName || "",
         phoneNumber: user.profile?.phoneNumber || "",
         designation: user.profile?.designation || "",
+        description: user.profile?.description || "",
         address: user.profile?.address || "",
-        organization: user.profile?.organization || "",
       });
     }
   };
@@ -245,321 +296,74 @@ export const UserDetailView: React.FC<UserDetailViewProps> = ({ userId, onNaviga
     }
   };
 
-  // ============================================
-  // STYLES
-  // ============================================
-
-  const containerStyle: React.CSSProperties = {
-    maxWidth: "1100px",
-    margin: "0 auto",
-    padding: "var(--space-6)",
+  const handleDelete = async () => {
+    deleteDialog.setLoading(true);
+    try {
+      await usersService.remove(userId);
+      toast.success(t("users.detail.deleted", "Usuario eliminado"));
+      handleBack();
+    } catch {
+      toast.error(t("users.detail.delete_error", "Error al eliminar"));
+      deleteDialog.setLoading(false);
+    }
   };
 
-  const backButtonStyle: React.CSSProperties = {
-    display: "inline-flex",
-    alignItems: "center",
-    gap: "6px",
-    padding: "0",
-    marginBottom: "var(--space-4)",
-    fontSize: "var(--font-size-sm)",
-    fontWeight: 500,
-    color: "var(--color-text-secondary)",
-    background: "none",
-    border: "none",
-    cursor: "pointer",
-    transition: "color 150ms ease",
+  const handleAvatarChange = async (file: File) => {
+    setIsUploadingAvatar(true);
+    try {
+      // Get presigned URL
+      const { uploadUrl, publicUrl } = await uploadService.getAvatarUploadUrl(
+        file.type,
+        file.size
+      );
+
+      console.log("Avatar upload - publicUrl:", publicUrl);
+      console.log("Avatar upload - uploadUrl:", uploadUrl);
+
+      // Upload to S3/MinIO
+      const uploadResponse = await fetch(uploadUrl, {
+        method: "PUT",
+        body: file,
+        headers: {
+          "Content-Type": file.type,
+        },
+      });
+
+      if (!uploadResponse.ok) {
+        throw new Error(`Upload to storage failed: ${uploadResponse.status}`);
+      }
+
+      console.log("Avatar upload - File uploaded to storage successfully");
+
+      // Update profile with new avatar URL
+      await adminProfileService.updateByUserId(userId, { avatar: publicUrl });
+      // Refresh user data
+      queryClient.invalidateQueries({ queryKey: ["user", userId] });
+      toast.success(t("users.avatar.upload_success", "Avatar actualizado"));
+    } catch (err: unknown) {
+      console.error("Avatar upload error:", err);
+      // Show more details if available
+      if (err && typeof err === 'object' && 'response' in err) {
+        const axiosErr = err as { response?: { data?: unknown } };
+        console.error("Error response data:", axiosErr.response?.data);
+      }
+      toast.error(t("users.avatar.upload_error", "Error al subir el avatar"));
+    } finally {
+      setIsUploadingAvatar(false);
+    }
   };
 
-  const headerStyle: React.CSSProperties = {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "flex-start",
-    marginBottom: "var(--space-6)",
-    gap: "var(--space-4)",
-    flexWrap: "wrap",
-  };
-
-  const headerTitleStyle: React.CSSProperties = {
-    display: "flex",
-    flexDirection: "column",
-    gap: "var(--space-1)",
-  };
-
-  const pageTitleStyle: React.CSSProperties = {
-    fontSize: "var(--font-size-2xl)",
-    fontWeight: 600,
-    color: "var(--color-text-primary)",
-    margin: 0,
-  };
-
-  const pageSubtitleStyle: React.CSSProperties = {
-    fontSize: "var(--font-size-sm)",
-    color: "var(--color-text-muted)",
-    margin: 0,
-  };
-
-  const headerActionsStyle: React.CSSProperties = {
-    display: "flex",
-    alignItems: "center",
-    gap: "var(--space-3)",
-  };
-
-  // User card (header card with avatar)
-  const userCardStyle: React.CSSProperties = {
-    display: "flex",
-    alignItems: "center",
-    gap: "var(--space-4)",
-    padding: "var(--space-5)",
-    backgroundColor: "var(--color-bg-primary)",
-    border: "1px solid var(--color-grey-200)",
-    borderRadius: "var(--radius-lg)",
-    marginBottom: "var(--space-6)",
-  };
-
-  const userInfoContainerStyle: React.CSSProperties = {
-    flex: 1,
-    display: "flex",
-    alignItems: "center",
-    gap: "var(--space-4)",
-  };
-
-  const userDetailsStyle: React.CSSProperties = {
-    flex: 1,
-  };
-
-  const userNameStyle: React.CSSProperties = {
-    display: "flex",
-    alignItems: "center",
-    gap: "var(--space-3)",
-    marginBottom: "var(--space-1)",
-  };
-
-  const userNameTextStyle: React.CSSProperties = {
-    fontSize: "var(--font-size-lg)",
-    fontWeight: 600,
-    color: "var(--color-text-primary)",
-  };
-
-  const userMetaStyle: React.CSSProperties = {
-    display: "flex",
-    alignItems: "center",
-    gap: "var(--space-4)",
-    fontSize: "var(--font-size-sm)",
-    color: "var(--color-text-muted)",
-    flexWrap: "wrap",
-  };
-
-  const userMetaItemStyle: React.CSSProperties = {
-    display: "flex",
-    alignItems: "center",
-    gap: "var(--space-1)",
-  };
-
-  const verificationSectionStyle: React.CSSProperties = {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "flex-end",
-    gap: "var(--space-1)",
-    textAlign: "right",
-  };
-
-  const verificationLabelStyle: React.CSSProperties = {
-    fontSize: "var(--font-size-xs)",
-    fontWeight: 500,
-    color: "var(--color-text-muted)",
-    textTransform: "uppercase",
-    letterSpacing: "0.05em",
-  };
-
-  // Main content layout
-  const mainLayoutStyle: React.CSSProperties = {
-    display: "grid",
-    gridTemplateColumns: "1fr 300px",
-    gap: "var(--space-6)",
-  };
-
-  const mainContentStyle: React.CSSProperties = {
-    minWidth: 0,
-  };
-
-  const sidebarStyle: React.CSSProperties = {
-    display: "flex",
-    flexDirection: "column",
-    gap: "var(--space-4)",
-  };
-
-  // Tabs
-  const tabsContainerStyle: React.CSSProperties = {
-    display: "flex",
-    gap: "var(--space-1)",
-    borderBottom: "1px solid var(--color-grey-200)",
-    marginBottom: "var(--space-6)",
-  };
-
-  const getTabStyle = (isActive: boolean): React.CSSProperties => ({
-    padding: "var(--space-3) var(--space-4)",
-    fontSize: "var(--font-size-sm)",
-    fontWeight: 500,
-    color: isActive ? "var(--color-red-600)" : "var(--color-text-muted)",
-    background: "none",
-    border: "none",
-    borderBottom: isActive ? "2px solid var(--color-red-500)" : "2px solid transparent",
-    marginBottom: "-1px",
-    cursor: "pointer",
-    transition: "all 150ms ease",
-  });
-
-  // Card styles
-  const cardStyle: React.CSSProperties = {
-    backgroundColor: "var(--color-bg-primary)",
-    border: "1px solid var(--color-grey-200)",
-    borderRadius: "var(--radius-lg)",
-    padding: "var(--space-5)",
-    marginBottom: "var(--space-4)",
-  };
-
-  const cardTitleStyle: React.CSSProperties = {
-    fontSize: "var(--font-size-base)",
-    fontWeight: 600,
-    color: "var(--color-text-primary)",
-    marginBottom: "var(--space-4)",
-  };
-
-  const formGridStyle: React.CSSProperties = {
-    display: "grid",
-    gridTemplateColumns: "1fr 1fr",
-    gap: "var(--space-4)",
-  };
-
-  // Sidebar card
-  const sidebarCardStyle: React.CSSProperties = {
-    backgroundColor: "var(--color-bg-primary)",
-    border: "1px solid var(--color-grey-200)",
-    borderRadius: "var(--radius-lg)",
-    padding: "var(--space-4)",
-  };
-
-  const sidebarTitleStyle: React.CSSProperties = {
-    fontSize: "var(--font-size-xs)",
-    fontWeight: 600,
-    color: "var(--color-text-muted)",
-    textTransform: "uppercase",
-    letterSpacing: "0.05em",
-    marginBottom: "var(--space-3)",
-  };
-
-  const roleCardStyle = (isSelected: boolean): React.CSSProperties => ({
-    display: "flex",
-    alignItems: "center",
-    gap: "var(--space-3)",
-    padding: "var(--space-3)",
-    borderRadius: "var(--radius-md)",
-    border: isSelected ? "1px solid var(--color-red-200)" : "1px solid var(--color-grey-200)",
-    backgroundColor: isSelected ? "var(--color-red-050)" : "var(--color-bg-primary)",
-    marginBottom: "var(--space-2)",
-    cursor: "default",
-  });
-
-  const roleIconStyle = (isSelected: boolean): React.CSSProperties => ({
-    width: "32px",
-    height: "32px",
-    borderRadius: "var(--radius-md)",
-    backgroundColor: isSelected ? "var(--color-red-100)" : "var(--color-grey-100)",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    color: isSelected ? "var(--color-red-600)" : "var(--color-grey-500)",
-  });
-
-  const metadataRowStyle: React.CSSProperties = {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    padding: "var(--space-2) 0",
-    borderBottom: "1px solid var(--color-grey-100)",
-  };
-
-  const metadataLabelStyle: React.CSSProperties = {
-    fontSize: "var(--font-size-sm)",
-    color: "var(--color-text-muted)",
-  };
-
-  const metadataValueStyle: React.CSSProperties = {
-    fontSize: "var(--font-size-sm)",
-    fontWeight: 500,
-    color: "var(--color-text-primary)",
-  };
-
-  // Security section
-  const securityItemStyle: React.CSSProperties = {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-    padding: "var(--space-4)",
-    backgroundColor: "var(--color-grey-050)",
-    borderRadius: "var(--radius-md)",
-    marginBottom: "var(--space-3)",
-  };
-
-  const securityItemLeftStyle: React.CSSProperties = {
-    display: "flex",
-    alignItems: "center",
-    gap: "var(--space-3)",
-  };
-
-  const securityIconStyle: React.CSSProperties = {
-    width: "40px",
-    height: "40px",
-    borderRadius: "var(--radius-md)",
-    backgroundColor: "var(--color-bg-primary)",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    color: "var(--color-grey-500)",
-  };
-
-  const dangerZoneStyle: React.CSSProperties = {
-    marginTop: "var(--space-6)",
-    paddingTop: "var(--space-4)",
-    borderTop: "1px solid var(--color-grey-200)",
-  };
-
-  const dangerTitleStyle: React.CSSProperties = {
-    fontSize: "var(--font-size-sm)",
-    fontWeight: 600,
-    color: "var(--color-red-600)",
-    marginBottom: "var(--space-3)",
-  };
-
-  const dangerItemStyle: React.CSSProperties = {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-    padding: "var(--space-3)",
-    backgroundColor: "var(--color-red-050)",
-    borderRadius: "var(--radius-md)",
-    border: "1px solid var(--color-red-100)",
-  };
-
-  // Activity log
-  const activityItemStyle: React.CSSProperties = {
-    display: "flex",
-    alignItems: "flex-start",
-    gap: "var(--space-3)",
-    padding: "var(--space-3) 0",
-    borderBottom: "1px solid var(--color-grey-100)",
-  };
-
-  const activityIconStyle: React.CSSProperties = {
-    width: "36px",
-    height: "36px",
-    borderRadius: "50%",
-    backgroundColor: "var(--color-cyan-100)",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    color: "var(--color-cyan-600)",
-    flexShrink: 0,
+  const handleAvatarRemove = async () => {
+    setIsUploadingAvatar(true);
+    try {
+      await adminProfileService.updateByUserId(userId, { avatar: "" });
+      queryClient.invalidateQueries({ queryKey: ["user", userId] });
+      toast.success(t("users.avatar.remove_success", "Avatar eliminado"));
+    } catch {
+      toast.error(t("users.avatar.remove_error", "Error al eliminar el avatar"));
+    } finally {
+      setIsUploadingAvatar(false);
+    }
   };
 
   // ============================================
@@ -568,381 +372,383 @@ export const UserDetailView: React.FC<UserDetailViewProps> = ({ userId, onNaviga
 
   if (isLoading) {
     return (
-      <div style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "400px" }}>
-        <SpinnerGap size={32} style={{ animation: "spin 1s linear infinite", color: "var(--color-grey-400)" }} />
+      <div className="user-detail">
+        {/* Skeleton Breadcrumbs */}
+        <div style={{ marginBottom: "var(--space-4)" }}>
+          <Skeleton width={200} height={16} />
+        </div>
+
+        {/* Skeleton Back Button */}
+        <div style={{ marginBottom: "var(--space-6)" }}>
+          <Skeleton width={140} height={36} style={{ borderRadius: "var(--radius-md)" }} />
+        </div>
+
+        {/* Skeleton Header */}
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "var(--space-6)" }}>
+          <Skeleton width={180} height={28} />
+          <div style={{ display: "flex", gap: "var(--space-3)" }}>
+            <Skeleton width={100} height={36} style={{ borderRadius: "var(--radius-md)" }} />
+            <Skeleton width={80} height={36} style={{ borderRadius: "var(--radius-md)" }} />
+          </div>
+        </div>
+
+        {/* Skeleton User Card */}
+        <div style={{
+          backgroundColor: "var(--color-bg-primary)",
+          border: "1px solid var(--color-grey-200)",
+          borderRadius: "var(--radius-lg)",
+          padding: "var(--space-6)",
+          marginBottom: "var(--space-6)"
+        }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "var(--space-4)" }}>
+            <SkeletonCircle size={80} />
+            <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-2)" }}>
+              <Skeleton width={200} height={24} />
+              <Skeleton width={180} height={16} />
+              <div style={{ display: "flex", gap: "var(--space-2)", marginTop: "var(--space-1)" }}>
+                <Skeleton width={70} height={24} style={{ borderRadius: "var(--radius-full)" }} />
+                <Skeleton width={90} height={24} style={{ borderRadius: "var(--radius-full)" }} />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Skeleton Tabs */}
+        <div style={{ display: "flex", gap: "var(--space-4)", marginBottom: "var(--space-6)", borderBottom: "1px solid var(--color-grey-200)", paddingBottom: "var(--space-3)" }}>
+          <Skeleton width={140} height={20} />
+          <Skeleton width={160} height={20} />
+          <Skeleton width={150} height={20} />
+        </div>
+
+        {/* Skeleton Content */}
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 300px", gap: "var(--space-6)" }}>
+          {/* Main content */}
+          <div style={{
+            backgroundColor: "var(--color-bg-primary)",
+            border: "1px solid var(--color-grey-200)",
+            borderRadius: "var(--radius-lg)",
+            padding: "var(--space-6)"
+          }}>
+            <Skeleton width={120} height={20} style={{ marginBottom: "var(--space-4)" }} />
+            <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-4)" }}>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "var(--space-4)" }}>
+                <div><Skeleton width="40%" height={14} style={{ marginBottom: "var(--space-2)" }} /><Skeleton width="100%" height={40} style={{ borderRadius: "var(--radius-md)" }} /></div>
+                <div><Skeleton width="40%" height={14} style={{ marginBottom: "var(--space-2)" }} /><Skeleton width="100%" height={40} style={{ borderRadius: "var(--radius-md)" }} /></div>
+              </div>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "var(--space-4)" }}>
+                <div><Skeleton width="50%" height={14} style={{ marginBottom: "var(--space-2)" }} /><Skeleton width="100%" height={40} style={{ borderRadius: "var(--radius-md)" }} /></div>
+                <div><Skeleton width="35%" height={14} style={{ marginBottom: "var(--space-2)" }} /><Skeleton width="100%" height={40} style={{ borderRadius: "var(--radius-md)" }} /></div>
+              </div>
+            </div>
+          </div>
+          {/* Sidebar */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-4)" }}>
+            <div style={{
+              backgroundColor: "var(--color-bg-primary)",
+              border: "1px solid var(--color-grey-200)",
+              borderRadius: "var(--radius-lg)",
+              padding: "var(--space-4)"
+            }}>
+              <Skeleton width={100} height={16} style={{ marginBottom: "var(--space-3)" }} />
+              <Skeleton width="100%" height={36} style={{ borderRadius: "var(--radius-md)" }} />
+            </div>
+            <div style={{
+              backgroundColor: "var(--color-bg-primary)",
+              border: "1px solid var(--color-grey-200)",
+              borderRadius: "var(--radius-lg)",
+              padding: "var(--space-4)"
+            }}>
+              <Skeleton width={80} height={16} style={{ marginBottom: "var(--space-3)" }} />
+              <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-2)" }}>
+                <Skeleton width="100%" height={14} />
+                <Skeleton width="100%" height={14} />
+                <Skeleton width="80%" height={14} />
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
 
   if (error || !user) {
     return (
-      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", padding: "4rem", gap: "16px" }}>
+      <div className="user-detail__error">
         <ShieldWarning size={48} color="var(--color-red-400)" />
-        <p style={{ color: "var(--color-red-600)" }}>{t("users.detail.error", "Error al cargar el usuario")}</p>
-        <Button variant="secondary" onClick={handleBack}>{t("common.back", "Volver")}</Button>
+        <p className="user-detail__error-text">
+          {t("users.detail.error", "Error al cargar el usuario")}
+        </p>
+        <Button variant="secondary" onClick={handleBack}>
+          {t("common.back", "Volver")}
+        </Button>
       </div>
     );
   }
 
   const fullName = getDisplayName(user);
-  const currentRole = roles?.find((r) => r.id === user.role?.id);
-
-  // ============================================
-  // RENDER TABS CONTENT
-  // ============================================
-
-  const renderPersonalTab = () => (
-    <div style={cardStyle}>
-      <h3 style={cardTitleStyle}>
-        {t("users.detail.general_data", "Datos Generales")}
-      </h3>
-      <div style={formGridStyle}>
-        <Input
-          label={t("users.field.firstName", "Nombres")}
-          value={formData.firstName}
-          onChange={(e) => handleFormChange("firstName", e.target.value)}
-          placeholder={t("users.placeholder.firstName", "Nombre")}
-          leftIcon={<User size={16} />}
-          disabled={!isEditing}
-        />
-        <Input
-          label={t("users.field.lastName", "Apellidos")}
-          value={formData.lastName}
-          onChange={(e) => handleFormChange("lastName", e.target.value)}
-          placeholder={t("users.placeholder.lastName", "Apellido")}
-          leftIcon={<User size={16} />}
-          disabled={!isEditing}
-        />
-        <Input
-          label={t("users.field.email", "Correo Electrónico")}
-          type="email"
-          value={formData.email}
-          onChange={(e) => handleFormChange("email", e.target.value)}
-          placeholder={t("users.placeholder.email", "usuario@ejemplo.com")}
-          leftIcon={<EnvelopeSimple size={16} />}
-          disabled={!isEditing}
-        />
-        <Input
-          label={t("users.field.phone", "Teléfono")}
-          value={formData.phoneNumber}
-          onChange={(e) => handleFormChange("phoneNumber", e.target.value)}
-          placeholder={t("users.placeholder.phone", "+51 987 654 321")}
-          leftIcon={<Phone size={16} />}
-          disabled={!isEditing}
-        />
-        <div style={{ gridColumn: "1 / -1" }}>
-          <Input
-            label={t("users.field.organization", "Organización / Colegio")}
-            value={formData.organization}
-            onChange={(e) => handleFormChange("organization", e.target.value)}
-            placeholder={t("users.placeholder.organization", "CIP Lima")}
-            leftIcon={<Buildings size={16} />}
-            disabled={!isEditing}
-          />
-        </div>
-      </div>
-    </div>
-  );
-
-  const renderSecurityTab = () => (
-    <>
-      {/* Security Card */}
-      <div style={cardStyle}>
-        <h3 style={cardTitleStyle}>
-          {t("users.detail.account_security", "Seguridad de la Cuenta")}
-        </h3>
-
-        {/* Password */}
-        <div style={securityItemStyle}>
-          <div style={securityItemLeftStyle}>
-            <div style={securityIconStyle}>
-              <Key size={20} />
-            </div>
-            <div>
-              <div style={{ fontWeight: 500, color: "var(--color-text-primary)", marginBottom: "2px" }}>
-                {t("users.detail.password", "Contraseña")}
-              </div>
-              <div style={{ fontSize: "var(--font-size-xs)", color: "var(--color-text-muted)" }}>
-                {t("users.detail.password_last_change", "Último cambio hace 3 meses")}
-              </div>
-            </div>
-          </div>
-          <Button variant="ghost" size="sm" onClick={() => resetPasswordDialog.open()}>
-            {t("users.detail.change_password", "Cambiar contraseña")}
-          </Button>
-        </div>
-
-        {/* Force Reset */}
-        <div style={securityItemStyle}>
-          <div style={securityItemLeftStyle}>
-            <div style={securityIconStyle}>
-              <ArrowClockwise size={20} />
-            </div>
-            <div>
-              <div style={{ fontWeight: 500, color: "var(--color-text-primary)", marginBottom: "2px" }}>
-                {t("users.detail.reset_access", "Restablecer Accesos")}
-              </div>
-              <div style={{ fontSize: "var(--font-size-xs)", color: "var(--color-text-muted)" }}>
-                {t("users.detail.reset_access_desc", "Forzar cambio de contraseña en próximo inicio")}
-              </div>
-            </div>
-          </div>
-          {/* Toggle switch placeholder */}
-          <div style={{
-            width: "44px",
-            height: "24px",
-            borderRadius: "12px",
-            backgroundColor: "var(--color-grey-200)",
-            cursor: "pointer",
-          }} />
-        </div>
-
-        {/* Danger Zone */}
-        {isSuperAdmin && (
-          <div style={dangerZoneStyle}>
-            <h4 style={dangerTitleStyle}>
-              {t("users.detail.danger_zone", "Zona de Peligro")}
-            </h4>
-            <div style={dangerItemStyle}>
-              <div>
-                <div style={{ fontWeight: 500, color: "var(--color-text-primary)", marginBottom: "2px" }}>
-                  {t("users.detail.delete_user", "Eliminar usuario")}
-                </div>
-                <div style={{ fontSize: "var(--font-size-xs)", color: "var(--color-text-muted)" }}>
-                  {t("users.detail.delete_warning", "Esta acción no se puede deshacer.")}
-                </div>
-              </div>
-              <Button variant="danger" size="sm" onClick={() => deleteDialog.open()}>
-                <Trash size={16} />
-                {t("common.delete", "Eliminar")}
-              </Button>
-            </div>
-          </div>
-        )}
-      </div>
-    </>
-  );
-
-  const renderActivityTab = () => (
-    <div style={cardStyle}>
-      <h3 style={cardTitleStyle}>
-        {t("users.detail.activity_log", "Registro de Actividad")}
-      </h3>
-      {/* Mock activity items */}
-      {[1, 2, 3, 4].map((i) => (
-        <div key={i} style={activityItemStyle}>
-          <div style={activityIconStyle}>
-            <Globe size={18} />
-          </div>
-          <div style={{ flex: 1 }}>
-            <div style={{ fontWeight: 500, color: "var(--color-text-primary)", marginBottom: "2px" }}>
-              {t("users.detail.login_success", "Inicio de sesión exitoso")}
-            </div>
-            <div style={{ fontSize: "var(--font-size-xs)", color: "var(--color-text-muted)" }}>
-              IP: 192.168.1.{10 + i} • Navegador Chrome en Windows
-            </div>
-          </div>
-          <div style={{ fontSize: "var(--font-size-xs)", color: "var(--color-text-muted)" }}>
-            Hace {i}h
-          </div>
-        </div>
-      ))}
-    </div>
-  );
 
   // ============================================
   // MAIN RENDER
   // ============================================
 
   return (
-    <div style={containerStyle}>
+    <div className="user-detail">
+      {/* Breadcrumbs */}
+      <Breadcrumbs
+        items={[
+          { label: t("users.list.title", "Usuarios"), href: isEnglish ? "/en/users" : "/usuarios" },
+          { label: fullName }
+        ]}
+      />
+
       {/* Back button */}
-      <button
-        type="button"
-        style={backButtonStyle}
-        onClick={handleBack}
-        onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-primary)")}
-        onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-secondary)")}
-      >
+      <button type="button" className="user-detail__back" onClick={handleBack}>
         <ArrowLeft size={16} />
         {t("users.detail.back_to_list", "Volver a la lista")}
       </button>
 
       {/* Page Header */}
-      <div style={headerStyle}>
-        <div style={headerTitleStyle}>
-          <h1 style={pageTitleStyle}>
+      <div className="user-detail__header">
+        <div className="user-detail__header-title">
+          <h1 className="user-detail__title">
             {t("users.detail.title", "Detalles del Usuario")}
           </h1>
-          <p style={pageSubtitleStyle}>
+          <p className="user-detail__subtitle">
             {t("users.detail.subtitle", "Visualiza y edita la información completa de")} {formData.firstName || fullName}.
           </p>
         </div>
-        <div style={headerActionsStyle}>
+        <div className="user-detail__header-actions">
           {isSuperAdmin && (
             <>
-              <Button
-                variant="secondary"
-                size="md"
-                onClick={() => toggleStatusDialog.open()}
-              >
-                {user.isActive
-                  ? t("users.detail.deactivate_account", "Desactivar Cuenta")
-                  : t("users.detail.activate_account", "Activar Cuenta")}
-              </Button>
-              <Button
-                variant="primary"
-                size="md"
-                onClick={() => isEditing ? updateMutation.mutate() : setIsEditing(true)}
-                isLoading={updateMutation.isPending}
-              >
-                <FloppyDisk size={18} />
-                {isEditing
-                  ? t("users.detail.save_changes", "Guardar Cambios")
-                  : t("common.edit", "Editar")}
-              </Button>
+              {isEditing ? (
+                <>
+                  <Button variant="ghost" size="md" onClick={handleCancelEdit}>
+                    <X size={18} />
+                    {t("common.cancel", "Cancelar")}
+                  </Button>
+                  <Button
+                    variant="primary"
+                    size="md"
+                    onClick={() => updateMutation.mutate()}
+                    isLoading={updateMutation.isPending}
+                    disabled={!hasChanges}
+                  >
+                    <FloppyDisk size={18} />
+                    {t("users.detail.save_changes", "Guardar Cambios")}
+                  </Button>
+                </>
+              ) : (
+                !isOwnProfile && (
+                  <>
+                    <Button
+                      variant="secondary"
+                      size="md"
+                      onClick={() => toggleStatusDialog.open()}
+                    >
+                      {user.isActive
+                        ? t("users.detail.deactivate_account", "Desactivar")
+                        : t("users.detail.activate_account", "Activar")}
+                    </Button>
+                    <Button
+                      variant="primary"
+                      size="md"
+                      onClick={() => setIsEditing(true)}
+                    >
+                      <PencilSimple size={18} />
+                      {t("common.edit", "Editar")}
+                    </Button>
+                  </>
+                )
+              )}
             </>
           )}
         </div>
       </div>
 
-      {/* User Card */}
-      <div style={userCardStyle}>
-        <div style={userInfoContainerStyle}>
-          <UserAvatar user={user} size="xl" />
-          <div style={userDetailsStyle}>
-            <div style={userNameStyle}>
-              <span style={userNameTextStyle}>{fullName}</span>
+      {/* User Card - Full width above tabs */}
+      <div className="user-detail__user-card">
+        <div className="user-detail__user-info">
+          {isEditing ? (
+            <AvatarEditor
+              user={user}
+              onAvatarChange={handleAvatarChange}
+              onAvatarRemove={handleAvatarRemove}
+              isUploading={isUploadingAvatar}
+            />
+          ) : (
+            <UserAvatar user={user} size="xl" />
+          )}
+          <div className="user-detail__user-details">
+            <div className="user-detail__user-name">
+              <span className="user-detail__user-name-text">{fullName}</span>
               <UserStatusBadge isActive={user.isActive} size="sm" />
             </div>
-            <div style={userMetaStyle}>
-              <div style={userMetaItemStyle}>
+            <div className="user-detail__user-meta">
+              <div className="user-detail__user-meta-item">
                 <EnvelopeSimple size={14} />
                 {user.email}
               </div>
-              {user.profile?.organization && (
-                <div style={userMetaItemStyle}>
-                  <Buildings size={14} />
-                  {user.profile.organization}
+              {user.profile?.designation && (
+                <div className="user-detail__user-meta-item">
+                  <Briefcase size={14} />
+                  {user.profile.designation}
                 </div>
               )}
-              <div style={userMetaItemStyle}>
+              <div className="user-detail__user-meta-item">
                 <Shield size={14} />
                 {user.role?.description || user.role?.name}
               </div>
             </div>
           </div>
         </div>
-        <div style={verificationSectionStyle}>
-          <span style={verificationLabelStyle}>
-            {t("users.detail.verified_label", "Verificado")}
-          </span>
-          <UserVerificationBadge isVerified={user.isVerified} showLabel={false} size="md" />
-          <div style={{ marginTop: "var(--space-2)" }}>
-            <span style={verificationLabelStyle}>
+        <div className="user-detail__verification">
+          <div className="user-detail__verification-item">
+            <span className="user-detail__verification-label">
+              {t("users.detail.verified_label", "Verificado")}
+            </span>
+            <UserVerificationBadge isVerified={user.isVerified} showLabel={false} size="md" />
+          </div>
+          <div className="user-detail__verification-item">
+            <span className="user-detail__verification-label">
               {t("users.detail.last_access_label", "Último Acceso")}
             </span>
-            <div style={{ fontWeight: 500, color: "var(--color-text-primary)", fontSize: "var(--font-size-sm)" }}>
+            <span className="user-detail__verification-value">
               {user.lastLoginAt ? getRelativeTime(user.lastLoginAt, locale) : t("users.detail.never", "Nunca")}
-            </div>
+            </span>
           </div>
         </div>
       </div>
 
+      {/* Tabs - Full width */}
+      <div className="user-detail__tabs" role="tablist" aria-label={t("users.detail.tabs", "Secciones del usuario")}>
+        <button
+          type="button"
+          role="tab"
+          aria-selected={activeTab === "personal"}
+          aria-controls="panel-personal"
+          className={`user-detail__tab ${activeTab === "personal" ? "user-detail__tab--active" : ""}`}
+          onClick={() => setActiveTab("personal")}
+        >
+          {t("users.detail.tab_personal", "Información Personal")}
+        </button>
+        <button
+          type="button"
+          role="tab"
+          aria-selected={activeTab === "security"}
+          aria-controls="panel-security"
+          className={`user-detail__tab ${activeTab === "security" ? "user-detail__tab--active" : ""}`}
+          onClick={() => setActiveTab("security")}
+        >
+          {t("users.detail.tab_security", "Seguridad y Permisos")}
+        </button>
+        <button
+          type="button"
+          role="tab"
+          aria-selected={activeTab === "activity"}
+          aria-controls="panel-activity"
+          className={`user-detail__tab ${activeTab === "activity" ? "user-detail__tab--active" : ""}`}
+          onClick={() => setActiveTab("activity")}
+        >
+          {t("users.detail.tab_activity", "Historial de Actividad")}
+        </button>
+      </div>
+
       {/* Main Layout */}
-      <div style={mainLayoutStyle}>
-        {/* Left: Content with tabs */}
-        <div style={mainContentStyle}>
-          {/* Tabs */}
-          <div style={tabsContainerStyle}>
-            <button
-              type="button"
-              style={getTabStyle(activeTab === "personal")}
-              onClick={() => setActiveTab("personal")}
-            >
-              {t("users.detail.tab_personal", "Información Personal")}
-            </button>
-            <button
-              type="button"
-              style={getTabStyle(activeTab === "security")}
-              onClick={() => setActiveTab("security")}
-            >
-              {t("users.detail.tab_security", "Seguridad y Permisos")}
-            </button>
-            <button
-              type="button"
-              style={getTabStyle(activeTab === "activity")}
-              onClick={() => setActiveTab("activity")}
-            >
-              {t("users.detail.tab_activity", "Historial de Actividad")}
-            </button>
+      <div className="user-detail__layout">
+        {/* Left: Tab Content */}
+        <div className="user-detail__main">
+          {/* Tab Content */}
+          <div role="tabpanel" id="panel-personal" hidden={activeTab !== "personal"}>
+            {activeTab === "personal" && (
+              <UserPersonalTab
+                formData={formData}
+                isEditing={isEditing}
+                onFormChange={handleFormChange}
+              />
+            )}
           </div>
 
-          {/* Tab Content */}
-          {activeTab === "personal" && renderPersonalTab()}
-          {activeTab === "security" && renderSecurityTab()}
-          {activeTab === "activity" && renderActivityTab()}
+          <div role="tabpanel" id="panel-security" hidden={activeTab !== "security"}>
+            {activeTab === "security" && (
+              <UserSecurityTab
+                isSuperAdmin={isSuperAdmin}
+                isOwnProfile={isOwnProfile}
+                forcePasswordReset={forcePasswordReset}
+                onForcePasswordResetChange={handleForcePasswordResetChange}
+                onResetPassword={() => resetPasswordDialog.open()}
+                onDeleteUser={() => deleteDialog.open()}
+                onVerifyEmail={() => verifyEmailDialog.open()}
+                onChangeRole={() => {
+                  setSelectedRoleId(user.role?.id?.toString() || "");
+                  changeRoleDialog.open();
+                }}
+                isVerified={user.isVerified}
+                currentRoleName={user.role?.name}
+              />
+            )}
+          </div>
+
+          <div role="tabpanel" id="panel-activity" hidden={activeTab !== "activity"}>
+            {activeTab === "activity" && (
+              <UserActivityTab userId={userId} />
+            )}
+          </div>
         </div>
 
         {/* Right: Sidebar */}
-        <div style={sidebarStyle}>
-          {/* Role Card - Solo muestra el rol actual del usuario */}
-          <div style={sidebarCardStyle}>
-            <h4 style={sidebarTitleStyle}>
+        <aside className="user-detail__sidebar">
+          {/* Role Card */}
+          <div className="user-detail__sidebar-card">
+            <h4 className="user-detail__sidebar-title">
               {t("users.detail.system_role", "Rol del Sistema")}
             </h4>
 
-            {/* Rol actual del usuario */}
-            <div style={roleCardStyle(true)}>
-              <div style={roleIconStyle(true)}>
-                <ShieldCheck size={18} />
-              </div>
-              <div style={{ flex: 1 }}>
-                <div style={{
-                  fontWeight: 500,
-                  color: "var(--color-red-700)",
-                  fontSize: "var(--font-size-sm)",
-                }}>
-                  {user.role?.description || user.role?.name || t("users.no_role", "Sin rol")}
+            {isEditing ? (
+              <FormSelect
+                label=""
+                value={formData.roleId}
+                onChange={(value) => handleFormChange("roleId", value)}
+                options={roleOptions}
+                placeholder={t("users.select_role", "Seleccionar rol")}
+              />
+            ) : (
+              <div className="user-detail__role-card user-detail__role-card--active">
+                <div className="user-detail__role-icon user-detail__role-icon--active">
+                  <ShieldCheck size={18} />
                 </div>
-                <div style={{ fontSize: "var(--font-size-xs)", color: "var(--color-text-muted)" }}>
-                  {t("users.detail.current_role_desc", "Rol asignado actualmente")}
+                <div className="user-detail__role-info">
+                  <div className="user-detail__role-name user-detail__role-name--active">
+                    {getRoleDisplayName(user.role?.name) || t("users.no_role", "Sin rol")}
+                  </div>
                 </div>
+                <div className="user-detail__role-indicator" />
               </div>
-              <div style={{
-                width: "8px",
-                height: "8px",
-                borderRadius: "50%",
-                backgroundColor: "var(--color-red-500)",
-              }} />
-            </div>
+            )}
           </div>
 
           {/* Metadata Card */}
-          <div style={sidebarCardStyle}>
-            <h4 style={sidebarTitleStyle}>
+          <div className="user-detail__sidebar-card">
+            <h4 className="user-detail__sidebar-title">
               {t("users.detail.metadata", "Metadatos")}
             </h4>
-            <div style={metadataRowStyle}>
-              <span style={metadataLabelStyle}>{t("users.detail.user_id", "ID Usuario")}</span>
-              <span style={{ ...metadataValueStyle, fontFamily: "monospace", fontSize: "var(--font-size-xs)" }}>
+            <div className="user-detail__metadata-row">
+              <span className="user-detail__metadata-label">
+                {t("users.detail.user_id", "ID Usuario")}
+              </span>
+              <span className="user-detail__metadata-value user-detail__metadata-value--mono">
                 USR-{user.id.slice(0, 8).toUpperCase()}
               </span>
             </div>
-            <div style={metadataRowStyle}>
-              <span style={metadataLabelStyle}>{t("users.detail.registered", "Registrado")}</span>
-              <span style={metadataValueStyle}>
-                {formatDateTimeLong(user.createdAt, locale)}
+            <div className="user-detail__metadata-row">
+              <span className="user-detail__metadata-label">
+                {t("users.detail.registered", "Registrado")}
               </span>
-            </div>
-            <div style={{ ...metadataRowStyle, borderBottom: "none" }}>
-              <span style={metadataLabelStyle}>{t("users.detail.last_ip", "Última IP")}</span>
-              <span style={{ ...metadataValueStyle, fontFamily: "monospace" }}>
-                {user.lastLoginIp || "—"}
+              <span className="user-detail__metadata-value">
+                {formatEventDate(user.createdAt, locale)}
               </span>
             </div>
           </div>
-        </div>
+        </aside>
       </div>
 
       {/* Modals */}
@@ -964,8 +770,8 @@ export const UserDetailView: React.FC<UserDetailViewProps> = ({ userId, onNaviga
           ? t("users.detail.deactivate_title", "Desactivar usuario")
           : t("users.detail.activate_title", "Activar usuario")}
         description={user.isActive
-          ? t("users.detail.deactivate_desc", `¿Desactivar a ${fullName}? No podrá acceder al sistema.`)
-          : t("users.detail.activate_desc", `¿Activar a ${fullName}? Podrá acceder al sistema.`)}
+          ? t("users.detail.deactivate_desc", { name: fullName, defaultValue: `¿Desactivar a ${fullName}? No podrá acceder al sistema.` })
+          : t("users.detail.activate_desc", { name: fullName, defaultValue: `¿Activar a ${fullName}? Podrá acceder al sistema.` })}
         confirmText={user.isActive
           ? t("users.detail.deactivate", "Desactivar")
           : t("users.detail.activate", "Activar")}
@@ -977,23 +783,53 @@ export const UserDetailView: React.FC<UserDetailViewProps> = ({ userId, onNaviga
       <ConfirmDialog
         isOpen={deleteDialog.isOpen}
         onClose={deleteDialog.close}
-        onConfirm={() => {
-          deleteDialog.setLoading(true);
-          usersService.remove(userId).then(() => {
-            toast.success(t("users.detail.deleted", "Usuario eliminado"));
-            handleBack();
-          }).catch(() => {
-            toast.error(t("users.detail.delete_error", "Error al eliminar"));
-            deleteDialog.setLoading(false);
-          });
-        }}
+        onConfirm={handleDelete}
         title={t("users.detail.delete_title", "Eliminar usuario")}
-        description={t("users.detail.delete_desc", `¿Estás seguro de eliminar a ${fullName}? Esta acción no se puede deshacer.`)}
+        description={t("users.detail.delete_desc", { name: fullName, defaultValue: `¿Estás seguro de eliminar a ${fullName}? Esta acción no se puede deshacer.` })}
         confirmText={t("common.delete", "Eliminar")}
         cancelText={t("common.cancel", "Cancelar")}
         variant="danger"
         isLoading={deleteDialog.isLoading}
       />
+
+      <ConfirmDialog
+        isOpen={verifyEmailDialog.isOpen}
+        onClose={verifyEmailDialog.close}
+        onConfirm={() => { verifyEmailDialog.setLoading(true); verifyEmailMutation.mutate(); }}
+        title={t("users.detail.verify_email_title", "Verificar correo")}
+        description={t("users.detail.verify_email_desc", { name: fullName, defaultValue: `¿Verificar manualmente el correo de ${fullName}? Esta acción quedará registrada en el historial.` })}
+        confirmText={t("users.detail.verify_confirm", "Verificar")}
+        cancelText={t("common.cancel", "Cancelar")}
+        variant="info"
+        isLoading={verifyEmailDialog.isLoading}
+      />
+
+      <ConfirmDialog
+        isOpen={changeRoleDialog.isOpen}
+        onClose={() => { changeRoleDialog.close(); setSelectedRoleId(""); }}
+        onConfirm={() => {
+          if (selectedRoleId && selectedRoleId !== user.role?.id?.toString()) {
+            changeRoleDialog.setLoading(true);
+            changeRoleMutation.mutate(parseInt(selectedRoleId));
+          }
+        }}
+        title={t("users.detail.change_role_title", "Cambiar rol")}
+        description={t("users.detail.change_role_desc", { name: fullName, defaultValue: `Selecciona el nuevo rol para ${fullName}. Esta acción quedará registrada en el historial.` })}
+        confirmText={t("users.detail.change_role_confirm", "Cambiar")}
+        cancelText={t("common.cancel", "Cancelar")}
+        variant="warning"
+        isLoading={changeRoleDialog.isLoading}
+      >
+        <div style={{ marginTop: "var(--space-4)" }}>
+          <FormSelect
+            label={t("users.detail.new_role", "Nuevo rol")}
+            value={selectedRoleId}
+            onChange={setSelectedRoleId}
+            options={roleOptions}
+            placeholder={t("users.select_role", "Seleccionar rol")}
+          />
+        </div>
+      </ConfirmDialog>
     </div>
   );
 };

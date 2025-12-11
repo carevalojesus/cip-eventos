@@ -158,6 +158,7 @@ export const UserActions: React.FC<UserActionsProps> = ({
                   }
                 }}
                 onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent")}
+                title={disabledActions.includes("edit") ? t("common.coming_soon", "Próximamente") : undefined}
               >
                 <PencilSimple size={16} />
                 {t("users.list.actions.edit", "Editar")}
@@ -172,6 +173,7 @@ export const UserActions: React.FC<UserActionsProps> = ({
                   }
                 }}
                 onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent")}
+                title={disabledActions.includes("changeRole") ? t("common.coming_soon", "Próximamente") : undefined}
               >
                 <UserGear size={16} />
                 {t("users.list.actions.change_role", "Cambiar rol")}

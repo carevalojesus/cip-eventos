@@ -7,7 +7,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@/components/ui/radix-select";
 import {
   FormField,
   FormItem,
@@ -49,10 +49,10 @@ export const EventVirtualFields: React.FC<EventVirtualFieldsProps> = ({ form }) 
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="Zoom">Zoom</SelectItem>
-                    <SelectItem value="Google Meet">Google Meet</SelectItem>
-                    <SelectItem value="Microsoft Teams">Microsoft Teams</SelectItem>
-                    <SelectItem value="Other">{t("create_event.virtual.other", "Otro")}</SelectItem>
+                    <SelectItem value="Zoom">{t("create_event.virtual.platforms.zoom", "Zoom")}</SelectItem>
+                    <SelectItem value="Google Meet">{t("create_event.virtual.platforms.google_meet", "Google Meet")}</SelectItem>
+                    <SelectItem value="Microsoft Teams">{t("create_event.virtual.platforms.teams", "Microsoft Teams")}</SelectItem>
+                    <SelectItem value="Other">{t("create_event.virtual.platforms.other", "Otro")}</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage className="rui-form-error" />
@@ -101,7 +101,7 @@ export const EventVirtualFields: React.FC<EventVirtualFieldsProps> = ({ form }) 
                   {...field}
                   type="text"
                   className="rui-form-input"
-                  placeholder="https://zoom.us/j/..."
+                  placeholder={t("create_event.virtual.meeting_url_placeholder", "https://zoom.us/j/...")}
                 />
               </FormControl>
               <span className="rui-form-hint">

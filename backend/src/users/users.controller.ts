@@ -56,8 +56,13 @@ export class UsersController {
 
   @Get(':id')
   @Roles('ADMIN', 'SUPER_ADMIN')
-  findOne(@Param('id') id: string): Promise<User> {
-    return this.usersService.findOne(id);
+  findOne(
+    @Param('id') id: string,
+    @CurrentUser() user: { userId: string; role: string },
+    @Query('includeInactive') includeInactive?: string,
+  ): Promise<User> {
+    const canSeeInactive = user.role === 'SUPER_ADMIN' && includeInactive === 'true';
+    return this.usersService.findOne(id, canSeeInactive);
   }
 
   @Patch(':id')
@@ -84,5 +89,24 @@ export class UsersController {
     return {
       message: 'Deletion request submitted successfully. An administrator will process your request.',
     };
+  }
+
+  @Patch(':id/verify-email')
+  @Roles('SUPER_ADMIN')
+  async verifyEmailManually(
+    @Param('id') id: string,
+    @CurrentUser() admin: { userId: string },
+  ): Promise<User> {
+    return this.usersService.verifyEmailManually(id, admin.userId);
+  }
+
+  @Patch(':id/change-role')
+  @Roles('SUPER_ADMIN')
+  async changeRole(
+    @Param('id') id: string,
+    @Body('roleId') roleId: number,
+    @CurrentUser() admin: { userId: string },
+  ): Promise<User> {
+    return this.usersService.changeRole(id, roleId, admin.userId);
   }
 }

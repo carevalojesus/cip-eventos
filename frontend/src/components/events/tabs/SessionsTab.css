@@ -17,7 +17,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 4rem;
+  padding: var(--space-16);
   background-color: var(--color-bg-primary);
   border: 1px solid var(--color-border-light);
   border-radius: var(--radius-xl);
@@ -131,7 +131,7 @@
   font-size: var(--font-size-xs);
   font-weight: 500;
   color: var(--color-grey-500);
-  padding-top: 2px;
+  padding-top: var(--space-1);
 }
 
 /* Item content */
@@ -140,7 +140,7 @@
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--space-1);
 }
 
 /* Header row: title + badges inline */
@@ -161,10 +161,10 @@
 .sessions-tab__badge {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  padding: 2px 8px;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-2);
   border-radius: var(--radius-full);
-  font-size: 11px;
+  font-size: var(--font-size-xs);
   font-weight: 500;
 }
 
@@ -197,19 +197,19 @@
   gap: var(--space-3);
   font-size: var(--font-size-xs);
   color: var(--color-grey-500);
-  margin-top: 2px;
+  margin-top: var(--space-1);
 }
 
 .sessions-tab__item-room {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: var(--space-1);
 }
 
 .sessions-tab__item-link {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: var(--space-1);
 }
 
 .sessions-tab__item-link {

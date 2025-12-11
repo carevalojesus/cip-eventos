@@ -15,6 +15,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import type { User } from "@/services/users.service";
 import { Checkbox } from "@/components/ui/rui";
+import { Skeleton, SkeletonCircle } from "@/components/ui/skeleton";
 import { UserAvatar } from "./UserAvatar";
 import { UserStatusBadge } from "./UserStatusBadge";
 import { UserVerificationBadge } from "./UserVerificationBadge";
@@ -29,6 +30,7 @@ interface UserTableProps {
   onUserClick: (userId: string) => void;
   onAction: (action: UserAction, user: User) => void;
   isLoading?: boolean;
+  disabledActions?: UserAction[];
 }
 
 export const UserTable: React.FC<UserTableProps> = ({
@@ -38,6 +40,7 @@ export const UserTable: React.FC<UserTableProps> = ({
   onUserClick,
   onAction,
   isLoading = false,
+  disabledActions = [],
 }) => {
   const { t, i18n } = useTranslation();
   const locale = getLocaleFromLang(i18n.language?.startsWith("en") ? "en" : "es");
@@ -155,6 +158,9 @@ export const UserTable: React.FC<UserTableProps> = ({
     overflow: "hidden",
     textOverflow: "ellipsis",
     whiteSpace: "nowrap",
+    textDecoration: "none",
+    transition: "color 150ms ease, text-decoration 150ms ease",
+    borderRadius: "var(--radius-sm)",
   };
 
   const emailStyle: React.CSSProperties = {
@@ -202,15 +208,60 @@ export const UserTable: React.FC<UserTableProps> = ({
   };
 
   // ============================================
-  // LOADING STATE
+  // LOADING STATE - Skeleton
   // ============================================
 
   if (isLoading) {
+    const skeletonRows = 5;
     return (
       <div style={tableContainerStyle}>
-        <div style={{ padding: "var(--space-8)", textAlign: "center", color: "var(--color-grey-400)" }}>
-          {t("common.loading", "Cargando...")}
-        </div>
+        <table style={tableStyle}>
+          <thead>
+            <tr>
+              <th style={{ ...thStyle, ...checkboxCellStyle, borderTopLeftRadius: "var(--radius-lg)" }}>
+                <Skeleton width={18} height={18} style={{ borderRadius: "var(--radius-sm)" }} />
+              </th>
+              <th style={thStyle}><Skeleton width="60%" height={12} /></th>
+              <th style={thStyle}><Skeleton width="70%" height={12} /></th>
+              <th style={thStyle}><Skeleton width="50%" height={12} /></th>
+              <th style={thStyle}><Skeleton width="65%" height={12} /></th>
+              <th style={{ ...thStyle, borderTopRightRadius: "var(--radius-lg)" }} />
+            </tr>
+          </thead>
+          <tbody>
+            {Array.from({ length: skeletonRows }).map((_, index) => (
+              <tr key={index}>
+                <td style={{ ...tdStyle, ...checkboxCellStyle }}>
+                  <Skeleton width={18} height={18} style={{ borderRadius: "var(--radius-sm)" }} />
+                </td>
+                <td style={tdStyle}>
+                  <div style={userCellStyle}>
+                    <SkeletonCircle size="2xl" />
+                    <div style={{ ...userInfoStyle, gap: "var(--space-2)" }}>
+                      <Skeleton width={120 + Math.random() * 60} height={14} />
+                      <Skeleton width={140 + Math.random() * 40} height={12} />
+                    </div>
+                  </div>
+                </td>
+                <td style={tdStyle}>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-1)" }}>
+                    <Skeleton width={80 + Math.random() * 40} height={14} />
+                    <Skeleton width={100 + Math.random() * 30} height={12} />
+                  </div>
+                </td>
+                <td style={tdStyle}>
+                  <Skeleton width={70} height={24} style={{ borderRadius: "var(--radius-full)" }} />
+                </td>
+                <td style={tdStyle}>
+                  <Skeleton width={90 + Math.random() * 30} height={14} />
+                </td>
+                <td style={{ ...tdStyle, textAlign: "right" }}>
+                  <Skeleton width={28} height={28} style={{ borderRadius: "var(--radius-md)", marginLeft: "auto" }} />
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     );
   }
@@ -315,8 +366,21 @@ export const UserTable: React.FC<UserTableProps> = ({
                       <button
                         onClick={() => onUserClick(user.id)}
                         style={userNameButtonStyle}
-                        onMouseEnter={(e) => (e.currentTarget.style.textDecoration = "underline")}
-                        onMouseLeave={(e) => (e.currentTarget.style.textDecoration = "none")}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.textDecoration = "underline";
+                          e.currentTarget.style.color = "var(--color-cyan-800)";
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.textDecoration = "none";
+                          e.currentTarget.style.color = "var(--color-cyan-700)";
+                        }}
+                        onFocus={(e) => {
+                          e.currentTarget.style.outline = "2px solid var(--color-cyan-500)";
+                          e.currentTarget.style.outlineOffset = "2px";
+                        }}
+                        onBlur={(e) => {
+                          e.currentTarget.style.outline = "none";
+                        }}
                       >
                         {fullName || user.email}
                       </button>
@@ -362,7 +426,7 @@ export const UserTable: React.FC<UserTableProps> = ({
                   borderBottomRightRadius: isLastRow ? "var(--radius-lg)" : undefined,
                 }}>
                   <div style={actionsCellStyle}>
-                    <UserActions user={user} onAction={onAction} onView={() => onUserClick(user.id)} />
+                    <UserActions user={user} onAction={onAction} onView={() => onUserClick(user.id)} disabledActions={disabledActions} />
                   </div>
                 </td>
               </tr>

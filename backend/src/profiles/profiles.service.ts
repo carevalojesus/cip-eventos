@@ -10,6 +10,7 @@ import { CreateProfileDto } from './dto/create-profile.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { Profile } from './entities/profile.entity';
 import { User } from '../users/entities/user.entity';
+import { AuditService } from '../audit/audit.service';
 
 @Injectable()
 export class ProfilesService {
@@ -19,6 +20,7 @@ export class ProfilesService {
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
     private readonly i18n: I18nService,
+    private readonly auditService: AuditService,
   ) {}
 
   async create(
@@ -52,7 +54,23 @@ export class ProfilesService {
       user: user,
     });
 
-    return await this.profileRepository.save(newProfile);
+    const savedProfile = await this.profileRepository.save(newProfile);
+
+    // Audit log
+    await this.auditService.logCreate(
+      'Profile',
+      savedProfile.id,
+      {
+        firstName: savedProfile.firstName,
+        lastName: savedProfile.lastName,
+        phoneNumber: savedProfile.phoneNumber,
+        description: savedProfile.description,
+        userId: user.id,
+      },
+      user,
+    );
+
+    return savedProfile;
   }
 
   async update(
@@ -61,6 +79,7 @@ export class ProfilesService {
   ): Promise<Profile> {
     const profile = await this.profileRepository.findOne({
       where: { user: { id: userId } },
+      relations: ['user'],
     });
 
     if (!profile) {
@@ -71,12 +90,36 @@ export class ProfilesService {
       );
     }
 
+    // Capture previous values before update
+    const previousValues = {
+      firstName: profile.firstName,
+      lastName: profile.lastName,
+      phoneNumber: profile.phoneNumber,
+      description: profile.description,
+    };
+
     const updatedProfile = this.profileRepository.merge(
       profile,
       updateProfileDto,
     );
 
-    return await this.profileRepository.save(updatedProfile);
+    const savedProfile = await this.profileRepository.save(updatedProfile);
+
+    // Audit log
+    await this.auditService.logUpdate(
+      'Profile',
+      savedProfile.id,
+      previousValues,
+      {
+        firstName: savedProfile.firstName,
+        lastName: savedProfile.lastName,
+        phoneNumber: savedProfile.phoneNumber,
+        description: savedProfile.description,
+      },
+      profile.user,
+    );
+
+    return savedProfile;
   }
 
   async findByUserId(userId: string): Promise<Profile> {
@@ -99,6 +142,7 @@ export class ProfilesService {
   async remove(userId: string): Promise<Profile> {
     const profile = await this.profileRepository.findOne({
       where: { user: { id: userId } },
+      relations: ['user'],
     });
 
     if (!profile) {
@@ -109,7 +153,27 @@ export class ProfilesService {
       );
     }
 
-    return await this.profileRepository.remove(profile);
+    // Capture values before deletion
+    const previousValues = {
+      id: profile.id,
+      firstName: profile.firstName,
+      lastName: profile.lastName,
+      phoneNumber: profile.phoneNumber,
+      description: profile.description,
+      userId: profile.user.id,
+    };
+
+    const removedProfile = await this.profileRepository.remove(profile);
+
+    // Audit log
+    await this.auditService.logDelete(
+      'Profile',
+      previousValues.id,
+      previousValues,
+      profile.user,
+    );
+
+    return removedProfile;
   }
 
   // ============================================
@@ -129,9 +193,13 @@ export class ProfilesService {
   ): Promise<Profile> {
     let profile = await this.profileRepository.findOne({
       where: { user: { id: userId } },
+      relations: ['user'],
     });
 
-    // If profile doesn't exist, create it
+    const isCreating = !profile;
+    let previousValues: any = null;
+
+    // If profile doesn't exist, create it with default values
     if (!profile) {
       const user = await this.userRepository.findOneBy({ id: userId });
       if (!user) {
@@ -142,14 +210,56 @@ export class ProfilesService {
         );
       }
 
+      // Create profile with defaults for required fields if not provided
       profile = this.profileRepository.create({
+        firstName: updateProfileDto.firstName || '',
+        lastName: updateProfileDto.lastName || '',
         ...updateProfileDto,
         user: user,
       });
     } else {
+      // Capture previous values before update
+      previousValues = {
+        firstName: profile.firstName,
+        lastName: profile.lastName,
+        phoneNumber: profile.phoneNumber,
+        description: profile.description,
+      };
+
       profile = this.profileRepository.merge(profile, updateProfileDto);
     }
 
-    return this.profileRepository.save(profile);
+    const savedProfile = await this.profileRepository.save(profile);
+
+    // Audit log
+    if (isCreating) {
+      await this.auditService.logCreate(
+        'Profile',
+        savedProfile.id,
+        {
+          firstName: savedProfile.firstName,
+          lastName: savedProfile.lastName,
+          phoneNumber: savedProfile.phoneNumber,
+          description: savedProfile.description,
+          userId: savedProfile.user.id,
+        },
+        savedProfile.user,
+      );
+    } else {
+      await this.auditService.logUpdate(
+        'Profile',
+        savedProfile.id,
+        previousValues,
+        {
+          firstName: savedProfile.firstName,
+          lastName: savedProfile.lastName,
+          phoneNumber: savedProfile.phoneNumber,
+          description: savedProfile.description,
+        },
+        savedProfile.user,
+      );
+    }
+
+    return savedProfile;
   }
 }

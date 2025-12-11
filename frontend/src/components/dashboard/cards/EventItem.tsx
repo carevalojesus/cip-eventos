@@ -39,12 +39,12 @@ export const EventItem = React.memo<EventItemProps>(({
   return (
     <div className="flex items-center gap-4 py-3">
       <div className="flex-1 space-y-1">
-        <p className="text-sm font-medium leading-none text-gray-900">
+        <p className="text-sm font-medium leading-none text-grey-900">
           {title}
         </p>
-        <p className="text-sm text-gray-500">{date}</p>
+        <p className="text-sm text-grey-500">{date}</p>
       </div>
-      <div className="font-medium text-gray-700 text-sm">
+      <div className="font-medium text-grey-700 text-sm">
         {t("dashboard.upcoming_events.attendees", { count: attendees })}
       </div>
       <div

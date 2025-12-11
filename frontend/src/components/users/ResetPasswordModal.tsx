@@ -9,7 +9,8 @@ import {
     Check,
     EnvelopeSimple,
 } from "@phosphor-icons/react";
-import { Button } from "@/components/ui/rui-button";
+import { Button } from "@/components/ui/button";
+import { generatePassword } from "@/lib/userUtils";
 
 interface ResetPasswordModalProps {
     isOpen: boolean;
@@ -22,33 +23,6 @@ interface ResetPasswordModalProps {
 }
 
 type ResetMode = "link" | "password";
-
-// Generate a secure random password
-const generatePassword = (length: number = 12): string => {
-    const lowercase = "abcdefghijklmnopqrstuvwxyz";
-    const uppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    const numbers = "0123456789";
-    const symbols = "!@#$%^&*";
-    const allChars = lowercase + uppercase + numbers + symbols;
-
-    let password = "";
-    // Ensure at least one of each type
-    password += lowercase[Math.floor(Math.random() * lowercase.length)];
-    password += uppercase[Math.floor(Math.random() * uppercase.length)];
-    password += numbers[Math.floor(Math.random() * numbers.length)];
-    password += symbols[Math.floor(Math.random() * symbols.length)];
-
-    // Fill the rest
-    for (let i = password.length; i < length; i++) {
-        password += allChars[Math.floor(Math.random() * allChars.length)];
-    }
-
-    // Shuffle the password
-    return password
-        .split("")
-        .sort(() => Math.random() - 0.5)
-        .join("");
-};
 
 export const ResetPasswordModal: React.FC<ResetPasswordModalProps> = ({
     isOpen,

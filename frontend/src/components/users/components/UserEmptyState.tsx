@@ -1,8 +1,8 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { UserPlus } from "@phosphor-icons/react";
-import { Button } from "@/components/ui/rui-button";
-import { EmptyState } from "@/components/ui/rui/EmptyState";
+import { Plus } from "@phosphor-icons/react";
+import { Button } from "@/components/ui/button";
+import { EmptyState } from "@/components/ui/empty-state";
 
 interface UserEmptyStateProps {
   hasFilters: boolean;
@@ -32,7 +32,7 @@ export const UserEmptyState: React.FC<UserEmptyStateProps> = ({
       action={
         !hasFilters ? (
           <Button variant="primary" size="md" onClick={onCreateUser}>
-            <UserPlus size={16} weight="bold" />
+            <Plus size={18} weight="bold" />
             {t("users.list.new_user", "Nuevo Usuario")}
           </Button>
         ) : undefined

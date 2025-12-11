@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { Check, MapPin, ChevronDown } from "lucide-react";
+import { Check, MapPin, CaretDown } from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
 import {
   Command,
@@ -74,9 +74,9 @@ export const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({
             hasValue && "rui-location-trigger--has-value"
           )}
         >
-          <MapPin className="rui-location-trigger-icon" />
+          <MapPin size={16} className="rui-location-trigger-icon" />
           {value || <span className="rui-location-trigger-placeholder">{placeholder}</span>}
-          <ChevronDown className="rui-location-trigger-chevron" />
+          <CaretDown size={16} className="rui-location-trigger-chevron" />
         </button>
       </PopoverTrigger>
       <PopoverContent className="w-[400px] p-0" align="start">
@@ -117,7 +117,7 @@ export const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({
                           value={displayName}
                           onSelect={() => handleSelect(location)}
                         >
-                          <MapPin className="mr-2 h-4 w-4 text-gray-400" />
+                          <MapPin size={16} className="mr-2 text-grey-400" />
                           <div className="flex flex-col flex-1">
                             <span className="text-sm font-medium">{displayName}</span>
                             <span className="text-xs text-muted-foreground">
@@ -125,8 +125,9 @@ export const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({
                             </span>
                           </div>
                           <Check
+                            size={16}
                             className={cn(
-                              "ml-auto h-4 w-4",
+                              "ml-auto",
                               (value || "") === displayName ? "opacity-100" : "opacity-0"
                             )}
                           />

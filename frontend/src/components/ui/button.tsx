@@ -1,32 +1,28 @@
-import * as React from "react"
-import { Slot } from "@radix-ui/react-slot"
+import { useState, type ButtonHTMLAttributes, type ReactNode } from 'react'
 import { cva, type VariantProps } from "class-variance-authority"
+import { red, grey, cyan, colors, rings, shadows } from '@/lib/styleTokens'
 
-import { cn } from "@/lib/utils"
-
-const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
+/**
+ * buttonVariants - Tailwind class-based variants for compatibility with shadcn components
+ * Used by calendar.tsx and other components that need CSS class-based styling
+ */
+export const buttonVariants = cva(
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground hover:bg-primary/90",
-        destructive:
-          "bg-destructive text-white hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
-        outline:
-          "border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50",
-        secondary:
-          "bg-secondary text-secondary-foreground hover:bg-secondary/80",
-        ghost:
-          "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
-        link: "text-primary underline-offset-4 hover:underline",
+        default: "bg-red-500 text-white hover:bg-red-600",
+        destructive: "bg-red-500 text-white hover:bg-red-600",
+        outline: "border border-gray-200 bg-white hover:bg-gray-50",
+        secondary: "bg-gray-100 text-gray-700 hover:bg-gray-200",
+        ghost: "hover:bg-gray-100 text-gray-700",
+        link: "text-red-500 underline-offset-4 hover:underline",
       },
       size: {
-        default: "h-9 px-4 py-2 has-[>svg]:px-3",
-        sm: "h-8 rounded-md gap-1.5 px-3 has-[>svg]:px-2.5",
-        lg: "h-10 rounded-md px-6 has-[>svg]:px-4",
-        icon: "size-9",
-        "icon-sm": "size-8",
-        "icon-lg": "size-10",
+        default: "h-9 px-4 py-2",
+        sm: "h-8 rounded-md px-3 text-xs",
+        lg: "h-10 rounded-md px-8",
+        icon: "h-9 w-9",
       },
     },
     defaultVariants: {
@@ -36,25 +32,293 @@ const buttonVariants = cva(
   }
 )
 
-function Button({
-  className,
-  variant,
-  size,
-  asChild = false,
-  ...props
-}: React.ComponentProps<"button"> &
-  VariantProps<typeof buttonVariants> & {
-    asChild?: boolean
-  }) {
-  const Comp = asChild ? Slot : "button"
+/**
+ * Button Component - Refactoring UI Design System
+ *
+ * Variantes:
+ * - primary: Identidad de marca CIP (rojo) - para acciones de alta jerarquía
+ * - secondary: Acción secundaria (borde gris) - contraste medio
+ * - ghost: Sin borde, solo hover - bajo énfasis
+ * - outline: Borde primario sin relleno
+ * - soft: Fondo suave con texto de color - para acciones de crear/agregar (cyan)
+ * - danger: Acciones destructivas (eliminar)
+ * - icon: Botones cuadrados solo para iconos - aspecto ghost
+ *
+ * Tamaños consistentes (altura fija):
+ * - sm: 32px - botones compactos, acciones inline (icon: 32x32px)
+ * - md: 36px - tamaño por defecto (icon: 36x36px)
+ * - lg: 40px - botones prominentes, CTAs (icon: 40x40px)
+ * - xl: 44px - botones extra grandes (icon: 44x44px - touch target)
+ */
 
-  return (
-    <Comp
-      data-slot="button"
-      className={cn(buttonVariants({ variant, size, className }))}
-      {...props}
-    />
-  )
+type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'outline' | 'soft' | 'danger' | 'icon'
+type ButtonSize = 'sm' | 'md' | 'lg' | 'xl'
+
+interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+  children: ReactNode
+  variant?: ButtonVariant
+  size?: ButtonSize
+  fullWidth?: boolean
+  isLoading?: boolean
+  loadingText?: string
+  loadingAriaLabel?: string
+  icon?: ReactNode
 }
 
-export { Button, buttonVariants }
+export function Button({
+  children,
+  variant = 'primary',
+  size = 'md',
+  fullWidth = false,
+  isLoading = false,
+  loadingText,
+  loadingAriaLabel = 'Loading',
+  icon,
+  disabled,
+  className = '',
+  style,
+  ...props
+}: ButtonProps) {
+  const [isHovered, setIsHovered] = useState(false)
+  const [isPressed, setIsPressed] = useState(false)
+  const [isFocused, setIsFocused] = useState(false)
+
+  const isDisabled = disabled || isLoading
+
+  // Tamaños consistentes según Refactoring UI
+  // Altura fija para alineación visual
+  const sizeStyles: Record<ButtonSize, React.CSSProperties> = {
+    sm: {
+      height: 'var(--button-height-sm)',
+      padding: '0 12px',
+      fontSize: '13px',
+      gap: '6px',
+    },
+    md: {
+      height: 'var(--button-height-md)',
+      padding: '0 14px',
+      fontSize: '14px',
+      gap: '6px',
+    },
+    lg: {
+      height: 'var(--button-height-lg)',
+      padding: '0 16px',
+      fontSize: '14px',
+      gap: '8px',
+    },
+    xl: {
+      height: 'var(--button-height-xl)',
+      padding: '0 18px',
+      fontSize: '15px',
+      gap: '8px',
+    },
+  }
+
+  // Icon-only button sizing (square buttons)
+  const iconSizeStyles: Record<ButtonSize, React.CSSProperties> = {
+    sm: {
+      width: 'var(--button-height-sm)',
+      height: 'var(--button-height-sm)',
+      padding: 0,
+      fontSize: '16px',
+    },
+    md: {
+      width: 'var(--button-height-md)',
+      height: 'var(--button-height-md)',
+      padding: 0,
+      fontSize: '18px',
+    },
+    lg: {
+      width: 'var(--button-height-lg)',
+      height: 'var(--button-height-lg)',
+      padding: 0,
+      fontSize: '20px',
+    },
+    xl: {
+      width: 'var(--button-height-xl)',
+      height: 'var(--button-height-xl)',
+      padding: 0,
+      fontSize: '22px',
+    },
+  }
+
+  const getVariantStyles = (): React.CSSProperties => {
+    // PRIMARY - Identidad de marca CIP, alto contraste (4.5:1 mínimo)
+    // Fondo: red-500, Texto: white
+    if (variant === 'primary') {
+      return {
+        backgroundColor: isPressed
+          ? red[700]
+          : isHovered
+            ? red[600]
+            : red[500],
+        color: colors.white,
+        border: 'none',
+        boxShadow: isPressed
+          ? shadows.buttonPressed
+          : isFocused
+            ? rings.primary
+            : shadows.buttonDefault,
+      }
+    }
+
+    // SECONDARY - Acción secundaria, contraste medio
+    // Fondo: white, Borde: grey-200, Texto: grey-700
+    if (variant === 'secondary') {
+      return {
+        backgroundColor: isPressed
+          ? grey[100]
+          : isHovered
+            ? grey[50]
+            : colors.white,
+        color: grey[700],
+        border: `1px solid ${isFocused ? grey[300] : grey[200]}`,
+        boxShadow: isPressed
+          ? shadows.buttonSecondaryPressed
+          : isFocused
+            ? rings.neutral
+            : shadows.buttonSecondary,
+      }
+    }
+
+    // GHOST - Sin borde, bajo énfasis
+    // Fondo: transparent, Texto: grey-700
+    if (variant === 'ghost') {
+      return {
+        backgroundColor: isPressed
+          ? grey[200]
+          : isHovered || isFocused
+            ? grey[100]
+            : colors.transparent,
+        color: grey[700],
+        border: 'none',
+        boxShadow: isFocused ? rings.neutral : shadows.none,
+      }
+    }
+
+    // OUTLINE - Borde primario sin relleno
+    // Fondo: transparent, Borde: red-500, Texto: red-500
+    if (variant === 'outline') {
+      return {
+        backgroundColor: isPressed
+          ? red[50]
+          : isHovered
+            ? 'var(--color-hover-primary)'
+            : colors.transparent,
+        color: red[500],
+        border: `1px solid ${red[500]}`,
+        boxShadow: isFocused ? rings.primary : shadows.none,
+      }
+    }
+
+    // SOFT - Fondo suave con texto de color (para agregar/crear)
+    // Fondo: cyan-50, Texto: cyan-700 (contraste 4.5:1+)
+    // Según Refactoring UI: usar el tono más oscuro del texto para contraste
+    if (variant === 'soft') {
+      return {
+        backgroundColor: isPressed
+          ? cyan[100]
+          : isHovered
+            ? cyan[100]
+            : cyan[50],
+        color: cyan[700], // cyan-700 sobre cyan-50 = ~5:1 contraste
+        border: 'none',
+        boxShadow: isFocused ? rings.action : shadows.none,
+      }
+    }
+
+    // DANGER - Acciones destructivas
+    // Similar a soft pero en rojo
+    if (variant === 'danger') {
+      return {
+        backgroundColor: isPressed
+          ? red[100]
+          : isHovered
+            ? red[100]
+            : red[50],
+        color: red[700], // red-700 sobre red-50 = alto contraste
+        border: 'none',
+        boxShadow: isFocused ? rings.danger : shadows.none,
+      }
+    }
+
+    // ICON - Icon-only buttons (ghost style)
+    // Square buttons with icon centered, ghost-like appearance
+    if (variant === 'icon') {
+      return {
+        backgroundColor: isPressed
+          ? grey[200]
+          : isHovered || isFocused
+            ? grey[100]
+            : colors.transparent,
+        color: grey[700],
+        border: 'none',
+        boxShadow: isFocused ? rings.neutral : shadows.none,
+      }
+    }
+
+    return {}
+  }
+
+  const variantStyles = getVariantStyles()
+
+  const baseStyles: React.CSSProperties = {
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontWeight: 600,
+    borderRadius: '6px',
+    cursor: isDisabled ? 'not-allowed' : 'pointer',
+    transition: 'all 150ms ease',
+    opacity: isDisabled ? 0.5 : 1,
+    width: fullWidth ? '100%' : 'auto',
+    transform: isPressed && !isDisabled ? 'translateY(1px)' : 'none',
+    outline: 'none',
+    whiteSpace: 'nowrap',
+    // Use icon-specific sizing for icon variant, otherwise use standard sizing
+    ...(variant === 'icon' ? iconSizeStyles[size] : sizeStyles[size]),
+    ...variantStyles,
+    ...style,
+  }
+
+  return (
+    <button
+      style={baseStyles}
+      disabled={isDisabled}
+      className={className}
+      aria-busy={isLoading}
+      onMouseEnter={() => !isDisabled && setIsHovered(true)}
+      onMouseLeave={() => {
+        setIsHovered(false)
+        setIsPressed(false)
+      }}
+      onMouseDown={() => !isDisabled && setIsPressed(true)}
+      onMouseUp={() => setIsPressed(false)}
+      onFocus={() => !isDisabled && setIsFocused(true)}
+      onBlur={() => setIsFocused(false)}
+      {...props}
+    >
+      {isLoading ? (
+        <>
+          <span
+            style={{
+              width: '1em',
+              height: '1em',
+              border: '2px solid currentColor',
+              borderTopColor: 'transparent',
+              borderRadius: '50%',
+              animation: 'spin 0.6s linear infinite',
+            }}
+            aria-label={loadingAriaLabel}
+          />
+          {loadingText || children}
+        </>
+      ) : (
+        <>
+          {icon}
+          {children}
+        </>
+      )}
+    </button>
+  )
+}

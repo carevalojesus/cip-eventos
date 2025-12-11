@@ -1,0 +1,10 @@
+---
+import AuthLayout from '@/layouts/AuthLayout.astro'
+import ChangePasswordForm from '@/components/auth/ChangePasswordForm'
+
+export const prerender = false;
+---
+
+<AuthLayout title="Cambiar Contraseña - CIP Eventos">
+  <ChangePasswordForm client:only="react" />
+</AuthLayout>

@@ -1,10 +1,10 @@
 import { useTranslation } from 'react-i18next'
 import { Mail, Lock } from 'lucide-react'
 
-import { Button } from '@/components/ui/rui-button'
-import { Input } from '@/components/ui/rui-input'
-import { Checkbox } from '@/components/ui/rui-checkbox'
-import { Link } from '@/components/ui/rui-link'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Checkbox } from '@/components/ui/checkbox'
+import { Link } from '@/components/ui/link'
 import { I18nProvider } from '@/components/providers/I18nProvider'
 
 import { useAuthStore } from '@/store/auth.store'
@@ -142,7 +142,7 @@ function LoginFormContent({ onSuccess }: LoginFormProps) {
           <Checkbox
             label={t('login.remember_me')}
             checked={rememberMe}
-            onChange={(e) => setRememberMe(e.target.checked)}
+            onChange={() => setRememberMe(!rememberMe)}
           />
           <Link href={routes[getCurrentLocale()].forgotPassword} variant="muted">
             {t('login.forgot_password')}

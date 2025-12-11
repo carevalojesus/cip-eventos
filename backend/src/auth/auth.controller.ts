@@ -34,6 +34,7 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { Roles } from './decorators/roles.decorator';
 import { RolesGuard } from './guards/roles.guard';
+import { UsersService } from 'src/users/users.service';
 
 // 1. Interfaz para cuando usas JwtAuthGuard (Logout)
 // La estrategia JWT mapeaba 'sub' a 'userId', recuerda?
@@ -49,6 +50,10 @@ interface RequestWithUserId {
     'user-agent'?: string;
   };
   ip?: string;
+}
+
+interface RequestWithUser extends RequestWithUserId {
+  userEntity?: any;
 }
 
 interface RequestWithRefreshToken {
@@ -71,6 +76,7 @@ export class AuthController {
     private readonly i18n: I18nService,
     private readonly configService: ConfigService,
     private readonly jwtService: JwtService,
+    private readonly usersService: UsersService,
   ) {}
 
   private setRefreshTokenCookie(res: Response, refreshToken: string) {
@@ -226,9 +232,46 @@ export class AuthController {
       exp = decoded?.exp;
     }
 
-    await this.authService.logout(req.user.userId, jti, exp);
+    const metadata = {
+      userAgent: req.headers['user-agent'],
+      ip: req.ip,
+    };
+
+    await this.authService.logout(req.user.userId, jti, exp, metadata);
     this.clearRefreshTokenCookie(res);
     return { message: 'Logged out successfully' };
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('change-password')
+  @ApiBearerAuth('JWT-auth')
+  @ApiOperation({
+    summary: 'Change password',
+    description: 'Change password for authenticated user (required when forcePasswordReset is true)',
+  })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        currentPassword: { type: 'string', minLength: 8 },
+        newPassword: { type: 'string', minLength: 8 },
+      },
+      required: ['currentPassword', 'newPassword'],
+    },
+  })
+  @ApiResponse({ status: 200, description: 'Password changed successfully' })
+  @ApiResponse({ status: 400, description: 'Invalid current password' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  async changePassword(
+    @Req() req: RequestWithUserId,
+    @Body('currentPassword') currentPassword: string,
+    @Body('newPassword') newPassword: string,
+  ) {
+    const metadata = {
+      userAgent: req.headers['user-agent'],
+      ip: req.ip,
+    };
+    return this.authService.changePassword(req.user.userId, currentPassword, newPassword, metadata);
   }
 
   @UseGuards(JwtAuthGuard, EmailVerifiedGuard)
@@ -385,8 +428,16 @@ export class AuthController {
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 403, description: 'Forbidden - requires ADMIN role' })
   @ApiResponse({ status: 404, description: 'User not found' })
-  async adminResetPassword(@Body('email') email: string) {
-    return this.authService.adminInitiatedPasswordReset(email);
+  async adminResetPassword(
+    @Body('email') email: string,
+    @Req() req: RequestWithUserId,
+  ) {
+    const adminUser = await this.usersService.findOne(req.user.userId);
+    const metadata = {
+      userAgent: req.headers['user-agent'],
+      ip: req.ip,
+    };
+    return this.authService.adminInitiatedPasswordReset(email, adminUser, metadata);
   }
 
   @UseGuards(JwtAuthGuard, EmailVerifiedGuard, RolesGuard)
@@ -417,8 +468,14 @@ export class AuthController {
   async adminSetPassword(
     @Body('email') email: string,
     @Body('password') password: string,
+    @Req() req: RequestWithUserId,
   ) {
-    return this.authService.adminSetPassword(email, password);
+    const adminUser = await this.usersService.findOne(req.user.userId);
+    const metadata = {
+      userAgent: req.headers['user-agent'],
+      ip: req.ip,
+    };
+    return this.authService.adminSetPassword(email, password, adminUser, metadata);
   }
 
   // ==================== SESIONES ACTIVAS ====================

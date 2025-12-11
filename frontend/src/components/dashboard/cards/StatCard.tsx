@@ -1,11 +1,11 @@
 import React from "react";
-import type { LucideIcon } from "lucide-react";
+import type { Icon as PhosphorIcon } from "@phosphor-icons/react";
 
 interface StatCardProps {
   title: string;
   value: string | number;
   description?: string;
-  icon: LucideIcon;
+  icon: PhosphorIcon;
   iconColor?: "blue" | "green" | "red" | "purple" | "yellow" | "orange";
   trend?: {
     value: string;
@@ -54,26 +54,26 @@ export const StatCard = React.memo<StatCardProps>(({
 }) => {
   return (
     <div
-      className="rounded-xl border border-gray-200 bg-white shadow-sm hover:shadow-md transition-shadow"
+      className="rounded-xl border border-grey-200 bg-white shadow-sm hover:shadow-md transition-shadow"
       style={{ padding: "var(--space-6)" }}
     >
       <div
         className="flex flex-row items-center justify-between space-y-0"
         style={{ paddingBottom: "var(--space-2)" }}
       >
-        <h3 className="text-sm font-medium text-gray-600">{title}</h3>
+        <h3 className="text-sm font-medium text-grey-600">{title}</h3>
         <div
           className="h-10 w-10 rounded-full flex items-center justify-center"
           style={iconColorStyles[iconColor]}
         >
-          <Icon className="h-5 w-5" />
+          <Icon size={20} />
         </div>
       </div>
       <div style={{ marginTop: "var(--space-2)" }}>
-        <div className="text-2xl font-bold text-gray-900">{value}</div>
+        <div className="text-2xl font-bold text-grey-900">{value}</div>
         {description && (
           <p
-            className="text-xs text-gray-500"
+            className="text-xs text-grey-500"
             style={{ marginTop: "var(--space-1)" }}
           >
             {description}
@@ -93,7 +93,7 @@ export const StatCard = React.memo<StatCardProps>(({
             >
               {trend.isPositive ? "↑" : "↓"} {trend.value}
             </span>
-            <span className="text-gray-500">vs mes anterior</span>
+            <span className="text-grey-500">vs mes anterior</span>
           </div>
         )}
       </div>

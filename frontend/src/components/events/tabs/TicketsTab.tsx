@@ -23,13 +23,13 @@ import {
   DrawerDescription,
   DrawerBody,
   DrawerFooter,
-} from "@/components/ui/rui/Drawer";
-import { EmptyState } from "@/components/ui/rui/EmptyState";
-import { Input } from "@/components/ui/rui-input";
-import { FormTextarea } from "@/components/ui/rui/form/FormTextarea";
-import { FormDateTimePicker } from "@/components/ui/rui/form/FormDateTimePicker";
-import { FormRow } from "@/components/ui/rui/form/FormRow";
-import { FormGroup } from "@/components/ui/rui/form/FormGroup";
+} from "@/components/ui/drawer";
+import { EmptyState } from "@/components/ui/empty-state";
+import { Input } from "@/components/ui/input";
+import { FormTextarea } from "@/components/ui/form/form-textarea";
+import { FormDateTimePicker } from "@/components/ui/form/form-datetime-picker";
+import { FormRow } from "@/components/ui/form/form-row";
+import { FormGroup } from "@/components/ui/form/form-group";
 import {
   IconTicket,
   IconAdd,
@@ -444,16 +444,16 @@ export const TicketsTab: React.FC<TicketsTabProps> = ({ eventId }) => {
                   <Input
                     label={t("event_management.tickets.dialog.price_label")}
                     type="number"
-                    placeholder="0.00"
+                    placeholder={t("event_management.tickets.dialog.price_placeholder", "0.00")}
                     disabled={isFreeTicket}
-                    leftIcon={<span style={{ fontSize: "14px", color: "var(--color-grey-500)" }}>S/</span>}
+                    leftIcon={<span style={{ fontSize: "var(--font-size-sm)", color: "var(--color-grey-500)" }}>S/</span>}
                     error={form.formState.errors.price?.message}
                     {...form.register("price")}
                   />
                   <Input
                     label={t("event_management.tickets.dialog.stock_label")}
                     type="number"
-                    placeholder="100"
+                    placeholder={t("event_management.tickets.dialog.stock_placeholder", "100")}
                     error={form.formState.errors.stock?.message}
                     {...form.register("stock")}
                   />
@@ -465,7 +465,7 @@ export const TicketsTab: React.FC<TicketsTabProps> = ({ eventId }) => {
                 <Input
                   label={t("event_management.tickets.dialog.max_per_order_label")}
                   type="number"
-                  placeholder="10"
+                  placeholder={t("event_management.tickets.dialog.max_per_order_placeholder", "10")}
                   hint={t("event_management.tickets.dialog.max_per_order_hint")}
                   error={form.formState.errors.maxPerOrder?.message}
                   {...form.register("maxPerOrder")}

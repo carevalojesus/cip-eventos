@@ -2,9 +2,9 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Mail } from 'lucide-react';
 
-import { Input } from '@/components/ui/rui-input';
-import { Button } from '@/components/ui/rui-button';
-import { Link } from '@/components/ui/rui-link';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Link } from '@/components/ui/link';
 import { I18nProvider } from '@/components/providers/I18nProvider';
 import { getCurrentLocale, routes } from '@/lib/routes';
 import { useForgotPasswordForm } from '@/hooks/useForgotPasswordForm';

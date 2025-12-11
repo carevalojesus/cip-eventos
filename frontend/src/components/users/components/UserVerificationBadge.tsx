@@ -27,8 +27,8 @@ export const UserVerificationBadge: React.FC<UserVerificationBadgeProps> = ({
   const badgeStyle: React.CSSProperties = {
     display: "inline-flex",
     alignItems: "center",
-    gap: "4px",
-    padding: size === "sm" ? "4px 12px" : "6px 14px",
+    gap: "var(--space-1)",
+    padding: size === "sm" ? "var(--space-1) var(--space-3)" : "var(--space-2) var(--space-4)",
     fontSize: size === "sm" ? "var(--font-size-xs)" : "var(--font-size-sm)",
     fontWeight: 500,
     borderRadius: "var(--radius-full)",

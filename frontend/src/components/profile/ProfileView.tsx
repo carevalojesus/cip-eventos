@@ -3,8 +3,8 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { User, IdentificationCard, CheckCircle, Warning, SpinnerGap } from "@phosphor-icons/react";
-import { Button } from "@/components/ui/rui-button";
-import { Input } from "@/components/ui/rui-input";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { useAuthStore } from "@/store/auth.store";
 import {
   profileService,

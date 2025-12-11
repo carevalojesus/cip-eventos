@@ -1,119 +1,191 @@
-"use client";
+import React from "react";
+import * as DrawerPrimitive from "@radix-ui/react-dialog";
+import { X } from "lucide-react";
 
-import * as React from "react";
-import { Drawer as DrawerPrimitive } from "vaul";
+interface DrawerProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  children: React.ReactNode;
+}
 
-import { cn } from "@/lib/utils";
+interface DrawerContentProps {
+  children: React.ReactNode;
+  width?: "sm" | "md" | "lg";
+  showClose?: boolean;
+}
 
-const Drawer = ({
-  shouldScaleBackground = true,
-  direction = "right",
-  ...props
-}: React.ComponentProps<typeof DrawerPrimitive.Root>) => (
-  <DrawerPrimitive.Root
-    shouldScaleBackground={shouldScaleBackground}
-    direction={direction}
-    {...props}
-  />
-);
-Drawer.displayName = "Drawer";
+interface DrawerHeaderProps {
+  children: React.ReactNode;
+}
 
-const DrawerTrigger = DrawerPrimitive.Trigger;
+interface DrawerTitleProps {
+  children: React.ReactNode;
+}
 
-const DrawerPortal = DrawerPrimitive.Portal;
+interface DrawerDescriptionProps {
+  children: React.ReactNode;
+}
 
-const DrawerClose = DrawerPrimitive.Close;
+interface DrawerBodyProps {
+  children: React.ReactNode;
+}
 
-const DrawerOverlay = React.forwardRef<
-  React.ElementRef<typeof DrawerPrimitive.Overlay>,
-  React.ComponentPropsWithoutRef<typeof DrawerPrimitive.Overlay>
->(({ className, ...props }, ref) => (
-  <DrawerPrimitive.Overlay
-    ref={ref}
-    className={cn("fixed inset-0 z-50 bg-black/80", className)}
-    {...props}
-  />
-));
-DrawerOverlay.displayName = DrawerPrimitive.Overlay.displayName;
+interface DrawerFooterProps {
+  children: React.ReactNode;
+}
 
-const DrawerContent = React.forwardRef<
-  React.ElementRef<typeof DrawerPrimitive.Content>,
-  React.ComponentPropsWithoutRef<typeof DrawerPrimitive.Content>
->(({ className, children, ...props }, ref) => (
-  <DrawerPortal>
-    <DrawerOverlay />
-    <DrawerPrimitive.Content
-      ref={ref}
-      className={cn(
-        "fixed inset-y-0 right-0 z-50 flex h-full w-full max-w-md flex-col border-l bg-background",
-        className
-      )}
-      {...props}
-    >
-      {children}
-    </DrawerPrimitive.Content>
-  </DrawerPortal>
-));
-DrawerContent.displayName = "DrawerContent";
-
-const DrawerHeader = ({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLDivElement>) => (
-  <div
-    className={cn("grid gap-1.5 p-4 text-center sm:text-left", className)}
-    {...props}
-  />
-);
-DrawerHeader.displayName = "DrawerHeader";
-
-const DrawerFooter = ({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLDivElement>) => (
-  <div
-    className={cn("mt-auto flex flex-col gap-2 p-4", className)}
-    {...props}
-  />
-);
-DrawerFooter.displayName = "DrawerFooter";
-
-const DrawerTitle = React.forwardRef<
-  React.ElementRef<typeof DrawerPrimitive.Title>,
-  React.ComponentPropsWithoutRef<typeof DrawerPrimitive.Title>
->(({ className, ...props }, ref) => (
-  <DrawerPrimitive.Title
-    ref={ref}
-    className={cn(
-      "text-lg font-semibold leading-none tracking-tight",
-      className
-    )}
-    {...props}
-  />
-));
-DrawerTitle.displayName = DrawerPrimitive.Title.displayName;
-
-const DrawerDescription = React.forwardRef<
-  React.ElementRef<typeof DrawerPrimitive.Description>,
-  React.ComponentPropsWithoutRef<typeof DrawerPrimitive.Description>
->(({ className, ...props }, ref) => (
-  <DrawerPrimitive.Description
-    ref={ref}
-    className={cn("text-sm text-muted-foreground", className)}
-    {...props}
-  />
-));
-DrawerDescription.displayName = DrawerPrimitive.Description.displayName;
-
-export {
-  Drawer,
-  DrawerPortal,
-  DrawerOverlay,
-  DrawerTrigger,
-  DrawerClose,
-  DrawerContent,
-  DrawerHeader,
-  DrawerFooter,
-  DrawerTitle,
-  DrawerDescription,
+// Anchos siguiendo RUI
+const widthMap = {
+  sm: "360px",
+  md: "420px",
+  lg: "480px",
 };
+
+export const Drawer: React.FC<DrawerProps> = ({ open, onOpenChange, children }) => {
+  return (
+    <DrawerPrimitive.Root open={open} onOpenChange={onOpenChange}>
+      {children}
+    </DrawerPrimitive.Root>
+  );
+};
+
+export const DrawerTrigger = DrawerPrimitive.Trigger;
+
+export const DrawerContent: React.FC<DrawerContentProps> = ({
+  children,
+  width = "md",
+  showClose = true,
+}) => {
+  const overlayStyle: React.CSSProperties = {
+    position: "fixed",
+    inset: 0,
+    backgroundColor: "var(--color-overlay-dark)",
+    zIndex: 9998,
+    animation: "fadeIn 150ms ease-out",
+  };
+
+  const contentStyle: React.CSSProperties = {
+    position: "fixed",
+    top: 0,
+    right: 0,
+    bottom: 0,
+    width: "100%",
+    maxWidth: widthMap[width],
+    backgroundColor: "var(--color-bg-primary)",
+    boxShadow: "var(--shadow-modal)",
+    zIndex: 9999,
+    display: "flex",
+    flexDirection: "column",
+    animation: "slideInRight 200ms ease-out",
+    outline: "none",
+  };
+
+  const closeButtonStyle: React.CSSProperties = {
+    position: "absolute",
+    top: "var(--space-4)",
+    right: "var(--space-4)",
+    width: "32px",
+    height: "32px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: "var(--radius-md)",
+    border: "none",
+    background: "transparent",
+    color: "var(--color-grey-400)",
+    cursor: "pointer",
+    transition: "all 150ms ease",
+  };
+
+  return (
+    <DrawerPrimitive.Portal>
+      <DrawerPrimitive.Overlay style={overlayStyle} />
+      <DrawerPrimitive.Content style={contentStyle}>
+        {showClose && (
+          <DrawerPrimitive.Close
+            style={closeButtonStyle}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = "var(--color-grey-100)";
+              e.currentTarget.style.color = "var(--color-grey-600)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = "transparent";
+              e.currentTarget.style.color = "var(--color-grey-400)";
+            }}
+          >
+            <X size={18} />
+          </DrawerPrimitive.Close>
+        )}
+        {children}
+      </DrawerPrimitive.Content>
+    </DrawerPrimitive.Portal>
+  );
+};
+
+export const DrawerHeader: React.FC<DrawerHeaderProps> = ({ children }) => {
+  const headerStyle: React.CSSProperties = {
+    padding: "var(--space-5) var(--space-6)",
+    paddingRight: "var(--space-12)", // Espacio para el botón de cerrar
+    borderBottom: "1px solid var(--color-grey-100)",
+    flexShrink: 0,
+  };
+
+  return <div style={headerStyle}>{children}</div>;
+};
+
+export const DrawerTitle: React.FC<DrawerTitleProps> = ({ children }) => {
+  const titleStyle: React.CSSProperties = {
+    fontSize: "var(--font-size-lg)",
+    fontWeight: 600,
+    color: "var(--color-text-primary)",
+    margin: 0,
+    lineHeight: "var(--line-height-tight)",
+  };
+
+  return (
+    <DrawerPrimitive.Title style={titleStyle}>
+      {children}
+    </DrawerPrimitive.Title>
+  );
+};
+
+export const DrawerDescription: React.FC<DrawerDescriptionProps> = ({ children }) => {
+  const descStyle: React.CSSProperties = {
+    fontSize: "var(--font-size-sm)",
+    color: "var(--color-text-muted)",
+    marginTop: "var(--space-1)",
+    lineHeight: "var(--line-height-normal)",
+  };
+
+  return (
+    <DrawerPrimitive.Description style={descStyle}>
+      {children}
+    </DrawerPrimitive.Description>
+  );
+};
+
+export const DrawerBody: React.FC<DrawerBodyProps> = ({ children }) => {
+  const bodyStyle: React.CSSProperties = {
+    flex: 1,
+    overflowY: "auto",
+    padding: "var(--space-5) var(--space-6)",
+  };
+
+  return <div style={bodyStyle}>{children}</div>;
+};
+
+export const DrawerFooter: React.FC<DrawerFooterProps> = ({ children }) => {
+  const footerStyle: React.CSSProperties = {
+    padding: "var(--space-4) var(--space-6)",
+    borderTop: "1px solid var(--color-grey-100)",
+    display: "flex",
+    justifyContent: "flex-end",
+    gap: "var(--space-3)",
+    flexShrink: 0,
+    backgroundColor: "var(--color-grey-050)",
+  };
+
+  return <div style={footerStyle}>{children}</div>;
+};
+
+export const DrawerClose = DrawerPrimitive.Close;
