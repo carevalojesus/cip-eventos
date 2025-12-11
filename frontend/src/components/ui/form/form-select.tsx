@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useRef, useState, useEffect, useCallback } from "react";
+import { createPortal } from "react-dom";
 import {
   Listbox,
   ListboxButton,
@@ -34,6 +35,10 @@ export const FormSelect: React.FC<FormSelectProps> = ({
   required,
   disabled = false,
 }) => {
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const [isOpen, setIsOpen] = useState(false);
+  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0, width: 0 });
+
   const selectedOption = options.find((opt) => opt.value === value);
   const displayLabel = selectedOption?.label || placeholder;
 
@@ -41,6 +46,69 @@ export const FormSelect: React.FC<FormSelectProps> = ({
     (longest, opt) => (opt.label.length > longest.length ? opt.label : longest),
     placeholder
   );
+
+  // Calcular posición del dropdown
+  const updatePosition = useCallback(() => {
+    if (buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect();
+      setDropdownPosition({
+        top: rect.bottom + 4,
+        left: rect.left,
+        width: rect.width,
+      });
+    }
+  }, []);
+
+  // Actualizar posición cuando se abre y en scroll/resize
+  useEffect(() => {
+    if (isOpen) {
+      updatePosition();
+      window.addEventListener("scroll", updatePosition, true);
+      window.addEventListener("resize", updatePosition);
+      return () => {
+        window.removeEventListener("scroll", updatePosition, true);
+        window.removeEventListener("resize", updatePosition);
+      };
+    }
+  }, [isOpen, updatePosition]);
+
+  // Cerrar dropdown al hacer clic fuera
+  useEffect(() => {
+    if (isOpen) {
+      const handleClickOutside = (e: MouseEvent) => {
+        const target = e.target as HTMLElement;
+        // Si el click es fuera del botón y fuera del dropdown, cerrar
+        if (
+          buttonRef.current && 
+          !buttonRef.current.contains(target) &&
+          !target.closest('.form-select-options')
+        ) {
+          setIsOpen(false);
+        }
+      };
+      
+      // Usar timeout para evitar que el click que abrió el dropdown lo cierre
+      const timeoutId = setTimeout(() => {
+        document.addEventListener("mousedown", handleClickOutside);
+      }, 0);
+      
+      return () => {
+        clearTimeout(timeoutId);
+        document.removeEventListener("mousedown", handleClickOutside);
+      };
+    }
+  }, [isOpen]);
+
+  const handleButtonClick = () => {
+    if (!disabled) {
+      setIsOpen(!isOpen);
+    }
+  };
+
+  const handleSelect = (newValue: string) => {
+    onChange(newValue);
+    setIsOpen(false);
+  };
 
   const containerStyle: React.CSSProperties = {
     display: "flex",
@@ -77,17 +145,13 @@ export const FormSelect: React.FC<FormSelectProps> = ({
     outline: "none",
     whiteSpace: "nowrap",
     opacity: disabled ? 0.7 : 1,
-  };
-
-  const getButtonDynamicStyle = (isOpen: boolean): React.CSSProperties => ({
-    ...buttonStyle,
     border: `1px solid ${error ? "var(--color-red-600)" : isOpen ? "var(--color-grey-400)" : "var(--color-grey-300)"}`,
     color: selectedOption ? "var(--color-grey-900)" : "var(--color-grey-500)",
     boxShadow: isOpen
       ? "0 0 0 3px rgba(184, 178, 167, 0.25)"
       : "inset 0 2px 4px rgba(39, 36, 29, 0.06)",
     transition: "border-color 150ms ease, box-shadow 150ms ease",
-  });
+  };
 
   const chevronStyle: React.CSSProperties = {
     position: "absolute",
@@ -102,17 +166,22 @@ export const FormSelect: React.FC<FormSelectProps> = ({
   };
 
   const optionsStyle: React.CSSProperties = {
+    position: "fixed",
+    top: dropdownPosition.top,
+    left: dropdownPosition.left,
+    width: dropdownPosition.width || "auto",
+    minWidth: "200px",
     zIndex: 99999,
-    width: "var(--button-width, 100%)",
     maxHeight: "240px",
     overflowY: "auto",
     backgroundColor: "var(--color-white)",
     border: "1px solid var(--color-grey-300)",
     borderRadius: "var(--radius-md)",
-    boxShadow:
-      "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
+    boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
     padding: "var(--space-1)",
     outline: "none",
+    listStyle: "none",
+    margin: 0,
   };
 
   const getOptionStyle = (
@@ -147,35 +216,43 @@ export const FormSelect: React.FC<FormSelectProps> = ({
         </label>
       )}
 
-      <Listbox value={value} onChange={onChange} disabled={disabled}>
-        {({ open }) => (
-          <div style={{ position: "relative" }}>
-            <ListboxButton style={getButtonDynamicStyle(open)}>
-              <span style={{ visibility: "hidden", gridArea: "1 / 1" }}>
-                {longestLabel}
-              </span>
-              <span style={{ gridArea: "1 / 1" }}>{displayLabel}</span>
-              <span style={chevronStyle}>
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  style={{
-                    transform: open ? "rotate(180deg)" : "rotate(0deg)",
-                    transition: "transform 150ms ease",
-                  }}
-                >
-                  <path d="m6 9 6 6 6-6" />
-                </svg>
-              </span>
-            </ListboxButton>
+      <Listbox value={value} onChange={handleSelect} disabled={disabled}>
+        <div style={{ position: "relative" }}>
+          <ListboxButton 
+            ref={buttonRef} 
+            style={buttonStyle}
+            onClick={handleButtonClick}
+          >
+            <span style={{ visibility: "hidden", gridArea: "1 / 1" }}>
+              {longestLabel}
+            </span>
+            <span style={{ gridArea: "1 / 1" }}>{displayLabel}</span>
+            <span style={chevronStyle}>
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                style={{
+                  transform: isOpen ? "rotate(180deg)" : "rotate(0deg)",
+                  transition: "transform 150ms ease",
+                }}
+              >
+                <path d="m6 9 6 6 6-6" />
+              </svg>
+            </span>
+          </ListboxButton>
 
-            <ListboxOptions anchor={{ to: "bottom", gap: "4px" }} portal={true} className="form-select-options" style={optionsStyle}>
+          {isOpen && createPortal(
+            <ListboxOptions 
+              static 
+              className="form-select-options" 
+              style={optionsStyle}
+            >
               {options.map((option) => (
                 <ListboxOption
                   key={option.value}
@@ -212,9 +289,10 @@ export const FormSelect: React.FC<FormSelectProps> = ({
                   )}
                 </ListboxOption>
               ))}
-            </ListboxOptions>
-          </div>
-        )}
+            </ListboxOptions>,
+            document.body
+          )}
+        </div>
       </Listbox>
 
       {(error || hint) && <span style={hintStyle}>{error || hint}</span>}
