@@ -213,7 +213,9 @@ export const RuiDashboardApp: React.FC<RuiDashboardAppProps> = ({
     const handleNavigate = (href: string) => {
         if (typeof window === "undefined") return;
         window.history.pushState({}, "", href);
-        setActivePath(href);
+        // Store only pathname for routing (without query params)
+        const pathname = href.split("?")[0];
+        setActivePath(pathname);
         window.scrollTo({ top: 0, behavior: "smooth" });
     };
 
