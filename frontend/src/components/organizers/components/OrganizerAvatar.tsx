@@ -23,16 +23,14 @@ const getInitials = (name: string): string => {
 };
 
 const getAvatarColor = (name: string): string => {
+    // Usar solo colores disponibles en el sistema de diseño
     const colors = [
-        "var(--color-primary)",
+        "var(--color-cyan-500)",
+        "var(--color-green-500)",
+        "var(--color-yellow-500)",
+        "var(--color-red-400)",
         "var(--color-cyan-600)",
-        "var(--color-teal-600)",
         "var(--color-green-600)",
-        "var(--color-yellow-600)",
-        "var(--color-orange-600)",
-        "var(--color-red-600)",
-        "var(--color-pink-600)",
-        "var(--color-purple-600)",
     ];
     let hash = 0;
     for (let i = 0; i < name.length; i++) {
@@ -55,7 +53,8 @@ export const OrganizerAvatar: React.FC<OrganizerAvatarProps> = ({
         width: dimensions.width,
         height: dimensions.height,
         borderRadius: "var(--radius-md)",
-        backgroundColor: organizer.logoUrl && !imageError ? "white" : backgroundColor,
+        backgroundColor:
+            organizer.logoUrl && !imageError ? "white" : backgroundColor,
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -64,7 +63,10 @@ export const OrganizerAvatar: React.FC<OrganizerAvatarProps> = ({
         color: "white",
         flexShrink: 0,
         overflow: "hidden",
-        border: organizer.logoUrl && !imageError ? "1px solid var(--color-grey-200)" : "none",
+        border:
+            organizer.logoUrl && !imageError
+                ? "1px solid var(--color-grey-200)"
+                : "none",
     };
 
     const imageStyle: React.CSSProperties = {

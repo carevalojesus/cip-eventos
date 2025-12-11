@@ -43,8 +43,10 @@ export const OrganizerActions: React.FC<OrganizerActionsProps> = ({
 
     const getItemClass = (variant?: "danger" | "success") => {
         let className = "organizer-actions__item rui-dropdown-item";
-        if (variant === "danger") className += " organizer-actions__item--danger";
-        if (variant === "success") className += " organizer-actions__item--success";
+        if (variant === "danger")
+            className += " organizer-actions__item--danger";
+        if (variant === "success")
+            className += " organizer-actions__item--success";
         return className;
     };
 
@@ -54,7 +56,10 @@ export const OrganizerActions: React.FC<OrganizerActionsProps> = ({
                 <button
                     type="button"
                     className="organizer-actions__trigger"
-                    aria-label={t("organizers.list.actions.menu", "Menú de acciones")}
+                    aria-label={t(
+                        "organizers.list.actions.menu",
+                        "Menú de acciones"
+                    )}
                 >
                     <DotsThree size={18} weight="bold" />
                 </button>
@@ -70,7 +75,10 @@ export const OrganizerActions: React.FC<OrganizerActionsProps> = ({
                         onClick={() => handleAction("activate")}
                     >
                         <Power size={16} />
-                        {t("organizers.list.actions.activate", "Activar organizador")}
+                        {t(
+                            "organizers.list.actions.activate",
+                            "Activar organizador"
+                        )}
                     </DropdownMenuItem>
                 ) : (
                     <>
@@ -80,7 +88,10 @@ export const OrganizerActions: React.FC<OrganizerActionsProps> = ({
                                 onClick={() => handleAction("view")}
                             >
                                 <Eye size={16} />
-                                {t("organizers.list.actions.view", "Ver detalles")}
+                                {t(
+                                    "organizers.list.actions.view",
+                                    "Ver detalles"
+                                )}
                             </DropdownMenuItem>
                         )}
 

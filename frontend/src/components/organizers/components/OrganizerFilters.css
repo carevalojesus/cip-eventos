@@ -1,8 +1,14 @@
+/* ============================================
+   OrganizerFilters Styles
+   Sistema de diseño RUI
+   ============================================ */
+
 .organizer-filters {
     display: flex;
-    align-items: center;
     justify-content: space-between;
+    align-items: center;
     gap: var(--space-4);
+    margin-bottom: var(--space-4);
     flex-wrap: wrap;
 }
 
@@ -10,48 +16,64 @@
     display: flex;
     align-items: center;
     gap: var(--space-3);
+    flex-wrap: wrap;
 }
+
+/* ============================================
+   Filter Button (Filtros avanzados)
+   ============================================ */
 
 .organizer-filters__button {
     display: inline-flex;
     align-items: center;
     gap: var(--space-2);
-    padding: var(--space-2) var(--space-3);
+    height: var(--button-height-lg);
+    padding: 0 var(--space-3);
+    background-color: var(--color-bg-primary);
+    border: 1px solid var(--color-grey-200);
+    border-radius: var(--radius-md);
     font-size: var(--font-size-sm);
     font-weight: 500;
     color: var(--color-text-secondary);
-    background: var(--color-bg-primary);
-    border: 1px solid var(--color-grey-300);
-    border-radius: var(--radius-md);
     cursor: pointer;
     transition: all 150ms ease;
+    position: relative;
 }
 
 .organizer-filters__button:hover {
-    background: var(--color-grey-50);
-    border-color: var(--color-grey-400);
-    color: var(--color-text-primary);
+    border-color: var(--color-grey-300);
 }
 
 .organizer-filters__button--active {
-    background: var(--color-primary-light);
-    border-color: var(--color-primary);
-    color: var(--color-primary);
+    border-color: var(--color-red-400);
+    color: var(--color-red-600);
 }
 
+.organizer-filters__button--active:hover {
+    border-color: var(--color-red-500);
+}
+
+/* ============================================
+   Badge Contador
+   ============================================ */
+
 .organizer-filters__badge {
-    display: inline-flex;
+    display: flex;
     align-items: center;
     justify-content: center;
     min-width: 18px;
     height: 18px;
-    padding: 0 var(--space-1);
-    font-size: var(--font-size-xs);
-    font-weight: 600;
+    padding: 0 5px;
+    background-color: var(--color-red-500);
     color: white;
-    background: var(--color-primary);
-    border-radius: var(--radius-full);
+    font-size: 11px;
+    font-weight: 600;
+    border-radius: 9999px;
 }
+
+/* ============================================
+   Popover
+   ============================================ */
 
 .organizer-filters__popover-container {
     position: relative;
@@ -59,22 +81,24 @@
 
 .organizer-filters__popover {
     position: absolute;
-    top: calc(100% + var(--space-2));
+    top: calc(100% + 8px);
     right: 0;
-    z-index: 100;
     width: 280px;
-    padding: var(--space-4);
-    background: var(--color-bg-primary);
+    background-color: var(--color-bg-primary);
     border: 1px solid var(--color-grey-200);
     border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-lg);
+    box-shadow: var(--shadow-lg), var(--shadow-sm);
+    z-index: var(--z-dropdown);
+    padding: var(--space-4);
 }
 
 .organizer-filters__popover-header {
     display: flex;
-    align-items: center;
     justify-content: space-between;
+    align-items: center;
     margin-bottom: var(--space-4);
+    padding-bottom: var(--space-3);
+    border-bottom: 1px solid var(--color-grey-100);
 }
 
 .organizer-filters__popover-title {
@@ -84,24 +108,27 @@
 }
 
 .organizer-filters__close-button {
+    width: 24px;
+    height: 24px;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 24px;
-    height: 24px;
-    padding: 0;
-    color: var(--color-text-tertiary);
-    background: transparent;
+    background-color: transparent;
     border: none;
     border-radius: var(--radius-sm);
+    color: var(--color-grey-400);
     cursor: pointer;
     transition: all 150ms ease;
 }
 
 .organizer-filters__close-button:hover {
-    background: var(--color-grey-100);
-    color: var(--color-text-primary);
+    background-color: var(--color-grey-100);
+    color: var(--color-grey-600);
 }
+
+/* ============================================
+   Filter Group
+   ============================================ */
 
 .organizer-filters__filter-group {
     margin-bottom: var(--space-4);
@@ -109,36 +136,40 @@
 
 .organizer-filters__filter-label {
     display: block;
-    margin-bottom: var(--space-2);
     font-size: var(--font-size-xs);
     font-weight: 500;
-    color: var(--color-text-secondary);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-2);
 }
 
 .organizer-filters__select-container {
     width: 100%;
 }
 
+/* ============================================
+   Clear Filters Link
+   ============================================ */
+
 .organizer-filters__clear {
     display: block;
     width: 100%;
-    padding: var(--space-2);
-    margin-top: var(--space-3);
-    font-size: var(--font-size-sm);
-    font-weight: 500;
-    color: var(--color-primary);
-    background: transparent;
+    text-align: right;
+    font-size: var(--font-size-xs);
+    color: var(--color-cyan-600);
+    background: none;
     border: none;
-    border-top: 1px solid var(--color-grey-200);
     cursor: pointer;
-    transition: color 150ms ease;
+    padding: var(--space-2) 0;
+    margin-top: var(--space-2);
 }
 
 .organizer-filters__clear:hover {
-    color: var(--color-primary-dark);
+    text-decoration: underline;
 }
+
+/* ============================================
+   Responsive
+   ============================================ */
 
 @media (max-width: 768px) {
     .organizer-filters {
@@ -148,5 +179,12 @@
 
     .organizer-filters__group {
         justify-content: flex-end;
+    }
+
+    .organizer-filters__popover {
+        right: auto;
+        left: 0;
+        width: 100%;
+        max-width: 280px;
     }
 }

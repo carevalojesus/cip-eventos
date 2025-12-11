@@ -20,18 +20,31 @@ export const OrganizerEmptyState: React.FC<OrganizerEmptyStateProps> = ({
             illustration={hasFilters ? "no-results" : "no-users"}
             title={
                 hasFilters
-                    ? t("organizers.list.empty.no_results", "No se encontraron organizadores")
+                    ? t(
+                          "organizers.list.empty.no_results",
+                          "No se encontraron organizadores"
+                      )
                     : t("organizers.list.empty.title", "No hay organizadores")
             }
             description={
                 hasFilters
-                    ? t("organizers.list.empty.try_different", "Intenta con otros filtros de búsqueda.")
-                    : t("organizers.list.empty.description", "Crea tu primer organizador para comenzar.")
+                    ? t(
+                          "organizers.list.empty.try_different",
+                          "Intenta con otros filtros de búsqueda."
+                      )
+                    : t(
+                          "organizers.list.empty.description",
+                          "Crea tu primer organizador para comenzar."
+                      )
             }
             size="md"
             action={
                 !hasFilters ? (
-                    <Button variant="primary" size="md" onClick={onCreateOrganizer}>
+                    <Button
+                        variant="primary"
+                        size="md"
+                        onClick={onCreateOrganizer}
+                    >
                         <Plus size={18} weight="bold" />
                         {t("organizers.list.new", "Nuevo Organizador")}
                     </Button>

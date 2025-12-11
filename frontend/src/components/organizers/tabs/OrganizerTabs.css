@@ -1,19 +1,36 @@
+/* ============================================
+   OrganizerTabs Styles
+   Sistema de diseño RUI
+   ============================================ */
+
 .organizer-tab {
     display: flex;
     flex-direction: column;
-    gap: var(--space-6);
+    gap: var(--space-5);
 }
 
+/* ============================================
+   Section Card
+   ============================================ */
+
 .organizer-tab__section {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-4);
+    background-color: var(--color-bg-primary);
+    border: 1px solid var(--color-grey-200);
+    border-radius: var(--radius-lg);
+    padding: var(--space-5);
 }
+
+/* ============================================
+   Section Header
+   ============================================ */
 
 .organizer-tab__section-header {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     gap: var(--space-3);
+    margin-bottom: var(--space-4);
+    padding-bottom: var(--space-3);
+    border-bottom: 1px solid var(--color-grey-100);
 }
 
 .organizer-tab__section-icon {
@@ -23,72 +40,82 @@
     width: 36px;
     height: 36px;
     border-radius: var(--radius-md);
+    background-color: var(--color-grey-050);
+    color: var(--color-grey-600);
     flex-shrink: 0;
 }
 
 .organizer-tab__section-icon--info {
-    background: var(--color-primary-light);
-    color: var(--color-primary);
-}
-
-.organizer-tab__section-icon--contact {
-    background: var(--color-cyan-100);
+    background-color: var(--color-cyan-050);
     color: var(--color-cyan-600);
 }
 
+.organizer-tab__section-icon--contact {
+    background-color: var(--color-green-050);
+    color: var(--color-green-600);
+}
+
 .organizer-tab__section-icon--logo {
-    background: var(--color-purple-100);
-    color: var(--color-purple-600);
+    background-color: var(--color-grey-100);
+    color: var(--color-grey-600);
 }
 
 .organizer-tab__section-icon--fiscal {
-    background: var(--color-orange-100);
-    color: var(--color-orange-600);
+    background-color: var(--color-yellow-050);
+    color: var(--color-yellow-700);
 }
 
 .organizer-tab__section-icon--config {
-    background: var(--color-green-100);
+    background-color: var(--color-green-050);
     color: var(--color-green-600);
 }
 
 .organizer-tab__section-icon--terms {
-    background: var(--color-yellow-100);
+    background-color: var(--color-yellow-050);
     color: var(--color-yellow-700);
 }
 
 .organizer-tab__section-icon--privacy {
-    background: var(--color-teal-100);
-    color: var(--color-teal-600);
+    background-color: var(--color-cyan-050);
+    color: var(--color-cyan-600);
 }
 
 .organizer-tab__section-title-group {
     display: flex;
     flex-direction: column;
-    gap: var(--space-1);
+    gap: 2px;
 }
 
 .organizer-tab__section-title {
-    margin: 0;
-    font-size: var(--font-size-md);
+    font-size: var(--font-size-base);
     font-weight: 600;
     color: var(--color-text-primary);
+    margin: 0;
 }
 
 .organizer-tab__section-subtitle {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
     margin: 0;
-    font-size: var(--font-size-sm);
-    color: var(--color-text-secondary);
 }
+
+/* ============================================
+   Form Grid
+   ============================================ */
 
 .organizer-tab__form-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: 1fr 1fr;
     gap: var(--space-4);
 }
 
 .organizer-tab__form-grid--full {
     grid-column: 1 / -1;
 }
+
+/* ============================================
+   Logo Preview
+   ============================================ */
 
 .organizer-tab__logo-preview {
     grid-column: 1 / -1;
@@ -97,7 +124,7 @@
     justify-content: center;
     padding: var(--space-4);
     background: var(--color-grey-050);
-    border: 1px solid var(--color-grey-200);
+    border: 1px dashed var(--color-grey-300);
     border-radius: var(--radius-md);
 }
 
@@ -106,6 +133,10 @@
     max-height: 100px;
     object-fit: contain;
 }
+
+/* ============================================
+   Switch Row
+   ============================================ */
 
 .organizer-tab__switch-row {
     display: flex;
@@ -120,7 +151,7 @@
 .organizer-tab__switch-label {
     display: flex;
     flex-direction: column;
-    gap: var(--space-1);
+    gap: 2px;
 }
 
 .organizer-tab__switch-title {
@@ -137,31 +168,59 @@
     color: var(--color-text-muted);
 }
 
+/* ============================================
+   Info Note
+   ============================================ */
+
 .organizer-tab__info-note {
     display: flex;
     align-items: flex-start;
     gap: var(--space-2);
     padding: var(--space-3);
-    background: var(--color-info-light);
+    background: var(--color-cyan-050);
     border-radius: var(--radius-md);
     font-size: var(--font-size-sm);
-    color: var(--color-info-dark);
+    color: var(--color-cyan-700);
 }
+
+.organizer-tab__info-note svg {
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+/* ============================================
+   Required Note
+   ============================================ */
 
 .organizer-tab__required-note {
     display: flex;
     align-items: center;
     gap: var(--space-1);
     font-size: var(--font-size-xs);
-    color: var(--color-text-secondary);
+    color: var(--color-text-muted);
+    margin-top: var(--space-4);
 }
 
 .organizer-tab__required-asterisk {
     color: var(--color-red-500);
 }
 
+/* ============================================
+   Responsive
+   ============================================ */
+
 @media (max-width: 768px) {
     .organizer-tab__form-grid {
         grid-template-columns: 1fr;
+    }
+
+    .organizer-tab__section {
+        padding: var(--space-4);
+    }
+
+    .organizer-tab__switch-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-3);
     }
 }

@@ -20,7 +20,7 @@
 }
 
 .organizer-detail__back:hover {
-    color: var(--color-primary);
+    color: var(--color-red-500);
 }
 
 .organizer-detail__header {
@@ -108,7 +108,7 @@
 }
 
 .organizer-detail__org-meta-item a {
-    color: var(--color-primary);
+    color: var(--color-cyan-600);
     text-decoration: none;
 }
 
@@ -173,8 +173,8 @@
 }
 
 .organizer-detail__tab--active {
-    color: var(--color-primary);
-    border-bottom-color: var(--color-primary);
+    color: var(--color-red-600);
+    border-bottom-color: var(--color-red-500);
 }
 
 .organizer-detail__layout {

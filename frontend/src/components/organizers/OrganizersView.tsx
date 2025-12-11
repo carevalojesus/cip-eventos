@@ -31,7 +31,9 @@ interface OrganizersViewProps {
 
 const ITEMS_PER_PAGE = 10;
 
-export const OrganizersView: React.FC<OrganizersViewProps> = ({ onNavigate }) => {
+export const OrganizersView: React.FC<OrganizersViewProps> = ({
+    onNavigate,
+}) => {
     const { t, i18n } = useTranslation();
     const isEnglish = i18n.language?.startsWith("en");
 
@@ -60,7 +62,10 @@ export const OrganizersView: React.FC<OrganizersViewProps> = ({ onNavigate }) =>
             } catch (err) {
                 console.error("Error fetching organizers:", err);
                 toast.error(
-                    t("organizers.list.error_loading", "Error al cargar organizadores")
+                    t(
+                        "organizers.list.error_loading",
+                        "Error al cargar organizadores"
+                    )
                 );
             } finally {
                 setLoading(false);
@@ -158,17 +163,25 @@ export const OrganizersView: React.FC<OrganizersViewProps> = ({ onNavigate }) =>
             await organizersService.remove(deleteDialog.data.id);
             setOrganizers((prev) =>
                 prev.map((o) =>
-                    o.id === deleteDialog.data?.id ? { ...o, isActive: false } : o
+                    o.id === deleteDialog.data?.id
+                        ? { ...o, isActive: false }
+                        : o
                 )
             );
             toast.success(
-                t("organizers.list.delete.success", "Organizador desactivado correctamente")
+                t(
+                    "organizers.list.delete.success",
+                    "Organizador desactivado correctamente"
+                )
             );
             deleteDialog.reset();
         } catch (error) {
             console.error("Error deleting organizer:", error);
             toast.error(
-                t("organizers.list.delete.error", "Error al eliminar el organizador")
+                t(
+                    "organizers.list.delete.error",
+                    "Error al eliminar el organizador"
+                )
             );
             deleteDialog.setLoading(false);
         }
@@ -180,22 +193,33 @@ export const OrganizersView: React.FC<OrganizersViewProps> = ({ onNavigate }) =>
 
         activateDialog.setLoading(true);
         try {
-            const updated = await organizersService.update(activateDialog.data.id, {
-                isActive: true,
-            });
+            const updated = await organizersService.update(
+                activateDialog.data.id,
+                {
+                    isActive: true,
+                }
+            );
             setOrganizers((prev) =>
                 prev.map((o) =>
-                    o.id === activateDialog.data?.id ? { ...o, isActive: updated.isActive } : o
+                    o.id === activateDialog.data?.id
+                        ? { ...o, isActive: updated.isActive }
+                        : o
                 )
             );
             toast.success(
-                t("organizers.list.activate.success", "Organizador activado correctamente")
+                t(
+                    "organizers.list.activate.success",
+                    "Organizador activado correctamente"
+                )
             );
             activateDialog.reset();
         } catch (error) {
             console.error("Error activating organizer:", error);
             toast.error(
-                t("organizers.list.activate.error", "Error al activar el organizador")
+                t(
+                    "organizers.list.activate.error",
+                    "Error al activar el organizador"
+                )
             );
             activateDialog.setLoading(false);
         }
@@ -259,7 +283,9 @@ export const OrganizersView: React.FC<OrganizersViewProps> = ({ onNavigate }) =>
                                 padding: "var(--space-4)",
                                 alignItems: "center",
                                 borderBottom:
-                                    index < 4 ? "1px solid var(--color-grey-100)" : "none",
+                                    index < 4
+                                        ? "1px solid var(--color-grey-100)"
+                                        : "none",
                             }}
                         >
                             <div
@@ -350,7 +376,10 @@ export const OrganizersView: React.FC<OrganizersViewProps> = ({ onNavigate }) =>
                         onPrevPage={pagination.goToPrevPage}
                         isFirstPage={pagination.isFirstPage}
                         isLastPage={pagination.isLastPage}
-                        itemLabel={t("organizers.list.pagination.organizers", "organizadores")}
+                        itemLabel={t(
+                            "organizers.list.pagination.organizers",
+                            "organizadores"
+                        )}
                     />
                 </>
             )}
@@ -360,7 +389,10 @@ export const OrganizersView: React.FC<OrganizersViewProps> = ({ onNavigate }) =>
                 isOpen={deleteDialog.isOpen}
                 onClose={deleteDialog.close}
                 onConfirm={handleConfirmDelete}
-                title={t("organizers.list.delete.title", "Desactivar organizador")}
+                title={t(
+                    "organizers.list.delete.title",
+                    "Desactivar organizador"
+                )}
                 description={
                     deleteDialog.data
                         ? t("organizers.list.delete.description", {
@@ -380,7 +412,10 @@ export const OrganizersView: React.FC<OrganizersViewProps> = ({ onNavigate }) =>
                 isOpen={activateDialog.isOpen}
                 onClose={activateDialog.close}
                 onConfirm={handleConfirmActivate}
-                title={t("organizers.list.activate.title", "Activar organizador")}
+                title={t(
+                    "organizers.list.activate.title",
+                    "Activar organizador"
+                )}
                 description={
                     activateDialog.data
                         ? t("organizers.list.activate.description", {

@@ -48,7 +48,10 @@ export function OrganizerFiscalTab({
                     </div>
                     <div className="organizer-tab__section-title-group">
                         <h3 className="organizer-tab__section-title">
-                            {t("organizers.detail.section.tax_info", "Datos Tributarios")}
+                            {t(
+                                "organizers.detail.section.tax_info",
+                                "Datos Tributarios"
+                            )}
                         </h3>
                         <p className="organizer-tab__section-subtitle">
                             {t(
@@ -64,16 +67,24 @@ export function OrganizerFiscalTab({
                         label={t("organizers.field.ruc", "RUC")}
                         value={formData.ruc}
                         onChange={(e) => onFormChange("ruc", e.target.value)}
-                        placeholder={t("organizers.placeholder.ruc", "20123456789")}
+                        placeholder={t(
+                            "organizers.placeholder.ruc",
+                            "20123456789"
+                        )}
                         leftIcon={<IdentificationCard size={16} />}
                         disabled={!isEditing}
                         maxLength={11}
                         error={errors.ruc}
                     />
                     <Input
-                        label={t("organizers.field.business_name", "Razón Social")}
+                        label={t(
+                            "organizers.field.business_name",
+                            "Razón Social"
+                        )}
                         value={formData.businessName}
-                        onChange={(e) => onFormChange("businessName", e.target.value)}
+                        onChange={(e) =>
+                            onFormChange("businessName", e.target.value)
+                        }
                         placeholder={t(
                             "organizers.placeholder.business_name",
                             "EMPRESA S.A.C."
@@ -83,9 +94,14 @@ export function OrganizerFiscalTab({
                     />
                     <div className="organizer-tab__form-grid--full">
                         <Input
-                            label={t("organizers.field.fiscal_address", "Dirección Fiscal")}
+                            label={t(
+                                "organizers.field.fiscal_address",
+                                "Dirección Fiscal"
+                            )}
                             value={formData.fiscalAddress}
-                            onChange={(e) => onFormChange("fiscalAddress", e.target.value)}
+                            onChange={(e) =>
+                                onFormChange("fiscalAddress", e.target.value)
+                            }
                             placeholder={t(
                                 "organizers.placeholder.fiscal_address",
                                 "Av. Principal 123, Lima"
@@ -106,7 +122,10 @@ export function OrganizerFiscalTab({
                     </div>
                     <div className="organizer-tab__section-title-group">
                         <h3 className="organizer-tab__section-title">
-                            {t("organizers.detail.section.config", "Configuración")}
+                            {t(
+                                "organizers.detail.section.config",
+                                "Configuración"
+                            )}
                         </h3>
                         <p className="organizer-tab__section-subtitle">
                             {t(
@@ -121,7 +140,9 @@ export function OrganizerFiscalTab({
                     <FormSelect
                         label={t("organizers.field.currency", "Moneda Base")}
                         value={formData.baseCurrency}
-                        onChange={(value) => onFormChange("baseCurrency", value)}
+                        onChange={(value) =>
+                            onFormChange("baseCurrency", value)
+                        }
                         options={currencyOptions}
                         disabled={!isEditing}
                         error={errors.baseCurrency}

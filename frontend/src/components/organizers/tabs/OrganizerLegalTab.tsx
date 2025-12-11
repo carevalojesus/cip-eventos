@@ -48,7 +48,9 @@ export function OrganizerLegalTab({
                     <div className="organizer-tab__form-grid--full">
                         <Textarea
                             value={formData.termsText}
-                            onChange={(e) => onFormChange("termsText", e.target.value)}
+                            onChange={(e) =>
+                                onFormChange("termsText", e.target.value)
+                            }
                             placeholder={t(
                                 "organizers.placeholder.terms",
                                 "Ingrese los términos y condiciones del organizador..."
@@ -86,7 +88,9 @@ export function OrganizerLegalTab({
                     <div className="organizer-tab__form-grid--full">
                         <Textarea
                             value={formData.privacyText}
-                            onChange={(e) => onFormChange("privacyText", e.target.value)}
+                            onChange={(e) =>
+                                onFormChange("privacyText", e.target.value)
+                            }
                             placeholder={t(
                                 "organizers.placeholder.privacy",
                                 "Ingrese la política de privacidad del organizador..."

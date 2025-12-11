@@ -47,46 +47,68 @@ export const OrganizerTable: React.FC<OrganizerTableProps> = ({
                         </tr>
                     </thead>
                     <tbody>
-                        {Array.from({ length: skeletonRows }).map((_, index) => (
-                            <tr key={index} className="organizer-table__row">
-                                <td className="organizer-table__cell">
-                                    <div className="organizer-table__org-cell">
-                                        <Skeleton
-                                            width={40}
-                                            height={40}
-                                            style={{ borderRadius: "var(--radius-md)" }}
-                                        />
-                                        <div className="organizer-table__org-info">
-                                            <Skeleton width={120 + Math.random() * 60} height={14} />
-                                            <Skeleton width={100 + Math.random() * 40} height={12} />
+                        {Array.from({ length: skeletonRows }).map(
+                            (_, index) => (
+                                <tr
+                                    key={index}
+                                    className="organizer-table__row"
+                                >
+                                    <td className="organizer-table__cell">
+                                        <div className="organizer-table__org-cell">
+                                            <Skeleton
+                                                width={40}
+                                                height={40}
+                                                style={{
+                                                    borderRadius:
+                                                        "var(--radius-md)",
+                                                }}
+                                            />
+                                            <div className="organizer-table__org-info">
+                                                <Skeleton
+                                                    width={
+                                                        120 + Math.random() * 60
+                                                    }
+                                                    height={14}
+                                                />
+                                                <Skeleton
+                                                    width={
+                                                        100 + Math.random() * 40
+                                                    }
+                                                    height={12}
+                                                />
+                                            </div>
                                         </div>
-                                    </div>
-                                </td>
-                                <td className="organizer-table__cell">
-                                    <Skeleton width={100} height={14} />
-                                </td>
-                                <td className="organizer-table__cell">
-                                    <Skeleton width={50} height={14} />
-                                </td>
-                                <td className="organizer-table__cell">
-                                    <Skeleton
-                                        width={70}
-                                        height={24}
-                                        style={{ borderRadius: "var(--radius-full)" }}
-                                    />
-                                </td>
-                                <td className="organizer-table__cell organizer-table__cell--actions">
-                                    <Skeleton
-                                        width={28}
-                                        height={28}
-                                        style={{
-                                            borderRadius: "var(--radius-md)",
-                                            marginLeft: "auto",
-                                        }}
-                                    />
-                                </td>
-                            </tr>
-                        ))}
+                                    </td>
+                                    <td className="organizer-table__cell">
+                                        <Skeleton width={100} height={14} />
+                                    </td>
+                                    <td className="organizer-table__cell">
+                                        <Skeleton width={50} height={14} />
+                                    </td>
+                                    <td className="organizer-table__cell">
+                                        <Skeleton
+                                            width={70}
+                                            height={24}
+                                            style={{
+                                                borderRadius:
+                                                    "var(--radius-full)",
+                                            }}
+                                        />
+                                    </td>
+                                    <td className="organizer-table__cell organizer-table__cell--actions">
+                                        <Skeleton
+                                            width={28}
+                                            height={28}
+                                            style={{
+                                                borderRadius:
+                                                    "var(--radius-md)",
+                                                marginLeft: "auto",
+                                            }}
+                                        />
+                                    </td>
+                                </tr>
+                            )
+                        )}
                     </tbody>
                 </table>
             </div>
@@ -99,7 +121,10 @@ export const OrganizerTable: React.FC<OrganizerTableProps> = ({
                 <thead>
                     <tr>
                         <th className="organizer-table__header">
-                            {t("organizers.list.table.organizer", "Organizador")}
+                            {t(
+                                "organizers.list.table.organizer",
+                                "Organizador"
+                            )}
                         </th>
                         <th className="organizer-table__header organizer-table__header--contact">
                             {t("organizers.list.table.contact", "Contacto")}
@@ -119,10 +144,15 @@ export const OrganizerTable: React.FC<OrganizerTableProps> = ({
                         <tr key={organizer.id} className="organizer-table__row">
                             <td className="organizer-table__cell">
                                 <div className="organizer-table__org-cell">
-                                    <OrganizerAvatar organizer={organizer} size="lg" />
+                                    <OrganizerAvatar
+                                        organizer={organizer}
+                                        size="lg"
+                                    />
                                     <div className="organizer-table__org-info">
                                         <button
-                                            onClick={() => onOrganizerClick(organizer.id)}
+                                            onClick={() =>
+                                                onOrganizerClick(organizer.id)
+                                            }
                                             className="organizer-table__org-name"
                                         >
                                             {organizer.name}
@@ -153,13 +183,19 @@ export const OrganizerTable: React.FC<OrganizerTableProps> = ({
                                                 rel="noopener noreferrer"
                                                 className="organizer-table__link"
                                             >
-                                                {organizer.website.replace(/^https?:\/\//, "")}
+                                                {organizer.website.replace(
+                                                    /^https?:\/\//,
+                                                    ""
+                                                )}
                                             </a>
                                         </div>
                                     )}
                                     {!organizer.email && !organizer.website && (
                                         <span className="organizer-table__no-data">
-                                            {t("common.not_specified", "No especificado")}
+                                            {t(
+                                                "common.not_specified",
+                                                "No especificado"
+                                            )}
                                         </span>
                                     )}
                                 </div>
@@ -185,7 +221,9 @@ export const OrganizerTable: React.FC<OrganizerTableProps> = ({
                             </td>
 
                             <td className="organizer-table__cell">
-                                <OrganizerStatusBadge isActive={organizer.isActive} />
+                                <OrganizerStatusBadge
+                                    isActive={organizer.isActive}
+                                />
                             </td>
 
                             <td className="organizer-table__cell organizer-table__cell--actions">
@@ -193,7 +231,9 @@ export const OrganizerTable: React.FC<OrganizerTableProps> = ({
                                     <OrganizerActions
                                         organizer={organizer}
                                         onAction={onAction}
-                                        onView={() => onOrganizerClick(organizer.id)}
+                                        onView={() =>
+                                            onOrganizerClick(organizer.id)
+                                        }
                                     />
                                 </div>
                             </td>

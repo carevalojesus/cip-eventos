@@ -57,16 +57,24 @@ export const OrganizerFilters: React.FC<OrganizerFiltersProps> = ({
         () => [
             {
                 value: "all",
-                label: t("organizers.list.filter.all_status", "Todos los estados"),
+                label: t(
+                    "organizers.list.filter.all_status",
+                    "Todos los estados"
+                ),
             },
             { value: "active", label: t("organizers.status.active", "Activo") },
-            { value: "inactive", label: t("organizers.status.inactive", "Inactivo") },
+            {
+                value: "inactive",
+                label: t("organizers.status.inactive", "Inactivo"),
+            },
         ],
         [t]
     );
 
     const isFilterButtonActive = isPopoverOpen || advancedFiltersCount > 0;
-    const filterButtonClass = `organizer-filters__button ${isFilterButtonActive ? "organizer-filters__button--active" : ""}`;
+    const filterButtonClass = `organizer-filters__button ${
+        isFilterButtonActive ? "organizer-filters__button--active" : ""
+    }`;
 
     return (
         <div className="organizer-filters">
@@ -78,7 +86,10 @@ export const OrganizerFilters: React.FC<OrganizerFiltersProps> = ({
                     "Buscar por nombre, RUC o email..."
                 )}
                 maxWidth="380px"
-                ariaLabel={t("organizers.list.search_aria", "Buscar organizadores")}
+                ariaLabel={t(
+                    "organizers.list.search_aria",
+                    "Buscar organizadores"
+                )}
             />
 
             <div className="organizer-filters__group">
@@ -91,7 +102,9 @@ export const OrganizerFilters: React.FC<OrganizerFiltersProps> = ({
                     >
                         <SlidersHorizontal
                             size={16}
-                            weight={advancedFiltersCount > 0 ? "fill" : "regular"}
+                            weight={
+                                advancedFiltersCount > 0 ? "fill" : "regular"
+                            }
                         />
                         {t("organizers.list.filter.advanced", "Filtros")}
                         {advancedFiltersCount > 0 && (
@@ -102,7 +115,10 @@ export const OrganizerFilters: React.FC<OrganizerFiltersProps> = ({
                     </button>
 
                     {isPopoverOpen && (
-                        <div ref={popoverRef} className="organizer-filters__popover">
+                        <div
+                            ref={popoverRef}
+                            className="organizer-filters__popover"
+                        >
                             <div className="organizer-filters__popover-header">
                                 <span className="organizer-filters__popover-title">
                                     {t(
@@ -121,7 +137,10 @@ export const OrganizerFilters: React.FC<OrganizerFiltersProps> = ({
 
                             <div className="organizer-filters__filter-group">
                                 <label className="organizer-filters__filter-label">
-                                    {t("organizers.list.filter.status_label", "Estado")}
+                                    {t(
+                                        "organizers.list.filter.status_label",
+                                        "Estado"
+                                    )}
                                 </label>
                                 <div className="organizer-filters__select-container">
                                     <Select
@@ -146,7 +165,10 @@ export const OrganizerFilters: React.FC<OrganizerFiltersProps> = ({
                                         setIsPopoverOpen(false);
                                     }}
                                 >
-                                    {t("organizers.list.filter.clear", "Limpiar filtros")}
+                                    {t(
+                                        "organizers.list.filter.clear",
+                                        "Limpiar filtros"
+                                    )}
                                 </button>
                             )}
                         </div>

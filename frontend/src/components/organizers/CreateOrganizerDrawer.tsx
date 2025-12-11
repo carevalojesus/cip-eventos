@@ -104,7 +104,10 @@ export const CreateOrganizerDrawer: React.FC<CreateOrganizerDrawerProps> = ({
 
             await organizersService.create(dto);
             toast.success(
-                t("organizers.create.success", "Organizador creado correctamente")
+                t(
+                    "organizers.create.success",
+                    "Organizador creado correctamente"
+                )
             );
             reset();
             onClose();
@@ -185,11 +188,17 @@ export const CreateOrganizerDrawer: React.FC<CreateOrganizerDrawerProps> = ({
                     </DrawerDescription>
                 </DrawerHeader>
                 <DrawerBody>
-                    <form id="create-organizer-form" onSubmit={handleFormSubmit}>
+                    <form
+                        id="create-organizer-form"
+                        onSubmit={handleFormSubmit}
+                    >
                         {/* Section 1: Basic Info */}
                         <div style={sectionStyle}>
                             <h3 style={sectionTitleStyle}>
-                                {t("organizers.section.basic", "Información Básica")}
+                                {t(
+                                    "organizers.section.basic",
+                                    "Información Básica"
+                                )}
                             </h3>
                             <p style={sectionDescStyle}>
                                 {t(
@@ -205,7 +214,10 @@ export const CreateOrganizerDrawer: React.FC<CreateOrganizerDrawerProps> = ({
                                         <Input
                                             {...field}
                                             type="text"
-                                            label={t("organizers.field.name", "Nombre")}
+                                            label={t(
+                                                "organizers.field.name",
+                                                "Nombre"
+                                            )}
                                             placeholder={t(
                                                 "organizers.placeholder.name",
                                                 "Colegio de Ingenieros del Perú"
@@ -223,7 +235,10 @@ export const CreateOrganizerDrawer: React.FC<CreateOrganizerDrawerProps> = ({
                                         <Input
                                             {...field}
                                             type="email"
-                                            label={t("organizers.field.email", "Email de contacto")}
+                                            label={t(
+                                                "organizers.field.email",
+                                                "Email de contacto"
+                                            )}
                                             placeholder={t(
                                                 "organizers.placeholder.email",
                                                 "contacto@organizador.com"
@@ -240,7 +255,10 @@ export const CreateOrganizerDrawer: React.FC<CreateOrganizerDrawerProps> = ({
                                         <Input
                                             {...field}
                                             type="url"
-                                            label={t("organizers.field.website", "Sitio web")}
+                                            label={t(
+                                                "organizers.field.website",
+                                                "Sitio web"
+                                            )}
                                             placeholder={t(
                                                 "organizers.placeholder.website",
                                                 "https://www.ejemplo.com"
@@ -257,7 +275,10 @@ export const CreateOrganizerDrawer: React.FC<CreateOrganizerDrawerProps> = ({
                                         <Input
                                             {...field}
                                             type="url"
-                                            label={t("organizers.field.logo", "URL del Logo")}
+                                            label={t(
+                                                "organizers.field.logo",
+                                                "URL del Logo"
+                                            )}
                                             placeholder={t(
                                                 "organizers.placeholder.logo",
                                                 "https://ejemplo.com/logo.png"
@@ -272,7 +293,10 @@ export const CreateOrganizerDrawer: React.FC<CreateOrganizerDrawerProps> = ({
                         {/* Section 2: Fiscal Data */}
                         <div style={sectionStyle}>
                             <h3 style={sectionTitleStyle}>
-                                {t("organizers.section.fiscal", "Datos Fiscales")}
+                                {t(
+                                    "organizers.section.fiscal",
+                                    "Datos Fiscales"
+                                )}
                             </h3>
                             <p style={sectionDescStyle}>
                                 {t(
@@ -288,13 +312,18 @@ export const CreateOrganizerDrawer: React.FC<CreateOrganizerDrawerProps> = ({
                                         <Input
                                             {...field}
                                             type="text"
-                                            label={t("organizers.field.ruc", "RUC")}
+                                            label={t(
+                                                "organizers.field.ruc",
+                                                "RUC"
+                                            )}
                                             placeholder={t(
                                                 "organizers.placeholder.ruc",
                                                 "20123456789"
                                             )}
                                             error={errors.ruc?.message}
-                                            leftIcon={<IdentificationCard size={16} />}
+                                            leftIcon={
+                                                <IdentificationCard size={16} />
+                                            }
                                             maxLength={11}
                                         />
                                     )}
@@ -306,7 +335,10 @@ export const CreateOrganizerDrawer: React.FC<CreateOrganizerDrawerProps> = ({
                                         <Input
                                             {...field}
                                             type="text"
-                                            label={t("organizers.field.business_name", "Razón Social")}
+                                            label={t(
+                                                "organizers.field.business_name",
+                                                "Razón Social"
+                                            )}
                                             placeholder={t(
                                                 "organizers.placeholder.business_name",
                                                 "EMPRESA S.A.C."
@@ -330,7 +362,9 @@ export const CreateOrganizerDrawer: React.FC<CreateOrganizerDrawerProps> = ({
                                                 "organizers.placeholder.fiscal_address",
                                                 "Av. Principal 123, Lima"
                                             )}
-                                            error={errors.fiscalAddress?.message}
+                                            error={
+                                                errors.fiscalAddress?.message
+                                            }
                                             leftIcon={<MapPin size={16} />}
                                         />
                                     )}
@@ -340,7 +374,10 @@ export const CreateOrganizerDrawer: React.FC<CreateOrganizerDrawerProps> = ({
                                     control={control}
                                     render={({ field }) => (
                                         <FormSelect
-                                            label={t("organizers.field.currency", "Moneda Base")}
+                                            label={t(
+                                                "organizers.field.currency",
+                                                "Moneda Base"
+                                            )}
                                             value={field.value}
                                             onChange={field.onChange}
                                             options={currencyOptions}
@@ -357,7 +394,8 @@ export const CreateOrganizerDrawer: React.FC<CreateOrganizerDrawerProps> = ({
                                             <div style={switchLabelStyle}>
                                                 <span
                                                     style={{
-                                                        fontSize: "var(--font-size-sm)",
+                                                        fontSize:
+                                                            "var(--font-size-sm)",
                                                         fontWeight: 500,
                                                         color: "var(--color-text-primary)",
                                                         display: "flex",
@@ -373,7 +411,8 @@ export const CreateOrganizerDrawer: React.FC<CreateOrganizerDrawerProps> = ({
                                                 </span>
                                                 <span
                                                     style={{
-                                                        fontSize: "var(--font-size-xs)",
+                                                        fontSize:
+                                                            "var(--font-size-xs)",
                                                         color: "var(--color-text-muted)",
                                                     }}
                                                 >

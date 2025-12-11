@@ -1,10 +1,5 @@
 import { useTranslation } from "react-i18next";
-import {
-    Buildings,
-    Envelope,
-    Globe,
-    Image,
-} from "@phosphor-icons/react";
+import { Buildings, Envelope, Globe, Image } from "@phosphor-icons/react";
 import { Input } from "@/components/ui/input";
 
 import "./OrganizerTabs.css";
@@ -39,7 +34,10 @@ export function OrganizerInfoTab({
                     </div>
                     <div className="organizer-tab__section-title-group">
                         <h3 className="organizer-tab__section-title">
-                            {t("organizers.detail.section.basic_info", "Información Básica")}
+                            {t(
+                                "organizers.detail.section.basic_info",
+                                "Información Básica"
+                            )}
                         </h3>
                         <p className="organizer-tab__section-subtitle">
                             {t(
@@ -53,9 +51,14 @@ export function OrganizerInfoTab({
                 <div className="organizer-tab__form-grid">
                     <div className="organizer-tab__form-grid--full">
                         <Input
-                            label={t("organizers.field.name", "Nombre del Organizador")}
+                            label={t(
+                                "organizers.field.name",
+                                "Nombre del Organizador"
+                            )}
                             value={formData.name}
-                            onChange={(e) => onFormChange("name", e.target.value)}
+                            onChange={(e) =>
+                                onFormChange("name", e.target.value)
+                            }
                             placeholder={t(
                                 "organizers.placeholder.name",
                                 "Colegio de Ingenieros del Perú"
@@ -106,7 +109,9 @@ export function OrganizerInfoTab({
                         label={t("organizers.field.website", "Sitio Web")}
                         type="url"
                         value={formData.website}
-                        onChange={(e) => onFormChange("website", e.target.value)}
+                        onChange={(e) =>
+                            onFormChange("website", e.target.value)
+                        }
                         placeholder={t(
                             "organizers.placeholder.website",
                             "https://www.ejemplo.com"
@@ -143,7 +148,9 @@ export function OrganizerInfoTab({
                             label={t("organizers.field.logo", "URL del Logo")}
                             type="url"
                             value={formData.logoUrl}
-                            onChange={(e) => onFormChange("logoUrl", e.target.value)}
+                            onChange={(e) =>
+                                onFormChange("logoUrl", e.target.value)
+                            }
                             placeholder={t(
                                 "organizers.placeholder.logo",
                                 "https://ejemplo.com/logo.png"
@@ -157,9 +164,14 @@ export function OrganizerInfoTab({
                         <div className="organizer-tab__logo-preview">
                             <img
                                 src={formData.logoUrl}
-                                alt={t("organizers.logo_preview", "Vista previa del logo")}
+                                alt={t(
+                                    "organizers.logo_preview",
+                                    "Vista previa del logo"
+                                )}
                                 onError={(e) => {
-                                    (e.target as HTMLImageElement).style.display = "none";
+                                    (
+                                        e.target as HTMLImageElement
+                                    ).style.display = "none";
                                 }}
                             />
                         </div>
@@ -170,7 +182,10 @@ export function OrganizerInfoTab({
             {isEditing && (
                 <div className="organizer-tab__required-note">
                     <span className="organizer-tab__required-asterisk">*</span>
-                    {t("organizers.detail.required_fields", "Campos requeridos")}
+                    {t(
+                        "organizers.detail.required_fields",
+                        "Campos requeridos"
+                    )}
                 </div>
             )}
         </div>

@@ -20,13 +20,20 @@ import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { Skeleton } from "@/components/ui/skeleton";
 import { OrganizerAvatar, OrganizerStatusBadge } from "./components";
-import { OrganizerInfoTab, OrganizerFiscalTab, OrganizerLegalTab } from "./tabs";
+import {
+    OrganizerInfoTab,
+    OrganizerFiscalTab,
+    OrganizerLegalTab,
+} from "./tabs";
 
 // Hooks
 import { useDialog } from "@/hooks/useDialog";
 
 // Services
-import { organizersService, type Organizer } from "@/services/organizers.service";
+import {
+    organizersService,
+    type Organizer,
+} from "@/services/organizers.service";
 import { formatEventDate, getLocaleFromLang } from "@/lib/dateUtils";
 
 // Styles
@@ -109,7 +116,10 @@ export const OrganizerDetailView: React.FC<OrganizerDetailViewProps> = ({
         const errors: Record<string, string> = {};
 
         if (!formData.name.trim()) {
-            errors.name = t("validation.name_required", "El nombre es requerido");
+            errors.name = t(
+                "validation.name_required",
+                "El nombre es requerido"
+            );
         } else if (formData.name.trim().length < 2) {
             errors.name = t("validation.min_length", {
                 count: 2,
@@ -117,12 +127,18 @@ export const OrganizerDetailView: React.FC<OrganizerDetailViewProps> = ({
             });
         }
 
-        if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+        if (
+            formData.email &&
+            !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)
+        ) {
             errors.email = t("validation.email_invalid", "Email inválido");
         }
 
         if (formData.ruc && !/^\d{11}$/.test(formData.ruc)) {
-            errors.ruc = t("validation.ruc_invalid", "El RUC debe tener 11 dígitos");
+            errors.ruc = t(
+                "validation.ruc_invalid",
+                "El RUC debe tener 11 dígitos"
+            );
         }
 
         setFormErrors(errors);
@@ -147,16 +163,24 @@ export const OrganizerDetailView: React.FC<OrganizerDetailViewProps> = ({
             });
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["organizer", organizerId] });
+            queryClient.invalidateQueries({
+                queryKey: ["organizer", organizerId],
+            });
             toast.success(
-                t("organizers.detail.update_success", "Organizador actualizado correctamente")
+                t(
+                    "organizers.detail.update_success",
+                    "Organizador actualizado correctamente"
+                )
             );
             setIsEditing(false);
             setHasChanges(false);
         },
         onError: () => {
             toast.error(
-                t("organizers.detail.update_error", "Error al actualizar el organizador")
+                t(
+                    "organizers.detail.update_error",
+                    "Error al actualizar el organizador"
+                )
             );
         },
     });
@@ -165,27 +189,40 @@ export const OrganizerDetailView: React.FC<OrganizerDetailViewProps> = ({
         mutationFn: () => organizersService.remove(organizerId),
         onSuccess: () => {
             toast.success(
-                t("organizers.detail.deleted", "Organizador desactivado correctamente")
+                t(
+                    "organizers.detail.deleted",
+                    "Organizador desactivado correctamente"
+                )
             );
             handleBack();
         },
         onError: () => {
-            toast.error(t("organizers.detail.delete_error", "Error al eliminar"));
+            toast.error(
+                t("organizers.detail.delete_error", "Error al eliminar")
+            );
             deleteDialog.setLoading(false);
         },
     });
 
     const activateMutation = useMutation({
-        mutationFn: () => organizersService.update(organizerId, { isActive: true }),
+        mutationFn: () =>
+            organizersService.update(organizerId, { isActive: true }),
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["organizer", organizerId] });
+            queryClient.invalidateQueries({
+                queryKey: ["organizer", organizerId],
+            });
             toast.success(
-                t("organizers.detail.activated", "Organizador activado correctamente")
+                t(
+                    "organizers.detail.activated",
+                    "Organizador activado correctamente"
+                )
             );
             activateDialog.reset();
         },
         onError: () => {
-            toast.error(t("organizers.detail.activate_error", "Error al activar"));
+            toast.error(
+                t("organizers.detail.activate_error", "Error al activar")
+            );
             activateDialog.setLoading(false);
         },
     });
@@ -299,7 +336,10 @@ export const OrganizerDetailView: React.FC<OrganizerDetailViewProps> = ({
             <div className="organizer-detail__error">
                 <ShieldWarning size={48} color="var(--color-red-400)" />
                 <p className="organizer-detail__error-text">
-                    {t("organizers.detail.error", "Error al cargar el organizador")}
+                    {t(
+                        "organizers.detail.error",
+                        "Error al cargar el organizador"
+                    )}
                 </p>
                 <Button variant="secondary" onClick={handleBack}>
                     {t("common.back", "Volver")}
@@ -322,7 +362,11 @@ export const OrganizerDetailView: React.FC<OrganizerDetailViewProps> = ({
             />
 
             {/* Back button */}
-            <button type="button" className="organizer-detail__back" onClick={handleBack}>
+            <button
+                type="button"
+                className="organizer-detail__back"
+                onClick={handleBack}
+            >
                 <ArrowLeft size={16} />
                 {t("organizers.detail.back_to_list", "Volver a la lista")}
             </button>
@@ -331,7 +375,10 @@ export const OrganizerDetailView: React.FC<OrganizerDetailViewProps> = ({
             <div className="organizer-detail__header">
                 <div className="organizer-detail__header-title">
                     <h1 className="organizer-detail__title">
-                        {t("organizers.detail.title", "Detalles del Organizador")}
+                        {t(
+                            "organizers.detail.title",
+                            "Detalles del Organizador"
+                        )}
                     </h1>
                     <p className="organizer-detail__subtitle">
                         {t(
@@ -344,7 +391,11 @@ export const OrganizerDetailView: React.FC<OrganizerDetailViewProps> = ({
                 <div className="organizer-detail__header-actions">
                     {isEditing ? (
                         <>
-                            <Button variant="ghost" size="md" onClick={handleCancelEdit}>
+                            <Button
+                                variant="ghost"
+                                size="md"
+                                onClick={handleCancelEdit}
+                            >
                                 <X size={18} />
                                 {t("common.cancel", "Cancelar")}
                             </Button>
@@ -360,7 +411,10 @@ export const OrganizerDetailView: React.FC<OrganizerDetailViewProps> = ({
                                 disabled={!hasChanges}
                             >
                                 <FloppyDisk size={18} />
-                                {t("organizers.detail.save_changes", "Guardar Cambios")}
+                                {t(
+                                    "organizers.detail.save_changes",
+                                    "Guardar Cambios"
+                                )}
                             </Button>
                         </>
                     ) : (
@@ -381,7 +435,10 @@ export const OrganizerDetailView: React.FC<OrganizerDetailViewProps> = ({
                                     style={{ color: "var(--color-red-600)" }}
                                 >
                                     <Trash size={18} />
-                                    {t("organizers.detail.deactivate", "Desactivar")}
+                                    {t(
+                                        "organizers.detail.deactivate",
+                                        "Desactivar"
+                                    )}
                                 </Button>
                             )}
                             <Button
@@ -406,7 +463,10 @@ export const OrganizerDetailView: React.FC<OrganizerDetailViewProps> = ({
                             <span className="organizer-detail__org-name-text">
                                 {organizer.name}
                             </span>
-                            <OrganizerStatusBadge isActive={organizer.isActive} size="sm" />
+                            <OrganizerStatusBadge
+                                isActive={organizer.isActive}
+                                size="sm"
+                            />
                         </div>
                         <div className="organizer-detail__org-meta">
                             {organizer.email && (
@@ -423,14 +483,20 @@ export const OrganizerDetailView: React.FC<OrganizerDetailViewProps> = ({
                                         target="_blank"
                                         rel="noopener noreferrer"
                                     >
-                                        {organizer.website.replace(/^https?:\/\//, "")}
+                                        {organizer.website.replace(
+                                            /^https?:\/\//,
+                                            ""
+                                        )}
                                     </a>
                                 </div>
                             )}
                             {organizer.emitsFiscalDocuments && (
                                 <div className="organizer-detail__org-meta-item organizer-detail__org-meta-item--fiscal">
                                     <Receipt size={14} />
-                                    {t("organizers.emits_fiscal", "Emite comprobantes")}
+                                    {t(
+                                        "organizers.emits_fiscal",
+                                        "Emite comprobantes"
+                                    )}
                                 </div>
                             )}
                         </div>
@@ -447,7 +513,9 @@ export const OrganizerDetailView: React.FC<OrganizerDetailViewProps> = ({
                     </div>
                     {organizer.ruc && (
                         <div className="organizer-detail__org-extra-item">
-                            <span className="organizer-detail__org-extra-label">RUC</span>
+                            <span className="organizer-detail__org-extra-label">
+                                RUC
+                            </span>
                             <span className="organizer-detail__org-extra-value">
                                 {organizer.ruc}
                             </span>
@@ -460,13 +528,20 @@ export const OrganizerDetailView: React.FC<OrganizerDetailViewProps> = ({
             <div
                 className="organizer-detail__tabs"
                 role="tablist"
-                aria-label={t("organizers.detail.tabs", "Secciones del organizador")}
+                aria-label={t(
+                    "organizers.detail.tabs",
+                    "Secciones del organizador"
+                )}
             >
                 <button
                     type="button"
                     role="tab"
                     aria-selected={activeTab === "info"}
-                    className={`organizer-detail__tab ${activeTab === "info" ? "organizer-detail__tab--active" : ""}`}
+                    className={`organizer-detail__tab ${
+                        activeTab === "info"
+                            ? "organizer-detail__tab--active"
+                            : ""
+                    }`}
                     onClick={() => setActiveTab("info")}
                 >
                     {t("organizers.detail.tab_info", "Información General")}
@@ -475,7 +550,11 @@ export const OrganizerDetailView: React.FC<OrganizerDetailViewProps> = ({
                     type="button"
                     role="tab"
                     aria-selected={activeTab === "fiscal"}
-                    className={`organizer-detail__tab ${activeTab === "fiscal" ? "organizer-detail__tab--active" : ""}`}
+                    className={`organizer-detail__tab ${
+                        activeTab === "fiscal"
+                            ? "organizer-detail__tab--active"
+                            : ""
+                    }`}
                     onClick={() => setActiveTab("fiscal")}
                 >
                     {t("organizers.detail.tab_fiscal", "Datos Fiscales")}
@@ -484,7 +563,11 @@ export const OrganizerDetailView: React.FC<OrganizerDetailViewProps> = ({
                     type="button"
                     role="tab"
                     aria-selected={activeTab === "legal"}
-                    className={`organizer-detail__tab ${activeTab === "legal" ? "organizer-detail__tab--active" : ""}`}
+                    className={`organizer-detail__tab ${
+                        activeTab === "legal"
+                            ? "organizer-detail__tab--active"
+                            : ""
+                    }`}
                     onClick={() => setActiveTab("legal")}
                 >
                     {t("organizers.detail.tab_legal", "Términos y Políticas")}
@@ -527,7 +610,10 @@ export const OrganizerDetailView: React.FC<OrganizerDetailViewProps> = ({
                         </h4>
                         <div className="organizer-detail__metadata-row">
                             <span className="organizer-detail__metadata-label">
-                                {t("organizers.detail.org_id", "ID Organizador")}
+                                {t(
+                                    "organizers.detail.org_id",
+                                    "ID Organizador"
+                                )}
                             </span>
                             <span className="organizer-detail__metadata-value organizer-detail__metadata-value--mono">
                                 ORG-{organizer.id.slice(0, 8).toUpperCase()}
@@ -561,12 +647,18 @@ export const OrganizerDetailView: React.FC<OrganizerDetailViewProps> = ({
                     deleteDialog.setLoading(true);
                     deleteMutation.mutate();
                 }}
-                title={t("organizers.detail.delete_title", "Desactivar organizador")}
+                title={t(
+                    "organizers.detail.delete_title",
+                    "Desactivar organizador"
+                )}
                 description={t("organizers.detail.delete_desc", {
                     name: organizer.name,
                     defaultValue: `¿Estás seguro de desactivar "${organizer.name}"? Los eventos asociados no se verán afectados.`,
                 })}
-                confirmText={t("organizers.detail.delete_confirm", "Desactivar")}
+                confirmText={t(
+                    "organizers.detail.delete_confirm",
+                    "Desactivar"
+                )}
                 cancelText={t("common.cancel", "Cancelar")}
                 variant="danger"
                 isLoading={deleteDialog.isLoading}
@@ -579,7 +671,10 @@ export const OrganizerDetailView: React.FC<OrganizerDetailViewProps> = ({
                     activateDialog.setLoading(true);
                     activateMutation.mutate();
                 }}
-                title={t("organizers.detail.activate_title", "Activar organizador")}
+                title={t(
+                    "organizers.detail.activate_title",
+                    "Activar organizador"
+                )}
                 description={t("organizers.detail.activate_desc", {
                     name: organizer.name,
                     defaultValue: `¿Deseas activar "${organizer.name}"?`,
