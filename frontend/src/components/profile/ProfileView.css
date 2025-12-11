@@ -161,8 +161,8 @@
 }
 
 .profile__tab--active {
-    color: var(--color-red-600);
-    border-bottom-color: var(--color-red-500);
+    color: var(--color-primary-dark);
+    border-bottom-color: var(--color-primary);
 }
 
 /* ============================================
@@ -598,7 +598,7 @@
 .profile__modal-overlay {
     position: fixed;
     inset: 0;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: var(--color-overlay);
     display: flex;
     align-items: center;
     justify-content: center;

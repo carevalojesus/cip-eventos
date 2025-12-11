@@ -23,7 +23,7 @@
 }
 
 .user-detail__back:hover {
-  color: var(--color-red-500);
+  color: var(--color-primary);
 }
 
 /* Header */
@@ -87,8 +87,8 @@
 }
 
 .user-detail__tab--active {
-  color: var(--color-red-600);
-  border-bottom-color: var(--color-red-500);
+  color: var(--color-primary-dark);
+  border-bottom-color: var(--color-primary);
 }
 
 /* User Card - Inside tab content */
@@ -366,7 +366,7 @@
 .user-detail__danger-title {
   font-size: var(--font-size-sm);
   font-weight: 600;
-  color: var(--color-red-600);
+  color: var(--color-danger);
   margin: 0 0 var(--space-3) 0;
 }
 

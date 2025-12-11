@@ -20,7 +20,7 @@
 }
 
 .organizer-detail__back:hover {
-    color: var(--color-red-500);
+    color: var(--color-primary);
 }
 
 .organizer-detail__header {
@@ -108,16 +108,17 @@
 }
 
 .organizer-detail__org-meta-item a {
-    color: var(--color-cyan-600);
+    color: var(--color-action);
     text-decoration: none;
 }
 
 .organizer-detail__org-meta-item a:hover {
+    color: var(--color-action-dark);
     text-decoration: underline;
 }
 
 .organizer-detail__org-meta-item--fiscal {
-    color: var(--color-green-600);
+    color: var(--color-success);
 }
 
 .organizer-detail__org-extra {
@@ -173,8 +174,8 @@
 }
 
 .organizer-detail__tab--active {
-    color: var(--color-red-600);
-    border-bottom-color: var(--color-red-500);
+    color: var(--color-primary-dark);
+    border-bottom-color: var(--color-primary);
 }
 
 .organizer-detail__layout {
