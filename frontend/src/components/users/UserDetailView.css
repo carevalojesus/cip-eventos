@@ -238,12 +238,13 @@
   gap: var(--space-2);
   padding: var(--space-2) var(--space-3);
   border-radius: var(--radius-lg);
-  border: none;
-  background-color: var(--color-grey-100);
+  border: 1px solid var(--color-grey-200);
+  background-color: var(--color-grey-050);
 }
 
 .user-detail__role-card--active {
-  background-color: var(--color-red-050);
+  background-color: var(--color-grey-050);
+  border-color: var(--color-grey-200);
 }
 
 .user-detail__role-icon {
@@ -254,7 +255,7 @@
 }
 
 .user-detail__role-icon--active {
-  color: var(--color-red-400);
+  color: var(--color-grey-500);
 }
 
 .user-detail__role-info {
@@ -280,7 +281,7 @@
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background-color: var(--color-red-400);
+  background-color: var(--color-green-500);
 }
 
 /* Metadata */
