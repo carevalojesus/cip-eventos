@@ -862,6 +862,10 @@
     "profile": {
         "title": "Mi Perfil",
         "subtitle": "Administra tu información personal y datos nominales",
+        "system_role": "Rol del Sistema",
+        "metadata": "Metadatos",
+        "user_id": "ID Usuario",
+        "registered": "Registrado",
         "tab_account": "Cuenta",
         "tab_nominal": "Datos Nominales",
         "email": "Correo electrónico",

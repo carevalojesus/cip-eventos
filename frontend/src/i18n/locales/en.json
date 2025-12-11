@@ -318,6 +318,31 @@
                 "duplicate": "Duplicate",
                 "delete": "Delete"
             },
+            "filters": {
+                "year": "Year",
+                "month": "Month",
+                "date_range": "Date range",
+                "months": {
+                    "january": "January",
+                    "february": "February",
+                    "march": "March",
+                    "april": "April",
+                    "may": "May",
+                    "june": "June",
+                    "july": "July",
+                    "august": "August",
+                    "september": "September",
+                    "october": "October",
+                    "november": "November",
+                    "december": "December"
+                }
+            },
+            "pagination": {
+                "showing": "Showing",
+                "to": "to",
+                "of": "of",
+                "events": "events"
+            },
             "empty": {
                 "title": "No events",
                 "description": "Create your first event to get started.",
@@ -845,6 +870,10 @@
     "profile": {
         "title": "My Profile",
         "subtitle": "Manage your personal information and nominal data",
+        "system_role": "System Role",
+        "metadata": "Metadata",
+        "user_id": "User ID",
+        "registered": "Registered",
         "tab_account": "Account",
         "tab_nominal": "Nominal Data",
         "email": "Email",

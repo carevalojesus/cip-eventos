@@ -234,15 +234,15 @@
     gap: var(--space-2);
     padding: var(--space-2) var(--space-3);
     border-radius: var(--radius-lg);
-    border: none;
-    background-color: var(--color-red-050);
+    border: 1px solid var(--color-grey-200);
+    background-color: var(--color-grey-050);
 }
 
 .profile__role-icon {
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--color-red-400);
+    color: var(--color-grey-500);
 }
 
 .profile__role-name {
@@ -256,7 +256,7 @@
     width: 8px;
     height: 8px;
     border-radius: 50%;
-    background-color: var(--color-red-400);
+    background-color: var(--color-green-500);
 }
 
 /* ============================================
