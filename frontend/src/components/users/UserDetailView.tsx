@@ -76,8 +76,8 @@ export const UserDetailView: React.FC<UserDetailViewProps> = ({ userId, onNaviga
   const locale = getLocaleFromLang(isEnglish ? "en" : "es");
   const queryClient = useQueryClient();
   const currentUser = useAuthStore((state) => state.user);
+  const updateAuthUser = useAuthStore((state) => state.updateUser);
   const isSuperAdmin = currentUser?.role === UserRole.SUPER_ADMIN;
-  const isOwnProfile = currentUser?.id === userId;
 
   // ============================================
   // STATE
@@ -122,6 +122,9 @@ export const UserDetailView: React.FC<UserDetailViewProps> = ({ userId, onNaviga
     queryKey: ["user", userId],
     queryFn: () => usersService.findById(userId),
   });
+
+  // Check if this is the current user's profile (compare by email)
+  const isOwnProfile = Boolean(user && currentUser && user.email === currentUser.email);
 
   const { data: roles } = useQuery({
     queryKey: ["roles"],
@@ -220,6 +223,13 @@ export const UserDetailView: React.FC<UserDetailViewProps> = ({ userId, onNaviga
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["user", userId] });
+      // Update auth store if this is the current user
+      if (isOwnProfile) {
+        updateAuthUser({
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+        });
+      }
       toast.success(t("users.detail.update_success", "Usuario actualizado correctamente"));
       setIsEditing(false);
       setHasChanges(false);
@@ -392,6 +402,10 @@ export const UserDetailView: React.FC<UserDetailViewProps> = ({ userId, onNaviga
       await adminProfileService.updateByUserId(userId, { avatar: publicUrl });
       // Refresh user data
       queryClient.invalidateQueries({ queryKey: ["user", userId] });
+      // Update auth store if this is the current user
+      if (isOwnProfile) {
+        updateAuthUser({ avatar: publicUrl });
+      }
       toast.success(t("users.avatar.upload_success", "Avatar actualizado"));
     } catch (err: unknown) {
       console.error("Avatar upload error:", err);
@@ -411,6 +425,10 @@ export const UserDetailView: React.FC<UserDetailViewProps> = ({ userId, onNaviga
     try {
       await adminProfileService.updateByUserId(userId, { avatar: "" });
       queryClient.invalidateQueries({ queryKey: ["user", userId] });
+      // Update auth store if this is the current user
+      if (isOwnProfile) {
+        updateAuthUser({ avatar: undefined });
+      }
       toast.success(t("users.avatar.remove_success", "Avatar eliminado"));
     } catch {
       toast.error(t("users.avatar.remove_error", "Error al eliminar el avatar"));
