@@ -140,9 +140,14 @@ export const OrganizersView: React.FC<OrganizersViewProps> = ({
     const handleAction = useCallback(
         (action: OrganizerAction, organizer: Organizer) => {
             switch (action) {
-                case "edit":
-                    handleViewOrganizer(organizer.id);
+                case "edit": {
+                    // Navigate to detail view in edit mode
+                    const path = isEnglish
+                        ? `/en/organizers/${organizer.id}?edit=true`
+                        : `/organizadores/${organizer.id}?edit=true`;
+                    onNavigate(path);
                     break;
+                }
                 case "delete":
                     deleteDialog.open(organizer);
                     break;
@@ -151,7 +156,7 @@ export const OrganizersView: React.FC<OrganizersViewProps> = ({
                     break;
             }
         },
-        [deleteDialog, activateDialog, handleViewOrganizer]
+        [deleteDialog, activateDialog, isEnglish, onNavigate]
     );
 
     // Confirm delete

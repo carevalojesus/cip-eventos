@@ -5,7 +5,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { OrganizerAvatar } from "./OrganizerAvatar";
 import { OrganizerStatusBadge } from "./OrganizerStatusBadge";
 import { OrganizerActions, type OrganizerAction } from "./OrganizerActions";
-import { Globe, EnvelopeSimple, Receipt } from "@phosphor-icons/react";
+import { Receipt } from "@phosphor-icons/react";
 
 import "./OrganizerTable.css";
 
@@ -170,13 +170,11 @@ export const OrganizerTable: React.FC<OrganizerTableProps> = ({
                                 <div className="organizer-table__contact">
                                     {organizer.email && (
                                         <div className="organizer-table__contact-item">
-                                            <EnvelopeSimple size={14} />
                                             <span>{organizer.email}</span>
                                         </div>
                                     )}
                                     {organizer.website && (
                                         <div className="organizer-table__contact-item">
-                                            <Globe size={14} />
                                             <a
                                                 href={organizer.website}
                                                 target="_blank"
