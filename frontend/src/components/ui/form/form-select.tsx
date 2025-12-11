@@ -32,31 +32,35 @@ const DropdownOptions: React.FC<{
     containerRef: React.RefObject<HTMLDivElement>;
     isOpen: boolean;
 }> = ({ options, containerRef, isOpen }) => {
-    const [position, setPosition] = useState({ 
-        top: 0, 
-        left: 0, 
+    const [position, setPosition] = useState({
+        top: 0,
+        left: 0,
         width: 0,
-        openUpward: false 
+        openUpward: false,
     });
 
     const updatePosition = useCallback(() => {
         if (containerRef.current) {
             const rect = containerRef.current.getBoundingClientRect();
             const viewportHeight = window.innerHeight;
-            
+
             // Calcular espacio disponible arriba y abajo
             const spaceBelow = viewportHeight - rect.bottom - DROPDOWN_GAP;
             const spaceAbove = rect.top - DROPDOWN_GAP;
-            
+
             // Decidir si abrir hacia arriba o abajo
-            const openUpward = spaceBelow < DROPDOWN_MAX_HEIGHT && spaceAbove > spaceBelow;
-            
+            const openUpward =
+                spaceBelow < DROPDOWN_MAX_HEIGHT && spaceAbove > spaceBelow;
+
             // Calcular la altura real del dropdown (puede ser menor si hay pocas opciones)
-            const estimatedHeight = Math.min(DROPDOWN_MAX_HEIGHT, options.length * 44);
-            
+            const estimatedHeight = Math.min(
+                DROPDOWN_MAX_HEIGHT,
+                options.length * 44
+            );
+
             setPosition({
-                top: openUpward 
-                    ? rect.top - estimatedHeight - DROPDOWN_GAP 
+                top: openUpward
+                    ? rect.top - estimatedHeight - DROPDOWN_GAP
                     : rect.bottom + DROPDOWN_GAP,
                 left: rect.left,
                 width: rect.width,
