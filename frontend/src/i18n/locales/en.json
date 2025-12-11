@@ -878,7 +878,18 @@
         "nominal_save_error": "Error saving nominal data",
         "person_verified": "Data verified with RENIEC",
         "person_pending": "Data pending verification",
-        "person_readonly_notice": "Nominal data is used to issue official certificates. Contact support if you need to correct them."
+        "person_readonly_notice": "Nominal data is used to issue official certificates. Contact support if you need to correct them.",
+        "section": {
+            "account": "Account Information",
+            "account_desc": "Your basic user information",
+            "contact": "Contact",
+            "contact_desc": "Contact and location information",
+            "nominal": "Nominal Data",
+            "nominal_desc": "Official information for certificates"
+        },
+        "doc_ce": "Foreigner ID",
+        "doc_passport": "Passport",
+        "doc_other": "Other"
     },
     "organizers": {
         "list": {

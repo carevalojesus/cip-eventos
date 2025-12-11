@@ -895,7 +895,18 @@
         "nominal_save_error": "Error al guardar los datos nominales",
         "person_verified": "Datos verificados con RENIEC",
         "person_pending": "Datos pendientes de verificación",
-        "person_readonly_notice": "Los datos nominales se utilizan para emitir certificados oficiales. Si necesitas corregirlos, contacta a soporte."
+        "person_readonly_notice": "Los datos nominales se utilizan para emitir certificados oficiales. Si necesitas corregirlos, contacta a soporte.",
+        "section": {
+            "account": "Información de Cuenta",
+            "account_desc": "Tu información básica de usuario",
+            "contact": "Contacto",
+            "contact_desc": "Información de contacto y ubicación",
+            "nominal": "Datos Nominales",
+            "nominal_desc": "Información oficial para certificados"
+        },
+        "doc_ce": "Carné de Extranjería",
+        "doc_passport": "Pasaporte",
+        "doc_other": "Otro"
     },
     "organizers": {
         "list": {
