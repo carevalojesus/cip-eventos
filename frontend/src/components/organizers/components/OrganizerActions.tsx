@@ -110,7 +110,7 @@ export const OrganizerActions: React.FC<OrganizerActionsProps> = ({
                             onClick={() => handleAction("delete")}
                         >
                             <Trash size={16} />
-                            {t("organizers.list.actions.delete", "Eliminar")}
+                            {t("organizers.list.actions.delete", "Desactivar")}
                         </DropdownMenuItem>
                     </>
                 )}

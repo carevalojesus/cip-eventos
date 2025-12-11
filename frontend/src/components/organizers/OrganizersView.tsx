@@ -343,7 +343,7 @@ export const OrganizersView: React.FC<OrganizersViewProps> = ({
             {/* Header */}
             <OrganizerPageHeader
                 onCreateOrganizer={handleCreateOrganizer}
-                showCreateButton={organizers.length > 0}
+                showCreateButton={true}
             />
 
             {/* Filters */}
