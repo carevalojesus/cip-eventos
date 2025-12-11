@@ -6,6 +6,61 @@
         "events_new": "/en/events/new",
         "dashboard": "/en/dashboard"
     },
+    "audit": {
+        "fields": {
+            "email": "Email",
+            "role": "Role",
+            "status": "Status",
+            "verification": "Verification",
+            "password": "Password",
+            "force_reset": "Force reset",
+            "first_name": "First name",
+            "last_name": "Last name",
+            "phone": "Phone",
+            "designation": "Position",
+            "description": "Description",
+            "address": "Address",
+            "avatar": "Avatar"
+        },
+        "values": {
+            "active": "Active",
+            "inactive": "Inactive",
+            "verified": "Verified",
+            "not_verified": "Not verified",
+            "enabled": "Enabled",
+            "disabled": "Disabled"
+        },
+        "actions": {
+            "CREATE": "Creation",
+            "UPDATE": "Update",
+            "DELETE": "Deletion",
+            "REVOKE": "Revocation",
+            "RESTORE": "Restoration",
+            "REISSUE": "Reissue",
+            "MERGE": "Merge",
+            "TRANSFER": "Transfer"
+        },
+        "entities": {
+            "User": "User",
+            "Profile": "Profile",
+            "Role": "Role",
+            "Event": "Event",
+            "Ticket": "Ticket",
+            "Session": "Session"
+        },
+        "user_created": "User created",
+        "user_created_with_email": "User created with email {{email}}",
+        "user_deactivated": "User deactivated",
+        "user_activated": "User activated",
+        "role_changed": "Role changed by administrator",
+        "email_verified_manually": "Email manually verified by administrator",
+        "force_reset_enabled": "Force password change enabled",
+        "force_reset_disabled": "Force password change disabled",
+        "password_updated": "Password updated",
+        "field_changed": "{{field}}: \"{{from}}\" → \"{{to}}\"",
+        "generic_action": "{{action}} on {{entity}}",
+        "performed_by": "by {{email}}"
+    },
     "welcome": "Welcome to Dashboard",
     "greeting": "Hello {{name}}",
     "events": "Events",

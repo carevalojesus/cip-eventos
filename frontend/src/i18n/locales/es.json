@@ -6,6 +6,61 @@
         "events_new": "/eventos/nuevo",
         "dashboard": "/panel"
     },
+    "audit": {
+        "fields": {
+            "email": "Correo",
+            "role": "Rol",
+            "status": "Estado",
+            "verification": "Verificación",
+            "password": "Contraseña",
+            "force_reset": "Forzar cambio",
+            "first_name": "Nombre",
+            "last_name": "Apellido",
+            "phone": "Teléfono",
+            "designation": "Cargo",
+            "description": "Descripción",
+            "address": "Dirección",
+            "avatar": "Avatar"
+        },
+        "values": {
+            "active": "Activo",
+            "inactive": "Inactivo",
+            "verified": "Verificado",
+            "not_verified": "No verificado",
+            "enabled": "Activado",
+            "disabled": "Desactivado"
+        },
+        "actions": {
+            "CREATE": "Creación",
+            "UPDATE": "Actualización",
+            "DELETE": "Eliminación",
+            "REVOKE": "Revocación",
+            "RESTORE": "Restauración",
+            "REISSUE": "Reemisión",
+            "MERGE": "Fusión",
+            "TRANSFER": "Transferencia"
+        },
+        "entities": {
+            "User": "Usuario",
+            "Profile": "Perfil",
+            "Role": "Rol",
+            "Event": "Evento",
+            "Ticket": "Entrada",
+            "Session": "Sesión"
+        },
+        "user_created": "Usuario creado",
+        "user_created_with_email": "Usuario creado con correo {{email}}",
+        "user_deactivated": "Usuario desactivado",
+        "user_activated": "Usuario activado",
+        "role_changed": "Cambio de rol por administrador",
+        "email_verified_manually": "Verificación manual de correo por administrador",
+        "force_reset_enabled": "Forzar cambio de contraseña activado",
+        "force_reset_disabled": "Forzar cambio de contraseña desactivado",
+        "password_updated": "Contraseña actualizada",
+        "field_changed": "{{field}}: \"{{from}}\" → \"{{to}}\"",
+        "generic_action": "{{action}} en {{entity}}",
+        "performed_by": "por {{email}}"
+    },
     "welcome": "Bienvenido al Panel",
     "greeting": "Hola {{name}}",
     "events": "Eventos",
