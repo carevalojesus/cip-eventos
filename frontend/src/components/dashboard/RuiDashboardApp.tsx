@@ -6,6 +6,7 @@ import { EventsView } from "@/components/events/EventsView";
 import { EventManagementView } from "@/components/events/EventManagementView";
 import { EditEventView } from "@/components/events/EditEventView";
 import { UsersView, CreateUserView, UserDetailView } from "@/components/users";
+import { OrganizersView, OrganizerDetailView } from "@/components/organizers";
 import { ProfileView } from "@/components/profile";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "@/lib/queryClient";
@@ -260,8 +261,15 @@ export const RuiDashboardApp: React.FC<RuiDashboardAppProps> = ({ initialPath })
     if (startsWithRoute(["/ponentes", "/en/speakers"])) {
       return <SectionPlaceholder title={t("sections.speakers")} description={t("sections.coming_soon")} />;
     }
+    // Detalle de organizador
+    const organizerDetailMatch = activePath.match(/^\/(organizadores|en\/organizers)\/([a-zA-Z0-9-]+)$/);
+    if (organizerDetailMatch) {
+      const organizerId = organizerDetailMatch[2];
+      return <OrganizerDetailView organizerId={organizerId} onNavigate={handleNavigate} />;
+    }
+    // Lista de organizadores
     if (startsWithRoute(["/organizadores", "/en/organizers"])) {
-      return <SectionPlaceholder title={t("sections.organizers")} description={t("sections.coming_soon")} />;
+      return <OrganizersView onNavigate={handleNavigate} />;
     }
     if (startsWithRoute(["/inscripciones", "/en/registrations"])) {
       return <SectionPlaceholder title={t("sections.registrations")} description={t("sections.coming_soon")} />;

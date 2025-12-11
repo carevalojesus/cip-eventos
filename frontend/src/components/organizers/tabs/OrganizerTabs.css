@@ -1,0 +1,167 @@
+.organizer-tab {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+}
+
+.organizer-tab__section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+.organizer-tab__section-header {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+}
+
+.organizer-tab__section-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-md);
+    flex-shrink: 0;
+}
+
+.organizer-tab__section-icon--info {
+    background: var(--color-primary-light);
+    color: var(--color-primary);
+}
+
+.organizer-tab__section-icon--contact {
+    background: var(--color-cyan-100);
+    color: var(--color-cyan-600);
+}
+
+.organizer-tab__section-icon--logo {
+    background: var(--color-purple-100);
+    color: var(--color-purple-600);
+}
+
+.organizer-tab__section-icon--fiscal {
+    background: var(--color-orange-100);
+    color: var(--color-orange-600);
+}
+
+.organizer-tab__section-icon--config {
+    background: var(--color-green-100);
+    color: var(--color-green-600);
+}
+
+.organizer-tab__section-icon--terms {
+    background: var(--color-yellow-100);
+    color: var(--color-yellow-700);
+}
+
+.organizer-tab__section-icon--privacy {
+    background: var(--color-teal-100);
+    color: var(--color-teal-600);
+}
+
+.organizer-tab__section-title-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+}
+
+.organizer-tab__section-title {
+    margin: 0;
+    font-size: var(--font-size-md);
+    font-weight: 600;
+    color: var(--color-text-primary);
+}
+
+.organizer-tab__section-subtitle {
+    margin: 0;
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+}
+
+.organizer-tab__form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-4);
+}
+
+.organizer-tab__form-grid--full {
+    grid-column: 1 / -1;
+}
+
+.organizer-tab__logo-preview {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-4);
+    background: var(--color-grey-050);
+    border: 1px solid var(--color-grey-200);
+    border-radius: var(--radius-md);
+}
+
+.organizer-tab__logo-preview img {
+    max-width: 200px;
+    max-height: 100px;
+    object-fit: contain;
+}
+
+.organizer-tab__switch-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-3);
+    background: var(--color-grey-050);
+    border: 1px solid var(--color-grey-200);
+    border-radius: var(--radius-md);
+}
+
+.organizer-tab__switch-label {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+}
+
+.organizer-tab__switch-title {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    color: var(--color-text-primary);
+}
+
+.organizer-tab__switch-desc {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+}
+
+.organizer-tab__info-note {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-2);
+    padding: var(--space-3);
+    background: var(--color-info-light);
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-sm);
+    color: var(--color-info-dark);
+}
+
+.organizer-tab__required-note {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    font-size: var(--font-size-xs);
+    color: var(--color-text-secondary);
+}
+
+.organizer-tab__required-asterisk {
+    color: var(--color-red-500);
+}
+
+@media (max-width: 768px) {
+    .organizer-tab__form-grid {
+        grid-template-columns: 1fr;
+    }
+}

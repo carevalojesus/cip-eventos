@@ -880,6 +880,150 @@
         "person_pending": "Data pending verification",
         "person_readonly_notice": "Nominal data is used to issue official certificates. Contact support if you need to correct them."
     },
+    "organizers": {
+        "list": {
+            "title": "Organizers Management",
+            "subtitle": "Manage the entities that organize events on the platform.",
+            "new": "New Organizer",
+            "error_loading": "Error loading organizers",
+            "search_placeholder": "Search by name, RUC or email...",
+            "search_aria": "Search organizers",
+            "table": {
+                "organizer": "Organizer",
+                "contact": "Contact",
+                "currency": "Currency",
+                "status": "Status"
+            },
+            "filter": {
+                "advanced": "Filters",
+                "advanced_title": "Advanced Filters",
+                "status_label": "Status",
+                "all_status": "All statuses",
+                "clear": "Clear filters"
+            },
+            "actions": {
+                "menu": "Actions menu",
+                "view": "View details",
+                "edit": "Edit",
+                "delete": "Delete",
+                "activate": "Activate organizer"
+            },
+            "delete": {
+                "title": "Deactivate organizer",
+                "description": "Are you sure you want to deactivate \"{{name}}\"? Associated events will not be affected.",
+                "confirm": "Deactivate",
+                "success": "Organizer deactivated successfully",
+                "error": "Error deleting organizer"
+            },
+            "activate": {
+                "title": "Activate organizer",
+                "description": "Do you want to activate \"{{name}}\"?",
+                "confirm": "Activate",
+                "success": "Organizer activated successfully",
+                "error": "Error activating organizer"
+            },
+            "empty": {
+                "title": "No organizers",
+                "description": "Create your first organizer to get started.",
+                "no_results": "No organizers found",
+                "try_different": "Try different search filters."
+            },
+            "pagination": {
+                "organizers": "organizers"
+            }
+        },
+        "detail": {
+            "title": "Organizer Details",
+            "subtitle": "View and edit organizer information",
+            "back_to_list": "Back to list",
+            "error": "Error loading organizer",
+            "tabs": "Organizer sections",
+            "tab_info": "General Information",
+            "tab_fiscal": "Fiscal Data",
+            "tab_legal": "Terms and Policies",
+            "save_changes": "Save Changes",
+            "update_success": "Organizer updated successfully",
+            "update_error": "Error updating organizer",
+            "activate": "Activate",
+            "deactivate": "Deactivate",
+            "deleted": "Organizer deactivated successfully",
+            "delete_error": "Error deleting",
+            "activated": "Organizer activated successfully",
+            "activate_error": "Error activating",
+            "delete_title": "Deactivate organizer",
+            "delete_desc": "Are you sure you want to deactivate \"{{name}}\"? Associated events will not be affected.",
+            "delete_confirm": "Deactivate",
+            "activate_title": "Activate organizer",
+            "activate_desc": "Do you want to activate \"{{name}}\"?",
+            "activate_confirm": "Activate",
+            "metadata": "Metadata",
+            "org_id": "Organizer ID",
+            "created": "Created",
+            "updated": "Updated",
+            "currency_label": "Currency",
+            "section": {
+                "basic_info": "Basic Information",
+                "basic_info_desc": "Main organizer data",
+                "contact": "Contact",
+                "contact_desc": "Contact and web information",
+                "logo": "Logo",
+                "logo_desc": "Institutional image of the organizer",
+                "tax_info": "Tax Information",
+                "tax_info_desc": "Billing information",
+                "config": "Configuration",
+                "config_desc": "Currency and billing options",
+                "terms": "Terms and Conditions",
+                "terms_desc": "Terms of use for registrations and services",
+                "privacy": "Privacy Policy",
+                "privacy_desc": "Information about personal data processing"
+            },
+            "required_fields": "Required fields",
+            "fiscal_note": "Fiscal data will be used for generating payment receipts for events.",
+            "legal_note": "These texts will be shown to participants during the event registration process."
+        },
+        "create": {
+            "title": "Create Organizer",
+            "subtitle": "Complete the information to register a new organizing entity.",
+            "btn": "Create Organizer",
+            "success": "Organizer created successfully",
+            "error": "Error creating organizer"
+        },
+        "status": {
+            "active": "Active",
+            "inactive": "Inactive"
+        },
+        "section": {
+            "basic": "Basic Information",
+            "basic_desc": "Main organizer data.",
+            "fiscal": "Fiscal Data",
+            "fiscal_desc": "Billing and receipt information."
+        },
+        "field": {
+            "name": "Organizer Name",
+            "email": "Contact Email",
+            "website": "Website",
+            "logo": "Logo URL",
+            "ruc": "Tax ID (RUC)",
+            "business_name": "Business Name",
+            "fiscal_address": "Fiscal Address",
+            "currency": "Base Currency",
+            "emits_fiscal": "Issues fiscal documents",
+            "emits_fiscal_desc": "Electronic invoices and receipts"
+        },
+        "placeholder": {
+            "name": "Engineers Association of Peru",
+            "email": "contact@organizer.com",
+            "website": "https://www.example.com",
+            "logo": "https://example.com/logo.png",
+            "ruc": "20123456789",
+            "business_name": "COMPANY INC.",
+            "fiscal_address": "123 Main St, Lima",
+            "terms": "Enter the organizer's terms and conditions...",
+            "privacy": "Enter the organizer's privacy policy..."
+        },
+        "logo_preview": "Logo preview",
+        "emits_fiscal": "Issues receipts"
+    },
     "users": {
         "back": "Back",
         "create_title": "Create User",

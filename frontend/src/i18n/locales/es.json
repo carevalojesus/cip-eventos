@@ -897,6 +897,150 @@
         "person_pending": "Datos pendientes de verificación",
         "person_readonly_notice": "Los datos nominales se utilizan para emitir certificados oficiales. Si necesitas corregirlos, contacta a soporte."
     },
+    "organizers": {
+        "list": {
+            "title": "Gestión de Organizadores",
+            "subtitle": "Administra las entidades que organizan eventos en la plataforma.",
+            "new": "Nuevo Organizador",
+            "error_loading": "Error al cargar organizadores",
+            "search_placeholder": "Buscar por nombre, RUC o email...",
+            "search_aria": "Buscar organizadores",
+            "table": {
+                "organizer": "Organizador",
+                "contact": "Contacto",
+                "currency": "Moneda",
+                "status": "Estado"
+            },
+            "filter": {
+                "advanced": "Filtros",
+                "advanced_title": "Filtros Avanzados",
+                "status_label": "Estado",
+                "all_status": "Todos los estados",
+                "clear": "Limpiar filtros"
+            },
+            "actions": {
+                "menu": "Menú de acciones",
+                "view": "Ver detalles",
+                "edit": "Editar",
+                "delete": "Eliminar",
+                "activate": "Activar organizador"
+            },
+            "delete": {
+                "title": "Desactivar organizador",
+                "description": "¿Estás seguro de que deseas desactivar \"{{name}}\"? Los eventos asociados no se verán afectados.",
+                "confirm": "Desactivar",
+                "success": "Organizador desactivado correctamente",
+                "error": "Error al eliminar el organizador"
+            },
+            "activate": {
+                "title": "Activar organizador",
+                "description": "¿Deseas activar \"{{name}}\"?",
+                "confirm": "Activar",
+                "success": "Organizador activado correctamente",
+                "error": "Error al activar el organizador"
+            },
+            "empty": {
+                "title": "No hay organizadores",
+                "description": "Crea tu primer organizador para comenzar.",
+                "no_results": "No se encontraron organizadores",
+                "try_different": "Intenta con otros filtros de búsqueda."
+            },
+            "pagination": {
+                "organizers": "organizadores"
+            }
+        },
+        "detail": {
+            "title": "Detalles del Organizador",
+            "subtitle": "Visualiza y edita la información del organizador",
+            "back_to_list": "Volver a la lista",
+            "error": "Error al cargar el organizador",
+            "tabs": "Secciones del organizador",
+            "tab_info": "Información General",
+            "tab_fiscal": "Datos Fiscales",
+            "tab_legal": "Términos y Políticas",
+            "save_changes": "Guardar Cambios",
+            "update_success": "Organizador actualizado correctamente",
+            "update_error": "Error al actualizar el organizador",
+            "activate": "Activar",
+            "deactivate": "Desactivar",
+            "deleted": "Organizador desactivado correctamente",
+            "delete_error": "Error al eliminar",
+            "activated": "Organizador activado correctamente",
+            "activate_error": "Error al activar",
+            "delete_title": "Desactivar organizador",
+            "delete_desc": "¿Estás seguro de desactivar \"{{name}}\"? Los eventos asociados no se verán afectados.",
+            "delete_confirm": "Desactivar",
+            "activate_title": "Activar organizador",
+            "activate_desc": "¿Deseas activar \"{{name}}\"?",
+            "activate_confirm": "Activar",
+            "metadata": "Metadatos",
+            "org_id": "ID Organizador",
+            "created": "Creado",
+            "updated": "Actualizado",
+            "currency_label": "Moneda",
+            "section": {
+                "basic_info": "Información Básica",
+                "basic_info_desc": "Datos principales del organizador",
+                "contact": "Contacto",
+                "contact_desc": "Información de contacto y web",
+                "logo": "Logo",
+                "logo_desc": "Imagen institucional del organizador",
+                "tax_info": "Datos Tributarios",
+                "tax_info_desc": "Información para facturación",
+                "config": "Configuración",
+                "config_desc": "Moneda y opciones de facturación",
+                "terms": "Términos y Condiciones",
+                "terms_desc": "Condiciones de uso para inscripciones y servicios",
+                "privacy": "Política de Privacidad",
+                "privacy_desc": "Información sobre el tratamiento de datos personales"
+            },
+            "required_fields": "Campos requeridos",
+            "fiscal_note": "Los datos fiscales se utilizarán para la generación de comprobantes de pago de los eventos.",
+            "legal_note": "Estos textos se mostrarán a los participantes durante el proceso de inscripción a los eventos."
+        },
+        "create": {
+            "title": "Crear Organizador",
+            "subtitle": "Complete la información para registrar una nueva entidad organizadora.",
+            "btn": "Crear Organizador",
+            "success": "Organizador creado correctamente",
+            "error": "Error al crear el organizador"
+        },
+        "status": {
+            "active": "Activo",
+            "inactive": "Inactivo"
+        },
+        "section": {
+            "basic": "Información Básica",
+            "basic_desc": "Datos principales del organizador.",
+            "fiscal": "Datos Fiscales",
+            "fiscal_desc": "Información para facturación y comprobantes."
+        },
+        "field": {
+            "name": "Nombre del Organizador",
+            "email": "Email de contacto",
+            "website": "Sitio Web",
+            "logo": "URL del Logo",
+            "ruc": "RUC",
+            "business_name": "Razón Social",
+            "fiscal_address": "Dirección Fiscal",
+            "currency": "Moneda Base",
+            "emits_fiscal": "Emite comprobantes fiscales",
+            "emits_fiscal_desc": "Boletas y facturas electrónicas"
+        },
+        "placeholder": {
+            "name": "Colegio de Ingenieros del Perú",
+            "email": "contacto@organizador.com",
+            "website": "https://www.ejemplo.com",
+            "logo": "https://ejemplo.com/logo.png",
+            "ruc": "20123456789",
+            "business_name": "EMPRESA S.A.C.",
+            "fiscal_address": "Av. Principal 123, Lima",
+            "terms": "Ingrese los términos y condiciones del organizador...",
+            "privacy": "Ingrese la política de privacidad del organizador..."
+        },
+        "logo_preview": "Vista previa del logo",
+        "emits_fiscal": "Emite comprobantes"
+    },
     "users": {
         "back": "Volver",
         "create_title": "Crear Usuario",
