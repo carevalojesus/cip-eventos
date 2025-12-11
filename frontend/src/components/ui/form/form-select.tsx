@@ -175,7 +175,7 @@ export const FormSelect: React.FC<FormSelectProps> = ({
               </span>
             </ListboxButton>
 
-            <ListboxOptions anchor={{ to: "bottom", gap: "4px" }} className="form-select-options" style={optionsStyle}>
+            <ListboxOptions anchor={{ to: "bottom", gap: "4px" }} portal={true} className="form-select-options" style={optionsStyle}>
               {options.map((option) => (
                 <ListboxOption
                   key={option.value}

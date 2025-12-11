@@ -1,0 +1,215 @@
+/* ============================================
+   UserFilters Styles
+   Sistema de diseño RUI
+   ============================================ */
+
+.user-filters {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.user-filters__group {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+/* ============================================
+   Filter Button (Filtros avanzados)
+   ============================================ */
+
+.user-filters__button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  height: var(--button-height-lg);
+  padding: 0 var(--space-3);
+  background-color: var(--color-bg-primary);
+  border: 1px solid var(--color-grey-200);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: all 150ms ease;
+  position: relative;
+}
+
+.user-filters__button:hover {
+  border-color: var(--color-grey-300);
+}
+
+.user-filters__button--active {
+  border-color: var(--color-red-400);
+  color: var(--color-red-600);
+}
+
+.user-filters__button--active:hover {
+  border-color: var(--color-red-500);
+}
+
+/* ============================================
+   Badge Contador
+   ============================================ */
+
+.user-filters__badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  background-color: var(--color-red-500);
+  color: white;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: 9999px;
+}
+
+/* ============================================
+   Popover
+   ============================================ */
+
+.user-filters__popover-container {
+  position: relative;
+}
+
+.user-filters__popover {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 280px;
+  background-color: var(--color-bg-primary);
+  border: 1px solid var(--color-grey-200);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg), var(--shadow-sm);
+  z-index: var(--z-dropdown);
+  padding: var(--space-4);
+}
+
+.user-filters__popover-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-4);
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--color-grey-100);
+}
+
+.user-filters__popover-title {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.user-filters__close-button {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent;
+  border: none;
+  border-radius: var(--radius-sm);
+  color: var(--color-grey-400);
+  cursor: pointer;
+  transition: all 150ms ease;
+}
+
+.user-filters__close-button:hover {
+  background-color: var(--color-grey-100);
+  color: var(--color-grey-600);
+}
+
+/* ============================================
+   Filter Group
+   ============================================ */
+
+.user-filters__filter-group {
+  margin-bottom: var(--space-4);
+}
+
+.user-filters__filter-label {
+  display: block;
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-2);
+}
+
+.user-filters__select-container {
+  width: 100%;
+}
+
+/* ============================================
+   Clear Filters Link
+   ============================================ */
+
+.user-filters__clear {
+  display: block;
+  width: 100%;
+  text-align: right;
+  font-size: var(--font-size-xs);
+  color: var(--color-cyan-600);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: var(--space-2) 0;
+  margin-top: var(--space-2);
+}
+
+.user-filters__clear:hover {
+  text-decoration: underline;
+}
+
+/* ============================================
+   Export Button
+   ============================================ */
+
+.user-filters__export {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  height: var(--button-height-lg);
+  padding: 0 var(--space-3);
+  background-color: var(--color-bg-primary);
+  border: 1px solid var(--color-grey-200);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: all 150ms ease;
+}
+
+.user-filters__export:hover {
+  border-color: var(--color-grey-300);
+  background-color: var(--color-grey-050);
+}
+
+/* ============================================
+   Responsive
+   ============================================ */
+
+@media (max-width: 768px) {
+  .user-filters {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .user-filters__group {
+    justify-content: flex-end;
+  }
+
+  .user-filters__popover {
+    right: auto;
+    left: 0;
+    width: 100%;
+    max-width: 280px;
+  }
+}

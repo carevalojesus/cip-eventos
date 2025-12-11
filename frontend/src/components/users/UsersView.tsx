@@ -8,7 +8,7 @@ import { usePagination } from "@/hooks/usePagination";
 
 // Components
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
-import { TablePagination } from "@/components/ui/rui";
+import { TablePagination, PageContainer } from "@/components/ui/rui";
 import { Skeleton, SkeletonCircle } from "@/components/ui/skeleton";
 import { ResetPasswordModal } from "./ResetPasswordModal";
 import { CreateUserDrawer } from "./CreateUserDrawer";
@@ -456,7 +456,7 @@ export const UsersView: React.FC<UsersViewProps> = ({ onNavigate }) => {
   // Loading state - Skeleton
   if (loading) {
     return (
-      <div style={{ padding: "var(--space-6)", maxWidth: "1200px", margin: "0 auto" }}>
+      <PageContainer maxWidth="lg" padding="md">
         {/* Skeleton Header */}
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "var(--space-6)" }}>
           <Skeleton width={160} height={32} />
@@ -541,18 +541,12 @@ export const UsersView: React.FC<UsersViewProps> = ({ onNavigate }) => {
             <Skeleton width={36} height={36} style={{ borderRadius: "var(--radius-md)" }} />
           </div>
         </div>
-      </div>
+      </PageContainer>
     );
   }
 
-  const containerStyle: React.CSSProperties = {
-    padding: "var(--space-6)",
-    maxWidth: "1200px",
-    margin: "0 auto",
-  };
-
   return (
-    <div style={containerStyle}>
+    <PageContainer maxWidth="lg" padding="md">
       {/* Header */}
       <UserPageHeader onCreateUser={handleCreateUser} showCreateButton={users.length > 0} />
 
@@ -704,7 +698,7 @@ export const UsersView: React.FC<UsersViewProps> = ({ onNavigate }) => {
         onClose={() => setIsCreateDrawerOpen(false)}
         onSuccess={handleUserCreated}
       />
-    </div>
+    </PageContainer>
   );
 };
 

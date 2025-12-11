@@ -5,6 +5,7 @@ export { Button } from "../button";
 export { Checkbox } from "../checkbox";
 export { EmptyState } from "../empty-state";
 export { PageHeader } from "../page-header";
+export { PageContainer } from "../page-container";
 export { Pagination } from "../pagination";
 export { TablePagination } from "../table-pagination";
 export { SearchInput } from "../search-input";
