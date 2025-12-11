@@ -55,15 +55,23 @@ export const OrganizerDetailView: React.FC<OrganizerDetailViewProps> = ({
     const locale = getLocaleFromLang(isEnglish ? "en" : "es");
     const queryClient = useQueryClient();
 
-    // Check if we should start in edit mode (from URL query param)
-    const shouldStartEditing = typeof window !== "undefined" 
-        ? new URLSearchParams(window.location.search).get("edit") === "true"
-        : false;
-
     // State
     const [activeTab, setActiveTab] = useState<TabId>("info");
-    const [isEditing, setIsEditing] = useState(shouldStartEditing);
+    const [isEditing, setIsEditing] = useState(false);
     const [hasChanges, setHasChanges] = useState(false);
+
+    // Check if we should start in edit mode (from URL query param)
+    useEffect(() => {
+        if (typeof window !== "undefined") {
+            const params = new URLSearchParams(window.location.search);
+            if (params.get("edit") === "true") {
+                setIsEditing(true);
+                // Clean up URL to remove ?edit=true
+                const newUrl = window.location.pathname;
+                window.history.replaceState({}, "", newUrl);
+            }
+        }
+    }, [organizerId]);
 
     // Form data
     const [formData, setFormData] = useState({
