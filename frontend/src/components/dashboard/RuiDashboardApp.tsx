@@ -8,6 +8,7 @@ import { EditEventView } from "@/components/events/EditEventView";
 import { UsersView, CreateUserView, UserDetailView } from "@/components/users";
 import { OrganizersView, OrganizerDetailView } from "@/components/organizers";
 import { ProfileView } from "@/components/profile";
+import { SettingsView } from "@/components/settings";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "@/lib/queryClient";
 import { getCurrentLocale, routes } from "@/lib/routes";
@@ -415,12 +416,7 @@ export const RuiDashboardApp: React.FC<RuiDashboardAppProps> = ({
             );
         }
         if (startsWithRoute(["/configuracion", "/en/settings"])) {
-            return (
-                <SectionPlaceholder
-                    title={t("sections.settings")}
-                    description={t("sections.coming_soon")}
-                />
-            );
+            return <SettingsView />;
         }
         // Perfil
         if (matchesRoute(["/perfil", "/en/profile"])) {
