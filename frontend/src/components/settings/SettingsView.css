@@ -227,221 +227,11 @@
 }
 
 /* ============================================
-   Section
+   NOTE: Alert, Section, DataField, StatusBadge
+   styles are now in their respective RUI
+   components: alert.css, section.css,
+   data-field.css, badge.css
    ============================================ */
-
-.settings__section {
-    background-color: var(--color-bg-primary);
-    border: 1px solid var(--color-grey-200);
-    border-radius: var(--radius-lg);
-    padding: var(--space-5);
-}
-
-.settings__section-header {
-    display: flex;
-    align-items: center;
-    gap: var(--space-3);
-    margin-bottom: var(--space-4);
-    padding-bottom: var(--space-3);
-    border-bottom: 1px solid var(--color-grey-100);
-}
-
-.settings__section-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 36px;
-    height: 36px;
-    border-radius: var(--radius-md);
-    flex-shrink: 0;
-}
-
-.settings__section-icon--org {
-    background-color: var(--color-cyan-050);
-    color: var(--color-cyan-600);
-}
-
-.settings__section-icon--contact {
-    background-color: var(--color-green-050);
-    color: var(--color-green-600);
-}
-
-.settings__section-icon--integrations {
-    background-color: var(--color-purple-050);
-    color: var(--color-purple-600);
-}
-
-.settings__section-icon--email {
-    background-color: var(--color-cyan-050);
-    color: var(--color-cyan-600);
-}
-
-.settings__section-icon--security {
-    background-color: var(--color-red-050);
-    color: var(--color-red-600);
-}
-
-.settings__section-icon--2fa {
-    background-color: var(--color-green-050);
-    color: var(--color-green-600);
-}
-
-.settings__section-title-group {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-}
-
-.settings__section-title {
-    font-size: var(--font-size-base);
-    font-weight: 600;
-    color: var(--color-text-primary);
-    margin: 0;
-}
-
-.settings__section-subtitle {
-    font-size: var(--font-size-xs);
-    color: var(--color-text-muted);
-    margin: 0;
-}
-
-/* ============================================
-   Alerts / Notices
-   ============================================ */
-
-.settings__alert {
-    display: flex;
-    align-items: center;
-    gap: var(--space-3);
-    padding: var(--space-4);
-    border-radius: var(--radius-md);
-}
-
-.settings__alert-icon {
-    flex-shrink: 0;
-}
-
-/* Edit Button dentro de Alert */
-.settings__edit-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-2);
-    padding: var(--space-2) var(--space-3);
-    font-size: var(--font-size-sm);
-    font-weight: 500;
-    color: var(--color-cyan-700);
-    background: transparent;
-    border: none;
-    border-radius: var(--radius-md);
-    cursor: pointer;
-    transition: all 150ms ease;
-    flex-shrink: 0;
-}
-
-.settings__edit-btn:hover {
-    color: var(--color-cyan-800);
-    background-color: var(--color-cyan-100);
-}
-
-.settings__edit-btn:active {
-    background-color: var(--color-cyan-200);
-}
-
-.settings__alert--info {
-    background-color: var(--color-cyan-050);
-    border: 1px solid var(--color-cyan-200);
-}
-
-.settings__alert--success {
-    background-color: var(--color-green-050);
-    border: 1px solid var(--color-green-200);
-}
-
-.settings__alert--warning {
-    background-color: var(--color-yellow-050);
-    border: 1px solid var(--color-yellow-200);
-}
-
-.settings__alert--neutral {
-    background-color: var(--color-grey-050);
-    border: 1px solid var(--color-grey-200);
-}
-
-.settings__alert-content {
-    flex: 1;
-}
-
-.settings__alert-title {
-    margin: 0;
-    font-size: var(--font-size-sm);
-    font-weight: 600;
-}
-
-.settings__alert--info .settings__alert-title {
-    color: var(--color-cyan-800);
-}
-
-.settings__alert--success .settings__alert-title {
-    color: var(--color-green-700);
-}
-
-.settings__alert--warning .settings__alert-title {
-    color: var(--color-yellow-700);
-}
-
-.settings__alert-text {
-    margin: var(--space-1) 0 0;
-    font-size: var(--font-size-xs);
-}
-
-.settings__alert--info .settings__alert-text {
-    color: var(--color-cyan-700);
-}
-
-.settings__alert--success .settings__alert-text {
-    color: var(--color-green-600);
-}
-
-.settings__alert--warning .settings__alert-text {
-    color: var(--color-yellow-600);
-}
-
-.settings__alert--neutral .settings__alert-title {
-    color: var(--color-text-primary);
-}
-
-.settings__alert--neutral .settings__alert-text {
-    color: var(--color-text-muted);
-}
-
-/* ============================================
-   Read-only Field
-   ============================================ */
-
-.settings__readonly-field {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-1);
-}
-
-.settings__readonly-label {
-    font-size: var(--font-size-sm);
-    font-weight: 500;
-    color: var(--color-text-secondary);
-}
-
-.settings__readonly-value {
-    padding: var(--space-2) var(--space-3);
-    font-size: var(--font-size-sm);
-    color: var(--color-text-primary);
-    background-color: var(--color-grey-050);
-    border: 1px solid var(--color-grey-200);
-    border-radius: var(--radius-md);
-    min-height: 40px;
-    display: flex;
-    align-items: center;
-    word-break: break-word;
-}
 
 /* ============================================
    Integration Cards
@@ -526,7 +316,7 @@
 }
 
 /* ============================================
-   Status Badge
+   Status Badge (for IntegrationCard)
    ============================================ */
 
 .settings__status-badge {
@@ -555,25 +345,14 @@
 }
 
 /* ============================================
-   2FA Section
+   Integration Actions
    ============================================ */
 
-.settings__2fa-status {
+.settings__integration-actions {
     display: flex;
     align-items: center;
-    gap: var(--space-4);
-}
-
-.settings__2fa-info {
-    display: flex;
-    flex-direction: column;
     gap: var(--space-2);
-}
-
-.settings__2fa-note {
-    margin: 0;
-    font-size: var(--font-size-xs);
-    color: var(--color-text-muted);
+    flex-shrink: 0;
 }
 
 /* ============================================
@@ -637,63 +416,7 @@
     border-color: var(--color-green-200);
 }
 
-/* ============================================
-   Integration Actions
-   ============================================ */
-
-.settings__integration-actions {
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
-    flex-shrink: 0;
-}
-
-/* ============================================
-   Provider Card (Email Tab)
-   ============================================ */
-
-.settings__provider-card {
-    background-color: var(--color-bg-primary);
-    border: 1px solid var(--color-grey-200);
-    border-radius: var(--radius-md);
-    padding: var(--space-4);
-}
-
-.settings__provider-info {
-    display: flex;
-    align-items: center;
-    gap: var(--space-3);
-}
-
-.settings__provider-logo {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 48px;
-    height: 48px;
-    border-radius: var(--radius-md);
-    background-color: var(--color-cyan-050);
-    color: var(--color-cyan-600);
-    flex-shrink: 0;
-}
-
-.settings__provider-details {
-    flex: 1;
-    min-width: 0;
-}
-
-.settings__provider-name {
-    margin: 0;
-    font-size: var(--font-size-base);
-    font-weight: 600;
-    color: var(--color-text-primary);
-}
-
-.settings__provider-desc {
-    margin: var(--space-1) 0 0;
-    font-size: var(--font-size-xs);
-    color: var(--color-text-muted);
-}
+/* NOTE: Provider card now uses RUI Card component (card.css) */
 
 /* ============================================
    Modal
@@ -935,5 +658,115 @@
     .settings__integration-status {
         width: 100%;
         margin-top: var(--space-2);
+    }
+}
+
+/* ============================================
+   Email Edit Modal
+   ============================================ */
+
+.email-modal__loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-3);
+    padding: var(--space-8);
+    color: var(--color-text-muted);
+}
+
+.email-modal__form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+.email-modal__row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-4);
+}
+
+.email-modal__field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.email-modal__field--small {
+    max-width: 120px;
+}
+
+.email-modal__label {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    color: var(--color-text-secondary);
+}
+
+.email-modal__secret-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 6px;
+    font-size: var(--font-size-xs);
+    font-weight: 500;
+    color: var(--color-yellow-700);
+    background-color: var(--color-yellow-100);
+    border-radius: var(--radius-sm);
+}
+
+.email-modal__input-group {
+    display: flex;
+    align-items: stretch;
+    gap: var(--space-2);
+}
+
+.email-modal__input-group > *:first-child {
+    flex: 1;
+}
+
+.email-modal__toggle-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    background: var(--color-bg-primary);
+    border: 1px solid var(--color-grey-200);
+    border-radius: var(--radius-md);
+    color: var(--color-text-muted);
+    cursor: pointer;
+    transition: all 150ms ease;
+    flex-shrink: 0;
+}
+
+.email-modal__toggle-btn:hover {
+    background-color: var(--color-grey-050);
+    color: var(--color-text-primary);
+    border-color: var(--color-grey-300);
+}
+
+.email-modal__hint {
+    margin: 0;
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+    font-style: italic;
+}
+
+.email-modal__divider {
+    height: 1px;
+    background-color: var(--color-grey-200);
+    margin: var(--space-2) 0;
+}
+
+@media (max-width: 640px) {
+    .email-modal__row {
+        grid-template-columns: 1fr;
+    }
+
+    .email-modal__field--small {
+        max-width: none;
     }
 }

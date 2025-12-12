@@ -2,6 +2,7 @@
  * OrganizationTab Component
  *
  * Tab de configuración de la organización.
+ * Usa componentes RUI: Alert, Section, DataField.
  */
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -10,60 +11,34 @@ import { toast } from "sonner";
 import {
     Buildings,
     Globe,
-    Info,
-    SpinnerGap,
     PencilSimple,
     FloppyDisk,
 } from "@phosphor-icons/react";
+
+// UI Components
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Alert } from "@/components/ui/alert";
+import { Section } from "@/components/ui/section";
+import { DataField, DataFieldGroup } from "@/components/ui/data-field";
+
+// Services
 import {
     settingsService,
     type OrganizationConfig,
 } from "@/services/settings.service";
 
 // ============================================
-// Editable Field Component
-// ============================================
-
-interface EditableFieldProps {
-    label: string;
-    value: string;
-    name: string;
-    onChange: (name: string, value: string) => void;
-    isEditing: boolean;
-    placeholder?: string;
-}
-
-const EditableField: React.FC<EditableFieldProps> = ({
-    label,
-    value,
-    name,
-    onChange,
-    isEditing,
-    placeholder,
-}) => (
-    <div className="settings__readonly-field">
-        <span className="settings__readonly-label">{label}</span>
-        {isEditing ? (
-            <Input
-                value={value}
-                onChange={(e) => onChange(name, e.target.value)}
-                placeholder={placeholder}
-            />
-        ) : (
-            <div className="settings__readonly-value">{value || "-"}</div>
-        )}
-    </div>
-);
-
-// ============================================
-// Organization Tab
+// Types
 // ============================================
 
 interface OrganizationTabProps {
     data: OrganizationConfig;
 }
+
+// ============================================
+// Organization Tab Component
+// ============================================
 
 export const OrganizationTab: React.FC<OrganizationTabProps> = ({ data }) => {
     const { t } = useTranslation();
@@ -101,135 +76,147 @@ export const OrganizationTab: React.FC<OrganizationTabProps> = ({ data }) => {
     return (
         <div className="settings__form">
             {/* Info Alert */}
-            <div className="settings__alert settings__alert--info">
-                <Info
-                    size={20}
-                    weight="duotone"
-                    className="settings__alert-icon"
-                    style={{ color: "var(--color-cyan-600)" }}
-                />
-                <div className="settings__alert-content">
-                    <p className="settings__alert-title">
-                        {t(
-                            "settings.org_info_title",
-                            "Información de la Organización"
-                        )}
-                    </p>
-                    <p className="settings__alert-text">
-                        {t(
-                            "settings.org_info_desc",
-                            "Estos datos se muestran en certificados, facturas y documentos oficiales."
-                        )}
-                    </p>
-                </div>
-                {!isEditing && (
-                    <Button
-                        variant="soft"
-                        size="sm"
-                        onClick={() => setIsEditing(true)}
-                    >
-                        <PencilSimple size={16} weight="bold" />
-                        {t("common.edit", "Editar")}
-                    </Button>
+            <Alert
+                variant="info"
+                title={t(
+                    "settings.org_info_title",
+                    "Información de la Organización"
                 )}
-            </div>
+                action={
+                    !isEditing && (
+                        <Button
+                            variant="soft"
+                            size="sm"
+                            onClick={() => setIsEditing(true)}
+                        >
+                            <PencilSimple size={16} weight="bold" />
+                            {t("common.edit", "Editar")}
+                        </Button>
+                    )
+                }
+            >
+                {t(
+                    "settings.org_info_desc",
+                    "Estos datos se muestran en certificados, facturas y documentos oficiales."
+                )}
+            </Alert>
 
             {/* Section: Datos Generales */}
-            <section className="settings__section">
-                <div className="settings__section-header">
-                    <div className="settings__section-icon settings__section-icon--org">
-                        <Buildings size={18} weight="duotone" />
-                    </div>
-                    <div className="settings__section-title-group">
-                        <h3 className="settings__section-title">
-                            {t("settings.general_data", "Datos Generales")}
-                        </h3>
-                        <p className="settings__section-subtitle">
-                            {t(
-                                "settings.general_data_desc",
-                                "Información básica de la organización"
-                            )}
-                        </p>
-                    </div>
-                </div>
+            <Section>
+                <Section.Header
+                    icon={<Buildings size={18} weight="duotone" />}
+                    iconVariant="primary"
+                    title={t("settings.general_data", "Datos Generales")}
+                    subtitle={t(
+                        "settings.general_data_desc",
+                        "Información básica de la organización"
+                    )}
+                />
+                <Section.Content>
+                    {isEditing ? (
+                        <div className="settings__form-grid">
+                            <div className="settings__form-grid--full">
+                                <Input
+                                    label={t("settings.org_name", "Razón Social")}
+                                    value={formData.name}
+                                    onChange={(e) => handleChange("name", e.target.value)}
+                                />
+                            </div>
+                            <Input
+                                label={t("settings.org_short_name", "Nombre Corto")}
+                                value={formData.shortName}
+                                onChange={(e) => handleChange("shortName", e.target.value)}
+                            />
+                            <Input
+                                label={t("settings.ruc", "RUC")}
+                                value={formData.ruc}
+                                onChange={(e) => handleChange("ruc", e.target.value)}
+                            />
+                            <Input
+                                label={t("settings.phone", "Teléfono")}
+                                value={formData.phone}
+                                onChange={(e) => handleChange("phone", e.target.value)}
+                            />
+                            <Input
+                                label={t("settings.address", "Dirección Fiscal")}
+                                value={formData.address}
+                                onChange={(e) => handleChange("address", e.target.value)}
+                            />
+                        </div>
+                    ) : (
+                        <DataFieldGroup columns={2}>
+                            <div style={{ gridColumn: "1 / -1" }}>
+                                <DataField
+                                    label={t("settings.org_name", "Razón Social")}
+                                    value={formData.name}
+                                />
+                            </div>
+                            <DataField
+                                label={t("settings.org_short_name", "Nombre Corto")}
+                                value={formData.shortName}
+                            />
+                            <DataField
+                                label={t("settings.ruc", "RUC")}
+                                value={formData.ruc}
+                                copyable
+                                type="mono"
+                            />
+                            <DataField
+                                label={t("settings.phone", "Teléfono")}
+                                value={formData.phone}
+                                copyable
+                            />
+                            <DataField
+                                label={t("settings.address", "Dirección Fiscal")}
+                                value={formData.address}
+                            />
+                        </DataFieldGroup>
+                    )}
+                </Section.Content>
+            </Section>
 
-                <div className="settings__form-grid">
-                    <EditableField
-                        label={t("settings.org_name", "Razón Social")}
-                        value={formData.name}
-                        name="name"
-                        onChange={handleChange}
-                        isEditing={isEditing}
-                    />
-                    <EditableField
-                        label={t("settings.org_short_name", "Nombre Corto")}
-                        value={formData.shortName}
-                        name="shortName"
-                        onChange={handleChange}
-                        isEditing={isEditing}
-                    />
-                    <EditableField
-                        label={t("settings.ruc", "RUC")}
-                        value={formData.ruc}
-                        name="ruc"
-                        onChange={handleChange}
-                        isEditing={isEditing}
-                    />
-                    <EditableField
-                        label={t("settings.phone", "Teléfono")}
-                        value={formData.phone}
-                        name="phone"
-                        onChange={handleChange}
-                        isEditing={isEditing}
-                    />
-                    <div className="settings__form-grid--full">
-                        <EditableField
-                            label={t("settings.address", "Dirección Fiscal")}
-                            value={formData.address}
-                            name="address"
-                            onChange={handleChange}
-                            isEditing={isEditing}
-                        />
-                    </div>
-                </div>
-            </section>
-
-            {/* Section: Contacto */}
-            <section className="settings__section">
-                <div className="settings__section-header">
-                    <div className="settings__section-icon settings__section-icon--contact">
-                        <Globe size={18} weight="duotone" />
-                    </div>
-                    <div className="settings__section-title-group">
-                        <h3 className="settings__section-title">
-                            {t("settings.contact", "Contacto Web")}
-                        </h3>
-                        <p className="settings__section-subtitle">
-                            {t(
-                                "settings.contact_desc",
-                                "Presencia digital de la organización"
-                            )}
-                        </p>
-                    </div>
-                </div>
-
-                <div className="settings__form-grid">
-                    <EditableField
-                        label={t("settings.email", "Correo Institucional")}
-                        value={formData.email}
-                        name="email"
-                        onChange={handleChange}
-                        isEditing={isEditing}
-                    />
-                    <EditableField
-                        label={t("settings.website", "Sitio Web")}
-                        value={formData.website}
-                        name="website"
-                        onChange={handleChange}
-                        isEditing={isEditing}
-                    />
-                </div>
-            </section>
+            {/* Section: Contacto Web */}
+            <Section>
+                <Section.Header
+                    icon={<Globe size={18} weight="duotone" />}
+                    iconVariant="info"
+                    title={t("settings.contact", "Contacto Web")}
+                    subtitle={t(
+                        "settings.contact_desc",
+                        "Presencia digital de la organización"
+                    )}
+                />
+                <Section.Content>
+                    {isEditing ? (
+                        <div className="settings__form-grid">
+                            <Input
+                                label={t("settings.email", "Correo Institucional")}
+                                value={formData.email}
+                                onChange={(e) => handleChange("email", e.target.value)}
+                                type="email"
+                            />
+                            <Input
+                                label={t("settings.website", "Sitio Web")}
+                                value={formData.website}
+                                onChange={(e) => handleChange("website", e.target.value)}
+                            />
+                        </div>
+                    ) : (
+                        <DataFieldGroup columns={2}>
+                            <DataField
+                                label={t("settings.email", "Correo Institucional")}
+                                value={formData.email}
+                                copyable
+                            />
+                            <DataField
+                                label={t("settings.website", "Sitio Web")}
+                                value={formData.website}
+                                copyable
+                            />
+                        </DataFieldGroup>
+                    )}
+                </Section.Content>
+            </Section>
 
             {/* Edit Actions */}
             {isEditing && (
@@ -243,13 +230,9 @@ export const OrganizationTab: React.FC<OrganizationTabProps> = ({ data }) => {
                     </Button>
                     <Button
                         onClick={handleSave}
-                        disabled={updateMutation.isPending}
+                        isLoading={updateMutation.isPending}
                     >
-                        {updateMutation.isPending ? (
-                            <SpinnerGap size={16} className="animate-spin" />
-                        ) : (
-                            <FloppyDisk size={16} />
-                        )}
+                        <FloppyDisk size={16} />
                         {t("form.save_changes", "Guardar Cambios")}
                     </Button>
                 </div>

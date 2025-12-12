@@ -2,6 +2,7 @@
  * IntegrationsTab Component
  *
  * Tab de configuración de integraciones.
+ * Usa componentes RUI: Alert, Section.
  */
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -13,12 +14,20 @@ import {
     Receipt,
     PaperPlaneTilt,
 } from "@phosphor-icons/react";
+
+// UI Components
+import { Alert } from "@/components/ui/alert";
+import { Section } from "@/components/ui/section";
+
+// Services & Types
 import type { IntegrationStatus } from "@/services/settings.service";
+
+// Components
 import {
     IntegrationCard,
-    IntegrationCardData,
     IntegrationEditModal,
 } from "../components";
+import type { IntegrationCardData } from "../components";
 
 // ============================================
 // Types
@@ -41,7 +50,7 @@ const iconMap: Record<string, React.ReactNode> = {
 };
 
 // ============================================
-// Component
+// Integrations Tab Component
 // ============================================
 
 export const IntegrationsTab: React.FC<IntegrationsTabProps> = ({ data }) => {
@@ -66,61 +75,45 @@ export const IntegrationsTab: React.FC<IntegrationsTabProps> = ({ data }) => {
     return (
         <div className="settings__form">
             {/* Info Alert */}
-            <div className="settings__alert settings__alert--info">
-                <Plugs
-                    size={20}
-                    weight="duotone"
-                    className="settings__alert-icon"
-                    style={{ color: "var(--color-cyan-600)" }}
-                />
-                <div className="settings__alert-content">
-                    <p className="settings__alert-title">
-                        {t(
-                            "settings.integrations_title",
-                            "Integraciones del Sistema"
-                        )}
-                    </p>
-                    <p className="settings__alert-text">
-                        {t(
-                            "settings.integrations_desc_admin",
-                            "Configura las credenciales y parámetros de conexión de los servicios externos."
-                        )}
-                    </p>
-                </div>
-            </div>
+            <Alert
+                variant="info"
+                title={t(
+                    "settings.integrations_title",
+                    "Integraciones del Sistema"
+                )}
+            >
+                {t(
+                    "settings.integrations_desc_admin",
+                    "Configura las credenciales y parámetros de conexión de los servicios externos."
+                )}
+            </Alert>
 
             {/* Integrations List */}
-            <section className="settings__section">
-                <div className="settings__section-header">
-                    <div className="settings__section-icon settings__section-icon--integrations">
-                        <Plugs size={18} weight="duotone" />
+            <Section>
+                <Section.Header
+                    icon={<Plugs size={18} weight="duotone" />}
+                    iconVariant="info"
+                    title={t(
+                        "settings.active_integrations",
+                        "Integraciones Activas"
+                    )}
+                    subtitle={t(
+                        "settings.active_integrations_desc",
+                        "Estado de los servicios externos"
+                    )}
+                />
+                <Section.Content>
+                    <div className="settings__integrations-grid">
+                        {integrationsWithIcons.map((integration) => (
+                            <IntegrationCard
+                                key={integration.key}
+                                integration={integration}
+                                onConfigure={handleConfigure}
+                            />
+                        ))}
                     </div>
-                    <div className="settings__section-title-group">
-                        <h3 className="settings__section-title">
-                            {t(
-                                "settings.active_integrations",
-                                "Integraciones Activas"
-                            )}
-                        </h3>
-                        <p className="settings__section-subtitle">
-                            {t(
-                                "settings.active_integrations_desc",
-                                "Estado de los servicios externos"
-                            )}
-                        </p>
-                    </div>
-                </div>
-
-                <div className="settings__integrations-grid">
-                    {integrationsWithIcons.map((integration) => (
-                        <IntegrationCard
-                            key={integration.key}
-                            integration={integration}
-                            onConfigure={handleConfigure}
-                        />
-                    ))}
-                </div>
-            </section>
+                </Section.Content>
+            </Section>
 
             {/* Edit Modal */}
             {selectedIntegration && (
