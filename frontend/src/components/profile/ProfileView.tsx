@@ -940,7 +940,7 @@ const NominalTab: React.FC<NominalTabProps> = ({
                     </section>
 
                     <div className="profile__form-actions" style={{ display: "flex", gap: "var(--space-3)", justifyContent: "flex-end" }}>
-                        <Button type="button" variant="secondary" onClick={handleCancelEdit}>
+                        <Button type="button" variant="ghost" onClick={handleCancelEdit}>
                             {t("common.cancel", "Cancelar")}
                         </Button>
                         <Button type="submit" variant="primary" isLoading={isSaving}>
@@ -1002,7 +1002,7 @@ const NominalTab: React.FC<NominalTabProps> = ({
                             </Button>
                         )}
                         <Button
-                            variant="ghost"
+                            variant="soft"
                             size="sm"
                             onClick={() => setIsEditing(true)}
                         >

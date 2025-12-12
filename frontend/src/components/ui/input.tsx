@@ -68,6 +68,8 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(({
     alignItems: 'center',
   }
 
+  const isDisabled = props.disabled
+
   const inputStyles: React.CSSProperties = {
     width: '100%',
     height,
@@ -75,13 +77,14 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(({
     paddingLeft: leftIcon ? 'var(--space-10)' : 'var(--space-4)',
     paddingRight: (rightIcon || shouldShowToggle) ? 'var(--space-10)' : 'var(--space-4)',
     fontSize,
-    color: 'var(--color-grey-900)',
-    backgroundColor: colors.white,
+    color: isDisabled ? 'var(--color-grey-600)' : 'var(--color-grey-900)',
+    backgroundColor: isDisabled ? 'var(--color-grey-050)' : colors.white,
     border: `1px solid ${error ? 'var(--color-danger)' : 'var(--color-grey-200)'}`,
     borderRadius: 'var(--radius-md)',
     outline: 'none',
     transition: 'border-color 150ms ease, box-shadow 150ms ease',
-    boxShadow: shadows.inputInset,
+    boxShadow: isDisabled ? 'none' : shadows.inputInset,
+    cursor: isDisabled ? 'default' : 'text',
   }
 
   const iconStyles: React.CSSProperties = {

@@ -47,6 +47,30 @@ export class OrganizationSettingsDto {
 export class EmailSettingsDto {
   @IsString()
   @IsOptional()
+  provider?: 'resend' | 'smtp';
+
+  @IsString()
+  @IsOptional()
+  resendApiKey?: string;
+
+  @IsString()
+  @IsOptional()
+  smtpHost?: string;
+
+  @IsString()
+  @IsOptional()
+  smtpPort?: string;
+
+  @IsString()
+  @IsOptional()
+  smtpUser?: string;
+
+  @IsString()
+  @IsOptional()
+  smtpPass?: string;
+
+  @IsString()
+  @IsOptional()
   fromName?: string;
 
   @IsString()

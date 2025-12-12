@@ -638,6 +638,249 @@
 }
 
 /* ============================================
+   Integration Actions
+   ============================================ */
+
+.settings__integration-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    flex-shrink: 0;
+}
+
+/* ============================================
+   Provider Card (Email Tab)
+   ============================================ */
+
+.settings__provider-card {
+    background-color: var(--color-bg-primary);
+    border: 1px solid var(--color-grey-200);
+    border-radius: var(--radius-md);
+    padding: var(--space-4);
+}
+
+.settings__provider-info {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+}
+
+.settings__provider-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-md);
+    background-color: var(--color-cyan-050);
+    color: var(--color-cyan-600);
+    flex-shrink: 0;
+}
+
+.settings__provider-details {
+    flex: 1;
+    min-width: 0;
+}
+
+.settings__provider-name {
+    margin: 0;
+    font-size: var(--font-size-base);
+    font-weight: 600;
+    color: var(--color-text-primary);
+}
+
+.settings__provider-desc {
+    margin: var(--space-1) 0 0;
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+}
+
+/* ============================================
+   Modal
+   ============================================ */
+
+.settings__modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: var(--space-4);
+}
+
+.settings__modal {
+    background-color: var(--color-bg-primary);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
+        0 8px 10px -6px rgba(0, 0, 0, 0.1);
+    max-width: 500px;
+    width: 100%;
+    max-height: 90vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.settings__modal--wide {
+    max-width: 600px;
+}
+
+.settings__modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-4) var(--space-5);
+    border-bottom: 1px solid var(--color-grey-200);
+}
+
+.settings__modal-title {
+    margin: 0;
+    font-size: var(--font-size-lg);
+    font-weight: 600;
+    color: var(--color-text-primary);
+}
+
+.settings__modal-close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: none;
+    border: none;
+    border-radius: var(--radius-md);
+    color: var(--color-text-muted);
+    cursor: pointer;
+    transition: all 150ms ease;
+}
+
+.settings__modal-close:hover {
+    background-color: var(--color-grey-100);
+    color: var(--color-text-primary);
+}
+
+.settings__modal-body {
+    padding: var(--space-5);
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+.settings__modal-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-3);
+    padding: var(--space-8);
+    color: var(--color-text-muted);
+}
+
+.settings__modal-field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.settings__modal-label {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    color: var(--color-text-secondary);
+}
+
+.settings__modal-secret-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 6px;
+    font-size: var(--font-size-xs);
+    font-weight: 500;
+    color: var(--color-yellow-700);
+    background-color: var(--color-yellow-100);
+    border-radius: var(--radius-sm);
+}
+
+.settings__modal-select {
+    width: 100%;
+    padding: var(--space-2) var(--space-3);
+    font-size: var(--font-size-sm);
+    color: var(--color-text-primary);
+    background-color: var(--color-bg-primary);
+    border: 1px solid var(--color-grey-300);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: border-color 150ms ease;
+}
+
+.settings__modal-select:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px var(--color-primary-100);
+}
+
+.settings__modal-input-wrapper {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    position: relative;
+}
+
+.settings__modal-input-wrapper input {
+    flex: 1;
+}
+
+.settings__modal-toggle-secret {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: none;
+    border: none;
+    border-radius: var(--radius-md);
+    color: var(--color-text-muted);
+    cursor: pointer;
+    transition: all 150ms ease;
+    flex-shrink: 0;
+}
+
+.settings__modal-toggle-secret:hover {
+    background-color: var(--color-grey-100);
+    color: var(--color-text-primary);
+}
+
+.settings__modal-hint {
+    margin: 0;
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+    font-style: italic;
+}
+
+.settings__modal-divider {
+    height: 1px;
+    background-color: var(--color-grey-200);
+    margin: var(--space-2) 0;
+}
+
+.settings__modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--space-3);
+    padding: var(--space-4) var(--space-5);
+    border-top: 1px solid var(--color-grey-200);
+    background-color: var(--color-grey-050);
+}
+
+/* ============================================
    Responsive
    ============================================ */
 
