@@ -1,0 +1,91 @@
+/* ============================================
+   EventAdminActions Styles
+   Sistema de diseño RUI
+   ============================================ */
+
+/* Trigger Button */
+.event-actions__trigger {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-md);
+  color: var(--color-grey-500);
+  cursor: pointer;
+  transition: background-color 150ms ease, color 150ms ease;
+}
+
+.event-actions__trigger:hover {
+  background-color: var(--color-grey-100);
+  color: var(--color-grey-700);
+}
+
+.event-actions__trigger:focus-visible {
+  outline: 2px solid var(--color-cyan-500);
+  outline-offset: 2px;
+}
+
+/* Dropdown Content */
+.event-actions__content {
+  min-width: 200px;
+  background-color: var(--color-bg-primary);
+  border: 1px solid var(--color-grey-200);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  padding: var(--space-1);
+  overflow: hidden;
+}
+
+/* Dropdown Item */
+.event-actions__item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  width: 100%;
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-primary);
+  background: none;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  text-align: left;
+  transition: background-color 150ms ease;
+}
+
+.event-actions__item:hover,
+.event-actions__item:focus {
+  background-color: var(--color-grey-050);
+  outline: none;
+}
+
+/* Danger Item */
+.event-actions__item--danger {
+  color: var(--color-danger);
+}
+
+.event-actions__item--danger:hover,
+.event-actions__item--danger:focus {
+  background-color: var(--color-red-050);
+}
+
+/* Success Item (Publish) */
+.event-actions__item--success {
+  color: var(--color-success);
+}
+
+.event-actions__item--success:hover,
+.event-actions__item--success:focus {
+  background-color: var(--color-green-050);
+}
+
+/* Separator */
+.event-actions__separator {
+  height: 1px;
+  background-color: var(--color-grey-100);
+  margin: var(--space-1) 0;
+}

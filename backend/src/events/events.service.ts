@@ -340,7 +340,10 @@ export class EventsService {
         'location',
         'virtualAccess',
         'speakers',
+        'organizers',
         'tickets',
+        'sessions',
+        'signers',
       ],
     });
 

@@ -11,6 +11,8 @@ interface FormSelectOption {
     label: string;
 }
 
+type SelectSize = "sm" | "md";
+
 interface FormSelectProps {
     label?: string;
     value: string;
@@ -21,6 +23,7 @@ interface FormSelectProps {
     hint?: string;
     required?: boolean;
     disabled?: boolean;
+    size?: SelectSize;
 }
 
 // Componente interno para manejar el dropdown con position tracking
@@ -171,6 +174,11 @@ const DropdownOptions: React.FC<{
     );
 };
 
+const sizeConfig: Record<SelectSize, { height: string; fontSize: string }> = {
+    sm: { height: "var(--button-height-sm)", fontSize: "var(--font-size-sm)" },
+    md: { height: "var(--button-height-md)", fontSize: "var(--font-size-sm)" },
+};
+
 export const FormSelect: React.FC<FormSelectProps> = ({
     label,
     value,
@@ -181,6 +189,7 @@ export const FormSelect: React.FC<FormSelectProps> = ({
     hint,
     required,
     disabled = false,
+    size = "md",
 }) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const [isHovered, setIsHovered] = useState(false);
@@ -208,15 +217,17 @@ export const FormSelect: React.FC<FormSelectProps> = ({
         marginLeft: "var(--space-0-5)",
     };
 
+    const { height, fontSize } = sizeConfig[size];
+
     const getButtonStyle = (isOpen: boolean): React.CSSProperties => ({
         position: "relative",
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
         width: "100%",
-        height: "var(--button-height-md)",
+        height,
         padding: "0 var(--space-3) 0 var(--space-4)",
-        fontSize: "var(--font-size-sm)",
+        fontSize,
         fontWeight: 400,
         textAlign: "left",
         borderRadius: "var(--radius-md)",

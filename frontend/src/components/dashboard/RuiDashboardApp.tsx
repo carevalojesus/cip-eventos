@@ -2,9 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useAuthStore } from "@/store/auth.store";
 import { LoadingState } from "./LoadingState";
 import { DashboardContent } from "./DashboardContent";
-import { EventsView } from "@/components/events/EventsView";
-import { EventManagementView } from "@/components/events/EventManagementView";
-import { EditEventView } from "@/components/events/EditEventView";
+import { EventsAdminView, EventDetailAdminView, EditEventAdminView } from "@/components/events-admin";
 import { UsersView, CreateUserView, UserDetailView } from "@/components/users";
 import { OrganizersView, OrganizerDetailView } from "@/components/organizers";
 import { ProfileView } from "@/components/profile";
@@ -281,10 +279,9 @@ export const RuiDashboardApp: React.FC<RuiDashboardAppProps> = ({
         const editEventId = getEventIdFromEditPath(activePath);
         if (editEventId) {
             return (
-                <EditEventView
+                <EditEventAdminView
                     eventId={editEventId}
                     onNavigate={handleNavigate}
-                    onBreadcrumbsChange={setBreadcrumbs}
                 />
             );
         }
@@ -292,7 +289,7 @@ export const RuiDashboardApp: React.FC<RuiDashboardAppProps> = ({
         const eventId = getEventIdFromPath(activePath);
         if (eventId) {
             return (
-                <EventManagementView
+                <EventDetailAdminView
                     eventId={eventId}
                     onNavigate={handleNavigate}
                 />
@@ -300,7 +297,7 @@ export const RuiDashboardApp: React.FC<RuiDashboardAppProps> = ({
         }
         // Lista de eventos
         if (startsWithRoute(["/eventos", "/en/events"])) {
-            return <EventsView onNavigate={handleNavigate} />;
+            return <EventsAdminView onNavigate={handleNavigate} />;
         }
         // Placeholders para otras secciones
         if (startsWithRoute(["/ponentes", "/en/speakers"])) {

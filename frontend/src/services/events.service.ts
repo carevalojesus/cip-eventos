@@ -51,6 +51,15 @@ export const eventsService = {
     return response.data;
   },
 
+  async unpublish(id: string): Promise<Event> {
+    const response = await api.patch<Event>(`/events/${id}/unpublish`);
+    return response.data;
+  },
+
+  async delete(id: string): Promise<void> {
+    await api.delete(`/events/${id}`);
+  },
+
   async findAllPaginated(page = 1, limit = 10): Promise<PaginatedResponse<Event>> {
     const response = await api.get<PaginatedResponse<Event>>("/events", {
       params: { page, limit },
@@ -90,5 +99,14 @@ export const eventsService = {
   async getUniqueLocations(): Promise<EventLocation[]> {
     const response = await api.get<EventLocation[]>("/events/locations");
     return response.data;
+  },
+
+  // Organizers
+  async addOrganizer(eventId: string, organizerId: string): Promise<void> {
+    await api.post(`/events/${eventId}/organizers`, { organizerId });
+  },
+
+  async removeOrganizer(eventId: string, organizerId: string): Promise<void> {
+    await api.delete(`/events/${eventId}/organizers/${organizerId}`);
   },
 };

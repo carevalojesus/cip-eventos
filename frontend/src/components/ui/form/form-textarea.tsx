@@ -13,9 +13,9 @@ interface FormTextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> 
 }
 
 const sizeConfig: Record<TextareaSize, { fontSize: string; minHeight: string }> = {
-  sm: { fontSize: "var(--font-size-xs)", minHeight: "80px" },
-  md: { fontSize: "var(--font-size-sm)", minHeight: "120px" },
-  lg: { fontSize: "var(--font-size-sm)", minHeight: "160px" },
+  sm: { fontSize: "var(--font-size-xs)", minHeight: "60px" },
+  md: { fontSize: "var(--font-size-sm)", minHeight: "100px" },
+  lg: { fontSize: "var(--font-size-sm)", minHeight: "140px" },
 };
 
 export const FormTextarea = forwardRef<HTMLTextAreaElement, FormTextareaProps>(

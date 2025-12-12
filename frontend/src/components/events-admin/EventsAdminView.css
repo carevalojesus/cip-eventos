@@ -1,0 +1,409 @@
+/**
+ * EventsAdminView Styles
+ *
+ * Estilos para la vista de lista de eventos administrativos.
+ * Siguiendo tokens CSS de global.css y patrones RUI.
+ */
+
+/* ============================================
+   Page Header
+   ============================================ */
+
+.events-admin__page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+  flex-wrap: wrap;
+}
+
+.events-admin__page-header-content {
+  flex: 1;
+  min-width: 200px;
+}
+
+.events-admin__page-title {
+  font-size: var(--font-size-2xl);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 0 0 var(--space-1) 0;
+}
+
+.events-admin__page-subtitle {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+/* ============================================
+   Filters
+   ============================================ */
+
+.events-admin__filters {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.events-admin__filters-search {
+  flex: 1;
+  min-width: 280px;
+  max-width: 400px;
+}
+
+.events-admin__filters-actions {
+  display: flex;
+  gap: var(--space-3);
+  align-items: center;
+}
+
+.events-admin__filters-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  font-size: 11px;
+  font-weight: 600;
+  background-color: var(--color-red-500);
+  color: white;
+  border-radius: var(--radius-full);
+}
+
+/* Popover de filtros */
+.events-admin__filters-popover-container {
+  position: relative;
+}
+
+.events-admin__filters-popover {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 320px;
+  background-color: var(--color-bg-primary);
+  border: 1px solid var(--color-grey-200);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  z-index: 50;
+}
+
+.events-admin__filters-popover-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-4);
+  border-bottom: 1px solid var(--color-grey-100);
+}
+
+.events-admin__filters-popover-header h4 {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.events-admin__filters-popover-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: transparent;
+  color: var(--color-grey-500);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.events-admin__filters-popover-close:hover {
+  background-color: var(--color-grey-100);
+  color: var(--color-grey-700);
+}
+
+.events-admin__filters-popover-body {
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.events-admin__filters-popover-footer {
+  padding: var(--space-3) var(--space-4);
+  border-top: 1px solid var(--color-grey-100);
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* ============================================
+   Table Container
+   ============================================ */
+
+.events-admin__table-container {
+  background-color: var(--color-bg-primary);
+  border: 1px solid var(--color-grey-200);
+  border-radius: var(--radius-lg);
+  overflow-x: auto;
+}
+
+.events-admin__table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+/* ============================================
+   Table Header
+   ============================================ */
+
+.events-admin__th {
+  padding: var(--space-3) var(--space-4);
+  text-align: left;
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background-color: var(--color-grey-050);
+  border-bottom: 1px solid var(--color-grey-200);
+  white-space: nowrap;
+}
+
+.events-admin__th--checkbox {
+  width: 48px;
+  text-align: center;
+}
+
+.events-admin__th--image {
+  width: 80px;
+}
+
+.events-admin__th--title {
+  min-width: 200px;
+}
+
+.events-admin__th--organizer {
+  min-width: 140px;
+}
+
+.events-admin__th--date {
+  width: 100px;
+}
+
+.events-admin__th--status {
+  width: 110px;
+}
+
+.events-admin__th--modality {
+  width: 120px;
+}
+
+.events-admin__th--enrollments {
+  width: 90px;
+  text-align: center;
+}
+
+.events-admin__th--actions {
+  width: 60px;
+  text-align: center;
+}
+
+/* ============================================
+   Table Rows
+   ============================================ */
+
+.events-admin__tr {
+  transition: background-color var(--transition-fast);
+}
+
+.events-admin__tr:hover {
+  background-color: var(--color-grey-050);
+}
+
+.events-admin__tr--selected {
+  background-color: var(--color-red-025);
+}
+
+.events-admin__tr--selected:hover {
+  background-color: var(--color-red-050);
+}
+
+.events-admin__td {
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--color-grey-100);
+  vertical-align: middle;
+}
+
+.events-admin__tr:last-child .events-admin__td {
+  border-bottom: none;
+}
+
+.events-admin__td--checkbox {
+  text-align: center;
+}
+
+.events-admin__td--enrollments {
+  text-align: center;
+}
+
+.events-admin__td--actions {
+  text-align: center;
+}
+
+/* ============================================
+   Event Image
+   ============================================ */
+
+.events-admin__event-image {
+  width: 64px;
+  height: 48px;
+  object-fit: cover;
+  border-radius: var(--radius-md);
+  background-color: var(--color-grey-100);
+}
+
+/* ============================================
+   Event Info (Title + Slug)
+   ============================================ */
+
+.events-admin__event-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.events-admin__event-title {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-cyan-700);
+  text-decoration: none;
+  cursor: pointer;
+  transition: color var(--transition-fast);
+  background: none;
+  border: none;
+  padding: 0;
+  text-align: left;
+}
+
+.events-admin__event-title:hover {
+  color: var(--color-cyan-800);
+  text-decoration: underline;
+}
+
+.events-admin__event-slug {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+/* ============================================
+   Other Cells
+   ============================================ */
+
+.events-admin__organizer-name {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-primary);
+}
+
+.events-admin__date {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-primary);
+}
+
+.events-admin__enrollments {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+/* ============================================
+   Skeleton
+   ============================================ */
+
+.events-admin__skeleton {
+  background-color: var(--color-bg-primary);
+  border: 1px solid var(--color-grey-200);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.events-admin__skeleton-header {
+  display: grid;
+  grid-template-columns: 48px 80px 2fr 1.5fr 100px 110px 120px 90px 60px;
+  gap: var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  background-color: var(--color-grey-050);
+  border-bottom: 1px solid var(--color-grey-200);
+  align-items: center;
+}
+
+.events-admin__skeleton-row {
+  display: grid;
+  grid-template-columns: 48px 80px 2fr 1.5fr 100px 110px 120px 90px 60px;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  border-bottom: 1px solid var(--color-grey-100);
+  align-items: center;
+}
+
+.events-admin__skeleton-row:last-child {
+  border-bottom: none;
+}
+
+/* ============================================
+   Responsive
+   ============================================ */
+
+@media (max-width: 1200px) {
+  .events-admin__th--organizer,
+  .events-admin__td--organizer {
+    display: none;
+  }
+
+  .events-admin__skeleton-header,
+  .events-admin__skeleton-row {
+    grid-template-columns: 48px 80px 2fr 100px 110px 120px 90px 60px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .events-admin__th--modality,
+  .events-admin__td--modality {
+    display: none;
+  }
+
+  .events-admin__skeleton-header,
+  .events-admin__skeleton-row {
+    grid-template-columns: 48px 80px 2fr 100px 110px 90px 60px;
+  }
+}
+
+@media (max-width: 768px) {
+  .events-admin__filters {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .events-admin__filters-search {
+    max-width: none;
+  }
+
+  .events-admin__filters-actions {
+    justify-content: flex-end;
+  }
+
+  .events-admin__th--image,
+  .events-admin__td--image,
+  .events-admin__th--enrollments,
+  .events-admin__td--enrollments {
+    display: none;
+  }
+
+  .events-admin__skeleton-header,
+  .events-admin__skeleton-row {
+    grid-template-columns: 48px 2fr 100px 110px 60px;
+  }
+}

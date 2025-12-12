@@ -1,0 +1,485 @@
+/**
+ * EventDetailAdminView Styles
+ *
+ * Estilos para la vista de detalle de evento administrativo.
+ * Layout 2 columnas con tabs horizontales.
+ */
+
+/* ============================================
+   Back Button
+   ============================================ */
+
+.event-detail-admin__back {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 0;
+  margin-bottom: var(--space-4);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color 150ms ease;
+}
+
+.event-detail-admin__back:hover {
+  color: var(--color-primary);
+}
+
+/* ============================================
+   Header con acciones
+   ============================================ */
+
+.event-detail-admin__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-4);
+  margin-bottom: var(--space-5);
+}
+
+.event-detail-admin__header-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.event-detail-admin__title {
+  font-size: var(--font-size-2xl);
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin: 0 0 var(--space-2) 0;
+  line-height: 1.2;
+}
+
+.event-detail-admin__header-badges {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.event-detail-admin__header-actions {
+  display: flex;
+  gap: var(--space-2);
+  flex-shrink: 0;
+}
+
+/* ============================================
+   Layout
+   ============================================ */
+
+.event-detail-admin__layout {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: var(--space-6);
+  align-items: start;
+}
+
+.event-detail-admin__main {
+  min-width: 0;
+}
+
+.event-detail-admin__sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+/* ============================================
+   Event Card
+   ============================================ */
+
+.event-detail-admin__event-card {
+  display: flex;
+  gap: var(--space-5);
+  padding: var(--space-5);
+  background-color: var(--color-bg-primary);
+  border: 1px solid var(--color-grey-200);
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--space-4);
+}
+
+.event-detail-admin__event-image-container {
+  flex-shrink: 0;
+}
+
+.event-detail-admin__event-image {
+  width: 200px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: var(--radius-lg);
+}
+
+.event-detail-admin__event-image-placeholder {
+  width: 200px;
+  height: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-grey-100);
+  border-radius: var(--radius-lg);
+  color: var(--color-grey-400);
+}
+
+.event-detail-admin__event-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.event-detail-admin__event-badges {
+  display: flex;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+
+.event-detail-admin__event-title {
+  font-size: var(--font-size-xl);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 0 0 var(--space-1) 0;
+  line-height: 1.3;
+}
+
+.event-detail-admin__event-slug {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  margin: 0 0 var(--space-3) 0;
+}
+
+.event-detail-admin__event-dates,
+.event-detail-admin__event-location {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-2);
+}
+
+.event-detail-admin__event-dates svg,
+.event-detail-admin__event-location svg {
+  color: var(--color-grey-500);
+  flex-shrink: 0;
+}
+
+/* ============================================
+   Tabs
+   ============================================ */
+
+.event-detail-admin__tabs {
+  display: flex;
+  gap: var(--space-1);
+  border-bottom: 1px solid var(--color-grey-200);
+  margin-bottom: var(--space-4);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.event-detail-admin__tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.event-detail-admin__tab {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-text-muted);
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.event-detail-admin__tab:hover {
+  color: var(--color-text-primary);
+  background-color: var(--color-grey-050);
+}
+
+.event-detail-admin__tab--active {
+  color: var(--color-primary-dark);
+  border-bottom-color: var(--color-primary);
+}
+
+.event-detail-admin__tab--active:hover {
+  color: var(--color-primary-dark);
+}
+
+/* ============================================
+   Tab Content
+   ============================================ */
+
+.event-detail-admin__tab-content {
+  min-height: 400px;
+}
+
+/* Espaciado entre elementos en los tabs */
+.event-detail-admin__tab-content > .rui-alert {
+  margin-bottom: var(--space-4);
+}
+
+.event-detail-admin__tab-content > .rui-section {
+  margin-bottom: var(--space-4);
+}
+
+.event-detail-admin__tab-content > .rui-section:last-child {
+  margin-bottom: 0;
+}
+
+/* Tab Info específico */
+.event-info-tab {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.event-info-tab__image-container {
+  max-width: 400px;
+}
+
+.event-info-tab__image {
+  width: 100%;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-grey-200);
+}
+
+.event-info-tab__no-image {
+  color: var(--color-text-muted);
+  margin: 0;
+  font-size: var(--font-size-sm);
+}
+
+/* Tab Sessions */
+.event-sessions-tab {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+/* Tab Tickets */
+.event-tickets-tab {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+/* Tab Registrations */
+.event-registrations-tab {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.event-detail-admin__placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  background-color: var(--color-grey-050);
+  border-radius: var(--radius-lg);
+  color: var(--color-text-muted);
+}
+
+/* ============================================
+   Sidebar Cards
+   ============================================ */
+
+.event-detail-admin__sidebar-card {
+  padding: var(--space-4);
+  background-color: var(--color-bg-primary);
+  border: 1px solid var(--color-grey-200);
+  border-radius: var(--radius-lg);
+}
+
+.event-detail-admin__sidebar-card-title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 0 0 var(--space-4) 0;
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--color-grey-100);
+}
+
+/* ============================================
+   Quick Stats
+   ============================================ */
+
+.event-detail-admin__stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+}
+
+.event-detail-admin__stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-3);
+  background-color: var(--color-grey-050);
+  border-radius: var(--radius-md);
+}
+
+.event-detail-admin__stat-value {
+  font-size: var(--font-size-xl);
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.event-detail-admin__stat-label {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  text-align: center;
+}
+
+/* ============================================
+   Organizers
+   ============================================ */
+
+.event-detail-admin__organizers {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.event-detail-admin__organizer {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.event-detail-admin__organizer-logo {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  border-radius: var(--radius-md);
+  background-color: var(--color-grey-050);
+}
+
+.event-detail-admin__organizer-logo-placeholder {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-grey-100);
+  border-radius: var(--radius-md);
+  color: var(--color-grey-400);
+}
+
+.event-detail-admin__organizer-name {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+.event-detail-admin__no-data {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+/* ============================================
+   Metadata
+   ============================================ */
+
+.event-detail-admin__metadata {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.event-detail-admin__metadata-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.event-detail-admin__metadata-label {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+.event-detail-admin__metadata-value {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-text-primary);
+  text-align: right;
+}
+
+/* ============================================
+   Not Found
+   ============================================ */
+
+.event-detail-admin__not-found {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+  min-height: 400px;
+  text-align: center;
+}
+
+.event-detail-admin__not-found h2 {
+  font-size: var(--font-size-lg);
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+/* ============================================
+   Responsive
+   ============================================ */
+
+@media (max-width: 1024px) {
+  .event-detail-admin__layout {
+    grid-template-columns: 1fr;
+  }
+
+  .event-detail-admin__sidebar {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-4);
+  }
+}
+
+@media (max-width: 768px) {
+  .event-detail-admin__header {
+    flex-direction: column;
+  }
+
+  .event-detail-admin__header-actions {
+    width: 100%;
+  }
+
+  .event-detail-admin__header-actions > button {
+    flex: 1;
+  }
+
+  .event-detail-admin__event-card {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .event-detail-admin__event-badges {
+    justify-content: center;
+  }
+
+  .event-detail-admin__event-dates,
+  .event-detail-admin__event-location {
+    justify-content: center;
+  }
+
+  .event-detail-admin__sidebar {
+    grid-template-columns: 1fr;
+  }
+}

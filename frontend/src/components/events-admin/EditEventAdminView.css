@@ -1,0 +1,292 @@
+/**
+ * EditEventAdminView Styles
+ *
+ * Estilos para la vista de edición de evento administrativo.
+ * Layout 2 columnas: Izquierda (info básica, imagen) | Derecha (config, ubicación, virtual)
+ */
+
+/* ============================================
+   Back Button
+   ============================================ */
+
+.edit-event-admin__back {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 0;
+  margin-bottom: var(--space-4);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color 150ms ease;
+}
+
+.edit-event-admin__back:hover {
+  color: var(--color-primary);
+}
+
+/* ============================================
+   Header
+   ============================================ */
+
+.edit-event-admin__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+}
+
+.edit-event-admin__title {
+  font-size: var(--font-size-2xl);
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin: 0 0 var(--space-1) 0;
+  line-height: 1.2;
+}
+
+.edit-event-admin__subtitle {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+.edit-event-admin__header-actions {
+  display: flex;
+  gap: var(--space-2);
+  flex-shrink: 0;
+}
+
+/* ============================================
+   Form Layout
+   ============================================ */
+
+.edit-event-admin__layout {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: var(--space-6);
+  align-items: start;
+}
+
+.edit-event-admin__main {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.edit-event-admin__sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  position: sticky;
+  top: var(--space-4);
+}
+
+/* ============================================
+   Card
+   ============================================ */
+
+.edit-event-admin__card {
+  padding: var(--space-5);
+  background-color: var(--color-bg-primary);
+  border: 1px solid var(--color-grey-200);
+  border-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.edit-event-admin__card-title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 0;
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--color-grey-200);
+}
+
+/* ============================================
+   Summary Counter
+   ============================================ */
+
+.edit-event-admin__counter {
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+  color: var(--color-grey-600);
+  white-space: nowrap;
+}
+
+.edit-event-admin__counter--warning {
+  color: var(--color-orange-600);
+}
+
+.edit-event-admin__counter--error {
+  color: var(--color-red-600);
+}
+
+/* ============================================
+   Image Upload
+   ============================================ */
+
+.edit-event-admin__image-preview {
+  position: relative;
+  width: 100%;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: 1px solid var(--color-grey-200);
+}
+
+.edit-event-admin__image {
+  width: 100%;
+  height: auto;
+  max-height: 300px;
+  object-fit: cover;
+  display: block;
+}
+
+.edit-event-admin__image-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, 0.7) 100%
+  );
+  pointer-events: none;
+}
+
+.edit-event-admin__image-info {
+  position: absolute;
+  bottom: var(--space-3);
+  left: var(--space-3);
+  right: var(--space-3);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-white);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.edit-event-admin__image-remove {
+  position: absolute;
+  top: var(--space-2);
+  right: var(--space-2);
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-white);
+  border: none;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  color: var(--color-grey-700);
+  box-shadow: var(--shadow-md);
+  transition: all 150ms ease;
+}
+
+.edit-event-admin__image-remove:hover {
+  background-color: var(--color-red-50);
+  color: var(--color-red-600);
+  transform: scale(1.1);
+}
+
+.edit-event-admin__image-upload {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-8) var(--space-4);
+  border: 2px dashed var(--color-grey-300);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: all 150ms ease;
+  background-color: var(--color-grey-050);
+  color: var(--color-grey-500);
+}
+
+.edit-event-admin__image-upload:hover {
+  border-color: var(--color-primary);
+  background-color: var(--color-red-050);
+  color: var(--color-primary);
+}
+
+.edit-event-admin__image-upload-text {
+  font-size: var(--font-size-sm);
+  color: var(--color-grey-700);
+  margin: var(--space-3) 0 var(--space-1) 0;
+  text-align: center;
+}
+
+.edit-event-admin__image-upload-text strong {
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+.edit-event-admin__image-upload-hint {
+  font-size: var(--font-size-xs);
+  color: var(--color-grey-500);
+  margin: 0;
+  text-align: center;
+}
+
+/* ============================================
+   Error State
+   ============================================ */
+
+.edit-event-admin__error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+  min-height: 400px;
+  text-align: center;
+}
+
+.edit-event-admin__error h2 {
+  font-size: var(--font-size-lg);
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+/* ============================================
+   Responsive
+   ============================================ */
+
+@media (max-width: 1024px) {
+  .edit-event-admin__layout {
+    grid-template-columns: 1fr;
+  }
+
+  .edit-event-admin__sidebar {
+    position: static;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-4);
+  }
+}
+
+@media (max-width: 768px) {
+  .edit-event-admin__header {
+    flex-direction: column;
+  }
+
+  .edit-event-admin__header-actions {
+    width: 100%;
+  }
+
+  .edit-event-admin__header-actions > button {
+    flex: 1;
+  }
+
+  .edit-event-admin__sidebar {
+    grid-template-columns: 1fr;
+  }
+}
