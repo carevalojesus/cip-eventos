@@ -1,0 +1,166 @@
+/**
+ * Section Component Styles - Refactoring UI Design System
+ *
+ * Unifica el patrón de secciones con header icónico:
+ * - .profile__section
+ * - .settings__section
+ * - Secciones de formularios en general
+ */
+
+/* ============================================
+   Base Section
+   ============================================ */
+
+.rui-section {
+    background-color: var(--color-bg-primary);
+    border: 1px solid var(--color-grey-200);
+    border-radius: var(--radius-lg);
+    padding: var(--card-padding-standard);
+}
+
+/* ============================================
+   Section Header
+   ============================================ */
+
+.rui-section__header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    margin-bottom: var(--space-4);
+    padding-bottom: var(--space-3);
+    border-bottom: 1px solid var(--color-grey-100);
+}
+
+.rui-section__header-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-md);
+    flex-shrink: 0;
+}
+
+/* Icon Variants - Generic */
+.rui-section__header-icon--primary {
+    background-color: var(--color-red-050);
+    color: var(--color-red-600);
+}
+
+.rui-section__header-icon--secondary {
+    background-color: var(--color-grey-100);
+    color: var(--color-grey-600);
+}
+
+.rui-section__header-icon--success {
+    background-color: var(--color-green-050);
+    color: var(--color-green-600);
+}
+
+.rui-section__header-icon--warning {
+    background-color: var(--color-yellow-050);
+    color: var(--color-yellow-600);
+}
+
+.rui-section__header-icon--danger {
+    background-color: var(--color-red-050);
+    color: var(--color-red-600);
+}
+
+.rui-section__header-icon--info {
+    background-color: var(--color-cyan-050);
+    color: var(--color-cyan-600);
+}
+
+.rui-section__header-icon--neutral {
+    background-color: var(--color-grey-100);
+    color: var(--color-grey-600);
+}
+
+/* Icon Variants - Semantic (matching existing patterns) */
+.rui-section__header-icon--account {
+    background-color: var(--color-cyan-050);
+    color: var(--color-cyan-600);
+}
+
+.rui-section__header-icon--contact {
+    background-color: var(--color-green-050);
+    color: var(--color-green-600);
+}
+
+.rui-section__header-icon--nominal {
+    background-color: var(--color-yellow-050);
+    color: var(--color-yellow-600);
+}
+
+.rui-section__header-icon--integrations {
+    background-color: var(--color-purple-050, var(--color-cyan-050));
+    color: var(--color-purple-600, var(--color-cyan-600));
+}
+
+.rui-section__header-icon--email {
+    background-color: var(--color-cyan-050);
+    color: var(--color-cyan-600);
+}
+
+.rui-section__header-icon--security {
+    background-color: var(--color-red-050);
+    color: var(--color-red-600);
+}
+
+/* Header Content */
+.rui-section__header-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex: 1;
+    min-width: 0;
+}
+
+.rui-section__header-title {
+    font-size: var(--font-size-base);
+    font-weight: 600;
+    color: var(--color-text-primary);
+    margin: 0;
+    line-height: var(--line-height-tight);
+}
+
+.rui-section__header-subtitle {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+    margin: 0;
+    line-height: var(--line-height-normal);
+}
+
+.rui-section__header-action {
+    flex-shrink: 0;
+    margin-left: auto;
+}
+
+/* ============================================
+   Section Content
+   ============================================ */
+
+.rui-section__content {
+    /* Content container - form fields go here */
+}
+
+/* ============================================
+   Responsive
+   ============================================ */
+
+@media (max-width: 768px) {
+    .rui-section {
+        padding: var(--card-padding-compact);
+    }
+
+    .rui-section__header {
+        flex-wrap: wrap;
+    }
+
+    .rui-section__header-action {
+        width: 100%;
+        margin-top: var(--space-2);
+        margin-left: 0;
+    }
+}

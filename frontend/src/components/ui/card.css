@@ -1,0 +1,257 @@
+/**
+ * Card Component Styles - Refactoring UI Design System
+ *
+ * Unifica todos los patrones de cards del proyecto:
+ * - .profile__section, .profile__card
+ * - .settings__section, .settings__card
+ * - .user-detail__sidebar-card
+ */
+
+/* ============================================
+   Base Card
+   ============================================ */
+
+.rui-card {
+    background-color: var(--color-bg-primary);
+    border-radius: var(--radius-lg);
+    transition: box-shadow var(--transition-fast), border-color var(--transition-fast);
+}
+
+/* ============================================
+   Card Variants
+   ============================================ */
+
+.rui-card--default {
+    border: 1px solid var(--color-grey-200);
+}
+
+.rui-card--outlined {
+    border: 1px solid var(--color-grey-200);
+}
+
+.rui-card--elevated {
+    border: 1px solid var(--color-grey-100);
+    box-shadow: var(--shadow-md);
+}
+
+.rui-card--ghost {
+    border: none;
+    background-color: transparent;
+}
+
+/* ============================================
+   Card Padding
+   ============================================ */
+
+.rui-card--padding-none {
+    padding: 0;
+}
+
+.rui-card--padding-compact {
+    padding: var(--card-padding-compact);
+}
+
+.rui-card--padding-standard {
+    padding: var(--card-padding-standard);
+}
+
+.rui-card--padding-spacious {
+    padding: var(--card-padding-spacious);
+}
+
+/* ============================================
+   Interactive Card
+   ============================================ */
+
+.rui-card--interactive {
+    cursor: pointer;
+}
+
+.rui-card--interactive:hover {
+    border-color: var(--color-grey-300);
+    box-shadow: var(--shadow-md);
+}
+
+.rui-card--interactive:focus-visible {
+    outline: none;
+    box-shadow: var(--ring-neutral);
+}
+
+.rui-card--interactive:active {
+    transform: translateY(1px);
+}
+
+/* ============================================
+   Card Header
+   ============================================ */
+
+.rui-card__header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    margin-bottom: var(--space-4);
+    padding-bottom: var(--space-3);
+    border-bottom: 1px solid var(--color-grey-100);
+}
+
+.rui-card__header-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-md);
+    flex-shrink: 0;
+}
+
+/* Icon Variants */
+.rui-card__header-icon--primary {
+    background-color: var(--color-red-050);
+    color: var(--color-red-600);
+}
+
+.rui-card__header-icon--secondary {
+    background-color: var(--color-grey-100);
+    color: var(--color-grey-600);
+}
+
+.rui-card__header-icon--success {
+    background-color: var(--color-green-050);
+    color: var(--color-green-600);
+}
+
+.rui-card__header-icon--warning {
+    background-color: var(--color-yellow-050);
+    color: var(--color-yellow-600);
+}
+
+.rui-card__header-icon--danger {
+    background-color: var(--color-red-050);
+    color: var(--color-red-600);
+}
+
+.rui-card__header-icon--info {
+    background-color: var(--color-cyan-050);
+    color: var(--color-cyan-600);
+}
+
+.rui-card__header-icon--neutral {
+    background-color: var(--color-grey-100);
+    color: var(--color-grey-600);
+}
+
+/* Semantic icon variants for specific use cases */
+.rui-card__header-icon--account {
+    background-color: var(--color-cyan-050);
+    color: var(--color-cyan-600);
+}
+
+.rui-card__header-icon--contact {
+    background-color: var(--color-green-050);
+    color: var(--color-green-600);
+}
+
+.rui-card__header-icon--nominal {
+    background-color: var(--color-yellow-050);
+    color: var(--color-yellow-600);
+}
+
+.rui-card__header-icon--integrations {
+    background-color: var(--color-purple-050, var(--color-cyan-050));
+    color: var(--color-purple-600, var(--color-cyan-600));
+}
+
+.rui-card__header-icon--email {
+    background-color: var(--color-cyan-050);
+    color: var(--color-cyan-600);
+}
+
+.rui-card__header-icon--security {
+    background-color: var(--color-red-050);
+    color: var(--color-red-600);
+}
+
+.rui-card__header-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex: 1;
+    min-width: 0;
+}
+
+.rui-card__header-title {
+    font-size: var(--font-size-base);
+    font-weight: 600;
+    color: var(--color-text-primary);
+    margin: 0;
+    line-height: var(--line-height-tight);
+}
+
+.rui-card__header-subtitle {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+    margin: 0;
+    line-height: var(--line-height-normal);
+}
+
+.rui-card__header-action {
+    flex-shrink: 0;
+    margin-left: auto;
+}
+
+/* ============================================
+   Card Body
+   ============================================ */
+
+.rui-card__body {
+    /* Content container - no specific styles needed */
+}
+
+/* ============================================
+   Card Footer
+   ============================================ */
+
+.rui-card__footer {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    margin-top: var(--space-4);
+    padding-top: var(--space-3);
+    border-top: 1px solid var(--color-grey-100);
+}
+
+.rui-card__footer--left {
+    justify-content: flex-start;
+}
+
+.rui-card__footer--center {
+    justify-content: center;
+}
+
+.rui-card__footer--right {
+    justify-content: flex-end;
+}
+
+.rui-card__footer--between {
+    justify-content: space-between;
+}
+
+/* ============================================
+   Responsive
+   ============================================ */
+
+@media (max-width: 768px) {
+    .rui-card--padding-spacious {
+        padding: var(--card-padding-standard);
+    }
+
+    .rui-card__header {
+        flex-wrap: wrap;
+    }
+
+    .rui-card__header-action {
+        width: 100%;
+        margin-top: var(--space-2);
+        margin-left: 0;
+    }
+}
