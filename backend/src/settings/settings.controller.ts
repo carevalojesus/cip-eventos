@@ -3,10 +3,17 @@ import {
   Get,
   Patch,
   Body,
+  Param,
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
-import { SettingsService, AllSettingsResponse, OrganizationConfig, EmailConfig } from './settings.service';
+import {
+  SettingsService,
+  AllSettingsResponse,
+  OrganizationConfig,
+  EmailConfig,
+  IntegrationStatus,
+} from './settings.service';
 import { OrganizationSettingsDto, EmailSettingsDto } from './dto/update-settings.dto';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { UserRole } from '../roles/entities/role.entity';
@@ -42,8 +49,34 @@ export class SettingsController {
    */
   @Get('integrations')
   @Roles(UserRole.SUPER_ADMIN, UserRole.ORG_ADMIN)
-  async getIntegrations() {
+  async getIntegrations(): Promise<IntegrationStatus[]> {
     return this.settingsService.getIntegrationsStatus();
+  }
+
+  /**
+   * GET /settings/integrations/:key
+   * Obtiene la configuración de una integración específica
+   */
+  @Get('integrations/:key')
+  @Roles(UserRole.SUPER_ADMIN)
+  async getIntegrationConfig(
+    @Param('key') key: string,
+  ): Promise<Record<string, string>> {
+    return this.settingsService.getIntegrationConfig(key);
+  }
+
+  /**
+   * PATCH /settings/integrations/:key
+   * Actualiza la configuración de una integración
+   */
+  @Patch('integrations/:key')
+  @Roles(UserRole.SUPER_ADMIN)
+  @HttpCode(HttpStatus.OK)
+  async updateIntegration(
+    @Param('key') key: string,
+    @Body() data: Record<string, string>,
+  ): Promise<IntegrationStatus[]> {
+    return this.settingsService.updateIntegration(key, data);
   }
 
   /**
@@ -57,6 +90,16 @@ export class SettingsController {
     @Body() dto: OrganizationSettingsDto,
   ): Promise<OrganizationConfig> {
     return this.settingsService.updateOrganization(dto);
+  }
+
+  /**
+   * GET /settings/email/config
+   * Obtiene la configuración de email para edición
+   */
+  @Get('email/config')
+  @Roles(UserRole.SUPER_ADMIN)
+  async getEmailConfig(): Promise<Record<string, string>> {
+    return this.settingsService.getEmailSettings();
   }
 
   /**

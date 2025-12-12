@@ -1,0 +1,179 @@
+/**
+ * DataField Component Styles - Refactoring UI Design System
+ *
+ * Unifica los patrones de campos de solo lectura:
+ * - .profile__readonly-field
+ * - .settings__readonly-field
+ * - ReadOnlyField component inline styles
+ */
+
+/* ============================================
+   Base DataField
+   ============================================ */
+
+.rui-data-field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+}
+
+/* ============================================
+   Label
+   ============================================ */
+
+.rui-data-field__label {
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    color: var(--color-text-secondary);
+    line-height: var(--line-height-normal);
+}
+
+/* ============================================
+   Value Wrapper
+   ============================================ */
+
+.rui-data-field__value-wrapper {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: 0 var(--space-3);
+    background-color: var(--color-grey-050);
+    border: 1px solid var(--color-grey-200);
+    border-radius: var(--radius-md);
+    height: 40px;
+}
+
+/* ============================================
+   Icon
+   ============================================ */
+
+.rui-data-field__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-grey-400);
+    flex-shrink: 0;
+}
+
+/* ============================================
+   Value
+   ============================================ */
+
+.rui-data-field__value {
+    flex: 1;
+    font-size: var(--font-size-sm);
+    color: var(--color-text-primary);
+    word-break: break-word;
+    line-height: var(--line-height-normal);
+}
+
+.rui-data-field__value--mono {
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+        "Liberation Mono", monospace;
+    font-size: var(--font-size-xs);
+    letter-spacing: 0.025em;
+}
+
+/* ============================================
+   Actions
+   ============================================ */
+
+.rui-data-field__actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    flex-shrink: 0;
+    margin-left: auto;
+}
+
+.rui-data-field__action-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    background: transparent;
+    border: none;
+    border-radius: var(--radius-sm);
+    color: var(--color-grey-400);
+    cursor: pointer;
+    transition: color var(--transition-fast), background-color var(--transition-fast);
+}
+
+.rui-data-field__action-btn:hover {
+    color: var(--color-grey-600);
+    background-color: var(--color-grey-100);
+}
+
+.rui-data-field__action-btn:active {
+    background-color: var(--color-grey-200);
+}
+
+/* ============================================
+   Hint
+   ============================================ */
+
+.rui-data-field__hint {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+    line-height: var(--line-height-normal);
+}
+
+/* ============================================
+   Mono Variant
+   ============================================ */
+
+.rui-data-field--mono .rui-data-field__value {
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+        "Liberation Mono", monospace;
+    font-size: var(--font-size-xs);
+    letter-spacing: 0.025em;
+}
+
+/* ============================================
+   DataFieldGroup - Grid Layout
+   ============================================ */
+
+.rui-data-field-group {
+    display: grid;
+    gap: var(--form-field-gap);
+}
+
+.rui-data-field-group--cols-1 {
+    grid-template-columns: 1fr;
+}
+
+.rui-data-field-group--cols-2 {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.rui-data-field-group--cols-3 {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.rui-data-field-group--cols-4 {
+    grid-template-columns: repeat(4, 1fr);
+}
+
+/* ============================================
+   Responsive
+   ============================================ */
+
+@media (max-width: 768px) {
+    .rui-data-field-group--cols-2,
+    .rui-data-field-group--cols-3,
+    .rui-data-field-group--cols-4 {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 1024px) {
+    .rui-data-field-group--cols-3 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .rui-data-field-group--cols-4 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}

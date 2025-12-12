@@ -34,21 +34,24 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(({
     lineHeight: 1.5,
   }
 
+  const isDisabled = props.disabled
+
   const textareaStyles: React.CSSProperties = {
     width: '100%',
     padding: 'var(--space-3) var(--space-4)',
     fontSize: '14px',
-    color: 'var(--color-grey-900)',
-    backgroundColor: colors.white,
+    color: isDisabled ? 'var(--color-grey-600)' : 'var(--color-grey-900)',
+    backgroundColor: isDisabled ? 'var(--color-grey-050)' : colors.white,
     border: `1px solid ${error ? 'var(--color-danger)' : 'var(--color-grey-200)'}`,
     borderRadius: '6px',
     outline: 'none',
     transition: 'border-color 150ms ease, box-shadow 150ms ease',
-    boxShadow: shadows.inputInset,
-    resize: 'vertical',
+    boxShadow: isDisabled ? 'none' : shadows.inputInset,
+    resize: isDisabled ? 'none' : 'vertical',
     minHeight: '80px',
     fontFamily: 'inherit',
     lineHeight: 1.5,
+    cursor: isDisabled ? 'default' : 'text',
   }
 
   const hintStyles: React.CSSProperties = {

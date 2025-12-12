@@ -594,7 +594,6 @@ export const UserDetailView: React.FC<UserDetailViewProps> = ({ userId, onNaviga
               {isEditing ? (
                 <>
                   <Button variant="ghost" size="md" onClick={handleCancelEdit}>
-                    <X size={18} />
                     {t("common.cancel", "Cancelar")}
                   </Button>
                   <Button

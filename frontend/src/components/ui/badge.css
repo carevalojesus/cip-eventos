@@ -1,0 +1,244 @@
+/**
+ * Badge Component Styles - Refactoring UI Design System
+ *
+ * Unifica todos los patrones de badges del proyecto:
+ * - .settings__status-badge--success
+ * - .settings__env-badge
+ * - .profile__status-badge
+ * - Badges de eventos, usuarios, etc.
+ */
+
+/* ============================================
+   Base Badge
+   ============================================ */
+
+.rui-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    font-weight: 500;
+    border-radius: var(--radius-full);
+    white-space: nowrap;
+    transition: background-color var(--transition-fast), color var(--transition-fast);
+}
+
+/* ============================================
+   Badge Sizes
+   ============================================ */
+
+.rui-badge--sm {
+    padding: 2px var(--space-2);
+    font-size: 11px;
+    line-height: 1.4;
+}
+
+.rui-badge--md {
+    padding: var(--space-1) var(--space-2);
+    font-size: var(--font-size-xs);
+    line-height: 1.4;
+}
+
+.rui-badge--lg {
+    padding: var(--space-2) var(--space-3);
+    font-size: var(--font-size-sm);
+    line-height: 1.4;
+}
+
+/* ============================================
+   Badge Dot
+   ============================================ */
+
+.rui-badge__dot {
+    width: 6px;
+    height: 6px;
+    border-radius: var(--radius-full);
+    flex-shrink: 0;
+}
+
+.rui-badge--lg .rui-badge__dot {
+    width: 8px;
+    height: 8px;
+}
+
+/* ============================================
+   Badge Icon
+   ============================================ */
+
+.rui-badge__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.rui-badge--sm .rui-badge__icon {
+    font-size: 12px;
+}
+
+.rui-badge--md .rui-badge__icon {
+    font-size: 14px;
+}
+
+.rui-badge--lg .rui-badge__icon {
+    font-size: 16px;
+}
+
+/* ============================================
+   Badge Text
+   ============================================ */
+
+.rui-badge__text {
+    line-height: inherit;
+}
+
+/* ============================================
+   Badge Variants - Primary
+   ============================================ */
+
+.rui-badge--primary {
+    background-color: var(--color-red-100);
+    color: var(--color-red-700);
+}
+
+.rui-badge--primary .rui-badge__dot {
+    background-color: var(--color-red-500);
+}
+
+.rui-badge--primary.rui-badge--outline {
+    background-color: transparent;
+    border: 1px solid var(--color-red-300);
+    color: var(--color-red-600);
+}
+
+/* ============================================
+   Badge Variants - Secondary
+   ============================================ */
+
+.rui-badge--secondary {
+    background-color: var(--color-grey-100);
+    color: var(--color-grey-700);
+}
+
+.rui-badge--secondary .rui-badge__dot {
+    background-color: var(--color-grey-500);
+}
+
+.rui-badge--secondary.rui-badge--outline {
+    background-color: transparent;
+    border: 1px solid var(--color-grey-300);
+    color: var(--color-grey-600);
+}
+
+/* ============================================
+   Badge Variants - Success
+   ============================================ */
+
+.rui-badge--success {
+    background-color: var(--color-green-100);
+    color: var(--color-green-700);
+}
+
+.rui-badge--success .rui-badge__dot {
+    background-color: var(--color-green-500);
+}
+
+.rui-badge--success.rui-badge--outline {
+    background-color: transparent;
+    border: 1px solid var(--color-green-300);
+    color: var(--color-green-600);
+}
+
+/* ============================================
+   Badge Variants - Warning
+   ============================================ */
+
+.rui-badge--warning {
+    background-color: var(--color-yellow-100);
+    color: var(--color-yellow-700);
+}
+
+.rui-badge--warning .rui-badge__dot {
+    background-color: var(--color-yellow-500);
+}
+
+.rui-badge--warning.rui-badge--outline {
+    background-color: transparent;
+    border: 1px solid var(--color-yellow-300);
+    color: var(--color-yellow-600);
+}
+
+/* ============================================
+   Badge Variants - Error
+   ============================================ */
+
+.rui-badge--error {
+    background-color: var(--color-red-100);
+    color: var(--color-red-700);
+}
+
+.rui-badge--error .rui-badge__dot {
+    background-color: var(--color-red-500);
+}
+
+.rui-badge--error.rui-badge--outline {
+    background-color: transparent;
+    border: 1px solid var(--color-red-300);
+    color: var(--color-red-600);
+}
+
+/* ============================================
+   Badge Variants - Info
+   ============================================ */
+
+.rui-badge--info {
+    background-color: var(--color-cyan-100);
+    color: var(--color-cyan-700);
+}
+
+.rui-badge--info .rui-badge__dot {
+    background-color: var(--color-cyan-500);
+}
+
+.rui-badge--info.rui-badge--outline {
+    background-color: transparent;
+    border: 1px solid var(--color-cyan-300);
+    color: var(--color-cyan-600);
+}
+
+/* ============================================
+   Badge Variants - Neutral
+   ============================================ */
+
+.rui-badge--neutral {
+    background-color: var(--color-grey-100);
+    color: var(--color-grey-500);
+}
+
+.rui-badge--neutral .rui-badge__dot {
+    background-color: var(--color-grey-400);
+}
+
+.rui-badge--neutral.rui-badge--outline {
+    background-color: transparent;
+    border: 1px solid var(--color-grey-300);
+    color: var(--color-grey-500);
+}
+
+/* ============================================
+   Badge Variants - Accent
+   ============================================ */
+
+.rui-badge--accent {
+    background-color: var(--color-yellow-100);
+    color: var(--color-yellow-700);
+}
+
+.rui-badge--accent .rui-badge__dot {
+    background-color: var(--color-yellow-500);
+}
+
+.rui-badge--accent.rui-badge--outline {
+    background-color: transparent;
+    border: 1px solid var(--color-yellow-300);
+    color: var(--color-yellow-600);
+}

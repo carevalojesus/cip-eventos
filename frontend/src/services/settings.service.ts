@@ -22,7 +22,14 @@ export interface IntegrationStatus {
   description: string;
 }
 
+export interface IntegrationConfig {
+  enabled: string;
+  [key: string]: string;
+}
+
 export interface EmailConfig {
+  provider: 'resend' | 'smtp';
+  resendConfigured: boolean;
   smtpHost: string;
   smtpPort: string;
   smtpUser: string;
@@ -58,7 +65,14 @@ export interface UpdateOrganizationDto {
 }
 
 export interface UpdateEmailSettingsDto {
+  provider?: 'resend' | 'smtp';
+  resendApiKey?: string;
+  smtpHost?: string;
+  smtpPort?: string;
+  smtpUser?: string;
+  smtpPass?: string;
   fromName?: string;
+  fromEmail?: string;
 }
 
 // ============================================
@@ -91,10 +105,34 @@ export const settingsService = {
   },
 
   /**
+   * Obtiene la configuración de una integración específica
+   */
+  async getIntegrationConfig(key: string): Promise<IntegrationConfig> {
+    const response = await api.get<IntegrationConfig>(`/settings/integrations/${key}`);
+    return response.data;
+  },
+
+  /**
+   * Actualiza la configuración de una integración
+   */
+  async updateIntegration(key: string, data: Record<string, string>): Promise<IntegrationStatus[]> {
+    const response = await api.patch<IntegrationStatus[]>(`/settings/integrations/${key}`, data);
+    return response.data;
+  },
+
+  /**
    * Actualiza la configuración de la organización
    */
   async updateOrganization(data: UpdateOrganizationDto): Promise<OrganizationConfig> {
     const response = await api.patch<OrganizationConfig>("/settings/organization", data);
+    return response.data;
+  },
+
+  /**
+   * Obtiene la configuración de email para edición
+   */
+  async getEmailConfig(): Promise<Record<string, string>> {
+    const response = await api.get<Record<string, string>>("/settings/email/config");
     return response.data;
   },
 

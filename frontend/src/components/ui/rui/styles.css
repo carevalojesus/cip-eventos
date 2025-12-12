@@ -1,0 +1,13 @@
+/**
+ * RUI Component Library Styles
+ *
+ * Este archivo importa todos los estilos de los componentes RUI
+ * para asegurar que se cargan correctamente en SSR/Astro.
+ */
+
+@import "../card.css";
+@import "../alert.css";
+@import "../badge.css";
+@import "../modal.css";
+@import "../section.css";
+@import "../data-field.css";

@@ -1,0 +1,256 @@
+/**
+ * Alert Component Styles - Refactoring UI Design System
+ *
+ * Unifica todos los patrones de alerts del proyecto:
+ * - .profile__alert--info, .profile__alert--success, etc.
+ * - .settings__alert--info, .settings__alert--warning, etc.
+ */
+
+/* ============================================
+   Base Alert
+   ============================================ */
+
+.rui-alert {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+    padding: var(--space-4);
+    border-radius: var(--radius-md);
+    border: 1px solid transparent;
+}
+
+/* ============================================
+   Alert Icon
+   ============================================ */
+
+.rui-alert__icon {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ============================================
+   Alert Content
+   ============================================ */
+
+.rui-alert__content {
+    flex: 1;
+    min-width: 0;
+}
+
+.rui-alert__title {
+    margin: 0;
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    line-height: var(--line-height-tight);
+}
+
+.rui-alert__text {
+    margin: var(--space-1) 0 0;
+    font-size: var(--font-size-xs);
+    line-height: var(--line-height-normal);
+}
+
+.rui-alert__text p {
+    margin: 0;
+}
+
+/* ============================================
+   Alert Actions
+   ============================================ */
+
+.rui-alert__actions {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-left: auto;
+}
+
+.rui-alert__dismiss {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    background: transparent;
+    border: none;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    opacity: 0.6;
+    transition: opacity var(--transition-fast), background-color var(--transition-fast);
+}
+
+.rui-alert__dismiss:hover {
+    opacity: 1;
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+/* ============================================
+   Alert Variants - Info
+   ============================================ */
+
+.rui-alert--info {
+    background-color: var(--color-cyan-050);
+    border-color: var(--color-cyan-200);
+}
+
+.rui-alert--info .rui-alert__icon {
+    color: var(--color-cyan-600);
+}
+
+.rui-alert--info .rui-alert__title {
+    color: var(--color-cyan-800);
+}
+
+.rui-alert--info .rui-alert__text {
+    color: var(--color-cyan-700);
+}
+
+.rui-alert--info .rui-alert__dismiss {
+    color: var(--color-cyan-600);
+}
+
+/* ============================================
+   Alert Variants - Success
+   ============================================ */
+
+.rui-alert--success {
+    background-color: var(--color-green-050);
+    border-color: var(--color-green-200);
+}
+
+.rui-alert--success .rui-alert__icon {
+    color: var(--color-green-600);
+}
+
+.rui-alert--success .rui-alert__title {
+    color: var(--color-green-700);
+}
+
+.rui-alert--success .rui-alert__text {
+    color: var(--color-green-600);
+}
+
+.rui-alert--success .rui-alert__dismiss {
+    color: var(--color-green-600);
+}
+
+/* ============================================
+   Alert Variants - Warning
+   ============================================ */
+
+.rui-alert--warning {
+    background-color: var(--color-yellow-050);
+    border-color: var(--color-yellow-200);
+}
+
+.rui-alert--warning .rui-alert__icon {
+    color: var(--color-yellow-600);
+}
+
+.rui-alert--warning .rui-alert__title {
+    color: var(--color-yellow-700);
+}
+
+.rui-alert--warning .rui-alert__text {
+    color: var(--color-yellow-600);
+}
+
+.rui-alert--warning .rui-alert__dismiss {
+    color: var(--color-yellow-600);
+}
+
+/* ============================================
+   Alert Variants - Error
+   ============================================ */
+
+.rui-alert--error {
+    background-color: var(--color-red-050);
+    border-color: var(--color-red-200);
+}
+
+.rui-alert--error .rui-alert__icon {
+    color: var(--color-red-600);
+}
+
+.rui-alert--error .rui-alert__title {
+    color: var(--color-red-800);
+}
+
+.rui-alert--error .rui-alert__text {
+    color: var(--color-red-700);
+}
+
+.rui-alert--error .rui-alert__dismiss {
+    color: var(--color-red-600);
+}
+
+/* ============================================
+   Alert Variants - Neutral
+   ============================================ */
+
+.rui-alert--neutral {
+    background-color: var(--color-grey-050);
+    border-color: var(--color-grey-200);
+}
+
+.rui-alert--neutral .rui-alert__icon {
+    color: var(--color-grey-500);
+}
+
+.rui-alert--neutral .rui-alert__title {
+    color: var(--color-text-primary);
+}
+
+.rui-alert--neutral .rui-alert__text {
+    color: var(--color-text-muted);
+}
+
+.rui-alert--neutral .rui-alert__dismiss {
+    color: var(--color-grey-500);
+}
+
+/* ============================================
+   Alert Variants - Tip
+   ============================================ */
+
+.rui-alert--tip {
+    background-color: var(--color-yellow-050);
+    border-color: var(--color-yellow-200);
+}
+
+.rui-alert--tip .rui-alert__icon {
+    color: var(--color-yellow-600);
+}
+
+.rui-alert--tip .rui-alert__title {
+    color: var(--color-yellow-800);
+}
+
+.rui-alert--tip .rui-alert__text {
+    color: var(--color-yellow-700);
+}
+
+.rui-alert--tip .rui-alert__dismiss {
+    color: var(--color-yellow-600);
+}
+
+/* ============================================
+   Responsive
+   ============================================ */
+
+@media (max-width: 640px) {
+    .rui-alert {
+        flex-wrap: wrap;
+    }
+
+    .rui-alert__actions {
+        width: 100%;
+        margin-top: var(--space-2);
+        margin-left: 0;
+        justify-content: flex-end;
+    }
+}
